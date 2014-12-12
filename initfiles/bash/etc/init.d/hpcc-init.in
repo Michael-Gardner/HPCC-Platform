@@ -46,7 +46,7 @@
 
 
 function print_usage {
-    echo "Usage: $0 [-c component] {start|stop|restart|status|setup}
+    echo "Usage: $0 [-c component] {start|stop|stopall|restart|status|setup}
        $0 [--componentlist] Display node component name list.
        $0 [--typelist] Display node component type list.
        $0 [-h] [--help] Display help"
@@ -278,14 +278,16 @@ case "$arg" in
     status|start|restart|setup)
         cmd=$arg
         ;;
-    stop)
+    stop|stopall)
        #need to reverse the list so that dali stops last
-       cmd=$arg
+       stopdafilesrv=0
+       [ $arg == 'stopall' ] && stopdafilesrv=1
+       cmd='stop'
        component_rev=""
        if [ "${isComp}" -eq 0 ]; then
          for (( i=${compListLen}; i>=0; i-- ));
          do
-            if strstr ${compList[$i]} "dafilesrv" ;then
+            if strstr ${compList[$i]} "dafilesrv" && [ $stopdafilesrv -eq 0 ];then
               continue;
             fi
             component_rev="$component_rev ${compList[$i]}"
@@ -424,7 +426,6 @@ for C in ${component} ; do
         STATUS=$(( $STATUS == 0 ? $statForEach : $STATUS))
     fi
 done 
-
 
 if [ "$cmd" = "stop" ] && [ -n "$compDafilesrv" ]
 then
