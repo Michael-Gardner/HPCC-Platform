@@ -338,7 +338,11 @@ const char * queryMeasureName(StatisticMeasure measure)
 StatisticMeasure queryMeasure(const char *  measure)
 {
     //MORE: Use a hash table??
-    return (StatisticMeasure)matchString(measureNames, measure);
+    StatisticMeasure ret = (StatisticMeasure)matchString(measureNames, measure);
+    //Legacy support for an unusual statistic - pretend the sizes are in bytes instead of kb.
+    if ((ret == SMeasureNone) && measure && streq(measure, "kb"))
+        ret = SMeasureSize;
+    return ret;
 }
 
 StatsMergeAction queryMergeMode(StatisticMeasure measure)
@@ -1619,8 +1623,8 @@ void StatisticsFilter::set(const char * creatorTypeText, const char * scopeTypeT
 void StatisticsFilter::set(const char * _creatorTypeText, const char * _creator, const char * _scopeTypeText, const char * _scope, const char * _measureText, const char * _kindText)
 {
     StatisticMeasure newMeasure = queryMeasure(_measureText);
-    if (measure != SMeasureNone)
-        setMeasure(measure);
+    if (newMeasure != SMeasureNone)
+        setMeasure(newMeasure);
     set(_creatorTypeText, _scopeTypeText, _kindText);
     setCreator(_creator);
     setScope(_scope);
@@ -1687,7 +1691,8 @@ void StatisticsFilter::setKind(const char * _kind)
 {
     if (!_kind || !*_kind || streq(_kind, "*"))
     {
-        measure = SMeasureAll;
+        if (measure == SMeasureNone)
+            measure = SMeasureAll;
         kind = StKindAll;
         return;
     }

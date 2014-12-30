@@ -2586,6 +2586,20 @@ void HqlGram::addDictionaryField(const attribute &errpos, IIdAtom * name, ITypeI
     addToActiveRecord(newField);
 }
 
+void HqlGram::addFieldFromValue(const attribute &errpos, attribute & valueAttr)
+{
+    normalizeExpression(valueAttr);
+    IHqlExpression *value = valueAttr.getExpr();
+
+    IIdAtom * name = createFieldNameFromExpr(value);
+    IHqlExpression * attrs = extractAttrsFromExpr(value);
+
+    if (value->isDataset())
+        addDatasetField(errpos, name, NULL, value, attrs);
+    else
+        addField(errpos, name, value->getType(), value, attrs);
+}
+
 void HqlGram::addIfBlockToActive(const attribute &errpos, IHqlExpression * ifblock)
 {
     activeRecords.tos().addOperand(LINK(ifblock));
@@ -10452,6 +10466,7 @@ static void getTokenText(StringBuffer & msg, int token)
     case FIRST: msg.append("FIRST"); break;
     case TOK_FIXED: msg.append("FIXED"); break;
     case FLAT: msg.append("FLAT"); break;
+    case FORMAT: msg.append("FORMAT"); break;
     case FORMAT_ATTR: msg.append("FORMAT"); break;
     case FORWARD: msg.append("FORWARD"); break;
     case FROM: msg.append("FROM"); break;
@@ -10717,6 +10732,7 @@ static void getTokenText(StringBuffer & msg, int token)
     case HASH_STORED: msg.append("#STORED"); break;
     case HASH_LINK: msg.append("#LINK"); break;
     case HASH_WORKUNIT: msg.append("#WORKUNIT"); break;
+    case HASH_WEBSERVICE: msg.append("#WEBSERVICE"); break;
     case SIMPLE_TYPE: msg.append("type-name"); break;
 
     case EQ: msg.append("="); break;

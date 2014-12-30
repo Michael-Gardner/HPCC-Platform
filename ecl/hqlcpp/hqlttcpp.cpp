@@ -164,6 +164,7 @@ public:
     OwnedHqlExpr storedName;
     OwnedHqlExpr originalLabel;
     OwnedHqlExpr sequence;
+    OwnedHqlExpr fieldFormat;
     node_operator setOp;
     node_operator persistOp;
 protected:
@@ -281,7 +282,19 @@ void NewThorStoredReplacer::doAnalyseBody(IHqlExpression * expr)
         StringBuffer errorTemp;
         seenMeta = true;
         IAtom * kind = expr->queryChild(0)->queryName();
-        if (kind == debugAtom)
+        if (kind == webserviceAtom)
+        {
+            Owned<IWUWebServicesInfo> wsi = wu->updateWebServicesInfo(true);
+            IHqlExpression *wsExpr = expr->queryChild(0);
+            ForEachChild(i, wsExpr)
+            {
+                StringBuffer name, value;
+                OwnedHqlExpr folded = foldHqlExpression(wsExpr->queryChild(i));
+                getHintNameValue(folded, name, value);
+                wsi->setText(name, value);
+            }
+        }
+        else if (kind == debugAtom)
         {
             OwnedHqlExpr foldedName = foldHqlExpression(expr->queryChild(1));
             OwnedHqlExpr foldedValue = foldHqlExpression(expr->queryChild(2));
@@ -4969,6 +4982,8 @@ IHqlExpression * GlobalAttributeInfo::createSetValue(IHqlExpression * value, IHq
         extraSetAttr->unwindList(args, no_comma);
     if (cluster)
         args.append(*createAttribute(clusterAtom, LINK(cluster)));
+    if (fieldFormat)
+        args.append(*LINK(fieldFormat));
     if (setOp == no_setresult)
         return createSetResult(args);
     return createValue(setOp, makeVoidType(), args);
@@ -5011,6 +5026,7 @@ void GlobalAttributeInfo::extractStoredInfo(IHqlExpression * expr, IHqlExpressio
         storedName.set(expr->queryChild(0));
         originalLabel.set(storedName);
         sequence.setown(getStoredSequenceNumber());
+        fieldFormat.set(expr->queryAttribute(storedFieldFormatAtom));
         few = true;
         break;
     case no_checkpoint:
@@ -7194,6 +7210,7 @@ void ScalarGlobalTransformer::doAnalyseExpr(IHqlExpression * expr)
     case no_attr_link:
     case no_null:
     case no_all:
+    case no_funcdef:
         return;
     case no_persist_check:
         //No point spotting global within this since it will not create a subquery..
@@ -8945,12 +8962,18 @@ IHqlExpression * HqlLinkedChildRowTransformer::createTransformedBody(IHqlExpress
             case type_dictionary:
             case type_table:
             case type_groupedtable:
+                OwnedHqlExpr transformedRecord = transform(expr->queryRecord());
+                if (recordRequiresLinkCount(transformedRecord))
+                {
+                    if (expr->hasAttribute(embeddedAtom) || queryAttribute(type, embeddedAtom) || expr->hasAttribute(countAtom) || expr->hasAttribute(sizeofAtom))
+                        throwError1(HQLERR_InconsistentEmbedded, expr->queryId()->str());
+                }
                 if (expr->hasAttribute(embeddedAtom))
                 {
                     OwnedHqlExpr transformed = QuickHqlTransformer::createTransformedBody(expr);
                     return removeAttribute(transformed, embeddedAtom);
                 }
-                if (implicitLinkedChildRows && !expr->hasAttribute(_linkCounted_Atom))
+                if (implicitLinkedChildRows && !expr->hasAttribute(_linkCounted_Atom) && !queryAttribute(type, embeddedAtom))
                 {
                     //Don't use link counted rows for weird HOLe style dataset attributes
                     if (expr->hasAttribute(countAtom) || expr->hasAttribute(sizeofAtom))
@@ -12328,6 +12351,8 @@ IHqlExpression * HqlTreeNormalizer::createTransformedBody(IHqlExpression * expr)
                 reportAbstractModule(translator.queryErrorProcessor(), module, errpos);
                 throw MakeStringException(HQLERR_ErrorAlreadyReported, "%s", "");
             }
+            if (oldFuncdef->getOperator() == no_param)
+                return LINK(expr);
             assertex(oldFuncdef->getOperator() == no_funcdef);
             return transformCall(expr);
         }

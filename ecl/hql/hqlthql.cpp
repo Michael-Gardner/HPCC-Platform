@@ -2368,6 +2368,8 @@ void HqltHql::toECL(IHqlExpression *expr, StringBuffer &s, bool paren, bool inTy
                     s.append("#STORED");
                 else if (kind == workunitAtom)
                     s.append("#WORKUNIT");
+                else if (kind == webserviceAtom)
+                    s.append("#WEBSERVICE");
                 else
                     s.append("#META:").append(kind);
 
@@ -2760,6 +2762,22 @@ void HqltHql::sortlistToEcl(IHqlExpression *expr, StringBuffer &s, bool addCurle
 StringBuffer &HqltHql::getFieldTypeString(IHqlExpression * e, StringBuffer &s)
 {
     ITypeInfo * type = e->queryType();
+    ITypeInfo * cur = type;
+    for(;;)
+    {
+        typemod_t mod = cur->queryModifier();
+        if (mod == typemod_none)
+            break;
+        if (mod == typemod_attr)
+        {
+            IHqlExpression * attr = (IHqlExpression *)cur->queryModifierExtra();
+            if (!isInternalAttribute(attr))
+                s.append(attr->queryName()).append(" ");
+        }
+
+        cur = cur->queryTypeBase();
+    }
+
     switch (type->getTypeCode())
     {
     case type_groupedtable:

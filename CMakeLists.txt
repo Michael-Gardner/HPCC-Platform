@@ -146,6 +146,8 @@ set( CPACK_SOURCE_GENERATOR TGZ )
 
 set ( CPACK_RPM_PACKAGE_VERSION "${version}" )
 SET(CPACK_RPM_PACKAGE_RELEASE "${stagever}")
+SET(CPACK_RPM_PACKAGE_VENDOR "HPCC Systems")
+SET(CPACK_PACKAGE_VENDOR "HPCC Systems")
 
 if ( ${ARCH64BIT} EQUAL 1 )
     set ( CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
@@ -177,6 +179,12 @@ elseif ( UNIX )
     message ( "-- Auto Detecting Packaging type")
     message ( "-- distro uses ${packageManagement}, revision is ${packageRevisionArch}" )
     if ( "${packageManagement}" STREQUAL "RPM" AND WITH_PLUGINS )
+        set ( CPACK_RPM_SPEC_MORE_DEFINE
+"%define _use_internal_dependency_generator 0
+%define __getdeps() while read file; do /usr/lib/rpm/rpmdeps -%{1} ${file}; done | /bin/sort -u
+%define __find_provides /bin/sh -c '%{__getdeps P}'
+%define __find_requires /bin/sh -c '%{__grep} -v libRembed.so | %{__getdeps R}'" )
+>>>>>>> 328fdc7658dfeeada3a0b8f43761f3c88cd37f62
         set ( PACKAGE_FILE_NAME_PREFIX "${PACKAGE_FILE_NAME_PREFIX}-with-plugins")
     endif()
     if ( "${packageManagement}" STREQUAL "DEB" )
@@ -187,10 +195,10 @@ elseif ( UNIX )
         set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}_${stagever}${CPACK_SYSTEM_NAME}")
     endif ()
 endif ()
-MESSAGE ("-- Current release version is ${CPACK_PACKAGE_FILE_NAME}")
-set ( CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${version}" )
+MESSAGE ( "-- Current release version is ${CPACK_PACKAGE_FILE_NAME}" )
+set( CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${version}" )
 set( CPACK_SOURCE_GENERATOR TGZ )
-set(CPACK_SOURCE_IGNORE_FILES
+set( CPACK_SOURCE_IGNORE_FILES
         "~$"
         "\\\\.cvsignore$"
         "^${PROJECT_SOURCE_DIR}.*/CVS/"
@@ -261,7 +269,6 @@ if ( UNIX )
         # Standard sections values:
         # https://www.debian.org/doc/debian-policy/ch-archive.html/#s-subsections
         SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
-    
     elseif ( "${packageManagement}" STREQUAL "RPM" )
         set ( CPACK_GENERATOR "${packageManagement}" )
         ###
@@ -305,7 +312,6 @@ else ( PLATFORM )
         set ( CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${version}-${stagever}${CPACK_SYSTEM_NAME}" )
     endif()
     set ( CPACK_MONOLITHIC_INSTALL TRUE )
-    set ( CPACK_PACKAGE_VENDOR "HPCC Systems" )
     file(WRITE "${PROJECT_BINARY_DIR}/welcome.txt"
         "HPCC Systems - Client Tools\r"
         "===========================\r\r"
@@ -331,7 +337,7 @@ else ( PLATFORM )
 
       file(STRINGS "${SIGN_DIRECTORY}/passphrase.txt" PFX_PASSWORD LIMIT_COUNT 1)
 
-      add_custom_target(SIGN 
+      add_custom_target(SIGN
           COMMAND signtool sign /f "${SIGN_DIRECTORY}/hpcc_code_signing.pfx"
 /p "${PFX_PASSWORD}" /t "http://timestamp.verisign.com/scripts/timstamp.dll"
 "${CMAKE_BINARY_DIR}/${PACKAGE_FILE_NAME_PREFIX}*.exe"

@@ -2955,6 +2955,64 @@ bool isValidXmlRecord(IHqlExpression * expr)
     return true;
 }
 
+static void expandHintValue(StringBuffer & s, IHqlExpression * expr)
+{
+    node_operator op = expr->getOperator();
+    node_operator childOp = no_none;
+    switch (op)
+    {
+    case no_constant:
+        expr->queryValue()->getStringValue(s);
+        break;
+    case no_comma:
+        expandHintValue(s, expr->queryChild(0));
+        expandHintValue(s.append(","), expr->queryChild(1));
+        break;
+    case no_range:
+        expandHintValue(s, expr->queryChild(0));
+        expandHintValue(s.append(".."), expr->queryChild(1));
+        break;
+    case no_rangefrom:
+        expandHintValue(s, expr->queryChild(0));
+        s.append("..");
+        break;
+    case no_rangeto:
+        expandHintValue(s.append(".."), expr->queryChild(0));
+        break;
+    case no_list:
+        {
+            s.append("[");
+            ForEachChild(i, expr)
+            {
+                if (i)
+                    s.append(",");
+                expandHintValue(s, expr->queryChild(i));
+            }
+            s.append("]");
+            break;
+        }
+    case no_attr:
+        s.append(expr->queryName());
+        break;
+    default:
+        s.append("?");
+        break;
+    }
+}
+
+void getHintNameValue(IHqlExpression * attr, StringBuffer &name, StringBuffer &value)
+{
+    name.set(attr->queryName()->str());
+    ForEachChild(i, attr)
+    {
+        if (i)
+            value.append(",");
+        expandHintValue(value, attr->queryChild(i));
+    }
+    if (value.length() == 0)
+        value.append("1");
+}
+
 bool getBoolValue(IHqlExpression * expr, bool dft)
 {
     if (expr)
@@ -7003,13 +7061,15 @@ public:
         IHqlExpression *formals = funcdef->queryChild(1);
         ITypeInfo * retType = funcdef->queryType()->queryChildType();
 
-        enum { ServiceApi, RtlApi, BcdApi, CApi, LocalApi } api = ServiceApi;
+        enum { ServiceApi, RtlApi, BcdApi, CApi, CppApi, LocalApi } api = ServiceApi;
         if (body->hasAttribute(eclrtlAtom))
             api = RtlApi;
         else if (body->hasAttribute(bcdAtom))
             api = BcdApi;
         else if (body->hasAttribute(cAtom))
             api = CApi;
+        else if (body->hasAttribute(cppAtom))
+            api = CppApi;
         else if (body->hasAttribute(localAtom))
             api = LocalApi;
 
