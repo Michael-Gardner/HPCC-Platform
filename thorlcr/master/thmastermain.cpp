@@ -791,7 +791,7 @@ int main( int argc, char *argv[]  )
             auditStartLogged = true;
 
 
-            thorMain(logHandler);
+            thorMain(logHandler, sentinelFile);
             LOG(daliAuditLogCat, ",Progress,Thor,Terminate,%s,%s,%s",thorname,nodeGroup.str(),queueName.str());
         }
         else

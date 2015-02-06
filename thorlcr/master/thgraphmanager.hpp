@@ -23,7 +23,7 @@ interface IException;
 CSDSServerStatus &queryServerStatus();
 CSDSServerStatus &openThorServerStatus();
 void closeThorServerStatus();
-void thorMain(ILogMsgHandler *logHandler);
+void thorMain(ILogMsgHandler *logHandler, Owned<IFile> sentinel);
 void abortThor(IException *e=NULL, bool abortCurrentJob=true);
 void setExitCode(int code);
 int queryExitCode();

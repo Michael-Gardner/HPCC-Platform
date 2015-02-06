@@ -852,7 +852,7 @@ void closeThorServerStatus()
     }
 }
 
-void thorMain(ILogMsgHandler *logHandler)
+void thorMain(ILogMsgHandler *logHandler, Owned<IFile> sentinel)
 {
     aborting = 0;
     unsigned multiThorMemoryThreshold = globals->getPropInt("@multiThorMemoryThreshold")*0x100000;
@@ -876,7 +876,7 @@ void thorMain(ILogMsgHandler *logHandler)
         CThorResourceMaster masterResource;
         setIThorResource(masterResource);
 
-        writeSentinelFile(sentinelFile);
+        writeSentinelFile(sentinel);
         Owned<CJobManager> jobManager = new CJobManager(logHandler);
         try {
             LOG(MCdebugProgress, thorJob, "Listening for graph");
