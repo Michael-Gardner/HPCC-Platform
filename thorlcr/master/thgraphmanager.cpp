@@ -876,6 +876,7 @@ void thorMain(ILogMsgHandler *logHandler)
         CThorResourceMaster masterResource;
         setIThorResource(masterResource);
 
+        writeSentinelFile(sentinelFile);
         Owned<CJobManager> jobManager = new CJobManager(logHandler);
         try {
             LOG(MCdebugProgress, thorJob, "Listening for graph");
