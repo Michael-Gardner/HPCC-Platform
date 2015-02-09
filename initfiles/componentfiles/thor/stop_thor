@@ -15,11 +15,11 @@
 #    limitations under the License.
 ################################################################################
 
-PATH_PRE=`type -path hpcc_setenv`
-INSTALL_DIR=`dirname ${PATH_PRE}`/..
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+PATH_PRE=$( type -path hpcc_setenv )
+INSTALL_DIR=$( dirname ${PATH_PRE} )/..
+source ${PATH_PRE}
+source ${INSTALL_DIR}/etc/init.d/hpcc_common
 
-source ${PATH_PRE} ""
 comp_base=`basename $PWD`
 MASTER_PID_NAME="$PID/${comp_base}_master.pid" ## this needed when we use bash_init_system
 
@@ -39,21 +39,15 @@ fi
 # instancedir = [cwd] - on legacy system would be same as deploydir
 export instancedir=$(pwd -P)
 
-. $instancedir/setvars
+source $instancedir/setvars
 
-if [ "$#" -lt "2" ] || [ "$2" != "keep_sentinel" ]; then
-    echo removing sentinel file
-    rm -f $instancedir/${SENTINEL}
-    sleep 1
-fi
+ENV_DIR=`cat ${HPCC_CONFIG} | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^configs=" | sed -e 's/^configs=//'`
+export logdir=`updtdalienv $ENV_DIR/environment.xml -d log thor $THORNAME`
+export logfile="${logdir}/start_thor_${logpthtail}.log"
+export logredirect="${logdir}/start_slaves_${logpthtail}.log"
 
-kill_process ${MASTER_PID_NAME} thormaster_${comp_base} 8
-if [ $? -eq 1 ]; then
-    echo "unable to kill ${THORNAME}, in zombie state"
-fi
-
-echo --------------------------
-echo stopping thor slaves 
+log "--------------------"
+log "stopping thor slaves"
 
 if [ "$localthor" = "true" ]; then
   SLAVE_PID_NAME="$PID/${comp_base}_slave_*.pid"
@@ -63,8 +57,22 @@ else
   # we want to kill only slaves that have already been started in run_thor
   if [ -r $instancedir/uslaves.start ]; then
     nslaves=`cat $instancedir/uslaves.start | wc -l`
-    $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/stop_slaves ${THORNAME} ${PATH_PRE}'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves 2>&1 | egrep -v "no process killed"
-    echo slaves stopped
+    $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/stop_slaves ${THORNAME} ${PATH_PRE} ${logredirect}'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves 2>&1 | egrep -v "no process killed"
+    log "slaves stopped"
     rm -rf $instancedir/uslaves.start
   fi
+fi
+
+log "----------------------------------"
+log "stopping thormaster $THORMASTER"
+if [ "$#" -lt "2" ] || [ "$2" != "keep_sentinel" ]; then
+    log "removing sentinel file"
+    kill_process ${MASTER_PID_NAME} thormaster_${comp_base} 8 $instancedir/$SENTINEL
+    KP_STATE=$?
+else
+    kill_process ${MASTER_PID_NAME} thormaster_${comp_base} 8
+    KP_STATE=$?
+fi
+if [[ $KP_STATE -eq 1 ]]; then
+    log "unable to kill ${THORNAME}, in zombie state"
 fi

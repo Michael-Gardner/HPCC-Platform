@@ -16,9 +16,13 @@
 ################################################################################
 
 export deploydir=$(dirname $(type -path $0)) 
+
 PATH_PRE=`type -path hpcc_setenv` 
 source ${PATH_PRE} 
+source ${INSTALL_DIR}/etc/init.d/hpcc_common
 PID_NAME="$PID/`basename $PWD`.pid"
+
+export logpthtail="`date +%Y_%m_%d_%H_%M_%S`"
 
 INIT_PID_NAME="$PID/init_`basename $PWD`.pid"
 echo $$ > $INIT_PID_NAME
