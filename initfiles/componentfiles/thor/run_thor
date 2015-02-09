@@ -17,9 +17,6 @@
 
 thorpid=0
 
-
-
-
 RUN_THOR_PID_NAME="$PID/run_thor.`basename $PWD`.pid"
 # prevent two thors starting together
 if [ -e $RUN_THOR_PID_NAME ]; then
@@ -61,7 +58,7 @@ while [ 1 ]; do
 
     thorpid=$!
     if [ "$thorpid" -ne "0" ]; then 
-        echo thormaster$LCR process started pid = $thorpid
+        log "thormaster_$THORNAME process started pid = $thorpid"
         
         echo $thorpid > $PID_NAME
         echo $thorpid > $PID_NAME_BASE
