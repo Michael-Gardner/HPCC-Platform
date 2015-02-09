@@ -53,7 +53,7 @@ while [ 1 ]; do
         $deploydir/start_slaves $THORMASTER $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect
     else
         nslaves=`cat $instancedir/uslaves.start | wc -l`
-        $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/start_slaves %a $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves 2>&1
+        $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/start_slaves %a $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves
     fi
 
     echo thormaster cmd : $instancedir/thormaster_$THORNAME MASTER=$THORMASTER:$THORMASTERPORT
