@@ -190,7 +190,7 @@ log_failure_msg () {
 
 log () {
   logTime=$(date)
-  printf "%s :: %s\n" "${logTime}" "$@" >> $logFile
+  printf "%s :: %s\n" "${logTime}" "$@" >> $logfile
 }
 
 #log_success_msg () {

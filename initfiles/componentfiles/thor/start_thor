@@ -47,10 +47,6 @@ ln -s -f $deploydir/thormaster${LCR} thormaster_$THORNAME
 
 ENV_DIR=`cat ${HPCC_CONFIG} | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^configs=" | sed -e 's/^configs=//'`
 export logdir=`updtdalienv $ENV_DIR/environment.xml -d log thor $THORNAME`
-if [ -z "$logdir" ]; then
-export logdir="./start_logs"
-fi
-mkdir -p $logdir
-export logpthtail="`date +%m_%d_%Y_%H_%M_%S`"
+export logpthtail="`date +%m_%d_%Y`"
 export logfile="${logdir}/start_thor_${logpthtail}.log"
 $deploydir/run_thor
