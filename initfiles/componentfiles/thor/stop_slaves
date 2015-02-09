@@ -17,11 +17,16 @@
 
 compName=$1
 hpcc_setenv=$2
+logredirect=$3
 
 source ${hpcc_setenv}
+source `dirname ${hpcc_setenv}`/../etc/init.d/init-functions
+
+export logfile=$logredirect
 
 slavename=thorslave_${compName}
 
+log "killing $slavename"
 killall -0 $slavename &> /dev/null
 if [ $? -eq 0 ];then
   killall -9 $slavename
