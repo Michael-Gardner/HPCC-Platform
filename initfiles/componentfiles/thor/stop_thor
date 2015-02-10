@@ -42,7 +42,7 @@ export instancedir=$(pwd -P)
 . $instancedir/setvars
 
 if [ "$#" -lt "2" ] || [ "$2" != "keep_sentinel" ]; then
-    echo removing sentinel file
+    log "removing sentinel file"
     rm -f $instancedir/${SENTINEL}
     sleep 1
 fi
@@ -56,8 +56,8 @@ if [ ! -z $masterpid ]; then
     if [ 0 == $masterRunning ]; then
       break
     fi
-    echo --------------------------
-    echo stopping thormaster $THORMASTER 
+    log "----------------------------------"
+    log "stopping thormaster $THORMASTER"
     kill $masterpid >& /dev/null
     sleep 8
     kill -9 $masterpid >& /dev/null
@@ -65,8 +65,8 @@ if [ ! -z $masterpid ]; then
   done
 fi
 
-echo --------------------------
-echo stopping thor slaves 
+log "--------------------"
+log "stopping thor slaves"
 
 if [ "$localthor" = "true" ]; then
   SLAVE_PID_NAME="$PID/${comp_base}_slave_*.pid"
@@ -77,7 +77,7 @@ else
   if [ -r $instancedir/uslaves.start ]; then
     nslaves=`cat $instancedir/uslaves.start | wc -l`
     $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/stop_slaves ${THORNAME} ${PATH_PRE}'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves 2>&1 | egrep -v "no process killed"
-    echo slaves stopped
+    log "slaves stopped"
     rm -rf $instancedir/uslaves.start
   fi
 fi
