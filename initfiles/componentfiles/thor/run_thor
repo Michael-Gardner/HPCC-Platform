@@ -17,7 +17,6 @@
 
 thorpid=0
 
-export INIT_FUNCTIONS=$( type -path init_functions )
 source ${INIT_FUNCTIONS} ""
 
 RUN_THOR_PID_NAME="$PID/run_thor.`basename $PWD`.pid"

@@ -22,8 +22,8 @@ fi
 
 shift
 
-PATH_PRE=$( type -path hpcc_setenv )
-INIT_FUNCTIONS=$( dirname ${PATH_PRE} )/../etc/init.d/init-functions
+export PATH_PRE=$( type -path hpcc_setenv )
+export INIT_FUNCTIONS=$( dirname ${PATH_PRE} )/../etc/init.d/init-functions
 source ${PATH_PRE}
 source ${INIT_FUNCTIONS}
 export PID_NAME=$PID/$( basename $PWD )_master.pid ## this needed when we use bash_init_system
