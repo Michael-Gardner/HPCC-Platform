@@ -67,13 +67,13 @@ while [ 1 ]; do
         wait $thorpid
         errcode=$?
         if [ "$errcode" -eq "0" ]; then  # allows for CTRL-C or thorstop
-            echo thor exited cleanly - script stopping
+            log "thor exited cleanly - script stopping"
             exit 0
         fi
         echo master exited with errorcode = $errcode
         if [ ! -e $SENTINEL ]; then
-            echo $SENTINEL 'has been removed (1) - script stopping'
             $deploydir/stop_thor $deploydir
+            log "$SENTINEL 'has been removed (1) - script stopping"
             exit 0
         fi
 
@@ -86,15 +86,15 @@ while [ 1 ]; do
             swapnode auto $DALISERVER $compname
             errcode=$?
             if [ 0 != ${errcode} ]; then
-                echo auto swap node failed, errcode=${errcode}
+                log "auto swap node failed, errcode=${errcode}"
             fi
         fi
     else
-        echo failed to start thormaster$LCR, pausing for 30 seconds
+        log "failed to start thormaster$LCR, pausing for 30 seconds"
         sleep 30
     fi
     if [ ! -e $SENTINEL ]; then
-        echo $SENTINEL 'has been removed or thormaster did not fully start - script stopping'
+        log "$SENTINEL has been removed or thormaster did not fully start - script stopping"
         exit 0
     fi
 done
