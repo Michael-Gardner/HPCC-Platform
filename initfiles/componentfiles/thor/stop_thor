@@ -15,9 +15,10 @@
 #    limitations under the License.
 ################################################################################
 
-PATH_PRE=`type -path hpcc_setenv`
-INSTALL_DIR=`dirname ${PATH_PRE}`/..
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+PATH_PRE=$( type -path hpcc_setenv )
+INSTALL_DIR=$( dirname ${PATH_PRE} )/..
+source ${PATH_PRE}
+source ${INSTALL_DIR}/etc/init.d/hpcc_common
 
 source ${PATH_PRE} ""
 comp_base=`basename $PWD`

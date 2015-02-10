@@ -22,14 +22,19 @@ fi
 
 shift
 
-export PATH_PRE=`type -path hpcc_setenv`
-source ${PATH_PRE} ""
-export PID_NAME="$PID/`basename $PWD`_master.pid" ## this needed when we use bash_init_system
-export PID_NAME_BASE="$PID/`basename $PWD`.pid"
+PATH_PRE=$( type -path hpcc_setenv )
+INIT_FUNCTIONS=$( dirname ${PATH_PRE} )/../etc/init.d/init-functions
+source ${PATH_PRE}
+source ${INIT_FUNCTIONS}
+export PID_NAME=$PID/$( basename $PWD )_master.pid ## this needed when we use bash_init_system
+export PID_NAME_BASE=$PID/$( basename $PWD ).pid
+
+# this must match jsocket hard limit
+export handlelimit=32768
 
 # deploydir = where binaries and scripts live
 if [ -z "$deploydir" ]; then
-export deploydir=$(pwd -P)
+  export deploydir=$( pwd -P )
 fi
 # instancedir = [cwd] - on legacy system would be same as deploydir
 export instancedir=$(pwd -P)
