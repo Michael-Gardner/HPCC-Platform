@@ -50,11 +50,11 @@ while [ 1 ]; do
     if [ "$localthor" = "true" ]; then
         $deploydir/start_slaves $THORMASTER $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect
     else
-        nslaves=$( wc -l $instancedir/uslaves.start )
+        nslaves=$( wc -l < $instancedir/uslaves.start )
         $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/start_slaves %a $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves
     fi
 
-    echo thormaster cmd : $instancedir/thormaster_$THORNAME MASTER=$THORMASTER:$THORMASTERPORT
+    log "thormaster cmd = $instancedir/thormaster_$THORNAME MASTER=$THORMASTER:$THORMASTERPORT"
     nohup $instancedir/thormaster_$THORNAME MASTER=$THORMASTER:$THORMASTERPORT 2> /dev/null 1>/dev/null &
 
     thorpid=$!
