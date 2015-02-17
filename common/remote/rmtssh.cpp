@@ -513,6 +513,8 @@ public:
             return;
         if (slaves.ordinality()>1) {
             PROGLOG("Results: (%d of %d finished)",done.ordinality(),slaves.ordinality());
+            int errCode = 0;
+            Owned<IMultiException> multiException = MakeMultiException();
             for (unsigned i=0;i<done.ordinality();i++) {
                 unsigned n = done.item(i);
                 StringBuffer res(replytext.item(n));
@@ -521,10 +523,26 @@ public:
                 if (res.length()==0)
                     PROGLOG("%d: %s(%d): [OK]",n+1,slaves.item(n),reply.item(n));
                 else if (strchr(res.str(),'\n')==NULL)
+                {
                     PROGLOG("%d: %s(%d): %s",n+1,slaves.item(n),reply.item(n),res.str());
+                    if (reply.item(n))
+                    {
+                        errCode = reply.item(n);
+                        multiException->append(*MakeStringExceptionDirect(reply.item(n),res.str()));
+                    }
+                }
                 else
+                {
                     PROGLOG("%d: %s(%d):\n---------------------------\n%s\n===========================",n+1,slaves.item(n),reply.item(n),res.str());
+                    if (reply.item(n))
+                    {
+                        errCode = reply.item(n);
+                        multiException->append(*MakeStringExceptionDirect(reply.item(n),res.str()));
+                    }
+                }
             }
+            if (errCode)
+                throw multiException.getClear(); 
         }
         else {
             StringBuffer res(replytext.item(0));
