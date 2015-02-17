@@ -20,10 +20,10 @@ hpcc_setenv=$2
 
 source ${hpcc_setenv}
 
-echo compName=${compName}
-echo PID=${PID}
-
 slavename=thorslave_${compName}
+
+echo "I am here"
+echo "I am here2"
 
 killall -0 $slavename &> /dev/null
 if [ $? -eq 0 ];then
