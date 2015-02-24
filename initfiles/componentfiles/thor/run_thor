@@ -37,7 +37,7 @@ while [ 1 ]; do
     daliadmin $DALISERVER dfsgroup ${groupName} slaves
     errcode=$?
     if [ 0 != ${errcode} ]; then
-    echo 'failed to lookup dali group for $groupName'
+    log 'failed to lookup dali group for $groupName'
         exit 1
     fi
     $deploydir/makethorgroup
@@ -51,7 +51,7 @@ while [ 1 ]; do
         $deploydir/start_slaves $THORMASTER $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect
     else
         nslaves=$( wc -l < $instancedir/uslaves.start )
-        $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/start_slaves %a $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves
+        log $( $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/start_slaves %a $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves )
     fi
 
     log "thormaster cmd = $instancedir/thormaster_$THORNAME MASTER=$THORMASTER:$THORMASTERPORT"
@@ -80,7 +80,7 @@ while [ 1 ]; do
         $deploydir/stop_thor $deploydir keep_sentinel
 
         if [ 0 != $autoSwapNode ]; then
-            echo "Running autoswap $THORNAME"
+            log "Running autoswap $THORNAME"
             compname=`basename $PWD`
             swapnode auto $DALISERVER $compname
             errcode=$?

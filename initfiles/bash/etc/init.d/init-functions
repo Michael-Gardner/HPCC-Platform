@@ -188,9 +188,34 @@ log_failure_msg () {
     fi
 }
 
-log () {
-  logTime=$(date)
-  printf "%s :: %s\n" "${logTime}" "$@" >> $logfile
+# general logging message for init scripts
+# expects $logfile to exist within the context of where it's called
+log() {
+  if [[ -z ${logfile+x} ]]; then
+    # logfile isn't set within the context of this function call
+    return 1
+  fi
+
+  local msg=$@
+  local header=$( date --universal --iso-8601='seconds' )
+  local header="${header:0:19}: "
+  local firstRun=1
+
+  while [[ -n ${msg} ]]; do
+    if [[ $firstRun -eq 1 ]]; then
+      local fMsg=${msg:0:59}
+      local msg=${msg:59}
+      local firstRun=0
+    else
+      local fMsg=${msg:0:54}
+      local fMsg="     ${fMsg}"
+      local msg=${msg:54}
+    fi
+
+    printf "%s%s\n" "$header" "$fMsg" >> $logfile
+  done
+
+  return 0
 }
 
 #log_success_msg () {
