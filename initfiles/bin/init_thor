@@ -15,10 +15,34 @@
 #    limitations under the License.
 ################################################################################
 
-export deploydir=$(dirname $(type -path $0)) 
-PATH_PRE=`type -path hpcc_setenv` 
-source ${PATH_PRE} 
-PID_NAME="$PID/`basename $PWD`.pid"
+export deploydir=$(dirname $(type -path $0))
+export PATH_PRE=$( type -path hpcc_setenv )
+export INSTALL_DIR=$( dirname ${PATH_PRE} )/..
+
+source ${PATH_PRE}
+source ${INSTALL_DIR}/etc/init.d/hpcc_common
+source ${INSTALL_DIR}/etc/init.d/init-functions
+
+export ENV_DIR=`cat ${HPCC_CONFIG} | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^configs=" | sed -e 's/^configs=//'`
+export PID_NAME=$PID/$( basename $PWD )_master.pid ## this needed when we use bash_init_system
+export PID_NAME_BASE=$PID/$( basename $PWD ).pid
+export handlelimit=32768
+if [ -z "$deploydir" ]; then
+  export deploydir=$( pwd -P )
+fi
+export instancedir=$(pwd -P)
+
+source $instancedir/setvars
+
+pattern=$( basename $PWD )
+for file in "${LOG_DIR}/`basename $PWD`"/* ; do
+  [[ $file =~ "${pattern}_init_" ]] && [[ $file -nt $logFile ]] && export logFile=$file
+done
+
+if [ "${DEBUG:-NO_DEBUG}" != "NO_DEBUG" ]; then
+  exec 2> ${logdir}/debug_init_thor_`date +%m %d %Y`.log
+  set -x
+fi
 
 INIT_PID_NAME="$PID/init_`basename $PWD`.pid"
 echo $$ > $INIT_PID_NAME
@@ -26,16 +50,147 @@ echo $$ > $INIT_PID_NAME
 export SENTINEL="thor.sentinel"
 rm -f ${SENTINEL}
 
+stop_thor() {
+  which_pidof
+
+  if [ "$1" != "keep_sentinel" ]; then
+    log "removing sentinel file"
+    rm -f $instancedir/${SENTINEL}
+    sleep 1
+  fi
+
+  masterpid=`cat ${MASTER_PID_NAME} 2> /dev/null`
+  if [ ! -z $masterpid ]; then
+    while :
+    do
+      kill -0 $masterpid >& /dev/null
+      masterRunning=$(( $? == 0 ? 1 : 0 ))
+      if [ 0 == $masterRunning ]; then
+        break
+      fi
+      log "----------------------------------"
+      log "stopping thormaster $THORMASTER"
+      kill $masterpid >& /dev/null
+      sleep 8
+      kill -9 $masterpid >& /dev/null
+      sleep 1
+    done
+  fi
+
+  log "--------------------"
+  log "stopping thor slaves"
+
+  if [ "$localthor" = "true" ]; then
+    SLAVE_PID_NAME="$PID/${comp_base}_slave_*.pid"
+    slavepid=`cat ${SLAVE_PID_NAME} 2> /dev/null`
+    kill -9 $slavepid 2> /dev/null
+  else
+    # we want to kill only slaves that have already been started in run_thor
+    if [ -r $instancedir/uslaves.start ]; then
+      nslaves=`cat $instancedir/uslaves.start | wc -l`
+      $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/stop_slaves ${THORNAME} ${PATH_PRE}'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves 2>&1 | egrep -v "no process killed"
+      log "slaves stopped"
+      rm -rf $instancedir/uslaves.start
+    fi
+  fi
+}
+
 killed() {
-        echo "Stopping"
-        $deploydir/stop_thor $deploydir
-        kill_process ${SENTINEL} ${PID_NAME} 3
+        log "Process Killed"
+        stop_thor
+        kill_process ${SENTINEL} ${PID_NAME_BASE} 3
         exit 255
 }
 
-echo $$ > $PID_NAME
-$deploydir/start_thor $deploydir &
 trap "killed" SIGINT SIGTERM
-wait
-rm $PID_NAME
+echo $$ > $PID_NAME_BASE
 
+
+# sanity check to stop previous instance if up
+stop_thor
+
+ulimit -n $handlelimit
+if [ `ulimit -n` -lt $handlelimit ]; then
+    log "ulimit -n failed, aborting start_thor (perhaps you are not logged is as super user?)"
+    exit 0
+fi
+
+if [ ! -z ${THORPRIMARY} ]; then
+    export groupName=${THORPRIMARY}
+else
+    export groupName=${THORNAME}
+fi
+ln -s -f $deploydir/thormaster${LCR} thormaster_$THORNAME
+
+thorpid=0
+
+export SENTINEL="thor.sentinel"
+
+# ----------------------------------------
+# main loop
+# ----------------------------------------
+while [ 1 ]; do
+    # update slaves file in case state of environment has been altered since last run
+    daliadmin $DALISERVER dfsgroup ${groupName} slaves
+    errcode=$?
+    if [ 0 != ${errcode} ]; then
+    log 'failed to lookup dali group for $groupName'
+        exit 1
+    fi
+    $deploydir/makethorgroup
+    sort $instancedir/slaves | uniq > $instancedir/uslaves.start
+
+    log "starting thorslaves ..."
+
+    logredirect="$logdir/start_slaves_$logpthtail.log"
+    # Would be simpler, if there was simple way to test if ip is local and get rid of 'localthor' setting
+    if [ "$localthor" = "true" ]; then
+        $deploydir/start_slaves $THORMASTER $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect
+    else
+        nslaves=$( wc -l < $instancedir/uslaves.start )
+        log $( $deploydir/frunssh $instancedir/uslaves.start "/bin/sh -c '$deploydir/start_slaves %a $THORMASTER $THORMASTERPORT $logdir $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$nslaves )
+    fi
+
+    log "thormaster cmd = $instancedir/thormaster_$THORNAME MASTER=$THORMASTER:$THORMASTERPORT"
+    nohup $instancedir/thormaster_$THORNAME MASTER=$THORMASTER:$THORMASTERPORT 2> /dev/null 1>/dev/null &
+
+    thorpid=$!
+    if [ "$thorpid" -ne "0" ]; then 
+        log "thormaster_$THORNAME process started pid = $thorpid"
+        
+        echo $thorpid > $PID_NAME
+        echo $thorpid > $PID_NAME_BASE
+        wait $thorpid
+        errcode=$?
+        if [ "$errcode" -eq "0" ]; then  # allows for CTRL-C or thorstop
+            log "thor exited cleanly - script stopping"
+            exit 0
+        fi
+        echo master exited with errorcode = $errcode
+        if [ ! -e $SENTINEL ]; then
+            stop_thor
+            log "$SENTINEL 'has been removed (1) - script stopping"
+            exit 0
+        fi
+
+        echo 'stopping thor(slaves) for restart'
+        stop_thor keep_sentinel
+
+        if [ 0 != $autoSwapNode ]; then
+            log "Running autoswap $THORNAME"
+            compname=`basename $PWD`
+            swapnode auto $DALISERVER $compname
+            errcode=$?
+            if [ 0 != ${errcode} ]; then
+                log "auto swap node failed, errcode=${errcode}"
+            fi
+        fi
+    else
+        log "failed to start thormaster_$THORNAME, pausing for 30 seconds"
+        sleep 30
+    fi
+    if [ ! -e $SENTINEL ]; then
+        log "$SENTINEL has been removed or thormaster did not fully start - script stopping"
+        exit 0
+    fi
+done

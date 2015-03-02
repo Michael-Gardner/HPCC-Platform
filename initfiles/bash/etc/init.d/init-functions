@@ -191,7 +191,7 @@ log_failure_msg () {
 # general logging message for init scripts
 # expects $logfile to exist within the context of where it's called
 log() {
-  if [[ -z ${logfile+x} ]]; then
+  if [[ -z ${logFile+x} ]]; then
     # logfile isn't set within the context of this function call
     return 1
   fi
@@ -212,7 +212,7 @@ log() {
       local msg=${msg:54}
     fi
 
-    printf "%s%s\n" "$header" "$fMsg" >> $logfile
+    printf "%s%s\n" "$header" "$fMsg" >> $logFile
   done
 
   return 0

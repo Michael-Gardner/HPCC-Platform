@@ -295,11 +295,6 @@ get_commondirs() {
 
 configGenCmd() {
     componentFile="${path}/componentfiles/configxml"
-
-    # Creating logfiles for component
-    logDir=$log/${compName}
-    logFile=$log/${compName}/${compName}_init.log
-
     configcmd="${configgen_path}/configgen -env ${envfile} -od ${runtime} -id ${componentFile} -c ${compName}"
     if [ ${DEBUG} != "NO_DEBUG" ]; then
         echo $configcmd
@@ -413,9 +408,6 @@ startCmd() {
     # use less heap when threaded
     export MALLOC_ARENA_MAX=8
 
-    # Creating logfiles for component
-    logDir=$log/${compName}
-    logFile=$log/${compName}/${compName}_init.log
 
 
     if [ ${noStatusCheck} -ne 1 ]; then
@@ -467,10 +459,7 @@ startCmd() {
     EXEC_COMMAND="${bin_path}/init_${compType} "
     startcmd="${START_STOP_DAEMON} -S -p ${pid}/${compName}_init.pid -c ${user}:${group} -d ${compPath} ${UMASK_ARG} -m -x ${EXEC_COMMAND} -b  >>${logFile} 2>&1"
 
-    issueTime=`date`
-    logCommand="COMMAND:: $startcmd  ::Issued at $issueTime "
-    echo $logCommand >> $logFile
-
+    log "${startcmd}"
 
     # Creating a Lock
     lockPath=${lock}/${compName}
@@ -612,7 +601,8 @@ start_component() {
 
     # Creating logfiles for component
     logDir=$log/${compName}
-    logFile=$log/${compName}/${compName}_init.log
+    logTail=$( date +%m %d %Y )
+    logFile="${logDir}/${compName}_init_${logTail}.log"
 
     if [ ! -d $logDir ]; then
         mkdir -p $logDir >> tmp.txt 2>&1
