@@ -202,6 +202,7 @@ doStop() {
 doStopall() {
     action="hpcc-init"
     doStop
+    OPTIONS="-e $configfile -s ${SECTION:-DEFAULT}"
     action="dafilesrv"
     doStop
 }
