@@ -396,7 +396,23 @@ bool checkClusterRelicateDAFS(IGroup *grp)
     return (failures.ordinality()==0);
 }
 
+void abort_handler(int signo)
+{
+    LOG(MCdebugProgress, thorJob, "SIGINT/SIGQUIT detected - Aborting");
+    Owned<CRegistryServer> registry = CRegistryServer::getRegistryServer();
+    if (registry)
+        registry->stop();
+    abortThor(NULL, TEC_CtrlC);
+}
 
+void exit_handler(int signo)
+{
+    LOG(MCdebugProgress, thorJob, "SIGTERM detected - Exiting cleanly");
+    Owned<CRegistryServer> registry = CRegistryServer::getRegistryServer();
+    if (registry)
+        registry->stop();
+    abortThor(NULL, TEC_Clean);
+}
 
 static bool auditStartLogged = false;
 
@@ -779,7 +795,11 @@ int main( int argc, char *argv[]  )
         serverStatus.queryProperties()->setProp("@queue", queueName.str());
         serverStatus.commitProperties();
 
-        addAbortHandler(ControlHandler);
+        Signal signals;
+        signals.add(SIGINT,  abort_handler);
+        signals.add(SIGQUIT, abort_handler);
+        signals.add(SIGTERM, exit_handler);
+
         masterSlaveMpTag = allocateClusterMPTag();
 
         if (registry->connect())
