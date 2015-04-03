@@ -778,18 +778,27 @@ int queryExitCode() { return exitCode; }
 static unsigned aborting = 99;
 void abortThor(IException *e, unsigned errCode, bool abortCurrentJob)
 {
-    if (-1 == queryExitCode()) setExitCode(errCode);
+    if (-1 == queryExitCode())
+        setExitCode(errCode);
     Owned<CJobManager> jM = ((CJobManager *)getJobManager());
     Owned<IException> _e;
+    // debug
+    StringBuffer debugInfo;
+    debugInfo.append("entered into abortThor with errCode ").append(errCode).append(" and aborting = ").append(aborting);
+    // debug
+    LOG(MCdebugProgress, thorJob, debugInfo.str());
     if (0 == aborting)
     {
         aborting = 1;
-        if (!e)
+        if (errCode)
         {
-            _e.setown(MakeThorException(TE_AbortException, "THOR ABORT"));
-            e = _e;
+            if (!e)
+            {
+                _e.setown(MakeThorException(TE_AbortException, "THOR ABORT"));
+                e = _e;
+            }
+            EXCLOG(e,"abortThor");
         }
-        EXCLOG(e,"abortThor");
         LOG(MCdebugProgress, thorJob, "abortThor called");
         if (jM)
             jM->stop();
