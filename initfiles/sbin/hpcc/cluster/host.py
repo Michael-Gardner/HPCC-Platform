@@ -21,6 +21,7 @@ import subprocess
 import socket
 import re
 import logging
+from environment import EnvironmentParser
 
 class Host(object):
     '''
@@ -101,33 +102,14 @@ class Host(object):
     def get_hosts_from_env(cls, env_xml="/etc/HPCCSystems/environment.xml",
                            hpcc_home="/opt/HPCCSystems", exclude_local=False):
 
-        cmd = hpcc_home + "/sbin/configgen -env " + env_xml + \
-              " -machines | awk -F, '{print $1} ' | sort | uniq"
-
+        environment = EnvironmentParser(env_xml)
+        host_ips = environment.machines()
         hosts = []
-
-        try:
-            process = subprocess.Popen(cmd, shell=True,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-
-            process.wait()
-            errcode = process.returncode
-            stdout, stderr = process.communicate()
-
-
-            if (errcode == 0):
-                ips = stdout
-                for ip in ips.split():
-                    ip = ip.strip()
-                    if ip:
-                        hosts.append( Host(ip) )
-            else:
-                cls.logger.error(stderr)
-
-        except Exception as e:
-            cls.logger.error(e.output)
-
+        if (len(host_ips)):
+            for ip in host_ips:
+                if ip == ".":
+                    ip = socket.gethostbyname("localhost")
+                hosts.append( Host(ip) )
 
         if exclude_local:
             return Host.exclude_local_host(hosts)

@@ -53,6 +53,7 @@ class ScriptExecution(object):
         Constructor
         '''
 
+        self.env_xml          = '/etc/HPCCSystems/environment.xml'
         self.env_conf         = '/etc/HPCCSystems/environment.conf'
         self.section          = 'DEFAULT'
         self.hpcc_config      = None
@@ -104,10 +105,7 @@ class ScriptExecution(object):
         if self.host_list_file:
             self.hosts = Host.get_hosts_from_file( self.host_list_file, self.exclude_local )
         else:
-            self.hosts = Host.get_hosts_from_env(
-                self.get_config( 'configs' ) + '/' + \
-                self.get_config( 'environment' ),
-                self.get_config( 'path' ), self.exclude_local )
+            self.hosts = Host.get_hosts_from_env(self.env_xml,self.get_config( 'path' ),self.exclude_local)
 
         if len(self.hosts) == 0:
             print("Could not get any host. At least one host is required.")
@@ -231,6 +229,8 @@ class ScriptExecution(object):
         print("  -c  --chksum             script file md5 checksum")
         print("  -e, --env_conf           environment.conf full path. The default is")
         print("                           /etc/HPCCSystems/environment.conf")
+        print("  -a, --env_xml            environment.xml full path.  The default is")
+        print("                           /etc/HPCCSystems/environment.xml")
         print("  -f, --script_file        script file")
         print("  -h  --host_list          by default hosts will be retrieved from environment.xml")
         print("  -l, --log_level          WARNING, INFO, DEBUG. The default is INFO")
@@ -246,9 +246,9 @@ class ScriptExecution(object):
     def process_args(self):
 
         try:
-             opts, args = getopt.getopt(sys.argv[1:],":c:e:f:h:l:n:o:s:x",
-                ["help", "chksum","env_conf","script_file","host_list", "number_of_threads",
-                 "section", "log_file", "log_level", "exclude_local"])
+             opts, args = getopt.getopt(sys.argv[1:],":c:e:a:f:h:l:n:o:s:x",
+                ["help", "chksum=","env_conf=","env_xml=","script_file=","host_list=", "number_of_threads=",
+                 "section=", "log_file=", "log_level=", "exclude_local"])
 
         except getopt.GetoptError as err:
             print(str(err))
@@ -264,6 +264,8 @@ class ScriptExecution(object):
                 self.chksum = value
             elif arg in ("-e", "--env_conf"):
                 self.env_conf = value
+            elif arg in ("-a", "--env_xml"):
+                self.env_xml = value
             elif arg in ("-h", "--host_list"):
                 self.host_list_file = value
             elif arg in ("-n", "--number_of_thread"):
