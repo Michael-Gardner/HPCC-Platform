@@ -397,12 +397,19 @@ bool checkClusterRelicateDAFS(IGroup *grp)
 }
 
 
-
 static bool auditStartLogged = false;
 
 static bool firstCtrlC = true;
 bool ControlHandler() 
 { 
+    if (signoAbortHandler == 15)
+    {
+        LOG(MCdebugProgress, thorJob, "SIGTERM detected");
+        Owned<CRegistryServer> registry = CRegistryServer::getRegistryServer();
+        if (registry)
+            registry->stop();
+        abortThor(NULL, TEC_Clean);
+    }
     if (firstCtrlC)
     {
         LOG(MCdebugProgress, thorJob, "CTRL-C detected");

@@ -687,6 +687,7 @@ bool CopyFile(const char *file, const char *newfile, bool fail)
 
 //========================================================================================================================
 
+int signoAbortHandler = 0;  // extern
 static bool hadAbortSignal = false;
 static bool handlerInstalled = false;
 CriticalSection abortCrit;
@@ -784,6 +785,7 @@ BOOL WINAPI ModuleExitHandler ( DWORD dwCtrlType )
 #else
 static void UnixAbortHandler(int sig)
 {
+    signoAbortHandler = sig;
     hadAbortSignal = true;
     if (handlers.length()==0 || notifyOnAbort())
     {

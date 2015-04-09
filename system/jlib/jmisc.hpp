@@ -248,6 +248,8 @@ inline unsigned __int32 low(__int64 n)
 //Handle ^C/break from a console program.
 typedef bool (*AbortHandler)();                                                 // return true to exit program
 
+extern int signoAbortHandler;
+
 interface IAbortHandler : public IInterface
 {
     virtual bool onAbort() = 0;
