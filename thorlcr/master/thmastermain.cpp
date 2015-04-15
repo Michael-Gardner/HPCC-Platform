@@ -40,6 +40,7 @@
 #include "jsocket.hpp"
 #include "jthread.hpp"
 #include "jexcept.hpp"
+#include "jsignal.hpp"
 
 #include "mpbase.hpp"
 #include "mplog.hpp"
@@ -795,10 +796,11 @@ int main( int argc, char *argv[]  )
         serverStatus.queryProperties()->setProp("@queue", queueName.str());
         serverStatus.commitProperties();
 
-        Signal signals;
+        Signal & signals = Signal::getSignalObject();
         signals.add(SIGINT,  abort_handler);
         signals.add(SIGQUIT, abort_handler);
         signals.add(SIGTERM, exit_handler);
+        signals.add(SIGABRT, abort_handler);
 
         masterSlaveMpTag = allocateClusterMPTag();
 

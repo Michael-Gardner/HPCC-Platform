@@ -243,37 +243,6 @@ inline unsigned __int32 low(__int64 n)
     return (unsigned __int32)(n & (__int64)0xffffffff);
 }
 
-/****************************************************/
-/*               signal handling                    */
-/****************************************************/
-
-class SignalElement : public CInterface
-{
-public:
-    SignalElement(int,sighandler_t);
-    ~SignalElement();
-    void reset();
-    void modifyHandler(sighandler_t);
-    int  getSigno() const;
-    bool isSigno(int) const;
-
-private:
-    int signo;
-    struct sigaction action;
-};
-
-class Signal
-{
-public:
-    void add(int,sighandler_t);
-    void remove(int);
-
-private:
-    CIArrayOf<SignalElement> elementlist;
-};
-
-/****************************************************/
-
 //MORE - We really should restructure this file.  Also would this be better with a class interface?
 //Handle ^C/break from a console program.
 typedef bool (*AbortHandler)();                                                 // return true to exit program

@@ -21,6 +21,7 @@
 #include "jfile.hpp"
 #include "jmutex.hpp"
 #include "jlog.hpp"
+#include "jsignal.hpp"
 
 #include "portlist.h"
 #include "wujobq.hpp"
@@ -798,6 +799,9 @@ void abortThor(IException *e, unsigned errCode, bool abortCurrentJob)
                 e = _e;
             }
             EXCLOG(e,"abortThor");
+            if (jM)
+                jM->stop();
+            Signal::coreDump();
         }
         LOG(MCdebugProgress, thorJob, "abortThor called");
         if (jM)
