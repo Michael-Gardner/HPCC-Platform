@@ -27,10 +27,6 @@ class Host(object):
     This class represent cluster host attributions. Currently only ip is required.
     Several static help methods are provided to create cluster hast list.
     '''
-    # Default user name and passwords
-    user_name = 'hpcc'
-    user_passowrd = 'hpcc'
-    admin_password = 'hpcc'
 
     logger = logging.getLogger("hpcc.cluster.Host")
 
