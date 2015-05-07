@@ -17,7 +17,7 @@
 
 # Checks if Pid Directory exists and creates if it doesn't exist
 checkPidDir () {
-    PIDFILEPATH=$1
+    local PIDFILEPATH=$1
     if [[ -e ${PIDFILEPATH} ]]; then
         log_success_msg ""
     else
@@ -34,8 +34,8 @@ checkPidDir () {
 
 # Creats a Pid file
 createPid () {
-    PIDFILEPATH=$1
-    PIDNO=$2
+    local PIDFILEPATH=$1
+    local PIDNO=$2
     checkPid ${PIDFILEPATH}
     if [[ $__flagPid -eq 1 ]]; then
         [[ ${DEBUG} != "NO_DEBUG" ]] && log_failure_msg "Pid file already exists"
@@ -55,7 +55,7 @@ createPid () {
 
 # Checks if Pid file exists
 checkPid () {
-    PIDFILEPATH=$1
+    local PIDFILEPATH=$1
     if [[ -e ${PIDFILEPATH} ]]; then
         __flagPid=1
     else
@@ -65,7 +65,7 @@ checkPid () {
 
 # Reads the Pid file if Pidfile exists
 getPid () {
-    PIDFILEPATH=$1
+    local PIDFILEPATH=$1
     checkPid ${PIDFILEPATH}
     if [[ $__flagPid -eq 1 ]]; then
         __pidValue=$(/bin/cat $PIDFILEPATH)
@@ -76,7 +76,7 @@ getPid () {
 
 # Removes a Pid file 
 removePid () {
-    PIDFILEPATH=$1
+    local PIDFILEPATH=$1
     checkPid ${PIDFILEPATH}
     if [[ $__flagPid -eq 0 ]]; then
         [[ ${DEBUG} != "NO_DEBUG" ]] && log_failure_msg "Pidfile doesn't exist"
@@ -93,7 +93,7 @@ removePid () {
 }
     
 checkPidExist() {
-    PIDFILEPATH=$1
+    local PIDFILEPATH=$1
     getPid ${PIDFILEPATH}
     if [[ $__pidValue -ne 0 ]]; then
         ! kill -0 $__pidValue > /dev/null 2>&1 
@@ -117,10 +117,10 @@ checkPidExist() {
 #       3: Stopped except sentinel orphaned
 #       4: not yet in up state, details in debug mode
 check_status() {
-    PIDFILEPATH=$1
-    LOCKFILEPATH=$2
-    COMPPIDFILEPATH=$3
-    SENTINELFILECHK=$4
+    local PIDFILEPATH=$1
+    local LOCKFILEPATH=$2
+    local COMPPIDFILEPATH=$3
+    local SENTINELFILECHK=$4
 
     locked $LOCKFILEPATH
     local componentLocked=$flagLocked
@@ -163,7 +163,7 @@ check_status() {
 }
 
 checkSentinelFile() {
-    FILEPATH="${runtime}/${compName}"
+    local FILEPATH="${runtime}/${compName}"
     if [[ -d ${FILEPATH} ]]; then
        fileCheckOP=$(find ${FILEPATH} -name "*senti*")
        [[ ! -z "${fileCheckOP}" ]] && return 1
