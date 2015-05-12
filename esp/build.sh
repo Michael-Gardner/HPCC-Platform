@@ -66,4 +66,9 @@ do
   done
 done
 
+cd "$DISTDIR"
+
+# remove group and other write permissions from files and directories
+find -perm /0022 -exec chmod go-w '{}' \;
+
 echo "Post process complete"
