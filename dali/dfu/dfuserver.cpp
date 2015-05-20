@@ -61,9 +61,24 @@ void usage()
 }
 
 
-
+// signal_handler
 static bool exitDFUserver()
 {
+    CSDSServerStatus *serverstatus = new CSDSServerStatus("DFUserver");
+    saveXML("ptree.xml", serverstatus->queryProperties());
+    IPropertyTree *pTree = serverstatus->queryProperties();
+    IPropertyTreeIterator *iter = pTree->getElements("Queue"); 
+    ForEach(*iter)
+    {
+        IPropertyTree &queue = iter->query();
+        StringBuffer queueName;
+        if (queue.getProp("@name",queueName))
+        {
+            stopDFUserver(queueName);
+            DBGLOG("Called stopDFUserver on %s", queueName.str());
+        }
+    }
+
     engine->abortListeners();
     return false;
 }
@@ -234,7 +249,7 @@ int main(int argc, const char *argv[])
         }
         if (!stop) {
             serverstatus->commitProperties();
-
+            saveXML("ptreefull.xml", serverstatus->queryProperties());
             writeSentinelFile(sentinelFile);
 
             engine->joinListeners();
