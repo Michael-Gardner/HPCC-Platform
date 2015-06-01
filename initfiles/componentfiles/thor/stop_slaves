@@ -20,13 +20,18 @@ hpcc_setenv=$2
 
 source ${hpcc_setenv}
 
-echo compName=${compName}
-echo PID=${PID}
-
 slavename=thorslave_${compName}
 
-killall -0 $slavename &> /dev/null
-if [ $? -eq 0 ];then
-  killall -9 $slavename
-fi
+killall -0 $slavename > /dev/null 2>&1
+errno=$?
+countdown=30
+while [[ $errno -eq 0 && $countdown -gt 0 ]]; do
+    killall -9 $slavename > /dev/null 2>&1
+    killall -0 $slavename > /dev/null 2>&1
+    errno=$?
+    if [[ $errno -eq 0 ]]; then
+        sleep 1
+        ((countdown--))
+    fi
+done
 rm -f $PID/${compName}_slave_*.pid
