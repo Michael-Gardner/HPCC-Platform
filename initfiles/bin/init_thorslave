@@ -33,12 +33,25 @@ slavename=thorslave_${hpcc_compname}
 
 stop_slaves()
 {
+    log "killing slaves"
+    killall -9 $slavename > /dev/null 2>&1
     killall -0 $slavename > /dev/null 2>&1
-    if [[ $? -eq 0 ]];then
-        log "killing slaves"
+    local errcode=$?
+    local countdown=10
+    # while slaves are still running, do
+    while [[ $errcode -eq 0 && $countdown -gt 0 ]]; do
+        sleep 1
         killall -9 $slavename > /dev/null 2>&1
+        killall -0 $slavename > /dev/null 2>&1
+        errcode=$?
+        ((countdown--))
+    done
+    if [[ $countdown -le 0 && $errcode -eq 0 ]]; then
+        log "Unable to kill all instances of $slavename in the alloted time"
+    else
+        log "$slavename has been successfully killed"
+        rm -f $PID/${slavename}_*.pid > /dev/null 2>&1
     fi
-    rm -f $PID/${slavename}_*.pid > /dev/null 2>&1
 }
 
 start_slaves()
