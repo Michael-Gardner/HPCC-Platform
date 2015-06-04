@@ -15,96 +15,78 @@
 #    limitations under the License.
 ################################################################################
 
-# Checks if Pid Directory exists and creates if it doesn't exist
-checkPidDir () {
-    PIDFILEPATH=$1
-    if [[ -e ${PIDFILEPATH} ]]; then
-        log_success_msg ""
+# Reads the Pidfile if Pidfile exists
+getPid()
+{
+    local pidFile=$1
+    if [[ -e $pidFile ]]; then
+        return $(/bin/cat $pidFile)
     else
-        log_failure_msg "" 
-        echo "Creating a Pid directory"
-        /bin/mkdir -P ${PIDFILEPATH} 
-        if [[ ! -e ${PIDFILEPATH} ]]; then
-            log  "Can not create a Pid directory $PIDFILEPATH"
-        else
-            log_success_msg
-        fi
+        return 0
     fi
 }
 
-# Creats a Pid file
-createPid () {
-    PIDFILEPATH=$1
-    PIDNO=$2
-    checkPid ${PIDFILEPATH}
-    if [[ $__flagPid -eq 1 ]]; then
-        [[ ${DEBUG} != "NO_DEBUG" ]] && log_failure_msg "Pid file already exists"
-        log "Pid file already exists"
-        __pidCreated=0
+createPid()
+{
+    local pidFile=$1
+    local pidValue=$2
+    if [[ -e $pidFile ]]; then
+        log "Pidfile already exists"
+        return 1
     else
-        echo $PIDNO > ${PIDFILEPATH}
-        checkPid ${PIDFILEPATH}
-        if [[ $__flagPid -eq 1 ]]; then
-            [[ ${DEBUG} != "NO_DEBUG" ]] && log_success_msg
-            __pidCreated=1
+        echo $pidValue > $pidFile
+        if [[ -e $pidFile ]]; then
+            log "Created Pidfile $pidFile"
+            return 0
         else
-            [[ ${DEBUG} != "NO_DEBUG" ]] && log_failure_msg "Failed to create Pid"
             log "Failed to create Pid"
-            __pidCreated=0
+            return 1
         fi
     fi
 }
 
-# Checks if Pid file exists
-checkPid () {
-    PIDFILEPATH=$1
-    if [[ -e ${PIDFILEPATH} ]]; then
-        __flagPid=1
-    else
-        __flagPid=0
-    fi
-}
-
-# Reads the Pid file if Pidfile exists
-getPid () {
-    PIDFILEPATH=$1
-    checkPid ${PIDFILEPATH}
-    if [[ $__flagPid -eq 1 ]]; then
-        __pidValue=$(/bin/cat $PIDFILEPATH)
-    else
-        __pidValue=0
-    fi
-}
-
-# Removes a Pid file 
-removePid () {
-    PIDFILEPATH=$1
-    checkPid ${PIDFILEPATH}
-    if [[ $__flagPid -eq 0 ]]; then
-        [[ ${DEBUG} != "NO_DEBUG" ]] && log_failure_msg "Pidfile doesn't exist"
+removePid()
+{
+    local pidFile=$1
+    getPid $pidFile
+    local pidValue=$?
+    if [[ $pidValue -eq 0 ]]; then
         log "Pid file doesn't exist"
-        __pidRemoved=0
+        return 0
     else
-        rm -rf ${PIDFILEPATH} > /dev/null 2>&1
-        if [[ ! -e ${PIDFILEPATH} ]]; then
-            __pidRemoved=1
+        checkPidExists $pidFile
+        if [[ $? -eq 0 ]]; then
+            log "Process ($pidValue) is still running.  Failed to remove Pid File" 
+            return 1
         else
-            [[ ${DEBUG} != "NO_DEBUG" ]] && log_failure_msg "Failed to remove pid"
-            log "Failed to remove pid"
-            __pidRemoved=0
+            rm -rf $pidFile > /dev/null 2>&1
+            if [[ $? -ne 0 ]]; then
+                log "Error attempting to remove $pidFile"
+                return 1
+            fi
+            log "Successfully removed pid file: $pidFile"
+            return 0
         fi
     fi
 }
 
-checkPidExist() {
-    PIDFILEPATH=$1
+checkPidExist()
+{
     getPid ${PIDFILEPATH}
-    if [[ $__pidValue -ne 0 ]]; then
-        ! kill -0 $__pidValue > /dev/null 2>&1 
-        __pidExists=$?
+    local pidVal=$?
+    if [[ $pidVal -ne 0 ]]; then
+        kill -0 $pidVal > /dev/null 2>&1 
+        return $?
     else
-        __pidExists=0
+        return 1
     fi
+}
+
+checkSentinelFile()
+{
+    filecheck=$(find ${runtime}/${compName} -name "*sentinel" 2> /dev/null)
+    [[ -n "${filecheck}" ]] && return 1
+    return 0
 }
 
 #    check_status
@@ -169,13 +151,4 @@ check_status() {
         fi
         return 4
     fi
-}
-
-checkSentinelFile() {
-    FILEPATH="${runtime}/${compName}"
-    if [[ -d ${FILEPATH} ]]; then
-       fileCheckOP=$(find ${FILEPATH} -name "*senti*")
-       [[ ! -z "${fileCheckOP}" ]] && return 1
-    fi
-    return 0
 }
