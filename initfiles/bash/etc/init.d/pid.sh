@@ -52,7 +52,6 @@ removePid()
     local pidFile=$1
     getPid $pidFile
     if [[ $? -eq 0 ]]; then
-        log "Pid file doesn't exist"
         return 0
     else
         checkPidRunning $pidFile
@@ -85,9 +84,7 @@ checkPidRunning()
 checkSentinelFile()
 {
     local filecheck=$(find ${runtime}/${compName} -name "*sentinel" 2> /dev/null)
-    log "in ${runtime}/${compName} find *sentinel"
     [[ -n "${filecheck}" ]] && return 0
-    log "returning 1"
     return 1
 }
 
@@ -150,7 +147,7 @@ check_status()
     # check if shutdown and healthy
     elif [[ $initRunning -eq 1 ]] && [[ $compRunning -eq 1 ]]; then
         if [[ $SENTINELFILECHK -eq 1 && $sentinelFlag -eq 0 ]]; then
-                removeSentinelFile
+            log "$compName ---> Sentinel File found, but processes are dead"
         fi
         [[ $DEBUG != "NO_DEBUG" ]] && echo "Process is down"
         log "$compName ---> Process is down"

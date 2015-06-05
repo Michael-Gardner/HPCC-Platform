@@ -355,7 +355,6 @@ createRuntime() {
 
 # cleanup all standard files made during runtime
 cleanupRuntimeEnvironment() {
-    unlock ${lock}/${compName}/${compName}.lock
     removePid ${pid}/init_${compName}.pid
     removePid ${pid}/${compName}.pid
 }
@@ -484,10 +483,10 @@ stop_component() {
     check_status ${PIDPATH} ${COMPPIDPATH} 0
     RCSTOP=$?
     if [[ $RCSTOP -eq 1 ]];then
-      log "Already stopped"
-      log_success_msg
-      cleanupRuntimeEnvironment
-      return 0
+        log "Already stopped"
+        log_success_msg
+        cleanupRuntimeEnvironment
+        return 0
     elif [[ $RCSTOP -eq 3 ]]; then
         log "ERROR:  Orphaned process"
         kill_process $COMPPIDPATH "unknown" 15 1
@@ -593,19 +592,24 @@ restart_component() {
     fi
 }
 
-status_component() {
-  check_status ${PIDPATH} ${COMPPIDPATH} 1
-  RCSTATUS=$?
-  getPid ${COMPPIDPATH}
-  if [ ${RCSTATUS} -ne 0 ];then
-    log "${compName} ---> Stopped"
-    printf "%-15s is stopped" "$compName"
-  else
-    log "${compName} ---> Running ( pid ${__pidValue} )"
-    printf "%-15s ( pid %8s ) is running ..." "${compName}" "${__pidValue}"
-  fi
-  echo ""
-  return ${RCSTATUS}
+status_component()
+{
+    local sentinelCheck=1
+    if strstr "${compType}" "dafilesrv" ;then
+        sentinelCheck=0
+    fi
+    check_status ${PIDPATH} ${COMPPIDPATH} $sentinelCheck
+    local RCSTATUS=$?
+    getPid ${COMPPIDPATH}
+    if [ ${RCSTATUS} -ne 0 ];then
+        log "${compName} ---> Stopped"
+        printf "%-15s is stopped" "$compName"
+    else
+        log "${compName} ---> Running ( pid ${__pidValue} )"
+        printf "%-15s ( pid %8s ) is running ..." "${compName}" "${__pidValue}"
+    fi
+    echo ""
+    return ${RCSTATUS}
 }
 
 
@@ -913,7 +917,7 @@ pidwait_fn()
 {
     local PID=$1
     getPid $PID
-    local WATCH_PID=$?
+    local WATCH_PID=$__pidValue
     local PROCESS=$2
     local TIMEOUT=$(($3*1000))
 

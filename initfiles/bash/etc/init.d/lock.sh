@@ -76,7 +76,6 @@ unlock () {
     FILE=$1
     #echo -n "Removing lock file $1 "
     if [ ! -e $FILE ]; then
-        log "Lock file $FILE does not exist"
         __lockRemoved=0
     else
         /bin/rm -rf $FILE
