@@ -137,8 +137,8 @@ check_status ${initPidFile} ${lockFile} ${compPidFile} 0
 RCSTAT=$?
 
 if [ ${RCSTAT} -eq 0 ]; then
-    checkPid ${initPidFile}
-    echo "Configmgr is already running with Pid $__pidValue"
+    getPid ${initPidFile}
+    echo "Configmgr is already running with Pid $?"
     exit 0
 else
     cleanupRuntimeEnvironment
