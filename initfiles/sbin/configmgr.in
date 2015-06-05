@@ -35,7 +35,7 @@ cleanup ()
 {
     echo "Exiting configMgr"
     #stop configesp
-    PIDPATH=${pid}/${compName}_init.pid
+    PIDPATH=${pid}/init_${compName}.pid
     stopcmd="${START_STOP_DAEMON} -K -p $PIDPATH"
     eval $stopcmd
     sleep 2
@@ -81,9 +81,8 @@ createRuntime
 
 logFile=${log}/${compName}/${compName}.log
 
-initPidFile=${pid}/${compName}_init.pid
+initPidFile=${pid}/init_${compName}.pid
 compPidFile=${pid}/${compName}.pid
-lockFile=${lock}/${compName}/${compName}.lock
 defaultEnv=0
 
 # Checking input arguments
@@ -133,12 +132,12 @@ chown ${user}:${group} ${conffile}
 
 # Sanity Check for previous instances of configmgr. This code also takes care if configmgr script/configesp is not running and it killed by kill command
 
-check_status ${initPidFile} ${lockFile} ${compPidFile} 0
+check_status ${initPidFile} ${compPidFile} 0
 RCSTAT=$?
 
 if [ ${RCSTAT} -eq 0 ]; then
     getPid ${initPidFile}
-    echo "Configmgr is already running with Pid $?"
+    echo "Configmgr is already running with Pid $__pidValue"
     exit 0
 else
     cleanupRuntimeEnvironment
@@ -155,9 +154,6 @@ startcmd="${START_STOP_DAEMON} -S -p ${initPidFile} -c ${user}:${group} -d ${run
 eval ${startcmd}
 started=$?
 
-# Creating a Lock
-lock $lockFile
-
 if [ ${DEBUG:-NO_DEBUG} != "NO_DEBUG" ]; then
     echo $startcmd
     echo "configesp status = $started"
@@ -166,7 +162,7 @@ fi
 echo -n "Verifying configmgr startup ..."
 sleep 2
 
-check_status ${initPidFile} ${lockFile} ${compPidFile} 1
+check_status ${initPidFile} ${compPidFile} 1
 RCSTAT=$?
 
 if [ ${RCSTAT} -ne 0 ];then
@@ -176,7 +172,7 @@ else
     echo " Success"
     echo "Exit by pressing ctrl-c..."
     while :
-        check_status ${initPidFile} ${lockFile} ${compPidFile} 1
+        check_status ${initPidFile} ${compPidFile} 1
         if [ $? -ne 0 ] ;
         then
             if [ "${DEBUG}" != "NO_DEBUG" ];
