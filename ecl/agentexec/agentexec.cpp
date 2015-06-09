@@ -241,7 +241,7 @@ int CEclAgentExecutionServer::executeWorkunit(const char * wuid)
 
 //---------------------------------------------------------------------------------
 
-bool ControlHandler(ahType aht_val)
+bool ControlHandler()
 {
     if (execSvr)
     {
