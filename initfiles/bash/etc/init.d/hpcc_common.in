@@ -394,7 +394,14 @@ startCmd() {
       RCSTART=$?
       if [ ${RCSTART} -gt 1 ];then
         # take care of failure message in check_status function
-        cleanupRuntimeEnvironment
+        checkPidExist $PIDPATH
+        local initRunning=$__pidExists
+        checkPidExist $COMPPIDPATH
+        local compRunning=$__pidExists
+        if [[ $compRunning -eq 1 || $initRunning -eq 1 ]]; then
+            log "Orphaned Process"
+            cleanupRuntimeEnvironment
+        fi
       fi
       if [ ${RCSTART} -eq 0 ]; then
         #Since component is already started but current script is failed till returning 0
