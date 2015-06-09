@@ -62,6 +62,7 @@ killed()
       log "could not kill $component"
     else
       log "$component Stopped"
+        log "$lock/$component/${component}.lock"
     fi
     exit 255
 }

@@ -517,8 +517,6 @@ stop_component() {
 
     eval $stopcmd
 
-    unlock ${LOCKPATH}
-
     RESULT=0
     local waittime=30
     [[ $compType = "dali" ]] && waittime=720
