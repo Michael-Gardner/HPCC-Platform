@@ -38,7 +38,7 @@ killed()
         log "could not kill $component"
     else
         log "Stopped $component"
-        unlock $lock/$component/${component}.lock
+        unlock /var/lock/HPCCSystems/$component/${component}.lock
     fi
     exit 255
 }

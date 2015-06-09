@@ -118,7 +118,7 @@ killed()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock $lock/$component/${component}.lock
+        unlock /var/lock/HPCCSystems/$component/${component}.lock
         kill_slaves
         log "removing init.pid file and uslaves.start file"
         rm -f $INIT_PID_NAME $instancedir/uslaves.start > /dev/null 2>&1
