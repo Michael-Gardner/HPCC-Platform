@@ -249,6 +249,7 @@ inline unsigned __int32 low(__int64 n)
 
 enum ahType { aht_terminate, aht_interrupt};
 typedef bool (*AbortHandler)(ahType);                                       // return true to exit program
+typedef bool (*AbortHandlerBase)();
 
 interface IAbortHandler : public IInterface
 {
@@ -258,8 +259,10 @@ interface IAbortHandler : public IInterface
 #define JLIBERR_UserAbort       0xffffff00
 
 extern jlib_decl void addAbortHandler(AbortHandler handler=NULL);               // no parameter means just set the flag for later testing.
+extern jlib_decl void addAbortHandler(AbortHandlerBase Handler=NULL);
 extern jlib_decl void addAbortHandler(IAbortHandler & handler);
 extern jlib_decl void removeAbortHandler(AbortHandler handler);
+extern jlib_decl void removeAbortHandler(AbortHandlerBase handler);
 extern jlib_decl void removeAbortHandler(IAbortHandler & handler);
 extern jlib_decl bool isAborting();
 extern jlib_decl void throwAbortException();
@@ -274,10 +277,12 @@ interface IAbortRequestCallback
 class LocalAbortHandler
 {
 public:
-    LocalAbortHandler(AbortHandler _handler=NULL)   { handler = _handler; addAbortHandler(handler); }
+    LocalAbortHandler(AbortHandler _handler=NULL)   { handler = _handler; bhandler = NULL; addAbortHandler(handler); }
+    LocalAbortHandler(AbortHandlerBase _handler=NULL) { bhandler = _handler; handler = NULL; addAbortHandler(bhandler); }
     ~LocalAbortHandler()                            { removeAbortHandler(handler); }
 private:
     AbortHandler            handler;
+    AbortHandlerBase        bhandler;
 };
 
 class LocalIAbortHandler
