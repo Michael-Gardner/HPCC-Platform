@@ -696,16 +696,26 @@ class AbortHandlerInfo : public CInterface
 public:
     ThreadId installer;
     AbortHandler handler;
+    AbortHandlerBase bhandler;
     IAbortHandler *ihandler;
     AbortHandlerInfo(AbortHandler _handler)
     {
         handler = _handler;
+        bhandler = NULL;
+        ihandler = NULL;
+        installer = GetCurrentThreadId();
+    }
+    AbortHandlerInfo(AbortHandlerBase _handler)
+    {
+        handler = NULL;
+        bhandler = _handler;
         ihandler = NULL;
         installer = GetCurrentThreadId();
     }
     AbortHandlerInfo(IAbortHandler *_ihandler)
     {
         handler = NULL;
+        bhandler = NULL;
         ihandler = _ihandler;
         installer = GetCurrentThreadId();
     }
@@ -719,6 +729,8 @@ public:
 //          DBGLOG("handle abort %x", GetCurrentThreadId());
             if (handler)
                 return handler(aht_val);
+            else if (bhandler)
+                return bhandler();
             else
                 return ihandler->onAbort();
         }
@@ -854,6 +866,13 @@ void addAbortHandler(AbortHandler handler)
     handlers.append(*new AbortHandlerInfo(handler));
 }
 
+void addAbortHandler(AbortHandlerBase handler)
+{
+    CriticalBlock c(abortCrit);
+    queryInstallAbortHandler();
+    handlers.append(*new AbortHandlerInfo(handler));
+}
+
 void addAbortHandler(IAbortHandler & handler)
 {
     CriticalBlock c(abortCrit);
@@ -867,6 +886,20 @@ void removeAbortHandler(AbortHandler handler)
     ForEachItemInRev(idx, handlers)
     {
         if (handlers.item(idx).handler == handler)
+        {
+            handlers.remove(idx);
+            break;
+        }
+    }
+    queryUninstallAbortHandler();
+}
+
+void removeAbortHandler(AbortHandlerBase handler)
+{
+    CriticalBlock c(abortCrit);
+    ForEachItemInRev(idx, handlers)
+    {
+        if (handlers.item(idx).bhandler == handler)
         {
             handlers.remove(idx);
             break;

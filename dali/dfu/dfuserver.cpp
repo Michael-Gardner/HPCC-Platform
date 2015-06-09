@@ -62,7 +62,7 @@ void usage()
 
 
 
-static bool exitDFUserver(ahType aht_val)
+static bool exitDFUserver()
 {
     engine->abortListeners();
     return false;

@@ -88,7 +88,7 @@ static void stopServer()
 }
 
 
-static bool actionOnAbort(ahType aht_val)
+static bool actionOnAbort()
 {
     LOG(MCprogress, unknownJob, "Stop signalled");
     if (stopped)
