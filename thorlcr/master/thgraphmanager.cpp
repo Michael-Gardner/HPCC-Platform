@@ -784,7 +784,7 @@ void abortThor(IException *e, unsigned errCode, bool abortCurrentJob)
     if (0 == aborting)
     {
         aborting = 1;
-        if (errCode)
+        if (errCode != TEC_Clean)
         {
             if (!e)
             {

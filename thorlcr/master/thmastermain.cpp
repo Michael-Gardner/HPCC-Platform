@@ -401,9 +401,9 @@ bool checkClusterRelicateDAFS(IGroup *grp)
 static bool auditStartLogged = false;
 
 static bool firstCtrlC = true;
-bool ControlHandler(ahType aht_val)
+bool ControlHandler(ahType type)
 {
-    if (aht_interrupt == aht_val)
+    if (ahInterrupt == type)
     {
         if (firstCtrlC)
         {
@@ -439,7 +439,7 @@ bool ControlHandler(ahType aht_val)
             _exit(1);
         }
     }
-    // aht_terminate
+    // ahTerminate
     else
     {
         LOG(MCdebugProgress, thorJob, "SIGTERM detected, shutting down");

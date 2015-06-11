@@ -192,9 +192,9 @@ void UnregisterSelf(IException *e)
     }
 }
 
-bool ControlHandler(ahType aht_val)
+bool ControlHandler(ahType type)
 {
-    if (aht_interrupt == aht_val)
+    if (ahInterrupt == type)
         LOG(MCdebugProgress, thorJob, "CTRL-C pressed");
     if (masterNode)
         UnregisterSelf(NULL);
