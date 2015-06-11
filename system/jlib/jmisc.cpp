@@ -694,7 +694,6 @@ CriticalSection abortCrit;
 class AbortHandlerInfo : public CInterface
 {
 public:
-    ThreadId installer;
     AbortHandler handler;
     SimpleAbortHandler shandler;
     IAbortHandler *ihandler;
@@ -703,41 +702,29 @@ public:
         handler = _handler;
         shandler = NULL;
         ihandler = NULL;
-        installer = GetCurrentThreadId();
     }
     AbortHandlerInfo(SimpleAbortHandler _handler)
     {
         handler = NULL;
         shandler = _handler;
         ihandler = NULL;
-        installer = GetCurrentThreadId();
     }
     AbortHandlerInfo(IAbortHandler *_ihandler)
     {
         handler = NULL;
         shandler = NULL;
         ihandler = _ihandler;
-        installer = GetCurrentThreadId();
     }
 
     bool handle(ahType type)
     {
-#ifndef _WIN32
-        if (installer == GetCurrentThreadId())
-#endif
-        {
-//          DBGLOG("handle abort %x", GetCurrentThreadId());
-            if (handler)
-                return handler(type);
-            else if (shandler)
-                return shandler();
-            else
-                return ihandler->onAbort();
-        }
-#ifndef _WIN32
+        DBGLOG("handle abort %x", GetCurrentThreadId());
+        if (handler)
+            return handler(type);
+        else if (shandler)
+            return shandler();
         else
-            return false;
-#endif
+            return ihandler->onAbort();
     }
 };
 
