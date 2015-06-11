@@ -377,17 +377,22 @@ void Thread::startRelease()
                 pthread_attr_setstacksize(&attr, LINUX_STACKSIZE_CAP);
 #endif
         }
+        sigset_t set, oset;
+        sigfillset(&set);
+        pthread_sigmask(SIG_BLOCK,&set,&oset);
         status = pthread_create(&threadid, &attr, Thread::_threadmain, this);
-        if ((status==EAGAIN)||(status==EINTR)) {
+        pthread_sigmask(SIG_SETMASK,&oset,NULL);
+        if ((status==EAGAIN)||(status==EINTR))
+        {
             if (numretrys--==0)
                 break;
             WARNLOG("pthread_create(%d): Out of threads, retrying...",status);
             Sleep(delay);
             delay *= 2;
         }
-        else 
+        else
             break;
-    } 
+    }
     if (status) {
         threadid = 0;
         Release();
