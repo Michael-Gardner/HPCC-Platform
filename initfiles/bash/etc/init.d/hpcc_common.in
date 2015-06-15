@@ -393,7 +393,6 @@ startCmd() {
         check_status ${PIDPATH} ${LOCKPATH} ${COMPPIDPATH} 1
         RCSTART=$?
         if [ ${RCSTART} -gt 1 ];then
-            # take care of failure message in check_status function
             checkPidExist $PIDPATH
             local initRunning=$__pidExists
             checkPidExist $COMPPIDPATH
@@ -402,10 +401,12 @@ startCmd() {
                 log "Orphaned Process"
                 cleanup_component
                 if [[ $? -eq 1 ]]; then
+                    log "Attempt to clean up component has failed"
                     log_failure_msg
                     return 1
                 else
                     #only do cleanup on successful cleanup_component return
+                    log "Attempt to clean up component was successful"
                     cleanupRuntimeEnvironment
                 fi
             fi
