@@ -405,7 +405,8 @@ startCmd() {
                     log_failure_msg
                     return 1
                 else
-                     cleanupRuntimeEnvironment
+                    #only do cleanup on successful cleanup_component return
+                    cleanupRuntimeEnvironment
                 fi
             fi
         fi
@@ -515,12 +516,16 @@ stop_component() {
     FAILED=0
     check_status ${PIDPATH} ${LOCKPATH} ${COMPPIDPATH} 0
     RCSTOP=$?
-    if [ $RCSTOP -ne 0 ];then
-      log "Already stopped"
-      log_success_msg "Already stopped"
-      cleanup_component
-      cleanupRuntimeEnvironment
-      return 0
+    if [[ $RCSTOP -eq 1 ]];then
+        log "Already stopped"
+        log_success_msg "Already stopped"
+        return 0
+    elif [[ $RCSTOP -eq 3 ]]; then
+        log "Orphaned process found"
+        cleanup_component
+        local ccReturn=$?
+        [[ $ccReturn -eq 0 ]] && cleanupRuntimeEnvironment
+        return $ccReturn
     fi
 
     stopcmd="${START_STOP_DAEMON} -K -p ${PIDPATH} >> tmp.txt 2>&1"
@@ -945,31 +950,39 @@ cleanup_component() {
         mpid=$__pidValue
     fi
 
-    # start with SIGTERM and then follow up with SIGKILL if unsuccessful
+    # start with SIGTERM and then follow up with SIGKILL if unsuccessful and force flag is set
     if [ $mpid -ne 0 ] ; then
         # use the mpid we collected to grab the group pid of the process, to kill off all siblings at once
         local pgid=$( ps -p $mpid -o pid,pgid | grep $mpid | awk '{ print $2 }' )
 
-        kill -15 -$pgid
+        kill -15 -$pgid > /dev/null 2>&1
         sleep 1
-        local WAITTIME=5
+        local WAITTIME=10
         local RUNNING=1
         while [[ ${WAITTIME} -gt 0 ]]; do
-            WAITTIME=`expr ${WAITTIME} - 1`
+            ((WAITTIME--))
             kill -0 -$pgid &> /dev/null
-            if [ $? -ne 0 ];then
+            if [[ $? -ne 0 ]];then
                 log "${compName} orphans cleaned up"
                 RUNNING=0
                 break;
             else
-                log "Waiting for ${compName} orphans to cleanup gracefully"
+                [[ "((WAITTIME % 5))" -eq 0 ]] && log "Waiting for ${compName} orphans to cleanup gracefully"
                 sleep 1
             fi
         done
 
-        if [[ ${RUNNING} -eq 1 ]]; then
-            log "sending SIGKILL to ${compName} orphans"
-            kill -9 -$pgid
+        # if still running and Force option is set, send sigkill
+        if [[ ${RUNNING} -eq 1 && ${FORCE:-NO_FORCE} == "FORCE" ]]; then
+            log "WARNING Force flag is set"
+            log "WARNING sending SIGKILL to orphans in pid group for ${compName}"
+            log "INFO    If sockets used by the process are still in a TIME_WAIT state"
+            log "INFO       due to unclean shutdown, the operating system possibly will"
+            log "INFO       not release them until 60 seconds after SIGKILL was sent"
+            kill -9 -$pgid > /dev/null 2>&1
+            [[ $? -eq 0 ]] && RUNNING=0
+        elif [[ ${RUNNING} -eq 1 && ${FORCE:-NO_FORCE} == "NO_FORCE" ]]; then
+            log "INFO    Unable to kill with SIGTERM.  Use --force|-f to attempt SIGKILL"
         fi
     fi
     return $RUNNING
