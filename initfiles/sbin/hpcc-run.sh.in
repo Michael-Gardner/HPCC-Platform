@@ -34,6 +34,7 @@ print_usage(){
     echo "  -n|--concurrent: How many concurrent instances to run. The default is equal to the number of nodes present."
     echo "  -S|--sequentially: For the command to run sequentially. i.e. one host a time. (overrides -n)"
     echo "  -s|--save: Save the result to a file named by ip."
+    echo "  -f|--force: Force kill orphaned process groups"
     echo
     end 1
 }
