@@ -70,24 +70,19 @@ createIPListFileExcludeDIP(){
 doOneIP(){
     local _ip=$1
     local _action=$2
-    local _cmd=$3
-    local _comp=$4
-    local _args=$5
+    shift 2
+    local _args=$(echo "$@" | tr '\n' ' ')
 
     if ping -c 1 -w 5 -n $_ip > /dev/null 2>&1; then
         #echo "$_ip: Host is alive."
         local CAN_SSH="`ssh -i $home/$user/.ssh/id_rsa -o BatchMode=yes -o StrictHostKeyChecking=no $user@$_ip exit > /dev/null 2>&1; echo $?`"
         if [[ "$CAN_SSH" -eq 255 ]]; then
-            echo "$_ip: Cannot SSH to host.";
+            echo "$_ip: Cannot SSH to host."
             return 1
         else
             hpccStatusFile=/tmp/hpcc_status_$$
-            if [[ -z "${_comp}" ]]; then
-                local CMD="sudo /etc/init.d/$_action $_cmd $_args"
-            else
-                local CMD="sudo /etc/init.d/$_action -c $_comp $_cmd $_args"
-            fi
-            echo "$_ip: Running $CMD";
+            local CMD="sudo /etc/init.d/$_action $_args"
+            echo "$_ip: Running $CMD"
             local CMD="$CMD | tee ${hpccStatusFile}"
 
             ssh -i $home/$user/.ssh/id_rsa $user@$_ip $CMD;
@@ -108,9 +103,8 @@ doOneIP(){
 createScript(){
     local _scriptFile=$1
     local _action=$2
-    local _cmd=$3
-    local _comp=$4
-    local _args=$5
+    shift 2
+    local _args=$@
     local hpccStatusFile=/tmp/hpcc_status_${dateTime}_$$
 
     cat > $_scriptFile <<SCRIPTFILE
@@ -120,15 +114,11 @@ if ping -c 1 -w 5 -n \$IP > /dev/null 2>&1; then
     echo "\$IP: Host is alive."
     CAN_SSH="\`ssh -i $home/$user/.ssh/id_rsa -o BatchMode=yes -o StrictHostKeyChecking=no $user@\$IP exit > /dev/null 2>&1; echo \$?\`"
     if [[ "\$CAN_SSH" -eq 255 ]]; then
-        echo "\$IP: Cannot SSH to host.";
+        echo "\$IP: Cannot SSH to host."
         exit 1
     else
-        if [[ -z "${_comp}" ]]; then
-            CMD="sudo /etc/init.d/$_action $_cmd $_args"
-        else
-            CMD="sudo /etc/init.d/$_action -c $_comp $_cmd $_args"
-        fi
-        echo "\$IP: Running \$CMD";
+        CMD="sudo /etc/init.d/$_action $_args"
+        echo "\$IP: Running \$CMD"
         CMD="\$CMD | tee $hpccStatusFile"
         ssh -i $home/$user/.ssh/id_rsa $user@\$IP \$CMD;
         rc=\${PIPESTATUS[0]}
@@ -169,7 +159,7 @@ runScript() {
 doSetup() {
     init setup
     scriptFile=/tmp/${action}_setup_$$
-    createScript $scriptFile $action "setup" $comp
+    createScript $scriptFile $action $args setup
     runScript
     report "${action} setup"
 }
@@ -177,7 +167,7 @@ doSetup() {
 doStatus() {
     init status
     scriptFile=/tmp/${action}_status_$$
-    createScript $scriptFile $action "status" $comp
+    createScript $scriptFile $action $args status
     runScript
     report "${action} status"
 }
@@ -186,7 +176,7 @@ doStop() {
     echo "$action stop in the cluster ..."
     init stop
     scriptFile=/tmp/${action}_stop_$$
-    createScript $scriptFile $action "stop" $comp $args
+    createScript $scriptFile $action $args stop
     if [[ -n "${comp}" ]]; then
         OPTIONS="${DEFAULT_OPTIONS} -h $IPsFile"
         runScript $IPsFile
@@ -198,7 +188,7 @@ doStop() {
             report "${action} stop" $DIP
         fi
         for _dip in $DIP; do
-            doOneIP $_dip $action "stop" $comp || end 1
+            doOneIP $_dip $action $args stop || end 1
         done
     fi
 }
@@ -217,14 +207,14 @@ doStart() {
         local startFile=$IPsFile
     else
         for _dip in $DIP; do
-            doOneIP $_dip $action "start" $comp $args || end 1
+            doOneIP $_dip $action $args start || end 1
         done
         local startFile=$IPsExcludeDIP
     fi
     if [[ -e $startFile ]]; then
         echo "$action start in the cluster ..."
         scriptFile=/tmp/${action}_start_$$
-        createScript $scriptFile $action "start" $comp $args
+        createScript $scriptFile $action $args start
         OPTIONS="${DEFAULT_OPTIONS} -h $startFile"
         runScript $startFile
         if [[ -n "${comp}" ]]; then
