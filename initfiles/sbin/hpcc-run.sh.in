@@ -104,7 +104,7 @@ createScript(){
     local _scriptFile=$1
     local _action=$2
     shift 2
-    local _args=$@
+    local _args=$( echo "$@" | tr '\n' ' ')
     local hpccStatusFile=/tmp/hpcc_status_${dateTime}_$$
 
     cat > $_scriptFile <<SCRIPTFILE
@@ -289,10 +289,8 @@ fi
 envfile=$configs/$environment
 configfile=${CONFIG_DIR}/${ENV_CONF_FILE}
 
-
 hasPython=0
 save=0
-args=""
 expected_python_version=2.6
 is_python_installed $expected_python_version
 [[ $? -eq 0 ]] && hasPython=1
@@ -307,6 +305,11 @@ eval set -- "$TEMP"
 while true ; do
     case "$1" in
         -c|--comp) comp=$2
+            if [[ -z ${args} ]]; then
+                args="-c $2"
+            else
+                args="${args} -c $2"
+            fi
             shift 2 ;;
         -a|--action) action=$2
             shift 2 ;;
@@ -321,8 +324,12 @@ while true ; do
             shift ;;
         -s|--save) save=1
             shift ;;
-        -f|--force) args="${args} -f"
-            shift ;;
+        -f|--force) if [[ -z ${args} ]]; then
+                        args="-f"
+                    else
+                        args="${args} -f"
+                    fi
+                    shift ;;
         -h|--help) print_usage
             shift ;;
         --) shift ; break ;;
