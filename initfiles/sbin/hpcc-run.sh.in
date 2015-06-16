@@ -35,6 +35,7 @@ print_usage(){
     echo "  -S|--sequentially: For the command to run sequentially. i.e. one host a time. (overrides -n)"
     echo "  -s|--save: Save the result to a file named by ip."
     echo "  -f|--force: Force kill orphaned process groups"
+    echo "  -d|--debug: set debug flag for hpcc-init on each node in the cluster"
     echo
     end 1
 }
@@ -305,7 +306,7 @@ RUN_CLUSTER_DISPLAY_OUTPUT=FALSE
 
 DEFAULT_OPTIONS="-e $configfile -s ${SECTION:-DEFAULT}"
 
-TEMP=`/usr/bin/getopt -o a:c:n:sShf --long help,comp:,action:,save,concurrent:,sequentially,force -n 'hpcc-run' -- "$@"`
+TEMP=`/usr/bin/getopt -o a:c:n:sShfd --long help,comp:,action:,save,concurrent:,sequentially,force,debug -n 'hpcc-run' -- "$@"`
 if [[ $? != 0 ]] ; then echo "Failure to parse commandline." >&2 ; end 1 ; fi
 eval set -- "$TEMP"
 while true ; do
@@ -334,6 +335,12 @@ while true ; do
                         args="-f"
                     else
                         args="${args} -f"
+                    fi
+                    shift ;;
+        -d|--debug) if [[ -z ${args} ]]; then
+                        args="-d"
+                    else
+                        args="${args} -d"
                     fi
                     shift ;;
         -h|--help) print_usage
