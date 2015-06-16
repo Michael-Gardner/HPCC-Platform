@@ -183,9 +183,12 @@ doStop() {
         report "${action} stop"
     else
         if [[ -e $IPsExcludeDIP ]]; then
-            OPTIONS="${DEFAULT_OPTIONS} -h $IPsExcludeDIP"
-            runScript $IPsExcludeDIP
-            report "${action} stop" $DIP
+            local numIPs=$(wc -l $IPsExcludeDIP | awk '{ print $1 }')
+            if [[ $numIPs -gt 0 ]]; then
+                OPTIONS="${DEFAULT_OPTIONS} -h $IPsExcludeDIP"
+                runScript $IPsExcludeDIP
+                report "${action} stop" $DIP
+            fi
         fi
         for _dip in $DIP; do
             doOneIP $_dip $action $args stop || end 1
@@ -212,17 +215,20 @@ doStart() {
         local startFile=$IPsExcludeDIP
     fi
     if [[ -e $startFile ]]; then
-        echo "$action start in the cluster ..."
-        scriptFile=/tmp/${action}_start_$$
-        createScript $scriptFile $action $args start
-        OPTIONS="${DEFAULT_OPTIONS} -h $startFile"
-        runScript $startFile
-        if [[ -n "${comp}" ]]; then
-            report "${action} start"
-        else
-            report "${action} start" $DIP
+        local numIPs=$(wc -l $startFile | awk '{ print $1 }')
+        if [[ $numIPs -gt 0 ]]; then
+            echo "$action start in the cluster ..."
+            scriptFile=/tmp/${action}_start_$$
+            createScript $scriptFile $action $args start
+            OPTIONS="${DEFAULT_OPTIONS} -h $startFile"
+            runScript $startFile
+            if [[ -n "${comp}" ]]; then
+                report "${action} start"
+            else
+                report "${action} start" $DIP
+            fi
+            [[ $rc -ne 0 ]] && end $rc
         fi
-        [[ $rc -ne 0 ]] && end $rc
     fi
 }
 
