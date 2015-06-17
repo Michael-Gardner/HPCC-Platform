@@ -17,16 +17,24 @@
 
 compName=$1
 hpcc_setenv=$2
-
 source ${hpcc_setenv}
-
-echo compName=${compName}
-echo PID=${PID}
-
 slavename=thorslave_${compName}
 
-killall -0 $slavename &> /dev/null
-if [ $? -eq 0 ];then
-  killall -9 $slavename
+timer=15
+isAlive=0
+echo "Attempting to kill $slavename with SIGTERM"
+killall -SIGTERM $slavename > /dev/null 2>&1
+while [[ $isAlive -eq 0 && $timer -gt 0 ]];do
+    killall -0 $slavename > /dev/null 2>&1
+    isAlive=$?
+    [[ $isAlive -eq 0 ]] && sleep 0.5
+    ((timer--))
+done
+
+if [[ $isAlive -eq 0 ]]; then
+    echo "Failed to kill slaves with SIGTERM. Sending SIGKILL"
+    killall -SIGKILL $slavename > /dev/null 2>&1
 fi
-rm -f $PID/${compName}_slave_*.pid
+
+rm -f $PID/${slavename}_*.pid > /dev/null 2>&1
+
