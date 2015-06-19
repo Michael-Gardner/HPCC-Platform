@@ -965,7 +965,7 @@ cleanup_component() {
 
         kill -SIGTERM -$pgid > /dev/null 2>&1
         sleep 1
-        local WAITTIME=10
+        local WAITTIME=60
         local RUNNING=1
         while [[ ${WAITTIME} -gt 0 ]]; do
             ((WAITTIME--))
