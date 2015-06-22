@@ -141,7 +141,7 @@ SCRIPTFILE
 
 runScript() {
     if [[ "$RUN_CLUSTER_DISPLAY_OUTPUT" = "FALSE" ]] && [[ $hasPython -eq 1 ]]; then
-        OPTIONS="${OPTIONS} -n ${concurrent}"
+        OPTIONS="${OPTIONS} -n ${concurrent} -r ${reportDir}"
         eval ${INSTALL_DIR}/sbin/cluster_script.py -f ${scriptFile} "$OPTIONS"
         local rc=$?
     else
@@ -256,7 +256,7 @@ report() {
     local _title=$1
     local hostToSkip=$2
 
-    if [[ "$RUN_CLUSTER_DISPLAY_OUTPUT" = "FALSE" ]]; then
+    if [[ "$RUN_CLUSTER_DISPLAY_OUTPUT" = "FALSE" && $hasPython -eq 0 ]]; then
         ls ${reportDir} | while read _host; do
             [[ "$_host" = "$hostToSkip" ]] && continue
             local _message=$(cat ${reportDir}/$_host | grep -v "ervice dafilesrv" | grep -v -e "^[[:space:]]*$")

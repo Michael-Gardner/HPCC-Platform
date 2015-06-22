@@ -41,6 +41,10 @@ from hpcc.cluster.host import Host
 from hpcc.cluster.task import ScriptTask
 from hpcc.cluster.thread import ThreadWithQueue
 
+def splitList(l,n):
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
+
 class ScriptExecution(object):
     '''
     This class implements concurrent task execution in a list of hosts.
@@ -53,23 +57,28 @@ class ScriptExecution(object):
         Constructor
         '''
 
-        self.env_conf         = '/etc/HPCCSystems/environment.conf'
-        self.section          = 'DEFAULT'
-        self.hpcc_config      = None
-        self.host_list_file   = None
-        self.log_file         = None
-        self.script_file      = None
+        self.env_conf           = '/etc/HPCCSystems/environment.conf'
+        self.section            = 'DEFAULT'
+        self.hpcc_config        = None
+        self.host_list_file     = None
+        self.log_file           = None
+        self.script_file        = None
         self.number_of_threads  = 5
-        self.exclude_local    = False
-        self.log_level        = "INFO"
-        self.chksum           = None
+        self.report_dir         = None
+        self.exclude_local      = False
+        self.log_level          = "INFO"
+        self.chksum             = None
+        self.line               = 0
+        self.error              = False
 
-        self.quque = None
-        self.hosts = []
-        self.tasks = []
-        self.threads = []
-        self.logger = None
-
+        self.quque              = None
+        self.hosts              = []
+        self.tasks              = []
+        self.threads            = []
+        self.logger             = None
+        self.running            = []
+        self.fail               = []
+        self.success            = []
 
     def get_config(self, key):
         if not self.hpcc_config:
@@ -137,7 +146,6 @@ class ScriptExecution(object):
             task = ScriptTask(next_host_index, self.script_file)
             if self.chksum:
                 task.checksum=self.chksum
-
             self.tasks.append(task)
             # Assign the task to a host and add it to schedule queue
             self.queue.put((task.run, self.hosts[next_host_index]))
@@ -183,39 +191,74 @@ class ScriptExecution(object):
         if self.queue.qsize() <= self.number_of_threads:
             self.addTasks(self.number_of_threads * 2)
 
+    def print_ips(self, iplist):
+            formatted_ips = splitList(iplist,4)
+            for section in formatted_ips:
+                output = ""
+                for i in xrange(len(section)):
+                    output += "{" + str(i) + ":^20}"
+                print output.format(*section)
+                self.line += 1
+
     def report_status(self):
         current_done    = 0
         current_succeed = 0
         current_failed  = 0
         current_running = 0
         current_in_queue = 0
+        del self.running[:]
+        del self.success[:]
+        del self.fail[:]
         for task in self.tasks:
             if task.status == 'DONE':
                 current_done += 1
                 if task.result == 'SUCCEED':
+                    self.success.append(str(self.hosts[task.id].ip))
                     current_succeed += 1
                 else:
+                    self.fail.append(str(self.hosts[task.id].ip))
                     current_failed += 1
             elif task.status == 'RUNNING':
+                self.running.append(str(self.hosts[task.id].ip))
                 current_running += 1
             else:
                 current_in_queue += 1
-
         progress = (current_done * 100) / len(self.hosts)
-        sys.stdout.write("\rExecution progress: %d%%, running: %d, in queue: %d, succeed: %d, failed: %d" \
-          % (progress, current_running, current_in_queue, current_succeed, current_failed))
-        sys.stdout.flush();
+        sys.stdout.write("\033[%dA\033[J" % self.line)
+        sys.stdout.flush()
+        self.line = 0
 
+        if progress == 100 and self.report_dir != None:
+            for filename in os.listdir(self.report_dir):
+                with open(self.report_dir + '/' + filename, 'r') as fin:
+                    print fin.read()
+
+        if len(self.running):
+            print "\033[0mThreads currently running on:\033[1;33m"
+            self.line += 1
+            self.print_ips(self.running)
+        if len(self.success):
+            print "\033[0mSuccessfully completed threads on:\033[1;32m"
+            self.line += 1
+            self.print_ips(self.success)
+        if len(self.fail):
+            print "\033[0mFailed to run on:\033[1;31m"
+            self.line += 1
+            self.print_ips(self.fail)
+        sys.stdout.write("\033[0mExecution progress: %d%%, running: %d, in queue: %d, succeed: \033[1;32m%d\033[0m, failed: \033[1;31m%d\033[0m\n" \
+          % (progress, current_running, current_in_queue, current_succeed, current_failed))
+        sys.stdout.flush()
+        self.line += 1
 
     def check_error(self):
 
-        no_error_found = True
+        error_found = False
         for task in self.tasks:
-            if task.result != 'SUCCEED':
-                no_error_found = False
+            if task.result == "FAILED":
+                error_found = True
         script_name = os.path.basename(self.script_file)
-        if not no_error_found:
-            print("\n\n\033[91mError found during " + script_name + " execution.\033[0m")
+        if error_found:
+            print("\n\nError found during " + script_name + " execution. ")
             print("Reference following log for more information: ")
             print(self.log_file)
         else:
@@ -223,7 +266,7 @@ class ScriptExecution(object):
 
         print("\n")
 
-        return no_error_found
+        return error_found
 
     def usage(self):
         print("Usage cluster_script.py [option(s)]\n")
@@ -246,9 +289,9 @@ class ScriptExecution(object):
     def process_args(self):
 
         try:
-             opts, args = getopt.getopt(sys.argv[1:],":c:e:f:h:l:n:o:s:x",
+             opts, args = getopt.getopt(sys.argv[1:],":c:e:f:h:l:n:o:s:r:x",
                 ["help", "chksum","env_conf","script_file","host_list", "number_of_threads",
-                 "section", "log_file", "log_level", "exclude_local"])
+                 "section", "log_file", "log_level", "report_dir", "exclude_local"])
 
         except getopt.GetoptError as err:
             print(str(err))
@@ -276,6 +319,8 @@ class ScriptExecution(object):
                 self.log_level = value
             elif arg in ("-s", "--section"):
                 self.section = value
+            elif arg in ("-r", "--report_dir"):
+                self.report_dir = value
             elif arg in ("-x", "--exclude_local"):
                 self.exclude_local = True
             else:
