@@ -2724,6 +2724,7 @@ bool FileSprayer::disallowImplicitReplicate()
 
 void FileSprayer::spray()
 {
+    PROGLOG("I am spraying everywhere!");
     if (!allowSplit() && querySplitPrefix())
         throwError(DFTERR_SplitNoSplitClash);
 
