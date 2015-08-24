@@ -59,12 +59,15 @@ killed()
         cd $1
     fi
     log "Attempting to kill $component"
+    local __processID=$(cat ${PID_NAME})
     kill_process ${PID_NAME} roxie 3 ${SENTINEL}
     if [[ $? -eq 1 ]]; then
         log "could not kill $component"
     else
         log "$component Stopped"
         unlock /var/lock/HPCCSystems/$component/${component}.lock
+        log "removing artifacts for process ID ${__processID} from /tmp"
+        find /tmp -name "*${__processID}" -exec rm -rf {} \;
     fi
     exit 255
 }
