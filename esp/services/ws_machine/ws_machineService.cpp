@@ -1120,15 +1120,18 @@ void Cws_machineEx::buildPreflightCommand(IEspContext& context, CMachineInfoThre
         if (!process.getName() || !*process.getName())
             continue;
 
-        if (idx < 1)
-            preflightCommand.appendf(" -n=%s", process.getName());
+        StringBuffer procName;
+        if (streq(process.getType(), eqThorSlaveProcess))
+            procName.appendf("thorslave_%s_%d,%s_slave_%d", process.getName(), process.getProcessNumber(), process.getName(), process.getProcessNumber());
+        else if (streq(process.getType(), eqThorMasterProcess))
+            procName.appendf("%s,%s_master", process.getName(), process.getName());
         else
-            preflightCommand.appendf(",%s", process.getName());
+            procName.append(process.getName());
 
-        if (process.getType() && streq(process.getType(), eqThorMasterProcess))
-            preflightCommand.append("_master");
-        else if (process.getType() && streq(process.getType(), eqThorSlaveProcess))
-            preflightCommand.appendf("_slave_%d", process.getProcessNumber());
+        if (idx < 1)
+            preflightCommand.appendf(" -n=%s", procName.str());
+        else
+            preflightCommand.appendf(",%s", procName.str());
 
         if (!process.getDependencies().empty())
             checkDependency = true;
@@ -1499,19 +1502,76 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         if (!process.getName() || !*process.getName())
             continue;
 
-        StringBuffer processData, processPath;
-        if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-            processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), process.getName());
+        StringBuffer procName, catError, processPath, processData;
+        if (streq(process.getType(), eqThorSlaveProcess))
+        {
+            procName.appendf("thorslave_%s_%d", process.getName(), process.getProcessNumber());
+            if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
+                processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
+            else
+                processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
+            processPath.append(":");
+            catError.appendf("cat: %s",processPath.str());
+            readALineFromResult(response, catError.str(), processData, false);
+            if (processData.length() < 1)
+            {
+                processData.clear();
+                readALineFromResult(response, processPath.str(), processData, true);
+            }
+            else
+            {
+                processData.clear();
+                processPath.clear();
+                procName.clear();
+                procName.appendf("%s_slave_%d", process.getName(), process.getProcessNumber());
+                if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
+                    processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
+                else
+                    processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
+                processPath.append(":");
+                readALineFromResult(response, processPath.str(), processData, true);
+            }
+        }
+        else if (streq(process.getType(), eqThorMasterProcess))
+        {
+            procName.appendf("%s", process.getName());
+            if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
+                processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
+            else
+                processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
+            processPath.append(":");
+            catError.appendf("cat: %s",processPath.str());
+            readALineFromResult(response, catError.str(), processData, false);
+            if (processData.length() < 1)
+            {
+                processData.clear();
+                readALineFromResult(response, processPath.str(), processData, true);
+            }
+            else
+            {
+                processData.clear();
+                processPath.clear();
+                procName.clear();
+                procName.appendf("%s_master", process.getName());
+                if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
+                    processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
+                else
+                    processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
+                processPath.append(":");
+                readALineFromResult(response, processPath.str(), processData, true);
+            }
+        }
         else
-            processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), process.getName());
+        {
+            procName.append(process.getName());
+            if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
+                processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
+            else
+                processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
+            processPath.append(":");
+            readALineFromResult(response, processPath.str(), processData, true);
+        }
 
-        if (process.getType() && streq(process.getType(), eqThorMasterProcess))
-            processPath.append("_master");
-        else if (process.getType() && streq(process.getType(), eqThorSlaveProcess))
-            processPath.appendf("_slave_%d", process.getProcessNumber());
-        processPath.append(":");
-
-        readALineFromResult(response, processPath.str(), processData, true);
         if (processData.length() < 1)
         {
             DBGLOG("Information for process %s not found", processPath.str());
