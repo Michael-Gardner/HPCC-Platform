@@ -1119,16 +1119,16 @@ void Cws_machineEx::buildPreflightCommand(IEspContext& context, CMachineInfoThre
         CProcessData& process = processes.item(idx);
         if (!process.getName() || !*process.getName())
             continue;
+        StringBuffer procName;
+        if (streq(process.getType(), eqThorSlaveProcess))
+            procName.appendf("thorslave_%s_%d", process.getName(), process.getProcessNumber());
+        else
+            procName.append(process.getName());
 
         if (idx < 1)
-            preflightCommand.appendf(" -n=%s", process.getName());
+            preflightCommand.appendf(" -n=%s", procName.str());
         else
-            preflightCommand.appendf(",%s", process.getName());
-
-        if (process.getType() && streq(process.getType(), eqThorMasterProcess))
-            preflightCommand.append("_master");
-        else if (process.getType() && streq(process.getType(), eqThorSlaveProcess))
-            preflightCommand.appendf("_slave_%d", process.getProcessNumber());
+            preflightCommand.appendf(",%s", procName.str());
 
         if (!process.getDependencies().empty())
             checkDependency = true;
@@ -1499,16 +1499,18 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         if (!process.getName() || !*process.getName())
             continue;
 
+        StringBuffer procName;
+        if (streq(process.getType(), eqThorSlaveProcess))
+            procName.appendf("thorslave_%s_%d", process.getName(), process.getProcessNumber());
+        else
+            procName.append(process.getName());
+
         StringBuffer processData, processPath;
         if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-            processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), process.getName());
+            processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
         else
-            processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), process.getName());
+            processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
 
-        if (process.getType() && streq(process.getType(), eqThorMasterProcess))
-            processPath.append("_master");
-        else if (process.getType() && streq(process.getType(), eqThorSlaveProcess))
-            processPath.appendf("_slave_%d", process.getProcessNumber());
         processPath.append(":");
 
         readALineFromResult(response, processPath.str(), processData, true);
