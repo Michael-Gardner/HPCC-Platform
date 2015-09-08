@@ -1490,6 +1490,16 @@ bool Cws_machineEx::readStorageSpace(const char *line, StringBuffer& title, __in
     return true;
 }
 
+void Cws_machineEx::buildProcessPath(StringBuffer &processPath, const char * processName)
+{
+    processPath.clear();
+    if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
+        processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
+    else
+        processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
+    processPath.append(":");
+}
+
 void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadParam* pParam)
 {
     if (!response || !*response)
@@ -1506,11 +1516,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         if (streq(process.getType(), eqThorSlaveProcess))
         {
             procName.appendf("thorslave_%s_%d", process.getName(), process.getProcessNumber());
-            if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-                processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
-            else
-                processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
-            processPath.append(":");
+            buildProcessPath(processPath,procName.str());
             catError.appendf("cat: %s",processPath.str());
             readALineFromResult(response, catError.str(), processData, false);
             if (processData.length() < 1)
@@ -1521,26 +1527,17 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
             else
             {
                 processData.clear();
-                processPath.clear();
                 procName.clear();
                 procName.appendf("%s_slave_%d", process.getName(), process.getProcessNumber());
-                if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-                    processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
-                else
-                    processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
-                processPath.append(":");
+                buildProcessPath(processPath,procName.str());
                 readALineFromResult(response, processPath.str(), processData, true);
             }
         }
         else if (streq(process.getType(), eqThorMasterProcess))
         {
             procName.appendf("%s", process.getName());
-            if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-                processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
-            else
-                processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
-            processPath.append(":");
             catError.appendf("cat: %s",processPath.str());
+            buildProcessPath(processPath,procName.str());
             readALineFromResult(response, catError.str(), processData, false);
             if (processData.length() < 1)
             {
@@ -1553,22 +1550,14 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
                 processPath.clear();
                 procName.clear();
                 procName.appendf("%s_master", process.getName());
-                if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-                    processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
-                else
-                    processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
-                processPath.append(":");
+                buildProcessPath(processPath,procName.str());
                 readALineFromResult(response, processPath.str(), processData, true);
             }
         }
         else
         {
             procName.append(process.getName());
-            if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-                processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
-            else
-                processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
-            processPath.append(":");
+            buildProcessPath(processPath,procName.str());
             readALineFromResult(response, processPath.str(), processData, true);
         }
 
