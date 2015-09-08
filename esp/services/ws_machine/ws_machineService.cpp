@@ -1494,7 +1494,7 @@ void Cws_machineEx::buildProcessPath(StringBuffer &processPath, const char * pro
 {
     processPath.clear();
     if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-        processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), processName.str());
+        processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), processName);
     else
         processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), processName);
     processPath.append(":");
@@ -1536,8 +1536,8 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         else if (streq(process.getType(), eqThorMasterProcess))
         {
             procName.appendf("%s", process.getName());
-            catError.appendf("cat: %s",processPath.str());
             buildProcessPath(processPath,procName.str(),pParam);
+            catError.appendf("cat: %s",processPath.str());
             readALineFromResult(response, catError.str(), processData, false);
             if (processData.length() < 1)
             {
