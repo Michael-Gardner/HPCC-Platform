@@ -1490,13 +1490,13 @@ bool Cws_machineEx::readStorageSpace(const char *line, StringBuffer& title, __in
     return true;
 }
 
-void Cws_machineEx::buildProcessPath(StringBuffer &processPath, const char * processName)
+void Cws_machineEx::buildProcessPath(StringBuffer &processPath, const char * processName, CMachineInfoThreadParam * pParam)
 {
     processPath.clear();
     if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-        processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), procName.str());
+        processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), processName.str());
     else
-        processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), procName.str());
+        processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), processName);
     processPath.append(":");
 }
 
@@ -1516,7 +1516,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         if (streq(process.getType(), eqThorSlaveProcess))
         {
             procName.appendf("thorslave_%s_%d", process.getName(), process.getProcessNumber());
-            buildProcessPath(processPath,procName.str());
+            buildProcessPath(processPath,procName.str(),pParam);
             catError.appendf("cat: %s",processPath.str());
             readALineFromResult(response, catError.str(), processData, false);
             if (processData.length() < 1)
@@ -1529,7 +1529,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
                 processData.clear();
                 procName.clear();
                 procName.appendf("%s_slave_%d", process.getName(), process.getProcessNumber());
-                buildProcessPath(processPath,procName.str());
+                buildProcessPath(processPath,procName.str(),pParam);
                 readALineFromResult(response, processPath.str(), processData, true);
             }
         }
@@ -1537,7 +1537,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         {
             procName.appendf("%s", process.getName());
             catError.appendf("cat: %s",processPath.str());
-            buildProcessPath(processPath,procName.str());
+            buildProcessPath(processPath,procName.str(),pParam);
             readALineFromResult(response, catError.str(), processData, false);
             if (processData.length() < 1)
             {
@@ -1550,14 +1550,14 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
                 processPath.clear();
                 procName.clear();
                 procName.appendf("%s_master", process.getName());
-                buildProcessPath(processPath,procName.str());
+                buildProcessPath(processPath,procName.str(),pParam);
                 readALineFromResult(response, processPath.str(), processData, true);
             }
         }
         else
         {
             procName.append(process.getName());
-            buildProcessPath(processPath,procName.str());
+            buildProcessPath(processPath,procName.str(),pParam);
             readALineFromResult(response, processPath.str(), processData, true);
         }
 
