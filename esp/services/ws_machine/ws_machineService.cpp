@@ -1515,16 +1515,12 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         {
             procName.appendf("thorslave_%s_%d", process.getName(), process.getProcessNumber());
             buildProcessPath(processPath,procName.str(),pParam);
-            catError.appendf("cat: %s",processPath.str());
-            readALineFromResult(response, catError.str(), processData, false);
-            if (processData.length() < 1)
-            {
-                processData.clear();
+            catError.setf("cat: %s");
+            catError.insert(catError.length()-1,".pid");
+            if (!strstr(response,catError.str()))
                 readALineFromResult(response, processPath.str(), processData, true);
-            }
             else
             {
-                processData.clear();
                 procName.setf("%s_slave_%d", process.getName(), process.getProcessNumber());
                 buildProcessPath(processPath,procName.str(),pParam);
                 readALineFromResult(response, processPath.str(), processData, true);
@@ -1534,16 +1530,12 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
         {
             procName.appendf("%s", process.getName());
             buildProcessPath(processPath,procName.str(),pParam);
-            catError.appendf("cat: %s",processPath.str());
-            readALineFromResult(response, catError.str(), processData, false);
-            if (processData.length() < 1)
-            {
-                processData.clear();
+            catError.setf("cat: %s");
+            catError.insert(catError.length()-1,".pid");
+            if (!strstr(response,catError.str()))
                 readALineFromResult(response, processPath.str(), processData, true);
-            }
             else
             {
-                processData.clear();
                 procName.setf("%s_master", process.getName());
                 buildProcessPath(processPath,procName.str(),pParam);
                 readALineFromResult(response, processPath.str(), processData, true);
