@@ -1516,7 +1516,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
             procName.appendf("thorslave_%s_%d", process.getName(), process.getProcessNumber());
             buildProcessPath(processPath,procName.str(),pParam);
             catError.setf("cat: %s");
-            catError.replaceString(":",".pid:");
+            //catError.replaceString(":",".pid:");
             if (!strstr(response,catError.str()))
                 readALineFromResult(response, processPath.str(), processData, true);
             else
@@ -1531,7 +1531,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
             procName.appendf("%s", process.getName());
             buildProcessPath(processPath,procName.str(),pParam);
             catError.setf("cat: %s");
-            catError.replaceString(":",".pid:");
+            //catError.replaceString(":",".pid:");
             if (!strstr(response,catError.str()))
                 readALineFromResult(response, processPath.str(), processData, true);
             else
