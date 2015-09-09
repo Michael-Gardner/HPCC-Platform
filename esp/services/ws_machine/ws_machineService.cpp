@@ -1492,12 +1492,10 @@ bool Cws_machineEx::readStorageSpace(const char *line, StringBuffer& title, __in
 
 void Cws_machineEx::buildProcessPath(StringBuffer &processPath, const char * processName, CMachineInfoThreadParam * pParam)
 {
-    processPath.clear();
     if (environmentConfData.m_pidPath.charAt(environmentConfData.m_pidPath.length() - 1) != pParam->m_machineData.getPathSep())
-        processPath.appendf("%s%c%s", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), processName);
+        processPath.setf("%s%c%s:", environmentConfData.m_pidPath.str(), pParam->m_machineData.getPathSep(), processName);
     else
-        processPath.appendf("%s%s", environmentConfData.m_pidPath.str(), processName);
-    processPath.append(":");
+        processPath.setf("%s%s:", environmentConfData.m_pidPath.str(), processName);
 }
 
 void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadParam* pParam)
@@ -1527,8 +1525,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
             else
             {
                 processData.clear();
-                procName.clear();
-                procName.appendf("%s_slave_%d", process.getName(), process.getProcessNumber());
+                procName.setf("%s_slave_%d", process.getName(), process.getProcessNumber());
                 buildProcessPath(processPath,procName.str(),pParam);
                 readALineFromResult(response, processPath.str(), processData, true);
             }
@@ -1547,9 +1544,7 @@ void Cws_machineEx::readProcessData(const char* response, CMachineInfoThreadPara
             else
             {
                 processData.clear();
-                processPath.clear();
-                procName.clear();
-                procName.appendf("%s_master", process.getName());
+                procName.setf("%s_master", process.getName());
                 buildProcessPath(processPath,procName.str(),pParam);
                 readALineFromResult(response, processPath.str(), processData, true);
             }
