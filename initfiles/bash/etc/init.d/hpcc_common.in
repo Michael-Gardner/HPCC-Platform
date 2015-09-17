@@ -272,18 +272,26 @@ set_componentvars() {
 }
 
 validate_configuration() {
-    if ! validation_error=$(${configgen_path}/configgen -env ${envfile} -validateonly 2>&1); then
-        log  "get_commondirs(): validation failure ${envfile}"
+    validation_error=$(${INSTALL_DIR}/sbin/configgen -env ${envfile} -validateonly 2>&1)
+    validation_rc=$?
+    # if error, log and output to user then exit
+    if [[ $validation_rc -eq 1 ]]; then
+        log  "error: configgen xml validation failure ${envfile}"
         log  "${validation_error}"
-        echo -e "\033[31merror\033[0m: configgen xml validation failure"
+        echo -e "\033[31merror\033[0m: configgen xml validation failure ${envfile}"
+        echo "${validation_error}"
         exit 1
+    # if warning, just log
+    elif [[ $validation_rc -eq 2 ]]; then
+        log "warning: configgen xml validation issue ${envfile}"
+        log "${validation_error}"
     fi
 }
 
 get_commondirs() {
     componentFile="${path}/componentfiles/configxml"
     validate_configuration
-    DIRS=$(${configgen_path}/configgen -env ${envfile} -id ${componentFile} -listcommondirs)
+    DIRS=$(${INSTALL_DIR}/sbin/configgen -env ${envfile} -id ${componentFile} -listcommondirs)
     rc=$?
     if [[ $rc -ne 0 ]]; then
         log  "get_commondirs(): failure in configgen call"
@@ -300,7 +308,7 @@ configGenCmd() {
     logDir=$log/${compName}
 
     validate_configuration
-    configcmd="${configgen_path}/configgen -env ${envfile} -od ${runtime} -id ${componentFile} -c ${compName}"
+    configcmd="${INSTALL_DIR}/sbin/configgen -env ${envfile} -od ${runtime} -id ${componentFile} -c ${compName}"
     log "$configcmd"
     su ${user} -c "$configcmd" 2>/dev/null
     rc=$?
@@ -711,7 +719,7 @@ setup_component() {
 
 create_dropzone() {
     validate_configuration
-    dropzones=$(${configgen_path}/configgen -env ${envfile} -listdirs)
+    dropzones=$(${INSTALL_DIR}/sbin/configgen -env ${envfile} -listdirs)
     rc=$?
     if [[ $rc -ne 0 ]]; then
         log  "create_dropzone(): failure in configgen call"
