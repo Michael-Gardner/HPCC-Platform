@@ -255,7 +255,17 @@ endif()
 message ("-- Base build tag is '${BASE_BUILD_TAG}'")
 configure_file(${HPCC_SOURCE_DIR}/build-config.h.cmake "build-config.h" )
 
-#set( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
+if ( UNIX )
+    if ( "${packageManagement}" STREQUAL "DEB" )
+        set( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
+        set( CMAKE_SKIP_BUILD_RPATH FALSE )
+        set( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE )
+        set( CMAKE_INSTALL_RPATH "${LIB_DIR}" )
+        set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE )
+    endif()
+endif( UNIX )
+
+
 #set( CPACK_DEB_PACKAGE_COMPONENT ON )
 
 if ( UNIX )
