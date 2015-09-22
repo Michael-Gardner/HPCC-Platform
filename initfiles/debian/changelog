@@ -1,0 +1,5 @@
+hpccsystems-platform 6.0.0 trusty; urgency=low
+
+  * Initial release (Closes: #0001)
+
+-- Michael Gardner <michael.gardner@lexisnexis.com>  Tue, 22 Sep 2015 15:19:00 +0500
