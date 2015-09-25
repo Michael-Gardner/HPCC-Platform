@@ -46,7 +46,6 @@
 #   6. Executables will be created in .\hpcc\bin\<release_mode>
 #
 #########################################################
-
 project (hpccsystems-platform)
 cmake_minimum_required (VERSION 2.8.11)
 
@@ -167,45 +166,44 @@ endif()
 
 
 if ( APPLE )
-elseif ( UNIX )
-    EXECUTE_PROCESS (
+elseif ( UNIX AND PACKAGE_PLATFORM )
+        EXECUTE_PROCESS (
                 COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/distrocheck.sh
                     OUTPUT_VARIABLE packageManagement
                         ERROR_VARIABLE  packageManagement
                 )
-    EXECUTE_PROCESS (
+        EXECUTE_PROCESS (
                 COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/getpackagerevisionarch.sh
                     OUTPUT_VARIABLE packageRevisionArch
                         ERROR_VARIABLE  packageRevisionArch
                 )
-    EXECUTE_PROCESS (
+        EXECUTE_PROCESS (
                 COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/getpackagerevisionarch.sh --noarch
                     OUTPUT_VARIABLE packageRevision
                         ERROR_VARIABLE  packageRevision
                 )
 
-    message ( "-- Auto Detecting Packaging type")
-    message ( "-- distro uses ${packageManagement}, revision is ${packageRevisionArch}" )
-    if ( "${packageManagement}" STREQUAL "RPM" AND WITH_PLUGINS )
-        set ( CPACK_RPM_SPEC_MORE_DEFINE
+        message ( "-- Auto Detecting Packaging type")
+        message ( "-- distro uses ${packageManagement}, revision is ${packageRevisionArch}" )
+        if ( "${packageManagement}" STREQUAL "RPM" AND WITH_PLUGINS )
+            set ( CPACK_RPM_SPEC_MORE_DEFINE
 "%define _use_internal_dependency_generator 0
 %define __getdeps() while read file; do /usr/lib/rpm/rpmdeps -%{1} ${file}; done | /bin/sort -u
 %define __find_provides /bin/sh -c '%{__getdeps P}'
 %define __find_requires /bin/sh -c '%{__grep} -v libRembed.so | %{__getdeps R}'" )
-        set ( PACKAGE_FILE_NAME_PREFIX "${PACKAGE_FILE_NAME_PREFIX}-with-plugins")
-    endif()
-    if ( "${packageManagement}" STREQUAL "DEB" )
-        set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}${packageRevisionArch}")
-    elseif ( "${packageManagement}" STREQUAL "RPM" )
-        set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}.${packageRevisionArch}")
-    else()
-        set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}_${stagever}${CPACK_SYSTEM_NAME}")
-    endif ()
-endif ()
-MESSAGE ( "-- Current release version is ${CPACK_PACKAGE_FILE_NAME}" )
-set( CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}" )
-set( CPACK_SOURCE_GENERATOR TGZ )
-set( CPACK_SOURCE_IGNORE_FILES
+            set ( PACKAGE_FILE_NAME_PREFIX "${PACKAGE_FILE_NAME_PREFIX}-with-plugins")
+        endif()
+        if ( "${packageManagement}" STREQUAL "DEB" )
+            set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}${packageRevisionArch}")
+        elseif ( "${packageManagement}" STREQUAL "RPM" )
+            set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}.${packageRevisionArch}")
+        else()
+            set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}_${stagever}${CPACK_SYSTEM_NAME}")
+        endif ()
+    MESSAGE ( "-- Current release version is ${CPACK_PACKAGE_FILE_NAME}" )
+    set( CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}" )
+    set( CPACK_SOURCE_GENERATOR TGZ )
+    set( CPACK_SOURCE_IGNORE_FILES
         "~$"
         "\\\\.cvsignore$"
         "^${PROJECT_SOURCE_DIR}.*/CVS/"
@@ -229,7 +227,7 @@ set( CPACK_SOURCE_IGNORE_FILES
         "^${PROJECT_SOURCE_DIR}/ecl/regress/"
     "^${PROJECT_SOURCE_DIR}/testing/"
         )
-
+endif()
 ###
 ## Run file configuration to set build tag along with install lines for generated
 ## config files.
@@ -258,7 +256,7 @@ configure_file(${HPCC_SOURCE_DIR}/build-config.h.cmake "build-config.h" )
 #set( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
 #set( CPACK_DEB_PACKAGE_COMPONENT ON )
 
-if ( UNIX )
+if ( UNIX AND PACKAGE_PLATFORM )
     if ( "${packageManagement}" STREQUAL "DEB" )
         set ( CPACK_GENERATOR "${packageManagement}" )
         message("-- Will build DEB package")
@@ -302,20 +300,19 @@ if ( UNIX )
         message("WARNING: Unsupported package ${packageManagement}.")
     endif ()
 
-endif ( UNIX )
-if ( EXISTS ${HPCC_SOURCE_DIR}/cmake_modules/dependencies/${packageRevision}.cmake )
-    include( ${HPCC_SOURCE_DIR}/cmake_modules/dependencies/${packageRevision}.cmake )
-else()
-    message("-- WARNING: DEPENDENCY FILE FOR ${packageRevision} NOT FOUND, Using deps template.")
-    include( ${HPCC_SOURCE_DIR}/cmake_modules/dependencies/template.cmake )
-endif()
-
-if ( UNIX )
+    if ( EXISTS ${HPCC_SOURCE_DIR}/cmake_modules/dependencies/${packageRevision}.cmake )
+        include( ${HPCC_SOURCE_DIR}/cmake_modules/dependencies/${packageRevision}.cmake )
+    else()
+        message("-- WARNING: DEPENDENCY FILE FOR ${packageRevision} NOT FOUND, Using deps template.")
+        include( ${HPCC_SOURCE_DIR}/cmake_modules/dependencies/template.cmake )
+    endif()
     set ( CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" )
-endif ( UNIX )
-if ( PLATFORM )
+endif ( UNIX AND PACKAGE_PLATFORM )
+
+if ( PLATFORM AND PACKAGE_PLATFORM )
     set ( CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE_FILE_NAME_PREFIX}")
-else ( PLATFORM )
+endif ( PLATFORM AND PACKAGE_PLATFORM )
+if ( CLIENTTOOLS_ONLY AND PACKAGE_PLATFORM )
     if ( APPLE OR WIN32 )
         set ( CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${version}-${stagever}${CPACK_SYSTEM_NAME}" )
     endif()
@@ -354,7 +351,7 @@ else ( PLATFORM )
       add_dependencies(SIGN PACKAGE)
       set_property(TARGET SIGN PROPERTY FOLDER "CMakePredefinedTargets")
     endif()
-endif( PLATFORM )
+endif( CLIENTTOOLS_ONLY AND PACKAGE_PLATFORM)
 
 ###
 ## Below are the non-compile based install scripts required for
@@ -362,4 +359,6 @@ endif( PLATFORM )
 ###
 
 Install ( FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION "." COMPONENT Runtime )
-include (CPack)
+if ( PACKAGE_PLATFORM )
+    include (CPack)
+endif ( PACKAGE_PLATFORM )

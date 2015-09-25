@@ -45,6 +45,8 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   option(PLATFORM "Enable the building/inclusion of a Platform component." ON)
   option(DEVEL "Enable the building/inclusion of a Development component." OFF)
   option(CLIENTTOOLS_ONLY "Enable the building of Client Tools only." OFF)
+  option(PACKAGE_PLATFORM "Declare intent to package platform." ON)
+  message (STATUS "PACKAGE_PLATFORM == ${PACKAGE_PLATFORM}")
 
   if (APPLE OR WIN32)
     option(USE_BINUTILS "Enable use of binutils to embed workunit info into shared objects" OFF)
