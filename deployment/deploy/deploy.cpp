@@ -1136,8 +1136,10 @@ IPropertyTree* getInstances(const IPropertyTree* pEnvRoot, const char* compName,
     ForEach(*pClusterProcessIter)
     {
       IPropertyTree * pClusterProcess = &pClusterProcessIter->query();
-      if (!strcmp(pClusterProcess->queryName(),"RoxieCluster") || !strcmp(pClusterProcess->queryName(),"ThorCluster")
-            || !strcmp(pClusterProcess->queryName(),"EclServerProcess"))
+      if (     !strcmp(pClusterProcess->queryName(),"RoxieCluster") || !strcmp(pClusterProcess->queryName(),"ThorCluster")
+            || !strcmp(pClusterProcess->queryName(),"EclServerProcess") || !strcmp(pClusterProcess->queryName(),"EclAgentProcess")
+            || !strcmp(pClusterProcess->queryName(),"EclCCServerProcess") || !strcmp(pClusterProcess->queryName(),"EclSchedulerProcess")
+            || !strcmp(pClusterProcess->queryName(),"EclSchedulerProcess"))
         pTopologyComponents.appendUniq(pClusterProcess->queryProp("@process"));
     }
   }
@@ -1164,8 +1166,8 @@ IPropertyTree* getInstances(const IPropertyTree* pEnvRoot, const char* compName,
       const char* logDir = NULL;
 
       /* If one of these components found isn't also declared in topology, skip it. */
-      if ((!strcmp(buildSet,"thor") || !strcmp(buildSet,"roxie") || !strcmp(buildSet,"eclserver"))
-            && !pTopologyComponents.contains(name))
+      if ((!strcmp(buildSet,"thor") || !strcmp(buildSet,"roxie") || !strcmp(buildSet,"eclserver") || !strcmp(buildSet,"eclagent")
+            || !strcmp(buildSet,"eclccserver") || !strcmp(buildSet,"eclscheduler")) && !pTopologyComponents.contains(name))
         continue;
 
       if (listall)
