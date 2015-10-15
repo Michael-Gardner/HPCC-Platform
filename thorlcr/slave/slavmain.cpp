@@ -735,6 +735,7 @@ void slaveMain()
     unsigned masterMemMB = globals->getPropInt("@masterTotalMem");
     HardwareInfo hdwInfo;
     getHardwareInfo(hdwInfo);
+    PROGLOG("masterMemMB = %u\nhdwInfo = %u",masterMemMB,hdwInfo.totalMemory);
     if (hdwInfo.totalMemory < masterMemMB)
         WARNLOG("Slave has less memory than master node");
     unsigned gmemSize = globals->getPropInt("@globalMemorySize");

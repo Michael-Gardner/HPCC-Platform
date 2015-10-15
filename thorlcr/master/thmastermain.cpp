@@ -596,6 +596,7 @@ int main( int argc, char *argv[]  )
         HardwareInfo hdwInfo;
         getHardwareInfo(hdwInfo);
         globals->setPropInt("@masterTotalMem", hdwInfo.totalMemory);
+        PROGLOG("masterTotalMem = %u",globals->getPropInt("@masterTotalMem"));
         unsigned mmemSize = globals->getPropInt("@masterMemorySize"); // in MB
         unsigned gmemSize = globals->getPropInt("@globalMemorySize"); // in MB
         if (0 == gmemSize)
