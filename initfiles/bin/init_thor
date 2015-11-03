@@ -110,6 +110,13 @@ kill_slaves()
     rm -f $instancedir/uslaves.start > /dev/null 2>&1
 }
 
+cleanup()
+{
+    log "removing init.pid file and uslaves.start file"
+    rm -f $INIT_PID_NAME $instancedir/uslaves.start > /dev/null 2>&1
+    
+}
+
 killed()
 {
     log "Stopping ${component}"
@@ -119,11 +126,7 @@ killed()
     else
         log "$component Stopped"
         unlock /var/lock/HPCCSystems/$component/${component}.lock
-        kill_slaves
-        log "removing init.pid file and uslaves.start file"
-        rm -f $INIT_PID_NAME $instancedir/uslaves.start > /dev/null 2>&1
     fi
-    exit 255
 }
 
 trap "killed" SIGINT SIGTERM
@@ -199,20 +202,23 @@ while [[ 1 ]]; do
         echo $thorpid > $PID_NAME
         wait $thorpid
         errcode=$?
+        log "Errcode = $errcode"
         case $errcode in
         # TEC_Clean
-        0)  log "Thormaster ($thorpid) Exited cleanly"
-            rm -f $instancedir/uslaves.start $PID_NAME $INIT_PID_NAME > /dev/null 2>&1
+        0 | 143 )  log "Thormaster ($thorpid) Exited cleanly"
+            cleanup
+            unlock /var/lock/HPCCSystems/$component/${component}.lock
             exit 0
             ;;
         # TEC_CtrlC
         1)  log "Thormaster ($thorpid) Interrupted, Ctrl-C caught"
-            killed
+            kill_slaves
+            cleanup
             ;;
         # TEC_SlaveInit
         4)  log "Thormaster ($thorpid) Slaves failed to initialize"
-            log "Shutting down"
-            killed
+            kill_slaves
+            cleanup
             ;;
         # TEC_Idle=2, TEC_Watchdog=3, TEC_Swap=5, TEC_DaliDown=6
         *)  if [[ $errcode -eq 2 ]]; then
@@ -235,6 +241,7 @@ while [[ 1 ]]; do
                 if [[ 0 != ${errcode} ]]; then
                     log "auto swap node failed, errcode=${errcode}"
                     killed
+                    cleanup
                 fi
             fi
             # restarting thormaster
@@ -244,9 +251,13 @@ while [[ 1 ]]; do
         log "failed to start thormaster_lcr, pausing for 30 seconds"
         sleep 30
         kill_slaves
+        cleanup
     fi
     if [[ ! -e $SENTINEL ]]; then
         log "$SENTINEL has been removed or thormaster did not fully start - script stopping"
+        kill_slaves
+        cleanup
+        unlock /var/lock/HPCCSystems/$component/${component}.lock
         exit 0
     fi
 done
