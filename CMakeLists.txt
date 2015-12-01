@@ -1,4 +1,3 @@
-###############################################################################
 #    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,8 +46,8 @@
 #
 #########################################################
 
-project (hpccsystems-platform)
-cmake_minimum_required (VERSION 2.8.11)
+project(hpccsystems-platform)
+cmake_minimum_required(VERSION 2.8.11)
 
 include(CTest)
 ENABLE_TESTING()
@@ -61,8 +60,8 @@ include(${HPCC_SOURCE_DIR}/version.cmake)
 ###
 ## Build Level
 ###
-if( NOT BUILD_LEVEL )
-    set ( BUILD_LEVEL "COMMUNITY" )
+if(NOT BUILD_LEVEL)
+    set(BUILD_LEVEL "COMMUNITY")
 endif()
 ###
 
@@ -91,47 +90,70 @@ option(ENV_XML_FILE "Set the environment xml file name.")
 option(ENV_CONF_FILE "Set the environment conf file name.")
 option(LICENSE_FILE "Set the license file to use.")
 
-if( NOT LICENSE_FILE )
+if(NOT LICENSE_FILE)
+  if(MAKE_R_PLUGIN)
+    set(LICENSE_FILE "R-LICENSE.txt")
+  else()
     set(LICENSE_FILE "LICENSE.txt")
+  endif()
 endif()
 
 include(${HPCC_SOURCE_DIR}/cmake_modules/optionDefaults.cmake)
 ###
 
+if ( MAKE_R_PLUGIN )
+  # various components that are not needed if only making the R plugin
+  set(USE_LIBARCHIVE 0)
+  set(USE_APR 0)
+endif()
+
 include(${HPCC_SOURCE_DIR}/cmake_modules/commonSetup.cmake)
 
-if ( NOT MAKE_DOCS_ONLY )
-    HPCC_ADD_SUBDIRECTORY (initfiles)
-    HPCC_ADD_SUBDIRECTORY (tools)
-    HPCC_ADD_SUBDIRECTORY (common)
-    HPCC_ADD_SUBDIRECTORY (dali)
-    HPCC_ADD_SUBDIRECTORY (deploy)
-    HPCC_ADD_SUBDIRECTORY (deployment)
-    HPCC_ADD_SUBDIRECTORY (ecl)
-    HPCC_ADD_SUBDIRECTORY (ecllibrary)
-    HPCC_ADD_SUBDIRECTORY (esp)
-    HPCC_ADD_SUBDIRECTORY (plugins)
-    HPCC_ADD_SUBDIRECTORY (roxie)
-    HPCC_ADD_SUBDIRECTORY (rtl)
-    HPCC_ADD_SUBDIRECTORY (services "PLATFORM")
-    HPCC_ADD_SUBDIRECTORY (system)
-    HPCC_ADD_SUBDIRECTORY (thorlcr "PLATFORM")
-    HPCC_ADD_SUBDIRECTORY (testing)
-   if ( NOT WIN32 )
-       HPCC_ADD_SUBDIRECTORY (clienttools "CLIENTTOOLS_ONLY")
-   endif()
+if ( MAKE_R_PLUGIN )
+  add_subdirectory(roxie/roxiemem)
+  add_subdirectory(rtl/nbcd)
+  add_subdirectory(rtl/eclrtl)
+  add_subdirectory(system/lzma)
+  add_subdirectory(system/jlib)
+  add_subdirectory(plugins/Rembed)
+elseif ( MAKE_PLATFORM )
+  add_subdirectory(initfiles)
+  add_subdirectory(tools)
+  add_subdirectory(common)
+  add_subdirectory(dali)
+  add_subdirectory(deploy)
+  add_subdirectory(deployment)
+  add_subdirectory(ecl)
+  add_subdirectory(ecllibrary)
+  add_subdirectory(esp)
+  add_subdirectory(plugins)
+  add_subdirectory(roxie)
+  add_subdirectory(rtl)
+  add_subdirectory(services)
+  add_subdirectory(system)
+  add_subdirectory(thorlcr)
+  add_subdirectory(testing)
+  if ( NOT WIN32 )
+    add_subdirectory(clienttools)
+  endif()
+elseif ( MAKE_CLIENTTOOLS AND NOT WIN32 )
+    add_subdirectory(clienttools)   
 
 endif()
-HPCC_ADD_SUBDIRECTORY (docs "PLATFORM")
+add_subdirectory(docs "PLATFORM")
 if (APPLE OR WIN32)
-  HPCC_ADD_SUBDIRECTORY (lib2)
+  add_subdirectory(lib2)
 endif (APPLE OR WIN32)
 
 ###
 ## CPack install and packaging setup.
 ###
 INCLUDE(InstallRequiredSystemLibraries)
-if ( PLATFORM )
+if ( MAKE_R_PLUGIN )
+    set(CPACK_PACKAGE_NAME "hpccsystems-r-plugin")
+    set(PACKAGE_FILE_NAME_PREFIX "hpccsystems-r-plugin")
+    cpack_add_component(Rembed)
+elseif ( PLATFORM )
     set(CPACK_PACKAGE_NAME "hpccsystems-platform")
     set(PACKAGE_FILE_NAME_PREFIX "hpccsystems-platform-${projname}")
 else()
@@ -144,16 +166,16 @@ if ("${stagever}" MATCHES "^rc[0-9]+$")
     set (VER_SEPARATOR "~")
 endif()
 
-SET(CPACK_PACKAGE_VERSION_MAJOR ${majorver})
-SET(CPACK_PACKAGE_VERSION_MINOR ${minorver})
-SET(CPACK_PACKAGE_VERSION_PATCH ${point}${VER_SEPARATOR}${stagever})
+set(CPACK_PACKAGE_VERSION_MAJOR ${majorver})
+set(CPACK_PACKAGE_VERSION_MINOR ${minorver})
+set(CPACK_PACKAGE_VERSION_PATCH ${point}${VER_SEPARATOR}${stagever})
 set ( CPACK_PACKAGE_CONTACT "HPCCSystems <ossdevelopment@lexisnexis.com>" )
 set( CPACK_SOURCE_GENERATOR TGZ )
 
 set ( CPACK_RPM_PACKAGE_VERSION "${version}" )
-SET(CPACK_RPM_PACKAGE_RELEASE "${stagever}")
-SET(CPACK_RPM_PACKAGE_VENDOR "HPCC Systems®")
-SET(CPACK_PACKAGE_VENDOR "HPCC Systems®")
+set(CPACK_RPM_PACKAGE_RELEASE "${stagever}")
+set(CPACK_RPM_PACKAGE_VENDOR "HPCC Systems®")
+set(CPACK_PACKAGE_VENDOR "HPCC Systems®")
 
 if ( ${ARCH64BIT} EQUAL 1 )
     set ( CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
@@ -186,13 +208,12 @@ elseif ( UNIX )
 
     message ( "-- Auto Detecting Packaging type")
     message ( "-- distro uses ${packageManagement}, revision is ${packageRevisionArch}" )
-    if ( "${packageManagement}" STREQUAL "RPM" AND WITH_PLUGINS )
+    if ( "${packageManagement}" STREQUAL "RPM" AND MAKE_R_PLUGIN )
         set ( CPACK_RPM_SPEC_MORE_DEFINE
 "%define _use_internal_dependency_generator 0
 %define __getdeps() while read file; do /usr/lib/rpm/rpmdeps -%{1} ${file}; done | /bin/sort -u
 %define __find_provides /bin/sh -c '%{__getdeps P}'
 %define __find_requires /bin/sh -c '%{__grep} -v libRembed.so | %{__getdeps R}'" )
-        set ( PACKAGE_FILE_NAME_PREFIX "${PACKAGE_FILE_NAME_PREFIX}-with-plugins")
     endif()
     if ( "${packageManagement}" STREQUAL "DEB" )
         set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}${packageRevisionArch}")
@@ -261,6 +282,7 @@ configure_file(${HPCC_SOURCE_DIR}/build-config.h.cmake "build-config.h" )
 if ( UNIX )
     if ( "${packageManagement}" STREQUAL "DEB" )
         set ( CPACK_GENERATOR "${packageManagement}" )
+        set ( CPACK_DEB_COMPONENT_INSTALL ON )
         message("-- Will build DEB package")
         ###
         ## CPack instruction required for Debian
@@ -275,10 +297,11 @@ if ( UNIX )
 
         # Standard sections values:
         # https://www.debian.org/doc/debian-policy/ch-archive.html/#s-subsections
-        SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+        set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
 
     elseif ( "${packageManagement}" STREQUAL "RPM" )
         set ( CPACK_GENERATOR "${packageManagement}" )
+        set ( CPACK_RPM_COMPONENT_INSTALL ON )
         ###
         ## CPack instruction required for RPM
         ###
@@ -319,7 +342,7 @@ else ( PLATFORM )
     if ( APPLE OR WIN32 )
         set ( CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${version}-${stagever}${CPACK_SYSTEM_NAME}" )
     endif()
-    set ( CPACK_MONOLITHIC_INSTALL TRUE )
+    set ( CPACK_MONOLITHIC_INSTALL FALSE )
     file(WRITE "${PROJECT_BINARY_DIR}/welcome.txt"
         "HPCC Systems® - Client Tools\r"
         "===========================\r\r"
@@ -361,5 +384,5 @@ endif( PLATFORM )
 ## the hpcc platform.
 ###
 
-Install ( FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION "." COMPONENT Runtime )
+Install ( FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION "." COMPONENT Platform )
 include (CPack)

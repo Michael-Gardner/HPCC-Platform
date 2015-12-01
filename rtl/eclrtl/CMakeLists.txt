@@ -78,7 +78,6 @@ else ()
 endif ()
 
 HPCC_ADD_LIBRARY( eclrtl SHARED ${SRCS} )
-install ( TARGETS eclrtl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib )
 target_link_libraries ( eclrtl 
       ${BOOST_REGEX_LIBRARIES}
       ${ICU_LIBRARIES}
@@ -87,6 +86,7 @@ target_link_libraries ( eclrtl
       roxiemem
     )
 
+install ( TARGETS eclrtl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib COMPONENT Platform )
 FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/eclinclude4.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/eclrtl.hpp
@@ -96,7 +96,6 @@ FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/rtlds_imp.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtlfield_imp.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtlkey.hpp
-)
-    Install ( FILES ${iFILES} DESTINATION componentfiles/cl/include COMPONENT Runtime )
+  )
+  install ( FILES ${iFILES} DESTINATION componentfiles/cl/include COMPONENT Platform )
 ENDFOREACH ( iFILES )
-
