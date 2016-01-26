@@ -1,0 +1,15 @@
+Source: hpccsystems-platform
+Maintainer: hpccsystems <hpccsystems@lexisnexis.com>
+Uploaders: Michael Gardner <michael.gardner@lexisnexis.com>
+Section: main
+Priority: extra
+Build-Depends: cmake (>=3.0)
+Homepage: www.hpccsystems.com
+
+Package: hpccsystems-platform
+Architecture: amd64
+Section: main
+Priority: extra
+Depends: expect, zip, python, gcc
+Description: big data processer, server, control language 
+Homepage: www.hpccsystems.com
