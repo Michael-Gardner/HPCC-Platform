@@ -230,6 +230,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
         set(SQLITE3EMBED ON)
         set(CASSANDRAEMBED ON)
         set(KAFKA ON)
+        set(REMBED ON)
     endif()
 
   option(PORTALURL "Set url to hpccsystems portal download page")
