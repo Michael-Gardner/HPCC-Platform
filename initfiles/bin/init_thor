@@ -85,7 +85,7 @@ kill_slaves()
                 log "Stopping ${component}"
                 kill_process ${PID_NAME} thormaster_${component} 30
                 unlock /var/lock/HPCCSystems/$component/${component}.lock
-                rm -f $INIT_PID_NAME $instancedir/slaves > /dev/null 2>&1
+                rm -f $instancedir/slaves > /dev/null 2>&1
                 exit 255
             fi
         fi
@@ -105,7 +105,7 @@ killed()
         unlock /var/lock/HPCCSystems/$component/${component}.lock
         kill_slaves
         log "removing init.pid file and slaves file"
-        rm -f $INIT_PID_NAME $instancedir/slaves > /dev/null 2>&1
+        rm -f $instancedir/slaves > /dev/null 2>&1
     fi
     exit 255
 }
@@ -159,7 +159,8 @@ while [[ 1 ]]; do
         case $errcode in
         # TEC_Clean
         0)  log "Thormaster ($thorpid) Exited cleanly"
-            rm -f $instancedir/slaves $instancedir/uslaves $PID_NAME $INIT_PID_NAME > /dev/null 2>&1
+            unlock /var/lock/HPCCSystems/$component/${component}.lock
+            rm -f $instancedir/slaves $instancedir/uslaves $PID_NAME > /dev/null 2>&1
             exit 0
             ;;
         # TEC_CtrlC
