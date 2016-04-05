@@ -437,4 +437,14 @@ if(PLATFORM OR CLIENTTOOLS OR REMBED)
     install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION "." COMPONENT Runtime)
 endif()
 
+if(UNIX)
+    add_custom_target(
+        uninstall
+        bash -c 'while read file\; do rm -rf $file\; done < ${CMAKE_BINARY_DIR}/install_manifest.txt'
+        DEPENDS ${CMAKE_BINARY_DIR}/install_manifest.txt
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Uninstalling targets"
+    )
+endif()
+
 include(CPack)
