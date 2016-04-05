@@ -545,8 +545,7 @@ public:
             while (res.length()&&(res.charAt(res.length()-1)<=' '))
                 res.setLength(res.length()-1);
             PROGLOG("%s result(%d):\n%s",useplink?"plink":"ssh",reply.item(0),res.str());
-            if (reply.item(0))
-                throw MakeStringExceptionDirect(reply.item(0), res.str());
+            throw MakeStringExceptionDirect(reply.item(0), res.str());
         }
     }
     void exec(
