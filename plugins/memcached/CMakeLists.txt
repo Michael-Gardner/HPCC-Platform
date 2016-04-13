@@ -25,8 +25,35 @@
 project( memcached )
 
 if (MEMCACHED)
-    ADD_PLUGIN(memcached PACKAGES LIBMEMCACHED MINVERSION 1.0.10)
-    if(MAKE_MEMCACHED)
+    #ADD_PLUGIN(memcached PACKAGES LIBMEMCACHED MINVERSION 1.0.10)
+        # Currently libmemcached versions are not sufficient on ubuntu 12.04 and 14.04 LTS
+        # until then, we build the required libraries from source
+        add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
+            COMMAND wget -q https://launchpad.net/libmemcached/1.0/1.0.10/+download/libmemcached-1.0.10.tar.gz
+            COMMAND tar -xzf ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10.tar.gz
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        add_custom_target(fetch-libmemcached
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Fetching and unpacking libmemcached source") 
+        add_custom_target(configure-libmemcached
+            COMMAND ./configure > /dev/null
+            DEPENDS fetch-libmemcached
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
+            COMMENT "Configuring libmemcached")
+        add_custom_target(build-libmemcached
+            COMMAND make > /dev/null
+            DEPENDS configure-libmemcached
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
+            COMMENT "building libmemcached")
+        add_library(libmemcached SHARED IMPORTED)
+        add_dependencies(libmemcached build-libmemcached) 
+        set_target_properties(libmemcached
+            PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10/libmemcached/.libs/libmemcached.so)
+        set(LIBMEMCACHED_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10/libmemcached/.libs/libmemcached.so DESTINATION plugins)
+
         set(
             SRCS
             memcachedplugin.hpp
@@ -61,8 +88,7 @@ if (MEMCACHED)
             memcached
             eclrtl
             jlib
-            ${LIBMEMCACHED_LIBRARIES})
-    endif()
+            libmemcached)
 endif()
 
 if(PLATFORM)
