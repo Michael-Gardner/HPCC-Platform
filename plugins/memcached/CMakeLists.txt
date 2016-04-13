@@ -29,30 +29,26 @@ if (MEMCACHED)
         # Currently libmemcached versions are not sufficient on ubuntu 12.04 and 14.04 LTS
         # until then, we build the required libraries from source
         add_custom_command(
-            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so
             COMMAND wget -q https://launchpad.net/libmemcached/1.0/1.0.10/+download/libmemcached-1.0.10.tar.gz
             COMMAND tar -xzf ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10.tar.gz
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-        add_custom_target(fetch-libmemcached
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
+            COMMAND cd ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10/configure
+            COMMAND make -j
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            COMMENT "Fetching and unpacking libmemcached source") 
-        add_custom_target(configure-libmemcached
-            COMMAND ./configure > /dev/null
-            DEPENDS fetch-libmemcached
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
-            COMMENT "Configuring libmemcached")
-        add_custom_target(build-libmemcached
-            COMMAND make > /dev/null
-            DEPENDS configure-libmemcached
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10
-            COMMENT "building libmemcached")
+            COMMENT "fetching and building libmemcached")
+        add_custom_target(generate-libmemcached
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so)
         add_library(libmemcached SHARED IMPORTED)
-        add_dependencies(libmemcached build-libmemcached) 
         set_target_properties(libmemcached
-            PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10/libmemcached/.libs/libmemcached.so)
+            PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so)
         set(LIBMEMCACHED_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10)
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-1.0.10/libmemcached/.libs/libmemcached.so DESTINATION plugins)
+        install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so
+            ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so.11
+            ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so.11.0.0
+            DESTINATION lib
+            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
         set(
             SRCS
@@ -79,6 +75,8 @@ if (MEMCACHED)
         elseif(NOT APPLE)
             set_target_properties(memcached PROPERTIES NO_SONAME 1)
         endif()
+
+        add_dependencies(memcached generate-libmemcached)
 
         install(
             TARGETS memcached
