@@ -393,16 +393,16 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="directory" type="absolutePath" use="optional" default="${RUNTIME_PREFIX}/lib/${HPCC_PROJECT_NAME}/roxie/">
+      <xs:attribute name="directory" type="absolutePath" use="optional" default="@RUNTIME_PATH@/roxie/">
         <xs:annotation>
           <xs:appinfo>
             <tooltip>Specifies the directory to which the software will be deployed.</tooltip>
             <autogenforwizard>1</autogenforwizard>
-            <autogenprefix>${RUNTIME_PREFIX}/lib/${HPCC_PROJECT_NAME}/</autogenprefix>
+            <autogenprefix>@RUNTIME_PATH@/</autogenprefix>
           </xs:appinfo>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="pluginsPath" type="relativePath" use="optional" default="${PLUGINS_PATH}">
+      <xs:attribute name="pluginsPath" type="relativePath" use="optional" default="@PLUGINS_PATH@">
         <xs:annotation>
           <xs:appinfo>
             <tooltip>Alternate path where plugin files are deployed (./plugins is assumed if not specified)</tooltip>

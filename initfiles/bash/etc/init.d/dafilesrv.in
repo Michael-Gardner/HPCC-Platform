@@ -42,8 +42,6 @@
 #                         General Purpose Functions
 ##-----------------------------------------------------------------------------
 
-###<REPLACE>###
-
 function print_usage {
     echo >&2 "Usage: $0 {start|stop|restart|status|setup}
         $0 [-h] [--help]"
@@ -62,15 +60,13 @@ DEBUG=${DEBUG:-NO_DEBUG}
 TRACE=${TRACE:-0}
 VERBOSE=${VERBOSE:-0}
 
-configgen_path=${INSTALL_DIR}/sbin
 basepath=`pwd`
 set_environmentvars
 envfile=$configs/$environment
-bin_path=${INSTALL_DIR}/bin
 
 component=""
 runSetupOnly=0
-source ${configgen_path}/hpcc_setenv
+source @SBIN_PATH@/hpcc_setenv
 
 which_service
 get_commondirs
@@ -93,7 +89,7 @@ fi
 
 
 validate_configuration
-COMPS=$(${configgen_path}/configgen -env ${envfile} -ip "127.0.0.1" -list)
+COMPS=$(@SBIN_PATH@/configgen -env ${envfile} -ip "127.0.0.1" -list)
 if [[ $rc -ne 0 ]]; then
     log "hpcc-init: failure to build COMPS from configgen call"
     echo -e "\033[31merror\033[0m: hpcc-init -> failure to build COMPS from configgen call"

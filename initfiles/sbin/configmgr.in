@@ -19,15 +19,13 @@
 #                       Common Function
 #------------------------------------------------------------------------------
 
-###<REPLACE>###
-
 DEBUG=${DEBUG:-NO_DEBUG}
 
 source @SBIN_PATH@/hpcc_common
 
 createConf ()
 {
-    awk -f ${reg_path}/regex.awk -v NEW_ENVFILE=$1 -v NEW_PORT=$2 -v NEW_CONFFILE=$3< ${path}${configs}/configmgr/esp.xml >${runtime}/${compName}/esp.xml
+    awk -f @SBIN_PATH@/regex.awk -v NEW_ENVFILE=$1 -v NEW_PORT=$2 -v NEW_CONFFILE=$3< @CONFIG_PATH@/configmgr/esp.xml > @RUNTIME_PATH@/${compName}/esp.xml
 }
 
 
@@ -35,8 +33,7 @@ cleanup ()
 {
     echo "Exiting configMgr"
     #stop configesp
-    PIDPATH=${pid}/${compName}_init.pid
-    stopcmd="${START_STOP_DAEMON} -K -p $PIDPATH"
+    stopcmd="${START_STOP_DAEMON} -K -p @PID_PATH@/${compname}_init.pid"
     eval $stopcmd
     sleep 2
     killall -9 configesp >/dev/null 2>&1
@@ -61,11 +58,8 @@ print_usage ()
 
 set_environmentvars
 
-exec_script_path=${path}/bin
-reg_path=${path}/sbin
-
 compName=configmgr
-compPath=${runtime}/${compName}
+compPath=@RUNTIME_PATH@/${compName}
 
 is_root
 
@@ -150,7 +144,7 @@ fi
 cd ${runtime}/${compName}
 
 #start configesp
-EXEC_COMMAND="${exec_script_path}/init_configesp >> $logFile 2>&1"
+EXEC_COMMAND="@BIN_PATH@/init_configesp >> $logFile 2>&1"
 startcmd="${START_STOP_DAEMON} -S -p ${initPidFile} -c ${user}:${group} -d ${runtime}/${compName} -m -x ${EXEC_COMMAND} -b"
 eval ${startcmd}
 started=$?

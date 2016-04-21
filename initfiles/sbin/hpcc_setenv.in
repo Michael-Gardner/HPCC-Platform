@@ -20,8 +20,6 @@
 # relevant environment varibles if we are being sourced. Otherwise, just
 # echo bash-style commands to the caller that can in-turn be sourced.
 
-###<REPLACE>###
-
 function kill_process () {
     local PID=$1
     local PROCESS=$2
@@ -69,7 +67,7 @@ if [[ "$unamestr" == 'Linux' ]]; then
 elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='mac'
 fi
-HPCC_CONFIG=${HPCC_CONFIG:-${CONFIG_DIR}/${ENV_CONF_FILE}}
+HPCC_CONFIG=${HPCC_CONFIG:-@CONFIG_PATH@/@ENV_CONF_FILE@}
 #SECTION=${1:-DEFAULT}
 SECTION="DEFAULT"
 

@@ -42,8 +42,6 @@
 #                         General Purpose Functions                           
 ##-----------------------------------------------------------------------------
 
-###<REPLACE>###
-
 
 function print_usage {
     echo "Usage: $0 [-c component] {start|stop|restart|status|setup}
@@ -58,12 +56,12 @@ function print_usage {
 
 function print_components {
     if [ ! -z ${compList} ];then
-        echo  "Components on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}:"
+        echo  "Components on this node as defined by @CONFIG_PATH@/@ENV_XML_FILE@:"
         IFS=$'\n'
         echo  "${compList[*]}"
         unset IFS
     else
-        echo  "No components on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}."
+        echo  "No components on this node as defined by @CONFIG_PATH@/@ENV_XML_FILE@."
     fi
     echo
     exit 0
@@ -71,12 +69,12 @@ function print_components {
 
 function print_types {
     if [ ! -z ${compList} ];then
-        echo  "Components types on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}:"
+        echo  "Components types on this node as defined by @CONFIG_PATH@}/@ENV_XML_FILE@:"
         IFS=$'\n'
         echo  "${compTypeList[*]}"
         unset IFS
     else
-        echo  "No components on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}."
+        echo  "No components on this node as defined by @CONFIG_PATH@/@ENV_XML_FILE@."
     fi
     echo
     exit 0
@@ -90,7 +88,7 @@ source @SBIN_PATH@/hpcc_common
 source @SBIN_PATH@/init-functions
 source @SBIN_PATH@/export-path
 
-export logfile=${LOG_DIR}/hpcc-init.log
+export logfile=@LOG_PATH@/hpcc-init.log
 
 [ ! -e ${logfile}  ] && touch $logfile
 
@@ -107,14 +105,12 @@ set_environmentvars
 envfile=$configs/$environment
 
 # Know HPCC user after set_environmentvars
-log_dir_owner=$(ls -ld $LOG_DIR | awk '{print $3}')
-[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} $LOG_DIR
+log_dir_owner=$(ls -ld @LOG_PATH@ | awk '{print $3}')
+[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} @LOG_PATH@
 chown ${user}:${user} $logfile
 
 #Sourcing the hpcc environment
-configgen_path=${path}/sbin
-bin_path=${path}/bin
-source ${configgen_path}/hpcc_setenv
+source @SBIN_PATH@/hpcc_setenv
 
 which_service
 get_commondirs
@@ -143,7 +139,7 @@ chown -cR $user:$group ${home}/${user} 1>/dev/null 2>/dev/null
 basepath=`pwd`
 
 validate_configuration
-COMPS=$(${configgen_path}/configgen -env ${envfile} -list)
+COMPS=$(@SBIN_PATH@/configgen -env ${envfile} -list)
 if [[ $rc -ne 0 ]]; then
     log "hpcc-init: failure to build COMPS from configgen call"
     echo -e "\033[31merror\033[0m: hpcc-init -> failure to build COMPS from configgen call"
@@ -273,11 +269,11 @@ if [ -z $arg ] || [ $# -ne 1 ]; then
     print_usage
 fi
 
-log "Debug log written to $LOG_DIR/hpcc-init.debug"
-[ -e $LOG_DIR/hpcc-init.debug ] && rm -rf ${LOG_DIR}/hpcc-init.debug
-touch ${LOG_DIR}/hpcc-init.debug
-chown ${user}:${user} ${LOG_DIR}/hpcc-init.debug
-exec 2>$LOG_DIR/hpcc-init.debug
+log "Debug log written to @LOG_PATH@/hpcc-init.debug"
+[ -e @LOG_PATH@/hpcc-init.debug ] && rm -rf @LOG_PATH@/hpcc-init.debug
+touch @LOG_PATH@/hpcc-init.debug
+chown ${user}:${user} @LOG_PATH@/hpcc-init.debug
+exec 2>@LOG_PATH@/hpcc-init.debug
 set -x
 
 if [ -z ${component} ]; then

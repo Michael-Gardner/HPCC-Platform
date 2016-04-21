@@ -1,22 +1,22 @@
 ## Default environment configuration file for OpenHPCC
 
 [DEFAULT]
-configs=${CONFIG_DIR}
-path=${INSTALL_DIR}
-classpath=${INSTALL_DIR}/classes
-runtime=${RUNTIME_PATH}
-lock=${LOCK_PATH}
+configs=@CONFIG_PATH@
+path=@PREFIX@
+classpath=@SHARE_PATH@/classes
+runtime=@RUNTIME_PATH@
+lock=@LOCK_PATH@
 # Supported logging fields: AUD,CLS,DET,MID,TIM,DAT,PID,TID,NOD,JOB,USE,SES,COD,MLT,MCT,NNT,COM,QUO,PFX,ALL,STD
 logfields=TIM+DAT+MLT+MID+PID+TID+COD+QUO+PFX
-pid=${PID_PATH}
-log=${LOG_PATH}
-user=${RUNTIME_USER}
-group=${RUNTIME_GROUP}
+pid=@PID_PATH@
+log=@LOG_PATH@
+user=@RUNTIME_USER@
+group=@RUNTIME_GROUP@
 #umask=022
-home=${HOME_DIR}
-environment=${ENV_XML_FILE}
-sourcedir=${CONFIG_SOURCE_PATH}
-blockname=${HPCC_PROJECT_NAME}
+home=@HOME_DIR@
+environment=@ENV_XML_FILE@
+sourcedir=@CONFIG_SOURCE_PATH@
+blockname=@HPCC_PROJECT_NAME@
 interface=*
 # enable epoll method for notification events (true/false)
 use_epoll=true

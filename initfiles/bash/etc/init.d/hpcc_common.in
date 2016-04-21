@@ -24,9 +24,7 @@
 ## $1="<path to ini file>"
 ####
 
-###<REPLACE>###
-
-START_STOP_DAEMON=${INSTALL_DIR}/bin/start-stop-daemon
+START_STOP_DAEMON=@BIN_PATH@/start-stop-daemon
 
 which_service(){
     SERV=`type --path service`
@@ -245,7 +243,7 @@ strstr() {
 }
 
 set_environmentvars() {
-    HPCC_CONFIG=${HPCC_CONFIG:-${CONFIG_DIR}/${ENV_CONF_FILE}}
+    HPCC_CONFIG=${HPCC_CONFIG:-@CONFIG_PATH@/@ENV_CONF_FILE@}
 
     ## Retrieve the Section to use from environment variable and if not set
     ## use default of "DEFAULT"
@@ -266,13 +264,13 @@ set_componentvars() {
     comp.getByName ${compName}
     compPath=`echo $comp_return | cut -d ' ' -f 2 | cut -d '=' -f 2 `
     compType=`echo $comp_return | cut -d ' ' -f 1 | cut -d '=' -f 2 `
-    PIDPATH=${pid}/init_${compName}.pid
-    LOCKPATH=${lock}/$compName/$compName.lock
-    COMPPIDPATH=${pid}/${compName}.pid
+    PIDPATH=@PID_PATH@/init_${compName}.pid
+    LOCKPATH=@LOCK_PATH@/$compName/$compName.lock
+    COMPPIDPATH=@PID_PATH@/${compName}.pid
 }
 
 validate_configuration() {
-    if ! validation_error=$(${configgen_path}/configgen -env ${envfile} -validateonly 2>&1); then
+    if ! validation_error=$(@SBIN_PATH@/configgen -env ${envfile} -validateonly 2>&1); then
         log  "get_commondirs(): validation failure ${envfile}"
         log  "${validation_error}"
         echo -e "\033[31merror\033[0m: configgen xml validation failure"
@@ -281,9 +279,9 @@ validate_configuration() {
 }
 
 get_commondirs() {
-    componentFile="${path}/componentfiles/configxml"
+    componentFile="@SHARE_PATH@/componentfiles/configxml"
     validate_configuration
-    DIRS=$(${configgen_path}/configgen -env ${envfile} -id ${componentFile} -listcommondirs)
+    DIRS=$(@SBIN_PATH@/configgen -env ${envfile} -id ${componentFile} -listcommondirs)
     rc=$?
     if [[ $rc -ne 0 ]]; then
         log  "get_commondirs(): failure in configgen call"
@@ -294,13 +292,13 @@ get_commondirs() {
 }
 
 configGenCmd() {
-    componentFile="${path}/componentfiles/configxml"
+    componentFile="@SHARE_PATH@/componentfiles/configxml"
 
     # Creating logfiles for component
-    logDir=$log/${compName}
+    logDir=@LOG_PATH@/${compName}
 
     validate_configuration
-    configcmd="${configgen_path}/configgen -env ${envfile} -od ${runtime} -id ${componentFile} -c ${compName}"
+    configcmd="@SBIN_PATH@/configgen -env ${envfile} -od ${runtime} -id ${componentFile} -c ${compName}"
     log "$configcmd"
     if [ "$(whoami)" != "${user}" ]; then
         su ${user} -c "$configcmd" 2>/dev/null
@@ -321,41 +319,41 @@ createRuntime() {
         createDir ${runtime}
     fi
 
-    if [ ! -d ${pid} ]; then
-        createDir ${pid}
+    if [ ! -d @PID_PATH@ ]; then
+        createDir @PID_PATH@
     fi
 
-    if [ ! -d ${lock} ]; then
-        createDir ${lock}
+    if [ ! -d @LOCK_PATH@ ]; then
+        createDir @LOCK_PATH@
     fi
 
-    if [ ! -d ${log} ]; then
-        createDir ${log}
+    if [ ! -d @LOG_PATH@ ]; then
+        createDir @LOG_PATH@
     fi
 
 
     chown -c $user:$group ${runtime}  1> /dev/null 2>/dev/null
-    chown -c $user:$group ${pid}  1> /dev/null 2>/dev/null
-    chown -c $user:$group ${lock} 1> /dev/null 2>/dev/null
-    chown -c $user:$group ${log}  1> /dev/null 2>/dev/null
+    chown -c $user:$group @PID_PATH@  1> /dev/null 2>/dev/null
+    chown -c $user:$group @LOCK_PATH@ 1> /dev/null 2>/dev/null
+    chown -c $user:$group @LOG_PATH@  1> /dev/null 2>/dev/null
 
     [ -z "$compName" ] && return
 
     # Creating Component Specific directories
     # Creating pidfile specific directory and changing its owner permissions
-    if [ ! -d "$pid/$compName" ]; then
-        log "Creating Pidfile Directory $pid/$compName"
-        createDir "$pid/$compName"
+    if [ ! -d "@PID_PATH@/$compName" ]; then
+        log "Creating Pidfile Directory @PID_PATH@/$compName"
+        createDir "@PID_PATH@/$compName"
     fi
 
-    if [ ! -d "$lock/$compName" ]; then
-        log "Creating Lockfile Directory $lock/$compName"
-        createDir "$lock/$compName"
+    if [ ! -d "@LOCK_PATH@/$compName" ]; then
+        log "Creating Lockfile Directory @LOCK_PATH@/$compName"
+        createDir "@LOCK_PATH@/$compName"
     fi
 
-    if [ ! -d "$log/$compName" ]; then
-        log "Creating Log Directory $log/$compName"
-        createDir "$log/$compName"
+    if [ ! -d "@LOG_PATH@/$compName" ]; then
+        log "Creating Log Directory @LOG_PATH@/$compName"
+        createDir "@LOG_PATH@/$compName"
     fi
 
     # Creating runtime specific directory and changing its owner permissions
@@ -365,9 +363,9 @@ createRuntime() {
     fi
 
     #change the permission for all component directory under var
-    chown -c $user:$group "$pid/$compName"  1> /dev/null 2>/dev/null
-    chown -c $user:$group "$lock/$compName"  1> /dev/null 2>/dev/null
-    chown -c $user:$group "$log/$compName"  1> /dev/null 2>/dev/null
+    chown -c $user:$group "@PID_PATH@/$compName"  1> /dev/null 2>/dev/null
+    chown -c $user:$group "@LOCK_PATH@/$compName"  1> /dev/null 2>/dev/null
+    chown -c $user:$group "@LOG_PATH@/$compName"  1> /dev/null 2>/dev/null
     chown -c $user:$group "$compPath"  1> /dev/null 2>/dev/null
     dir.getByName data
     chown -c $user:$group "${dir_return}"  1> /dev/null 2>/dev/null
@@ -383,9 +381,9 @@ createRuntime() {
 
 # cleanup all standard files made during runtime
 cleanupRuntimeEnvironment() {
-    unlock ${lock}/${compName}/${compName}.lock
-    removePid ${pid}/init_${compName}.pid
-    removePid ${pid}/${compName}.pid
+    unlock @LOCK_PATH@/${compName}/${compName}.lock
+    removePid @PID_PATH@/init_${compName}.pid
+    removePid @PID_PATH@/${compName}.pid
 }
 
 
@@ -415,7 +413,7 @@ startCmd() {
     export MALLOC_ARENA_MAX=8
 
     # Creating logfiles for component
-    logDir=$log/${compName}
+    logDir=@LOG_PATH@/${compName}
 
     if [[ ${noStatusCheck} -ne 1 ]]; then
         check_status ${PIDPATH} ${LOCKPATH} ${COMPPIDPATH} 1
@@ -492,18 +490,18 @@ startCmd() {
         UMASK_ARG="--umask ${umask}"
     fi
 
-    EXEC_COMMAND="${bin_path}/init_${compType} "
-    startcmd="${START_STOP_DAEMON} -S -p ${pid}/init_${compName}.pid -c ${user}:${group} -d ${compPath} ${UMASK_ARG} -m -x ${EXEC_COMMAND} -b"
+    EXEC_COMMAND="@BIN_PATH@/init_${compType} "
+    startcmd="${START_STOP_DAEMON} -S -p @PID_PATH@/init_${compName}.pid -c ${user}:${group} -d ${compPath} ${UMASK_ARG} -m -x ${EXEC_COMMAND} -b"
 
     log "${startcmd}"
 
     # Creating a Lock
-    lockPath=${lock}/${compName}
-    if [ ! -d $lockPath ]; then
-        mkdir -p $lockPath >>/dev/null 2>&1
+    lockPath=@LOCK_PATH@/${compName}
+    if [ ! -d @LOCK_PATH@ ]; then
+        mkdir -p @LOCK_PATH@ >>/dev/null 2>&1
     fi
-    chown -c $user:$group $lockPath >> /dev/null 2>&1
-    lock ${lock}/${compName}/${compName}.lock
+    chown -c $user:$group @LOCK_PATH@ >> /dev/null 2>&1
+    lock @LOCK_PATH@/${compName}/${compName}.lock
 
     if [ $__lockCreated -eq 0 ]; then
         log "Cannot create the lock file. File locked by subsystem"
@@ -594,11 +592,11 @@ stop_component() {
 start_component() {
 
     # Creating logdirs for component
-    logDir=$log/${compName}
+    logDir=@LOG_PATH@/${compName}
 
-    if [ ! -d $logDir ]; then
-        mkdir -p $logDir >> tmp.txt 2>&1
-        chown -c $user:$group $logDir >> /dev/null 2>&1
+    if [ ! -d @LOG_PATH@Dir ]; then
+        mkdir -p @LOG_PATH@Dir >> tmp.txt 2>&1
+        chown -c $user:$group @LOG_PATH@Dir >> /dev/null 2>&1
     fi
 
     # Creating Runtime
@@ -689,7 +687,7 @@ setup_component() {
 
 create_dropzone() {
     validate_configuration
-    dropzones=$(${configgen_path}/configgen -env ${envfile} -listdirs)
+    dropzones=$(@SBIN_PATH@/configgen -env ${envfile} -listdirs)
     rc=$?
     if [[ $rc -ne 0 ]]; then
         log  "create_dropzone(): failure in configgen call"
@@ -861,7 +859,7 @@ run_cluster() {
 
     if [[ -z "$3" ]]; then
         validate_configuration
-        t_IP=$(${INSTALL_DIR}/sbin/configgen -env ${CONFIG_DIR}/${ENV_XML_FILE} -machines)
+        t_IP=$(@SBIN_PATH@/configgen -env @CONFIG_PATH@/@ENV_XML_FILE@ -machines)
         rc=$?
         if [[ $rc -ne 0 ]]; then
             log  "run_cluster(): failure in configgen call"
@@ -902,8 +900,8 @@ run_cluster() {
    _num_failed=0
    _num_processed=0
    _pregress=0
-   _log_file=${LOG_DIR}/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
-   [ ! -d ${LOG_DIR}/cluster ] && mkdir -p ${LOG_DIR}/cluster
+   _log_file=@LOG_PATH@/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
+   [ ! -d @LOG_PATH@/cluster ] && mkdir -p @LOG_PATH@/cluster
    [ -e $_log_file ] && rm -rf $_log_file
    if [ "$RUN_CLUSTER_DISPLAY_OUTPUT" != "TRUE" ]
    then
@@ -958,8 +956,8 @@ cluster_tools_init() {
    [ "$(id -u)" != "0" ] && _cmd_prefix=sudo
 
    # Check and set log directory
-   CLUSTER_LOG_DIR=${LOG_DIR}/cluster
-   [ ! -d $LOG_DIR ]  && ${_cmd_prefix} /etc/init.d/hpcc-init status > /dev/null 2>&1
+   CLUSTER_LOG_DIR=@LOG_PATH@/cluster
+   [ ! -d @LOG_PATH@ ]  && ${_cmd_prefix} /etc/init.d/hpcc-init status > /dev/null 2>&1
 
    [ ! -d $CLUSTER_LOG_DIR ] && mkdir -p $CLUSTER_LOG_DIR
    # workaround inconsistency of stat command

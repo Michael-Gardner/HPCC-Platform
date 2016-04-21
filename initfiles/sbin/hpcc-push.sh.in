@@ -20,8 +20,6 @@
 # This is acomplished with a standard scp command with the use of the
 # runtime users id_rsa file.
 
-###<REPLACE>###
-
 source @SBIN_PATH@/hpcc_common
 source @SBIN_PATH@/init-functions
 source @SBIN_PATH@/export-path
@@ -89,7 +87,7 @@ fi
 source=
 target=
 exclude=0
-OPTION="-e ${CONFIG_DIR}/${ENV_CONF_FILE} -s ${SECTION:-DEFAULT}"
+OPTION="-e @CONFIG_PATH@/@ENV_CONF_FILE@ -s ${SECTION:-DEFAULT}"
 
 
 TEMP=`/usr/bin/getopt -o n:s:t:hx --long help,conrrent:,source:,target:,exclude -n 'hpcc-push' -- "$@"`
@@ -130,7 +128,7 @@ python_expected_version=2.6
 is_python_installed ${python_expected_version}
 if [ $? -eq 0 ]
 then
-   eval ${INSTALL_DIR}/sbin/cluster_script.py -f ${SCRIPT_FILE} $OPTION
+   eval @SBIN_DIR@/cluster_script.py -f ${SCRIPT_FILE} $OPTION
 else
    echo ""
    echo "Cannot detect python version ${python_expected_version}+. Will run on the cluster hosts sequentially."

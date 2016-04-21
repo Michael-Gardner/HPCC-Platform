@@ -14,21 +14,24 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-HPCC_ADD_SUBDIRECTORY (hpcc)
-HPCC_ADD_SUBDIRECTORY (ecl)
+HPCC_ADD_SUBDIRECTORY(hpcc)
+HPCC_ADD_SUBDIRECTORY(ecl)
 
-configure_file("environment.xml.in" "environment.xml")
+configure_file("environment.xml.in" "environment.xml" @ONLY)
 
-Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/environment.xml DESTINATION "./testing/regress" COMPONENT Runtime )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/environment.xml
+  DESTINATION "${SHARE_PATH}/testing/regress"
+  COMPONENT Runtime )
 
-Install ( DIRECTORY download hpcc ecl DESTINATION "./testing/regress" COMPONENT Runtime
-          USE_SOURCE_PERMISSIONS
-          FILES_MATCHING
-          PATTERN "hpcc/__init__.py"
-          PATTERN "download/0drvb10.txt"
-          PATTERN "download/donQuixote.txt"
-          PATTERN "download/pge0112.txt"
-          PATTERN "download/spray_test.txt"
-          PATTERN "ecl/*.ecl"
-          PATTERN "ecl/*.xml"
-          PATTERN "ecl/*.queryxml" )
+install(DIRECTORY download hpcc ecl
+  DESTINATION "${SHARE_PATH}/testing/regress" COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+  PATTERN "hpcc/__init__.py"
+  PATTERN "download/0drvb10.txt"
+  PATTERN "download/donQuixote.txt"
+  PATTERN "download/pge0112.txt"
+  PATTERN "download/spray_test.txt"
+  PATTERN "ecl/*.ecl"
+  PATTERN "ecl/*.xml"
+  PATTERN "ecl/*.queryxml")

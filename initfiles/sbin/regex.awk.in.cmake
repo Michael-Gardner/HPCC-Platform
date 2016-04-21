@@ -13,8 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-/LocalEnvFile/ && ( NEW_ENVFILE != "" ) { gsub("${CONFIG_DIR}/${ENV_XML_FILE}", NEW_ENVFILE )}
-/LocalEnvConfFile/ && ( NEW_CONFFILE != "" ) { gsub("${CONFIG_DIR}/${ENV_CONF_FILE}", NEW_CONFFILE )  }
+/LocalEnvFile/ && ( NEW_ENVFILE != "" ) { gsub("@CONFIG_PATH@}/@ENV_XML_FILE@", NEW_ENVFILE )}
+/LocalEnvConfFile/ && ( NEW_CONFFILE != "" ) { gsub("@CONFIG_PATH@/@ENV_CONF_FILE@", NEW_CONFFILE )  }
 /EspBinding/ && ( NEW_PORT != "" )  { gsub(/port=\"[0-9]*\"/, "port=\""NEW_PORT  "\"" )  }
 
 { print $0 }

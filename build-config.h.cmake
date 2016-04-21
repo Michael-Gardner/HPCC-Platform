@@ -30,8 +30,8 @@
     #cmakedefine COMPONENTFILES_DIR "${COMPONENTFILES_PATH}"
 #endif
 
-#ifndef CONFIG_DIR
-    #define CONFIG_DIR "${CONFIG_DIR}"
+#ifndef CONFIG_PATH
+    #define CONFIG_PATH "${CONFIG_PATH}"
 #endif
 
 #ifndef CONFIG_SOURCE_DIR
@@ -50,8 +50,8 @@
     #cmakedefine RUNTIME_DIR "${RUNTIME_PATH}"
 #endif
 
-#ifndef HOME_DIR
-    #cmakedefine HOME_DIR "${HOME_DIR}"
+#ifndef HOME_PREFIX
+#cmakedefine HOME_PREFIX "${HOME_PREFIX}"
 #endif
 
 #ifndef LOCK_DIR

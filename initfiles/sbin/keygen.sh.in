@@ -15,9 +15,7 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
-HPCC_CONFIG=${HPCC_CONFIG:-${CONFIG_DIR}/${ENV_CONF_FILE}}
+HPCC_CONFIG=${HPCC_CONFIG:-@CONFIG_PATH@/@ENV_CONF_FILE@}
 SECTION=${1:-DEFAULT}
 
 

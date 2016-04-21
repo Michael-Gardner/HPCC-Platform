@@ -214,7 +214,7 @@
       </xs:annotation>
     </xs:attribute>
 
-    <xs:attribute name="pluginDirectory" type="absolutePath" use="optional" default="${PLUGINS_PATH}/">
+    <xs:attribute name="pluginDirectory" type="absolutePath" use="optional" default="@PLUGINS_PATH@/">
       <xs:annotation>
         <xs:appinfo>
           <tooltip>Directory where plugins are located</tooltip>

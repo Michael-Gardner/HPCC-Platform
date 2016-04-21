@@ -27,8 +27,6 @@
 # 3. Return.
 #
 
-###<REPLACE>###
-
 source @SBIN_PATH@/hpcc_common
 source @SBIN_PATH@/init-functions
 source @SBIN_PATH@/export-path
@@ -114,9 +112,9 @@ createPayload(){
         cp -r ${KEY_DIR}/* ${NEW}/
     fi
     cp -r ${PKG} ${REMOTE_INSTALL}
-    cp -r ${CONFIG_DIR}/${ENV_XML_FILE} ${REMOTE_INSTALL}
-    cp -r ${CONFIG_DIR}/${ENV_CONF_FILE} ${REMOTE_INSTALL}
-    cp -r ${INSTALL_DIR}/sbin/remote-install-engine.sh ${REMOTE_INSTALL}
+    cp -r @CONFIG_PATH@/@ENV_XML_FILE@ ${REMOTE_INSTALL}
+    cp -r @CONFIG_PATH@/@ENV_CONF_FILE@ ${REMOTE_INSTALL}
+    cp -r @SBIN_PATH@/remote-install-engine.sh ${REMOTE_INSTALL}
 
     echo "tar -zcvf /tmp/remote_install.tgz ${REMOTE_INSTALL}/*"
     tar -zcvf /tmp/remote_install.tgz ${REMOTE_INSTALL}/*
@@ -146,7 +144,7 @@ fi
 
 NEW_KEY=0
 COPY_KEY=0
-OPTIONS="-l DEBUG -e ${CONFIG_DIR}/${ENV_CONF_FILE} -s ${SECTION:-DEFAULT}"
+OPTIONS="-l DEBUG -e @CONFIG_PATH@/@ENV_CONF_FILE@ -s ${SECTION:-DEFAULT}"
 
 TEMP=`/usr/bin/getopt -o p:n:s:kh --long help,pushkeydir,newkey,concurrent: -n 'install-cluster' -- "$@"`
 if [ $? != 0 ] ; then echo "Failure to parse commandline." >&2 ; exit 1 ; fi
@@ -210,12 +208,12 @@ is_python_installed ${expected_python_version}
 
 if [ $? -eq 0 ]
 then
-   chksum=$(md5sum ${INSTALL_DIR}/sbin/install-hpcc.exp | cut -d' ' -f1)
-   eval ${INSTALL_DIR}/sbin/cluster_script.py -f ${INSTALL_DIR}/sbin/install-hpcc.exp -c $chksum $OPTIONS
+   chksum=$(md5sum @SBIN_PATH@/install-hpcc.exp | cut -d' ' -f1)
+   eval @SBIN_PATH@/cluster_script.py -f @SBIN_PATH@/install-hpcc.exp -c $chksum $OPTIONS
 else
    echo ""
    echo "Cannot detect python version ${expected_python_version}+. Will run on the cluster hosts sequentially."
    echo ""
-   run_cluster ${INSTALL_DIR}/sbin/install-hpcc.exp 0
+   run_cluster @SBIN_PATH@/install-hpcc.exp 0
 fi
 removePayload;

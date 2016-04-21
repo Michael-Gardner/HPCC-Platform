@@ -14,18 +14,15 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-configure_file("version.in" "version")
-configure_file("environment.conf.in" "environment.conf")
-configure_file("environment.xml.in" "environment.xml")
-FOREACH( iFILES
-    ${CMAKE_CURRENT_BINARY_DIR}/environment.conf
-    ${CMAKE_CURRENT_BINARY_DIR}/version
-)
-    Install ( FILES ${iFILES}  DESTINATION .${CONFIG_DIR} COMPONENT Runtime )	#  Don't delete the "."
-ENDFOREACH ( iFILES)
+configure_file("version.in" "version" @ONLY)
+configure_file("environment.conf.in" "environment.conf" @ONLY)
+configure_file("environment.xml.in" "environment.xml" @ONLY)
 
-Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/environment.xml DESTINATION .${CONFIG_DIR}/rpmnew COMPONENT Runtime ) 	#  Don't delete the "."
-Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/environment.conf DESTINATION .${CONFIG_DIR}/rpmnew COMPONENT Runtime )
-Install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/genenvrules.conf DESTINATION .${CONFIG_DIR}/rpmnew COMPONENT Runtime )
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/environment.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/environment.conf
+  ${CMAKE_CURRENT_SOURCE_DIR}/genenvrules.conf
+  ${CMAKE_CURRENT_BINARY_DIR}/version.xml
+  DESTINATION ${CONFIG_PATH} COMPONENT Runtime)
 
-ADD_SUBDIRECTORY(configmgr)
+add_subdirectory(configmgr)

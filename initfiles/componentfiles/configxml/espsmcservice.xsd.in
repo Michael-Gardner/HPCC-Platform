@@ -68,7 +68,7 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:attribute>
-            <xs:attribute name="pluginsPath" type="relativePath" use="optional" default="${PLUGINS_PATH}">
+            <xs:attribute name="pluginsPath" type="relativePath" use="optional" default="@PLUGINS_PATH@">
                 <xs:annotation>
                     <xs:appinfo>
                         <tooltip>Path where plugin files are deployed</tooltip>

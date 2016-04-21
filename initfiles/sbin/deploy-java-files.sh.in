@@ -20,9 +20,6 @@
 # This is acomplished with a standard scp command with the use of the
 # runtime users id_rsa file.
 
-###<REPLACE>###
-
-
 source @SBIN_PATH@/hpcc_common
 
 usage() {
@@ -461,7 +458,7 @@ fi
 
 [ -n "$source" ] && setUser
 
-HPCC_CONFIG=${CONFIG_DIR}/${ENV_CONF_FILE}
+HPCC_CONFIG=@CONFIG_PATH@/@ENV_CONF_FILE@
 
 
 if [[ $target = */ ]]

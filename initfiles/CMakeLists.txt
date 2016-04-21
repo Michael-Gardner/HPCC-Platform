@@ -14,36 +14,24 @@
 #    limitations under the License.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8)
-PROJECT(initfiles)
+cmake_minimum_required(VERSION 3.2)
+project(initfiles)
 
-if ( PLATFORM AND UNIX )
-    HPCC_ADD_EXECUTABLE(processor processor.cpp)
-
-    MACRO(GENERATE_BASH processor bash-vars in out)
-        MESSAGE(STATUS "Process file: ${in}")
-        STRING(REGEX REPLACE ".in\$" "" outfileName "${in}")
-        SET(outfile "${CMAKE_CURRENT_BINARY_DIR}/${outfileName}")
-        MESSAGE(STATUS "Output file: ${outfile}")
-        SET(infile "${CMAKE_CURRENT_SOURCE_DIR}/${in}")
-        ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
-            COMMAND $<TARGET_FILE:processor>
-            "${bash-vars}" "${infile}" "${outfile}"
-            COMMAND chmod 0755 ${outfile}
-            DEPENDS "${infile}" processor # depends on the 'processor'
-            COMMENT "Generating: ${outfile}")
-        SET(${out} ${${out}} "${outfile}")
-    ENDMACRO(GENERATE_BASH)
-
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/bash-vars.in" "${CMAKE_BINARY_DIR}/bash-vars")
-    set(bash-vars "${CMAKE_BINARY_DIR}/bash-vars")
-
-    ADD_SUBDIRECTORY(bash)
-    ADD_SUBDIRECTORY(bin)
-    ADD_SUBDIRECTORY(etc)
-    ADD_SUBDIRECTORY(sbin)
-    ADD_SUBDIRECTORY(componentfiles)
+if(PLATFORM AND UNIX)
+  add_subdirectory(bash)
+  add_subdirectory(bin)
+  add_subdirectory(etc)
+  add_subdirectory(sbin)
+  add_subdirectory(componentfiles)
 endif ()
 
-Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples DESTINATION "." COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE )
-Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/classes DESTINATION "." COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE )
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples
+  DESTINATION ${SHARE_PATH}
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  PATTERN ".svn" EXCLUDE)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/classes
+  DESTINATION ${SHARE_PATH}
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  PATTERN ".svn" EXCLUDE)

@@ -16,8 +16,6 @@
 #    along with All rights reserved. This program is free software: you can redistribute program.  If not, see <http://www.gnu.org/licenses/>.
 #############################################
 
-###<REPLACE>###
-
 source @SBIN_PATH@/hpcc_common
 source @SBIN_PATH@/init-functions
 

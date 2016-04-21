@@ -734,7 +734,7 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:attribute-->
-            <xs:attribute name="componentfilesDir" type="xs:string" use="optional" default="${COMPONENTFILES_PATH}">
+            <xs:attribute name="componentfilesDir" type="xs:string" use="optional" default="@COMPONENTFILES_PATH@">
                 <xs:annotation>
                     <xs:appinfo>
                         <autogenforwizard>1</autogenforwizard>

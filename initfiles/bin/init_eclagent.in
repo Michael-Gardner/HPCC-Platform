@@ -15,8 +15,6 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
 PATH_PRE=$(type -path hpcc_setenv)
 source ${PATH_PRE}
 PID_NAME="$PID/$(basename $PWD).pid"
@@ -25,7 +23,7 @@ source @SBIN_PATH@/hpcc_common
 component=$(basename $PWD)
 dir.getByName lock
 lock="$dir_return"
-export logfile="${LOG_DIR}/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
+export logfile="@LOG_PATH@/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
 
 export SENTINEL="agentexec.sentinel"
 log "Removing $SENTINEL"
@@ -42,7 +40,7 @@ killed ()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock /var/lock/HPCCSystems/$component/${component}.lock
+        unlock @LOCK_PATH@/$component/${component}.lock
     fi
     exit 255
 }
