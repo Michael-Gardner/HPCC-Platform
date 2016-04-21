@@ -48,7 +48,7 @@ ADD_DEFINITIONS( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( ecl-roxie ${SRCS} )
 add_dependencies ( ecl-roxie espscm )
-install ( TARGETS ecl-roxie RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS ecl-roxie RUNTIME DESTINATION ${BIN_DIR} )
 target_link_libraries ( ecl-roxie
         jlib
         esphttp

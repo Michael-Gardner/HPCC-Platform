@@ -65,7 +65,7 @@ set_target_properties(workunit PROPERTIES
 if(NOT PLUGIN)
     install(
         TARGETS workunit
-        RUNTIME DESTINATION ${EXEC_DIR}
+        RUNTIME DESTINATION ${BIN_DIR}
         LIBRARY DESTINATION ${LIB_DIR})
     target_link_libraries(
         workunit 

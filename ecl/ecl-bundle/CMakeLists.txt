@@ -58,7 +58,7 @@ include_directories (
 ADD_DEFINITIONS( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( ecl-bundle ${SRCS} )
-install ( TARGETS ecl-bundle RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS ecl-bundle RUNTIME DESTINATION ${BIN_DIR} )
 target_link_libraries ( ecl-bundle
         jlib
         esphttp

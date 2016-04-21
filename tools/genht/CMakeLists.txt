@@ -41,6 +41,6 @@ HPCC_ADD_EXECUTABLE ( genht ${SRCS} )
 target_link_libraries ( genht
         jlib 
     )
-install ( TARGETS genht RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS genht RUNTIME DESTINATION ${BIN_DIR} )
 
 

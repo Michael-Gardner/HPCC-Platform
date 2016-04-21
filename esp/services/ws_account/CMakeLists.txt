@@ -54,7 +54,7 @@ include_directories ( ${OPENLDAP_INCLUDE_DIR} )
 ADD_DEFINITIONS( -D_USRDLL )
 
 HPCC_ADD_LIBRARY( ws_account SHARED ${SRCS} )
-install ( TARGETS ws_account RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT Runtime )
+install ( TARGETS ws_account RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT Runtime )
 add_dependencies (ws_account espscm)
 target_link_libraries ( ws_account 
          jlib

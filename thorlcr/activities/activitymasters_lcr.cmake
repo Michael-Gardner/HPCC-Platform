@@ -97,7 +97,7 @@ HPCC_ADD_LIBRARY( activitymasters_lcr SHARED ${SRCS} )
 set_target_properties(activitymasters_lcr PROPERTIES 
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL ACTIVITYMASTERS_EXPORTS )
-install ( TARGETS activitymasters_lcr RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS activitymasters_lcr RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( activitymasters_lcr
          jlib
          remote 
