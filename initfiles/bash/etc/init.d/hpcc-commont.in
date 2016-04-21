@@ -1,4 +1,5 @@
-## hpcc_common.lib
+#!/bin/bash
+## hpcc-common.lib
 ################################################################################
 #    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
 #
@@ -50,10 +51,10 @@ which_pidof(){
     fi
 }
 
-source @SBIN_PATH@/lock.sh
-source @SBIN_PATH@/pid.sh
-source @SBIN_PATH@/init-functions
-source @SBIN_PATH@/export-path
+source @SBIN_PATH@/hpcc-lock
+source @SBIN_PATH@/hpcc-pid
+source @SBIN_PATH@/hpcc-init-functions
+source @SBIN_PATH@/hpcc-export-path
 
 
 cfg.parser () {

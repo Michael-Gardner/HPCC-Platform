@@ -15,7 +15,7 @@
 #    limitations under the License.
 ################################################################################
 
-source @SBIN_PATH@/hpcc_common
+source @SBIN_PATH@/hpcc-common
 which_pidof
 set_environmentvars
 

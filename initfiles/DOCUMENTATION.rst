@@ -20,7 +20,7 @@ and in /etc/init.d pointing to initialization scripts
 Install process internals
 =========================
 
-The install-init process makes use of 3 bash functions along with the hpcc_common functions.
+The install-init process makes use of 3 bash functions along with the hpcc-common functions.
 
 *installConfs*
   Used to copy config files into place if they do not exist. It will not replacean existing file.
@@ -105,16 +105,16 @@ Directory structure of initfiles
   - etc/
    - init.d/
     - dafilesrv.in - dafilesrv init script
-    - export-path
-    - hpcc_common.in - common functions for hpcc scripts
+    -/hpcc-export-path
+    - hpcc-common.in - common functions for hpcc scripts
     - hpcc-init.in - hpcc-init init script
     - hpcc-init.install -  hpcc-init install script used by package install
     - hpcc-init.uninstall - hpcc-init uninstall script used by package uninstall
-    - init-functions - common functions related completely to init
+    - hpcc-init-functions - common functions related completely to init
     - install-init.in - script used to install hpcc init system on package install
-    - lock.sh - common functions related to lock files
+    - hpcc-lock - common functions related to lock files
     - lsb-base-logging.sh - common functions related to logging to terminal
-    - pid.sh - common functions related to pid files
+    - hpcc-pid - common functions related to pid files
     - uninstall-init.in - script used to uninstall hpcc init system on package uninstall
 
   - sbin/ - Directory containing bash based package install sripts

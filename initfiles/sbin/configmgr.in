@@ -21,7 +21,7 @@
 
 DEBUG=${DEBUG:-NO_DEBUG}
 
-source @SBIN_PATH@/hpcc_common
+source @SBIN_PATH@/hpcc-common
 
 createConf ()
 {

@@ -27,9 +27,9 @@
 # 3. Return.
 #
 
-source @SBIN_PATH@/hpcc_common
-source @SBIN_PATH@/init-functions
-source @SBIN_PATH@/export-path
+source @SBIN_PATH@/hpcc-common
+source @SBIN_PATH@/hpcc-init-functions
+source @SBIN_PATH@/hpcc-export-path
 
 export REMOTE_INSTALL="/tmp/remote_install"
 export NEW="${REMOTE_INSTALL}/new_keys"

@@ -20,7 +20,7 @@
 # This is acomplished with a standard scp command with the use of the
 # runtime users id_rsa file.
 
-source @SBIN_PATH@/hpcc_common
+source @SBIN_PATH@/hpcc-common
 
 usage() {
     echo ""

@@ -31,7 +31,7 @@ hpcc_setenv=${12}
 export logfile="${logpth}/${hpcc_compname}/${13}"
 
 source "$hpcc_setenv"
-source "$(dirname $hpcc_setenv)/../etc/init.d/hpcc_common"
+source "$(dirname $hpcc_setenv)/../etc/init.d/hpcc-common"
 
 slavename=thorslave_${hpcc_compname}
 

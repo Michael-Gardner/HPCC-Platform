@@ -48,11 +48,11 @@ function print_usage {
     exit 0
 }
 
-source @SBIN_PATH@/lock.sh
-source @SBIN_PATH@/pid.sh
-source @SBIN_PATH@/hpcc_common
-source @SBIN_PATH@/init-functions
-source @SBIN_PATH@/export-path
+source @SBIN_PATH@/hpcc-lock
+source @SBIN_PATH@/hpcc-pid
+source @SBIN_PATH@/hpcc-common
+source @SBIN_PATH@/hpcc-init-functions
+source @SBIN_PATH@/hpcc-export-path
 
 ## Debug variable allowing verbose debug output
 ##

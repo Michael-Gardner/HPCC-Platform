@@ -82,11 +82,11 @@ function print_types {
 
 
 
-source @SBIN_PATH@/lock.sh
-source @SBIN_PATH@/pid.sh
-source @SBIN_PATH@/hpcc_common
-source @SBIN_PATH@/init-functions
-source @SBIN_PATH@/export-path
+source @SBIN_PATH@/hpcc-lock
+source @SBIN_PATH@/hpcc-pid
+source @SBIN_PATH@/hpcc-common
+source @SBIN_PATH@/hpcc-init-functions
+source @SBIN_PATH@/hpcc-export-path
 
 export logfile=@LOG_PATH@/hpcc-init.log
 

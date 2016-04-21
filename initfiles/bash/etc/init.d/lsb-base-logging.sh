@@ -1,7 +1,7 @@
 # This code is a modified version of the Debian based Ubuntu lsb-base-logging.sh
 #
 # This will provide functionality to the hooks provided in the modified version
-# of the Debian based Ubuntu's  init-functions.
+# of the Debian based Ubuntu's  hpcc-init-functions.
 #
 # This has been tested to function for shell output for init purposes on 
 # Centos 5.5, Debian 5.0.3, Fedora 13, Linux Mint 9, Suse 11.1, and Ubuntu 
@@ -14,7 +14,7 @@
 ##
 
 # Default init script logging functions suitable for Ubuntu.
-# See /lib/lsb/init-functions for usage help.
+# See /lib/lsb/hpcc-init-functions for usage help.
 
 log_use_usplash () {
     if [ "${loop:-n}" = y ]; then

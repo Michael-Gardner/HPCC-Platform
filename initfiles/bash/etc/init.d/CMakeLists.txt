@@ -14,30 +14,31 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
+configure_file(dafilesrv.in dafilesrv @ONLY)
+configure_file(hpcc-init.in hpcc-init @ONLY)
+configure_file(hpcc-common.in hpcc-common @ONLY)
 
-GENERATE_BASH(processor ${bash-vars} "dafilesrv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "install-init.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc-init.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc_common.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "uninstall-init.in" outFiles)
+set(initScripts
+  ${CMAKE_CURRENT_BINARY_DIR}/dafilesrv
+  ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
+  ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
+  ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init
+  ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init.service
+  ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init@.service)
 
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bash-etc-init.d ALL DEPENDS ${outFiles})
-FOREACH( oFILES
-    ${outFiles}
-    ${CMAKE_CURRENT_SOURCE_DIR}/pid.sh
-    ${CMAKE_CURRENT_SOURCE_DIR}/lock.sh
-    ${CMAKE_CURRENT_SOURCE_DIR}/init-functions
-    ${CMAKE_CURRENT_SOURCE_DIR}/export-path
-    ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init.service
-    ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init@.service
-    ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
-    ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
-)
-    install ( PROGRAMS ${oFILES} DESTINATION etc/init.d COMPONENT Runtime )
-ENDFOREACH ( oFILES )
+set(bashScripts
+  ${CMAKE_CURRENT_BINARY_DIR}/hpcc-common
+  ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-pid
+  ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-lock
+  ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init-functions
+  ${CMAKE_CURRENT_SOURCE_DIR}//hpcc-export-path)
 
-if ( PLATFORM )
-    install ( PROGRAMS hpcc-init.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS hpcc-init.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
-endif()
+add_custom_target(ProcessFiles-initfiles-bash-etc-init.d ALL DEPENDS ${initScripts} ${bashScripts})
+
+foreach(iFile ${initScripts})
+  install(PROGRAMS ${iFile} DESTINATION /etc/init.d COMPONENT Runtime)
+endforeach()
+
+foreach(bFile ${bashScripts})
+  install(PROGRAMS ${bFile} DESTINATION ${SBIN_PATH} COMPONENT Runtime)
+endforeach()

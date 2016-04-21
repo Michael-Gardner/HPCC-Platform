@@ -20,9 +20,9 @@
 # This is acomplished with a standard ssh command with the use of the
 # runtime users id_rsa file.
 
-source @SBIN_PATH@/hpcc_common
-source @SBIN_PATH@/init-functions
-source @SBIN_PATH@/export-path
+source @SBIN_PATH@/hpcc-common
+source @SBIN_PATH@/hpcc-init-functions
+source @SBIN_PATH@/hpcc-export-path
 
 print_usage(){
     echo
