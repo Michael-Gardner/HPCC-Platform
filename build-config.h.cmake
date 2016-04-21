@@ -2,8 +2,8 @@
     #cmakedefine PREFIX "${PREFIX}"
 #endif
 
-#ifndef EXEC_PREFIX
-    #cmakedefine EXEC_PREFIX "${EXEC_PREFIX}"
+#ifndef RUNTIME_PREFIX
+    #cmakedefine RUNTIME_PREFIX "${RUNTIME_PREFIX}"
 #endif
 
 #ifndef CONFIG_PREFIX
