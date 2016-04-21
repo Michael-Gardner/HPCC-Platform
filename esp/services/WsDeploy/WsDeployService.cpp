@@ -34,7 +34,7 @@
 #define STANDARD_CONFIG_SOURCEDIR CONFIG_DIR
 #define STANDARD_CONFIG_STAGED_PATH "/etc/HPCCSystems/environment.xml"
 
-#define DEFAULT_DIRECTORIES "<Directories name=\"" DIR_NAME "\">\
+#define DEFAULT_DIRECTORIES "<Directories name=\"" HPCC_PROJECT_NAME "\">\
       <Category dir=\"" EXEC_PREFIX "/log/[NAME]/[INST]\" name=\"log\"/>\
       <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/[INST]\" name=\"run\"/>\
       <Category dir=\"" CONFIG_PREFIX "/[NAME]/[INST]\" name=\"conf\"/>\

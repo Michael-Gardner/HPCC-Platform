@@ -18,7 +18,7 @@
 -->
 <Environment>
 <Software>
-    <Directories name="${DIR_NAME}">
+    <Directories name="${HPCC_PROJECT_NAME}">
       <Category dir="${EXEC_PREFIX}/log/[NAME]/[INST]" name="log"/>
       <Category dir="${EXEC_PREFIX}/lib/[NAME]/[INST]" name="run"/>
       <Category dir="${CONFIG_PREFIX}/[NAME]/[INST]" name="conf"/>
@@ -32,7 +32,7 @@
     </Directories>  
 </Software>
 <Programs>
-  <Build name="${CPACK_RPM_PACKAGE_VERSION}_${CPACK_RPM_PACKAGE_RELEASE}" url="${PREFIX}/${DIR_NAME}">
+  <Build name="${CPACK_RPM_PACKAGE_VERSION}_${CPACK_RPM_PACKAGE_RELEASE}" url="${PREFIX}/${HPCC_PROJECT_NAME}">
    <BuildSet installSet="deploy_map.xml"
              name="dafilesrv"
              path="componentfiles/dafilesrv"

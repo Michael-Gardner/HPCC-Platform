@@ -179,7 +179,7 @@ static bool getHomeFolder(StringBuffer & homepath)
 #ifndef WIN32
     homepath.append('.');
 #endif
-    homepath.append(DIR_NAME);
+    homepath.append(HPCC_PROJECT_NAME);
     return true;
 }
 

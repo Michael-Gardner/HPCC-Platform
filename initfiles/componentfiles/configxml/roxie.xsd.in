@@ -393,12 +393,12 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="directory" type="absolutePath" use="optional" default="${EXEC_PREFIX}/lib/${DIR_NAME}/roxie/">
+      <xs:attribute name="directory" type="absolutePath" use="optional" default="${RUNTIME_PREFIX}/lib/${HPCC_PROJECT_NAME}/roxie/">
         <xs:annotation>
           <xs:appinfo>
             <tooltip>Specifies the directory to which the software will be deployed.</tooltip>
             <autogenforwizard>1</autogenforwizard>
-            <autogenprefix>${EXEC_PREFIX}/lib/${DIR_NAME}/</autogenprefix>
+            <autogenprefix>${RUNTIME_PREFIX}/lib/${HPCC_PROJECT_NAME}/</autogenprefix>
           </xs:appinfo>
         </xs:annotation>
       </xs:attribute>

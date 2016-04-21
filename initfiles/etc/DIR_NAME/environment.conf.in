@@ -16,7 +16,7 @@ group=${RUNTIME_GROUP}
 home=${HOME_DIR}
 environment=${ENV_XML_FILE}
 sourcedir=${CONFIG_SOURCE_PATH}
-blockname=${DIR_NAME}
+blockname=${HPCC_PROJECT_NAME}
 interface=*
 # enable epoll method for notification events (true/false)
 use_epoll=true

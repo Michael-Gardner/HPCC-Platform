@@ -10,8 +10,8 @@
     #cmakedefine CONFIG_PREFIX "${CONFIG_PREFIX}"
 #endif
 
-#ifndef DIR_NAME
-    #cmakedefine DIR_NAME "${DIR_NAME}"
+#ifndef HPCC_PROJECT_NAME
+    #cmakedefine HPCC_PROJECT_NAME "${HPCC_PROJECT_NAME}"
 #endif
 
 #ifndef INSTALL_DIR
@@ -38,8 +38,8 @@
     #cmakedefine CONFIG_SOURCE_DIR "${CONFIG_SOURCE_PATH}"
 #endif
 
-#ifndef ADMIN_DIR
-    #cmakedefine ADMIN_DIR "${ADMIN_PATH}"
+#ifndef SBIN_DIR
+    #cmakedefine SBIN_DIR "${SBIN_PATH}"
 #endif
 
 #ifndef PLUGINS_DIR
