@@ -1,7 +1,8 @@
 ################################################################################
 #    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License");
+#    All rights reserved. This program is free software: you can redistribute it
+#    and/or modify
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
 #
@@ -14,8 +15,5 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "postinst.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "postrm.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bash-sbin-deb ALL DEPENDS ${outFiles})
-
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-systems.desktop DESTINATION ${SHARE_PATH} COMPONENT Runtime)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/LN.png DESTINATION ${SHARE_PATH} COMPONENT Runtime)

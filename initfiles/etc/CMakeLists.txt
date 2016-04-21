@@ -14,6 +14,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-ADD_SUBDIRECTORY(DIR_NAME)
-ADD_SUBDIRECTORY(sshkey)
-ADD_SUBDIRECTORY(bash_completion)
+add_subdirectory(HPCC_PROJECT_NAME)
+add_subdirectory(bash_completion)
+add_subdirectory(init.d)

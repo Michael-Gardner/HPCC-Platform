@@ -14,11 +14,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-FOREACH( oFILES
+foreach(oFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/ecl
     ${CMAKE_CURRENT_SOURCE_DIR}/eclcc
     ${CMAKE_CURRENT_SOURCE_DIR}/eclplus
-    ${CMAKE_CURRENT_SOURCE_DIR}/eclagent
-)
-    install ( FILES ${oFILES} DESTINATION ${INSTALL_DIR}/etc/bash_completion.d COMPONENT Runtime )
-ENDFOREACH ( oFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/eclagent)
+  install(FILES ${oFILES} DESTINATION ${SHARE_PATH}/bash_completion.d COMPONENT Runtime)
+endforeach(oFILES)

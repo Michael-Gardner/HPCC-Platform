@@ -14,7 +14,7 @@
 #    limitations under the License.
 ################################################################################
 
-ADD_SUBDIRECTORY(ftslave)
-ADD_SUBDIRECTORY(configxml)
-ADD_SUBDIRECTORY(thor)
-ADD_SUBDIRECTORY(launcher)
+configure_file(run_ftslave.in run_ftslave @ONLY)
+add_custom_target(configure-initfiles-share-componentfiles-ftslave ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/run_ftslave)
+
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/run_ftslave DESTINATION ${BIN_PATH})

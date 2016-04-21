@@ -14,6 +14,20 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
+configure_file("version.in" "version" @ONLY)
+configure_file("environment.conf.in" "environment.conf" @ONLY)
+configure_file("environment.xml.in" "environment.xml" @ONLY)
 
-install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-systems.desktop DESTINATION ${SHARE_PATH} COMPONENT Runtime )
-install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/LN.png DESTINATION ${SHARE_PATH} COMPONENT Runtime )
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/environment.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/environment.conf
+  ${CMAKE_CURRENT_SOURCE_DIR}/genenvrules.conf
+  ${CMAKE_CURRENT_BINARY_DIR}/version.xml
+  DESTINATION ${CONFIG_PATH} COMPONENT Runtime)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/.ssh.md5
+  DESTINATION ${CONFIG_PATH}
+  COMPONENT Runtime)
+
+add_subdirectory(.ssh)
+add_subdirectory(configmgr)

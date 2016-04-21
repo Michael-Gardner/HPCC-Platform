@@ -19,19 +19,8 @@ project(initfiles)
 
 if(PLATFORM AND UNIX)
   add_subdirectory(bash)
+  add_subdirectory(share)
   add_subdirectory(bin)
   add_subdirectory(etc)
   add_subdirectory(sbin)
-  add_subdirectory(componentfiles)
 endif ()
-
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples
-  DESTINATION ${SHARE_PATH}
-  COMPONENT Runtime
-  USE_SOURCE_PERMISSIONS
-  PATTERN ".svn" EXCLUDE)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/classes
-  DESTINATION ${SHARE_PATH}
-  COMPONENT Runtime
-  USE_SOURCE_PERMISSIONS
-  PATTERN ".svn" EXCLUDE)
