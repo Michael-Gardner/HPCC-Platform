@@ -23,7 +23,7 @@
 ###<REPLACE>###
 
 
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @SBIN_PATH@/hpcc_common
 
 usage() {
     echo ""
@@ -118,7 +118,7 @@ addScriptDeployFiles() {
 
    cat >> $SCRIPT_FILE <<SCRIPTMARKER
 
-${INSTALL_DIR}/sbin/deploy-java-files.exp --ip \$IP --source "${source}" \
+@SBIN_PATH@/deploy-java-files.exp --ip \$IP --source "${source}" \
    --target ${target} --user ${file_transfer_user} ${_options} || exit 1
 
 SCRIPTMARKER
@@ -127,12 +127,12 @@ SCRIPTMARKER
 
 ######################################################################
 #
-# Reset classpath to ${INSTALL_DIR}/classes
+# Reset classpath to @SHARE_PATH@/classes
 #
 ######################################################################
 resetClasspath() {
    cat >> $SCRIPT_FILE <<SCRIPTPATH
-NEW_JAVA_CLASSPATH="${INSTALL_DIR}/classes"
+NEW_JAVA_CLASSPATH="@SHARE_PATH@/classes"
 SCRIPTPATH
 }
 
@@ -368,7 +368,7 @@ setUser() {
 
   if [ "$file_transfer_user" != "root" ]
   then
-     echo $target | grep -q ${INSTALL_DIR}
+     echo $target | grep -q @PREFIX@
      [ $? -eq 0 ] && run_as_sudo=1
   fi
 
@@ -440,7 +440,7 @@ fi
 
 if [ -z "$target" ]; then
    if [ -n "$source" ]; then
-       target=${INSTALL_DIR}/classes
+       target=@SHARE_PATH@/classes
    elif  [ $reset_classpath -eq 0 ]; then
        echo ""
        echo "Missing target"
@@ -483,7 +483,7 @@ expected_python_version=2.6
 is_python_installed ${expected_python_version}
 if [ $? -eq 0 ]
 then
-   eval ${INSTALL_DIR}/sbin/cluster_script.py -e ${HPCC_CONFIG} -f "${SCRIPT_FILE}" -l DEBUG -s $SECTION $OPTION
+   eval @SBIN_PATH@/cluster_script.py -e ${HPCC_CONFIG} -f "${SCRIPT_FILE}" -l DEBUG -s $SECTION $OPTION
 else
    echo ""
    echo "Cannot detect python version ${expected_python_version}+. Will run on the cluster hosts sequentially."

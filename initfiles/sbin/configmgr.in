@@ -23,7 +23,7 @@
 
 DEBUG=${DEBUG:-NO_DEBUG}
 
-source ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @SBIN_PATH@/hpcc_common
 
 createConf ()
 {

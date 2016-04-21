@@ -17,7 +17,7 @@
 
 ###<REPLACE>###
 
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @SBIN_PATH@/hpcc_common
 which_pidof
 set_environmentvars
 

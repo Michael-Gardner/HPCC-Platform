@@ -20,7 +20,7 @@ PATH_PRE=$(type -path hpcc_setenv)
 source ${PATH_PRE}
 
 INSTALL_DIR=$(dirname ${PATH_PRE})/..
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @SBIN_PATH@/hpcc_common
 component=$(basename $PWD)
 dir.getByName lock
 lock="$dir_return"

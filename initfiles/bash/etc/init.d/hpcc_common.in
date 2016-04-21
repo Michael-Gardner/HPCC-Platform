@@ -52,10 +52,10 @@ which_pidof(){
     fi
 }
 
-source  ${INSTALL_DIR}/etc/init.d/lock.sh
-source  ${INSTALL_DIR}/etc/init.d/pid.sh
-source  ${INSTALL_DIR}/etc/init.d/init-functions
-source  ${INSTALL_DIR}/etc/init.d/export-path
+source @SBIN_PATH@/lock.sh
+source @SBIN_PATH@/pid.sh
+source @SBIN_PATH@/init-functions
+source @SBIN_PATH@/export-path
 
 
 cfg.parser () {

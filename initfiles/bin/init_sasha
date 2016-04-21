@@ -20,7 +20,7 @@ source ${PATH_PRE}
 PID_NAME="$PID/$(basename $PWD).pid"
 
 INSTALL_DIR="$(dirname ${PATH_PRE})/.."
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @SBIN_PATH@/hpcc_common
 
 component=$(basename $PWD)
 dir.getByName lock
