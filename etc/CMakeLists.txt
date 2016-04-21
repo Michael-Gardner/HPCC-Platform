@@ -1,8 +1,7 @@
 ################################################################################
 #    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
 #
-#    All rights reserved. This program is free software: you can redistribute it
-#    and/or modify
+#    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
 #
@@ -14,6 +13,16 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-add_subdirectory(HPCC_PROJECT_NAME)
-add_subdirectory(bash_completion)
-add_subdirectory(init.d)
+
+cmake_minimum_required(VERSION 3.2)
+project(initfiles)
+
+if(PLATFORM AND UNIX)
+  add_subdirectory(bash)
+  add_subdirectory(share)
+  add_subdirectory(bin)
+  add_subdirectory(HPCC_PROJECT_NAME)
+  add_subdirectory(bash_completion)
+  add_subdirectory(init.d)
+  add_subdirectory(sbin)
+endif ()
