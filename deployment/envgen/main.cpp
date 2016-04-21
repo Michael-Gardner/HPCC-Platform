@@ -19,7 +19,7 @@
 #include "deployutils.hpp"
 #include "build-config.h"
 
-#define ENVGEN_PATH_TO_ESP_CONFIG INSTALL_DIR "" CONFIG_DIR "/configmgr/esp.xml"
+#define ENVGEN_PATH_TO_ESP_CONFIG CONFIG_PATH "/configmgr/esp.xml"
 #define STANDARD_CONFIGXMLDIR COMPONENTFILES_DIR"/configxml/"
 #define STANDARD_CONFIG_BUILDSETFILE "buildset.xml"
 

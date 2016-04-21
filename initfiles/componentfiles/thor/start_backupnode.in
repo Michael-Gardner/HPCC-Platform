@@ -33,7 +33,7 @@ if [ -z "$PATH_PRE" ]; then
 fi
 source ${PATH_PRE} ""
 is_user ${user}
-DEPLOY_DIR=${INSTALL_DIR}/bin
+DEPLOY_DIR=${BIN_PATH}
 ENVPATH=${CONFIG_DIR}/${ENV_XML_FILE}
 RUN_DIR=`cat ${HPCC_CONFIG} | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^runtime=" | sed -e 's/^runtime=//'`
 INSTANCE_DIR=$RUN_DIR/$1

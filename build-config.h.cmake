@@ -14,8 +14,8 @@
     #cmakedefine HPCC_PROJECT_NAME "${HPCC_PROJECT_NAME}"
 #endif
 
-#ifndef INSTALL_DIR
-    #define INSTALL_DIR "${INSTALL_DIR}"
+#ifndef SHARE_PATH
+    #cmakedefine SHARE_PATH "${SHARE_PATH}"
 #endif
 
 #ifndef LIB_DIR

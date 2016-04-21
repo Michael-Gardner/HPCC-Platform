@@ -775,14 +775,14 @@
   <interface>*</interface>
   <mpSoMaxConn>128</mpSoMaxConn>
   <user>${RUNTIME_USER}</user>
-  <classpath>${INSTALL_DIR}/classes</classpath>
+  <classpath>${SHARE_PATH}/classes</classpath>
   <log>${LOG_PATH}</log>
   <logfields>TIM+DAT+MLT+MID+PID+TID+COD+QUO+PFX</logfields>
   <use_epoll>true</use_epoll>
   <runtime>${RUNTIME_PATH}</runtime>
   <lock>${LOCK_PATH}</lock>
   <configs>${CONFIG_DIR}</configs>
-  <path>${INSTALL_DIR}</path>
+  <path>${PREFIX}</path>
  </EnvSettings>
  <Programs>
   <Build name="_" url="${INSTALL_DIR}">
