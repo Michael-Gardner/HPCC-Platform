@@ -13,8 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-HPCC_ADD_SUBDIRECTORY (configgen "PLATFORM")
-HPCC_ADD_SUBDIRECTORY (deploy "PLATFORM")
-HPCC_ADD_SUBDIRECTORY (deployutils "PLATFORM")
-HPCC_ADD_SUBDIRECTORY (envgen "PLATFORM")
-HPCC_ADD_SUBDIRECTORY (configutils "PLATFORM")
+HPCC_ADD_SUBDIRECTORY(configgen "PLATFORM")
+HPCC_ADD_SUBDIRECTORY(deploy "PLATFORM")
+HPCC_ADD_SUBDIRECTORY(deployutils "PLATFORM")
+HPCC_ADD_SUBDIRECTORY(envgen "PLATFORM")
+HPCC_ADD_SUBDIRECTORY(configutils "PLATFORM")

@@ -13,65 +13,59 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: deploy 
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for deploy
 #####################################################
 
+project(deploy) 
 
-project( deploy ) 
+set(SRCS 
+  configgenengine.cpp 
+  dalideploymentengine.cpp 
+  deploy.cpp 
+  DeployLog.cpp 
+  DeploymentEngine.cpp 
+  DeployTask.cpp 
+  EspDeploymentEngine.cpp 
+  espconfiggenengine.cpp 
+  RoxieDeploymentEngine.cpp 
+  thorconfiggenengine.cpp 
+  ThorDeploymentEngine.cpp 
+  XslFunctions.cpp)
 
-set (    SRCS 
-         configgenengine.cpp 
-         dalideploymentengine.cpp 
-         deploy.cpp 
-         DeployLog.cpp 
-         DeploymentEngine.cpp 
-         DeployTask.cpp 
-         EspDeploymentEngine.cpp 
-         espconfiggenengine.cpp 
-         RoxieDeploymentEngine.cpp 
-         thorconfiggenengine.cpp 
-         ThorDeploymentEngine.cpp 
-         XslFunctions.cpp
-    )
+include_directories( 
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/xmllib
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/mp
+  ${HPCC_SOURCE_DIR}/common/environment
+  ${HPCC_SOURCE_DIR}/dali/base
+  ${HPCC_SOURCE_DIR}/system/security/securesocket
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss
+  ${HPCC_SOURCE_DIR}/deployment/configutils)
 
-include_directories ( 
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/xmllib
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/system/mp
-         ${HPCC_SOURCE_DIR}/common/environment
-         ${HPCC_SOURCE_DIR}/dali/base
-         ${HPCC_SOURCE_DIR}/system/security/securesocket
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-         ${HPCC_SOURCE_DIR}/deployment/configutils
-    )
+add_definitions(-D_USRDLL -DDEPLOY_EXPORTS)
 
-ADD_DEFINITIONS ( -D_USRDLL -DDEPLOY_EXPORTS )
+HPCC_ADD_LIBRARY(deploy SHARED ${SRCS})
+install(TARGETS deploy RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  deploy 
+  jlib 
+  environment 
+  xmllib 
+  configutils)
 
-HPCC_ADD_LIBRARY( deploy SHARED ${SRCS} )
-install ( TARGETS deploy RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( deploy 
-         jlib 
-         environment 
-         xmllib 
-         configutils
-    )
+if(USE_OPENSSL)
+  target_link_libraries(
+    deploy 
+    securesocket)
+endif()
 
-IF (USE_OPENSSL)
-    target_link_libraries ( deploy 
-    	securesocket
-    )
-ENDIF()
-
-if ( PLATFORM )
-    install ( PROGRAMS configesp.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS configesp.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+if(PLATFORM)
+  install(PROGRAMS configesp.install DESTINATION ${SHARE_PATH}/install COMPONENT Runtime)
+  install(PROGRAMS configesp.uninstall DESTINATION ${SHARE_PATH}/uninstall COMPONENT Runtime)
 endif()

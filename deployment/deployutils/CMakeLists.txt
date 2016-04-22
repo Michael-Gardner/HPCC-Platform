@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: deployutils
 #####################################################
 # Description:
@@ -22,41 +20,37 @@
 #    Cmake Input File for deployutils
 #####################################################
 
-project( deployutils ) 
+project(deployutils) 
 
-set (    SRCS 
-         buildset.cpp 
-         computerpicker.cpp 
-         configenvhelper.cpp
-         wizardInputs.cpp
-         deployutils.cpp
-    )
+set(SRCS 
+  buildset.cpp 
+  computerpicker.cpp 
+  configenvhelper.cpp
+  wizardInputs.cpp
+  deployutils.cpp)
 
-include_directories ( 
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/system/mp
-         ${HPCC_SOURCE_DIR}/system/xmllib
-         ${HPCC_SOURCE_DIR}/common/environment
-         ${HPCC_SOURCE_DIR}/dali/base
-         ${HPCC_SOURCE_DIR}/esp/esplib
-         ${HPCC_SOURCE_DIR}/deployment/configgen
-         ${HPCC_SOURCE_DIR}/deployment/deploy
-         ${HPCC_SOURCE_DIR}/deployment/configutils
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
+include_directories(
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/mp
+  ${HPCC_SOURCE_DIR}/system/xmllib
+  ${HPCC_SOURCE_DIR}/common/environment
+  ${HPCC_SOURCE_DIR}/dali/base
+  ${HPCC_SOURCE_DIR}/esp/esplib
+  ${HPCC_SOURCE_DIR}/deployment/configgen
+  ${HPCC_SOURCE_DIR}/deployment/deploy
+  ${HPCC_SOURCE_DIR}/deployment/configutils
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
 
-ADD_DEFINITIONS ( -D_USRDLL -DDEPLOYUTILS_EXPORTS )
+add_definitions(-D_USRDLL -DDEPLOYUTILS_EXPORTS)
 
-HPCC_ADD_LIBRARY( deployutils SHARED ${SRCS} )
-install ( TARGETS deployutils RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( deployutils
-         jlib 
-         environment 
-         xmllib
-         deploy
-         configutils
-    )
-
-
+HPCC_ADD_LIBRARY(deployutils SHARED ${SRCS})
+install(TARGETS deployutils RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  deployutils
+  jlib 
+  environment 
+  xmllib
+  deploy
+  configutils)

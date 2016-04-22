@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: configutils
 #####################################################
 # Description:
@@ -22,28 +20,26 @@
 #    Cmake Input File for configutils
 #####################################################
 
-project( configutils )
+project(configutils)
 
-set (    SRCS
-         confighelper.cpp
-    )
+set(SRCS
+  confighelper.cpp)
 
-include_directories (
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/system/mp
-         ${HPCC_SOURCE_DIR}/common/environment
-         ${HPCC_SOURCE_DIR}/dali/base
-         ${HPCC_SOURCE_DIR}/deployment/deploy
-         ${CMAKE_BINARY_DIR}/oss
-         ${CMAKE_BINARY_DIR}
-    )
+include_directories(
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/mp
+  ${HPCC_SOURCE_DIR}/common/environment
+  ${HPCC_SOURCE_DIR}/dali/base
+  ${HPCC_SOURCE_DIR}/deployment/deploy
+  ${CMAKE_BINARY_DIR}/oss
+  ${CMAKE_BINARY_DIR})
 
-ADD_DEFINITIONS ( -D_USRDLL -DCONFIGUTILS_EXPORTS )
+add_definitions(-D_USRDLL -DCONFIGUTILS_EXPORTS)
 
-HPCC_ADD_LIBRARY( configutils SHARED ${SRCS} )
-install ( TARGETS configutils RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( configutils
-         jlib
-         environment
-    )
+HPCC_ADD_LIBRARY(configutils SHARED ${SRCS})
+install(TARGETS configutils RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  configutils
+  jlib
+  environment)
