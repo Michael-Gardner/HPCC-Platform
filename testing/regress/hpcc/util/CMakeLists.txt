@@ -14,11 +14,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-Install ( DIRECTORY ecl DESTINATION "./testing/regress/hpcc/util" COMPONENT Runtime
-          USE_SOURCE_PERMISSIONS
-          FILES_MATCHING
-          PATTERN "ecl/cc.py"
-          PATTERN "ecl/command.py"
-          PATTERN "ecl/file.py"
-          PATTERN "ecl/__init__.py"
-)
+install(DIRECTORY ecl
+  DESTINATION ${SHARE_PATH}/testing/regress/hpcc/util
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+  PATTERN "ecl/cc.py"
+  PATTERN "ecl/command.py"
+  PATTERN "ecl/file.py"
+  PATTERN "ecl/__init__.py")

@@ -20,54 +20,51 @@
 #    Cmake include file esp scm file generation
 #####################################################
 
-set ( ESPSCM_SOURCE_DIR ${HPCC_SOURCE_DIR}/esp/scm )
-set ( ESPSCM_GENERATED_DIR ${CMAKE_BINARY_DIR}/generated )
+set(ESPSCM_SOURCE_DIR ${HPCC_SOURCE_DIR}/esp/scm)
+set(ESPSCM_GENERATED_DIR ${CMAKE_BINARY_DIR}/generated)
 
-set ( ESPSCM_SRCS
-      common.ecm
-      ecl.ecm
-      ecldirect.ecm
-      ecllib.ecm
-      esp.ecm
-      ws_access.ecm
-      esploggingservice.ecm
-      roxiecommlibscm.ecm
-      soapesp.ecm
-      ws_ecl_client.ecm
-      ws_fs.ecm
-      ws_machine.ecm
-      ws_smc.ecm
-      ws_topology.ecm
-      ws_workunits.ecm
-      ws_packageprocess.ecm
-      ws_esdlconfig.ecm
-      ws_loggingservice.ecm
-      ws_espcontrol.ecm
-    )
+set(ESPSCM_SRCS
+  common.ecm
+  ecl.ecm
+  ecldirect.ecm
+  ecllib.ecm
+  esp.ecm
+  ws_access.ecm
+  esploggingservice.ecm
+  roxiecommlibscm.ecm
+  soapesp.ecm
+  ws_ecl_client.ecm
+  ws_fs.ecm
+  ws_machine.ecm
+  ws_smc.ecm
+  ws_topology.ecm
+  ws_workunits.ecm
+  ws_packageprocess.ecm
+  ws_esdlconfig.ecm
+  ws_loggingservice.ecm
+  ws_espcontrol.ecm)
 
-foreach ( loop_var ${ESPSCM_SRCS} )
-    string(  REGEX REPLACE "[.]ecm" "" result ${loop_var} )
-    if (SCM_BUILD)
-      add_custom_command ( DEPENDS hidl ${ESPSCM_SOURCE_DIR}/${loop_var}
-                           OUTPUT ${ESPSCM_GENERATED_DIR}/${result}.esp ${ESPSCM_GENERATED_DIR}/${result}.hpp ${ESPSCM_GENERATED_DIR}/${result}.int ${ESPSCM_GENERATED_DIR}/${result}.ipp ${ESPSCM_GENERATED_DIR}/${result}_esp.cpp ${ESPSCM_GENERATED_DIR}/${result}_esp.ipp
-                           COMMAND $<TARGET_FILE:hidl> ${ESPSCM_SOURCE_DIR}/${result}.ecm ${ESPSCM_GENERATED_DIR}
-                         )
-      add_custom_command ( DEPENDS esdl-xml ${ESPSCM_SOURCE_DIR}/${loop_var}
-                           OUTPUT ${ESPSCM_GENERATED_DIR}/${result}.xml
-                           COMMAND $<TARGET_FILE:esdl-xml> ${ESPSCM_SOURCE_DIR}/${result}.ecm ${ESPSCM_GENERATED_DIR}
-                         )
-    endif ()
-    set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.esp PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.hpp PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.int PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.ipp PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}_esp.cpp PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}_esp.ipp PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.xml PROPERTIES GENERATED TRUE)
-    set ( ESP_GENERATED_INCLUDES ${ESP_GENERATED_INCLUDES} ${ESPSCM_GENERATED_DIR}/${result}.esp ${ESPSCM_GENERATED_DIR}/${result}.hpp ${ESPSCM_GENERATED_DIR}/${result}.int ${ESPSCM_GENERATED_DIR}/${result}.ipp ${ESPSCM_GENERATED_DIR}/${result}_esp.ipp ${ESPSCM_GENERATED_DIR}/${result}.xml )
-    if ( PLATFORM )    
-        Install( FILES ${ESPSCM_GENERATED_DIR}/${result}.xml DESTINATION componentfiles/esdl_files COMPONENT Runtime )
-    endif ( PLATFORM )    
-endforeach ( loop_var ${ESPSCM_SRCS} )
+foreach(loop_var ${ESPSCM_SRCS})
+  string(REGEX REPLACE "[.]ecm" "" result ${loop_var})
+  if(SCM_BUILD)
+    add_custom_command(DEPENDS hidl ${ESPSCM_SOURCE_DIR}/${loop_var}
+      OUTPUT ${ESPSCM_GENERATED_DIR}/${result}.esp ${ESPSCM_GENERATED_DIR}/${result}.hpp ${ESPSCM_GENERATED_DIR}/${result}.int ${ESPSCM_GENERATED_DIR}/${result}.ipp ${ESPSCM_GENERATED_DIR}/${result}_esp.cpp ${ESPSCM_GENERATED_DIR}/${result}_esp.ipp
+      COMMAND $<TARGET_FILE:hidl> ${ESPSCM_SOURCE_DIR}/${result}.ecm ${ESPSCM_GENERATED_DIR})
+    add_custom_command(DEPENDS esdl-xml ${ESPSCM_SOURCE_DIR}/${loop_var}
+      OUTPUT ${ESPSCM_GENERATED_DIR}/${result}.xml
+      COMMAND $<TARGET_FILE:esdl-xml> ${ESPSCM_SOURCE_DIR}/${result}.ecm ${ESPSCM_GENERATED_DIR})
+  endif()
+  set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.esp PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.hpp PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.int PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.ipp PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}_esp.cpp PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}_esp.ipp PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${ESPSCM_GENERATED_DIR}/${result}.xml PROPERTIES GENERATED TRUE)
+  set(ESP_GENERATED_INCLUDES ${ESP_GENERATED_INCLUDES} ${ESPSCM_GENERATED_DIR}/${result}.esp ${ESPSCM_GENERATED_DIR}/${result}.hpp ${ESPSCM_GENERATED_DIR}/${result}.int ${ESPSCM_GENERATED_DIR}/${result}.ipp ${ESPSCM_GENERATED_DIR}/${result}_esp.ipp ${ESPSCM_GENERATED_DIR}/${result}.xml)
+  if(PLATFORM)
+    install(FILES ${ESPSCM_GENERATED_DIR}/${result}.xml DESTINATION ${SHARE_PATH}/componentfiles/esdl_files COMPONENT Runtime)
+  endif(PLATFORM) 
+endforeach(loop_var ${ESPSCM_SRCS})
 
-include_directories ( ${ESPSCM_GENERATED_DIR} )
+include_directories(${ESPSCM_GENERATED_DIR})

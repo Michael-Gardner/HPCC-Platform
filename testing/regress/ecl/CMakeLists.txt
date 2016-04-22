@@ -14,15 +14,17 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-HPCC_ADD_SUBDIRECTORY (setup)
+HPCC_ADD_SUBDIRECTORY(setup)
 
-Install ( DIRECTORY setup common hthor key roxie thor DESTINATION "./testing/regress/ecl" COMPONENT Runtime
-          USE_SOURCE_PERMISSIONS
-          FILES_MATCHING
-          PATTERN "setup/*.ecl"
-          PATTERN "setup/*.xml"
-          PATTERN "common/*.ecl"
-          PATTERN "hthor/*.xml"
-          PATTERN "key/*.xml"
-          PATTERN "roxie/*.xml"
-          PATTERN "thor/*.xml" )
+install(DIRECTORY setup common hthor key roxie thor
+  DESTINATION ${SHARE_PATH}/testing/regress/ecl
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+  PATTERN "setup/*.ecl"
+  PATTERN "setup/*.xml"
+  PATTERN "common/*.ecl"
+  PATTERN "hthor/*.xml"
+  PATTERN "key/*.xml"
+  PATTERN "roxie/*.xml"
+  PATTERN "thor/*.xml")

@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: unittests
 #####################################################
 # Description:
@@ -22,36 +20,34 @@
 #    Cmake Input File for unittests
 #####################################################
 
-if (USE_CPPUNIT)
+if(USE_CPPUNIT)
+  project(unitests)
 
-project( unitests )
+  set(SRCS
+    unittests.cpp
+    remotetests.cpp
+    dalitests.cpp
+    jlibtests.cpp)
 
-set (    SRCS
-         unittests.cpp
-         remotetests.cpp
-         dalitests.cpp
-         jlibtests.cpp
-    )
+  include_directories(
+    .
+    ./../../system/include
+    ./../../system/jlib
+    ./../../system/mp
+    ./../../common/remote
+    ./../../dali/base)
 
-include_directories (
-         .
-         ./../../system/include
-         ./../../system/jlib
-         ./../../system/mp
-         ./../../common/remote
-         ./../../dali/base
-    )
+  add_definitions(-D_CONSOLE)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+  HPCC_ADD_EXECUTABLE(unittests ${SRCS})
 
-HPCC_ADD_EXECUTABLE ( unittests ${SRCS} )
-
-install ( TARGETS unittests RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( unittests
-         jlib
-         remote
-         dalibase
-         ${CPPUNIT_LIBRARIES}
-    )
-
-endif ()
+  install(TARGETS unittests
+    RUNTIME DESTINATION ${BIN_PATH}
+    LIBRARY DESTINATION ${LIB_PATH})
+  target_link_libraries(
+    unittests
+    jlib
+    remote
+    dalibase
+    ${CPPUNIT_LIBRARIES})
+endif()

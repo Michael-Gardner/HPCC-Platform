@@ -13,12 +13,14 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-HPCC_ADD_SUBDIRECTORY (unittests)
-HPCC_ADD_SUBDIRECTORY (regress)
-install( DIRECTORY regress DESTINATION "./testing" COMPONENT Runtime
-         USE_SOURCE_PERMISSIONS
-         FILES_MATCHING
-         PATTERN "regress/ecl-test"
-         PATTERN "regress/ecl-test.json"
-         PATTERN "regress/environment.xml"
-         PATTERN "regress/README.rst" )
+HPCC_ADD_SUBDIRECTORY(unittests)
+HPCC_ADD_SUBDIRECTORY(regress)
+install(DIRECTORY regress
+  DESTINATION ${SHARE_PATH}/testing
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+  PATTERN "regress/ecl-test"
+  PATTERN "regress/ecl-test.json"
+  PATTERN "regress/environment.xml"
+  PATTERN "regress/README.rst")

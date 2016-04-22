@@ -15,23 +15,24 @@
 #    limitations under the License.
 ################################################################################
 HPCC_ADD_SUBDIRECTORY (util)
-Install ( DIRECTORY common regression util DESTINATION "./testing/regress/hpcc" COMPONENT Runtime
-          USE_SOURCE_PERMISSIONS
-          FILES_MATCHING
-          PATTERN "common/config.py"
-          PATTERN "common/dict.py"
-          PATTERN "common/error.py"
-          PATTERN "common/__init__.py"
-          PATTERN "common/logger.py"
-          PATTERN "common/report.py"
-          PATTERN "common/shell.py"
-          PATTERN "regression/__init__.py"
-          PATTERN "regression/regress.py"
-          PATTERN "regression/suite.py"
-          PATTERN "util/argparse.py"
-          PATTERN "util/collections.py"
-          PATTERN "util/configgen.py"
-          PATTERN "util/expandcheck.py"
-          PATTERN "util/__init__.py"
-          PATTERN "util/util.py"
-)
+install(DIRECTORY common regression util
+  DESTINATION ${SHARE_PATH}/testing/regress/hpcc
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+  PATTERN "common/config.py"
+  PATTERN "common/dict.py"
+  PATTERN "common/error.py"
+  PATTERN "common/__init__.py"
+  PATTERN "common/logger.py"
+  PATTERN "common/report.py"
+  PATTERN "common/shell.py"
+  PATTERN "regression/__init__.py"
+  PATTERN "regression/regress.py"
+  PATTERN "regression/suite.py"
+  PATTERN "util/argparse.py"
+  PATTERN "util/collections.py"
+  PATTERN "util/configgen.py"
+  PATTERN "util/expandcheck.py"
+  PATTERN "util/__init__.py"
+  PATTERN "util/util.py")
