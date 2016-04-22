@@ -30,8 +30,8 @@
 #define strlwr _strlwr
 #endif
 
-#define STANDARD_CONFIG_BACKUPDIR CONFIG_DIR"/backup"
-#define STANDARD_CONFIG_SOURCEDIR CONFIG_DIR
+#define STANDARD_CONFIG_BACKUPDIR CONFIG_PATH"/backup"
+#define STANDARD_CONFIG_SOURCEDIR CONFIG_PATH
 #define STANDARD_CONFIG_STAGED_PATH "/etc/HPCCSystems/environment.xml"
 
 #define DEFAULT_DIRECTORIES "<Directories name=\"" HPCC_PROJECT_NAME "\">\
@@ -7237,7 +7237,7 @@ bool CWsDeployFileInfo::checkForRequiredComponents(IPropertyTree* pEnvRoot, cons
       const char* cfgpath = pEnvParams->queryProp("configs");
 
       if (!cfgpath || !*cfgpath)
-        cfgpath = CONFIG_DIR;
+        cfgpath = CONFIG_PATH;
 
       genEnvConf.clear().append(cfgpath);
 

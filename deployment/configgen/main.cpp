@@ -52,7 +52,7 @@ void usage()
   puts("   -od <output directory>: The output directory for the generated files.");
   puts("          If not specified, the following defaults are used. ");
   puts("          For win32, '.'");
-  puts("          For Linux, '" CONFIG_DIR "'");
+  puts("          For Linux, '" CONFIG_PATH "'");
   puts("   -ldapconfig : Generates a .ldaprc file and puts it in the specified");
   puts("          output directory. If output directory is not specified,");
   puts("          default output directory is used as mentioned in -od option");

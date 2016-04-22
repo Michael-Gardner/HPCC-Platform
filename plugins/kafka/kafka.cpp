@@ -75,7 +75,7 @@ namespace KafkaPlugin
             std::string errStr;
             StringBuffer fullConfigPath;
 
-            fullConfigPath.append(CONFIG_DIR).append(PATHSEPSTR).append(configFilePath);
+            fullConfigPath.append(CONFIG_PATH).append(PATHSEPSTR).append(configFilePath);
 
             Owned<IProperties> properties = createProperties(fullConfigPath.str(), true);
             Owned<IPropertyIterator> props = properties->getIterator();

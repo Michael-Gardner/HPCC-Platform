@@ -1860,7 +1860,7 @@ IPropertyTree* generateTreeFromXsd(const IPropertyTree* pEnv, IPropertyTree* pSc
       const char* cfgpath = pEnvParams->queryProp("configs");
 
       if (!cfgpath || !*cfgpath)
-        cfgpath = CONFIG_DIR;
+        cfgpath = CONFIG_PATH;
 
       genEnvConf.clear().append(cfgpath);
 

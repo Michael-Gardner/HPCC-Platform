@@ -28,7 +28,7 @@
 #include "build-config.h"
 
 #define STANDARD_CONFIGXMLDIR COMPONENTFILES_DIR"/configxml/"
-#define STANDARD_CONFIG_DIR CONFIG_DIR
+#define STANDARD_CONFIG_DIR CONFIG_PATH
 
 CInstDetails::CInstDetails(StringBuffer compName, const StringArray &ipAssigned) : m_compName(compName)
 {

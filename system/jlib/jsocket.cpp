@@ -2711,7 +2711,7 @@ const char * GetCachedHostName()
 #ifndef _WIN32
         IpAddress ip;
         if (EnvConfPath.length() == 0)
-            EnvConfPath.append(CONFIG_DIR).append(PATHSEPSTR).append("environment.conf");
+            EnvConfPath.append(CONFIG_PATH).append(PATHSEPSTR).append("environment.conf");
         Owned<IProperties> conf = createProperties(EnvConfPath.str(), true);
 
         StringBuffer ifs;
@@ -4823,7 +4823,7 @@ ISocketSelectHandler *createSocketSelectHandler(const char *trc)
         CriticalBlock block(epollsect);
         // DBGLOG("createSocketSelectHandler(): epoll_method = %d",epoll_method);
         if (epoll_method == EPOLL_INIT) {
-            Owned<IProperties> conf = createProperties(CONFIG_DIR PATHSEPSTR "environment.conf", true);
+            Owned<IProperties> conf = createProperties(CONFIG_PATH PATHSEPSTR "environment.conf", true);
             if (conf->getPropBool("use_epoll", true)) {
                 epoll_method = EPOLL_ENABLED;
             } else {

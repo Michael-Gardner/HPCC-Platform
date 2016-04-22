@@ -200,7 +200,7 @@
   </Topology>
   <DaliServerProcess build="_"
                      buildSet="dali"
-                     environment="@CONFIG_DIR@/@ENV_XML_FILE@"
+                     environment="@CONFIG_PATH@/@ENV_XML_FILE@"
                      name="mydali"
                      recoverFromIncErrors="true">
    <Instance computer="localhost"
@@ -781,7 +781,7 @@
   <use_epoll>true</use_epoll>
   <runtime>@RUNTIME_PATH@</runtime>
   <lock>@LOCK_PATH@</lock>
-  <configs>@CONFIG_DIR@</configs>
+  <configs>@CONFIG_PATH@</configs>
   <path>@PREFIX@</path>
  </EnvSettings>
  <Programs>

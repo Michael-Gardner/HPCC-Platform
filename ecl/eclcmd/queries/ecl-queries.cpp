@@ -28,7 +28,7 @@
 #include "eclcmd_core.hpp"
 
 #define INIFILE "ecl.ini"
-#define SYSTEMCONFDIR CONFIG_DIR
+#define SYSTEMCONFDIR CONFIG_PATH
 #define DEFAULTINIFILE "ecl.ini"
 #define SYSTEMCONFFILE ENV_CONF_FILE
 

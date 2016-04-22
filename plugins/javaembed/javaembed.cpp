@@ -101,7 +101,7 @@ public:
             newPath.append(origPath).append(ENVSEPCHAR);
         }
         StringBuffer envConf;
-        envConf.append(CONFIG_DIR).append(PATHSEPSTR).append("environment.conf");
+        envConf.append(CONFIG_PATH).append(PATHSEPSTR).append("environment.conf");
         Owned<IProperties> conf = createProperties(envConf.str(), true);
         if (conf && conf->hasProp("classpath"))
         {
