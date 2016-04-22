@@ -15,7 +15,7 @@
 ################################################################################
 
 cmake_minimum_required(VERSION 3.2)
-project(initfiles)
+project(etc)
 
 if(PLATFORM AND UNIX)
   add_subdirectory(share)
