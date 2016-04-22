@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: gitfile
 #####################################################
 # Description:
@@ -22,23 +20,20 @@
 #    Cmake Input File for git repository direct reading hook
 #####################################################
 
-project( gitfile )
+project(gitfile)
 
-set (    SRCS
-         gitfile.cpp
-         gitfile.hpp
-    )
+set(SRCS
+  gitfile.cpp
+  gitfile.hpp)
 
-include_directories (
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-    )
+include_directories(
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib)
 
-ADD_DEFINITIONS( -D_USRDLL -DGITFILE_EXPORTS )
+add_definitions(-D_USRDLL -DGITFILE_EXPORTS)
 
-HPCC_ADD_LIBRARY( gitfile SHARED ${SRCS}  )
-install ( TARGETS gitfile DESTINATION filehooks )
+HPCC_ADD_LIBRARY(gitfile SHARED ${SRCS})
+install(TARGETS gitfile RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
 
-target_link_libraries ( gitfile
-    jlib
-    )
+target_link_libraries(gitfile
+  jlib)
