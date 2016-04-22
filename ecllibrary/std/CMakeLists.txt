@@ -17,19 +17,20 @@
 add_subdirectory(system)
 
 set(
-    SRCS
-    Audit.ecl
-    BundleBase.ecl
-    Date.ecl
-    File.ecl
-    Metaphone3.ecl
-    Metaphone.ecl
-    Str.ecl
-    Uni.ecl
-    )
+  SRCS
+  Audit.ecl
+  BundleBase.ecl
+  Date.ecl
+  File.ecl
+  Metaphone3.ecl
+  Metaphone.ecl
+  Str.ecl
+  Uni.ecl)
 
 foreach(module ${SRCS})
-    SIGN_MODULE(${module})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${module} DESTINATION share/ecllibrary/std COMPONENT Runtime)
+  SIGN_MODULE(${module})
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${module}
+    DESTINATION ${SHARE_PATH}/ecllibrary/std
+    COMPONENT Runtime)
 endforeach()
-  
+

@@ -15,17 +15,18 @@
 ################################################################################
 
 set(
-    SRCS
-    Debug.ecl
-    Email.ecl
-    Job.ecl
-    Log.ecl
-    Thorlib.ecl
-    Util.ecl
-    Workunit.ecl
-    )
+  SRCS
+  Debug.ecl
+  Email.ecl
+  Job.ecl
+  Log.ecl
+  Thorlib.ecl
+  Util.ecl
+  Workunit.ecl)
 
 foreach(module ${SRCS})
-    SIGN_MODULE(${module})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${module} DESTINATION share/ecllibrary/std/system COMPONENT Runtime)
+  SIGN_MODULE(${module})
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${module}
+    DESTINATION ${SHARE_PATH}/ecllibrary/std/system
+    COMPONENT Runtime)
 endforeach()

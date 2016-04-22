@@ -16,5 +16,11 @@
 
 add_subdirectory(std)
 
-Install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/StyleGuide.html DESTINATION share/ecllibrary COMPONENT Runtime )
-Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/teststd DESTINATION share/ecllibrary COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE )
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/StyleGuide.html
+  DESTINATION ${SHARE_PATH}/ecllibrary
+  COMPONENT Runtime)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/teststd
+  DESTINATION ${SHARE_PATH}/ecllibrary
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  PATTERN ".svn" EXCLUDE)
