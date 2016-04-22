@@ -15,10 +15,10 @@
 ################################################################################
 
 configure_file(hpcc-setenv.in hpcc-setenv @ONLY)
-configure_file(complete-uninstall.in complete-uninstall @ONLY)
-configure_file(keygen.sh.in keygen.sh @ONLY)
+configure_file(hpcc-complete-uninstall.in hpcc-complete-uninstall @ONLY)
+configure_file(hpcc-keygen.in hpcc-keygen @ONLY)
 configure_file(add_conf_settings.sh.in add_conf_settings.sh @ONLY)
-configure_file(rm_conf_settings.sh.in rm_conf_settings.sh.in @ONLY)
+configure_file(rm_conf_settings.sh.in rm_conf_settings.sh @ONLY)
 configure_file(configmgr.in configmgr @ONLY)
 configure_file(install-cluster.sh.in install-cluster.sh @ONLY)
 configure_file(hpcc-push.sh.in hpcc-push.sh @ONLY)
@@ -30,8 +30,8 @@ configure_file(regex.awk.in.cmake regex.awk @ONLY)
 
 add_custom_target(configure-etc-sbin ALL DEPENDS
   ${CMAKE_CURRENT_BINARY_DIR}/hpcc-setenv
-  ${CMAKE_CURRENT_BINARY_DIR}/complete-uninstall
-  ${CMAKE_CURRENT_BINARY_DIR}/keygen.sh
+  ${CMAKE_CURRENT_BINARY_DIR}/hpcc-complete-uninstall
+  ${CMAKE_CURRENT_BINARY_DIR}/hpcc-keygen
   ${CMAKE_CURRENT_BINARY_DIR}/add_conf_settings.sh
   ${CMAKE_CURRENT_BINARY_DIR}/rm_conf_settings.sh
   ${CMAKE_CURRENT_BINARY_DIR}/configmgr
@@ -44,8 +44,8 @@ add_custom_target(configure-etc-sbin ALL DEPENDS
 
 foreach(oFILES
     ${CMAKE_CURRENT_BINARY_DIR}/hpcc-setenv
-    ${CMAKE_CURRENT_BINARY_DIR}/complete-uninstall
-    ${CMAKE_CURRENT_BINARY_DIR}/keygen.sh
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc-complete-uninstall
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc-keygen
     ${CMAKE_CURRENT_BINARY_DIR}/add_conf_settings.sh
     ${CMAKE_CURRENT_BINARY_DIR}/rm_conf_settings.sh
     ${CMAKE_CURRENT_BINARY_DIR}/configmgr

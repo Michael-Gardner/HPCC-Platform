@@ -22,7 +22,7 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/environment.xml
   ${CMAKE_CURRENT_BINARY_DIR}/environment.conf
   ${CMAKE_CURRENT_SOURCE_DIR}/genenvrules.conf
-  ${CMAKE_CURRENT_BINARY_DIR}/version.xml
+  ${CMAKE_CURRENT_BINARY_DIR}/version
   DESTINATION ${CONFIG_PATH} COMPONENT Runtime)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/.ssh.md5
