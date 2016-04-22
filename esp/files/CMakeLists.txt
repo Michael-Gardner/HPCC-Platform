@@ -14,6 +14,10 @@
 #    limitations under the License.
 ################################################################################
 
-project( web_files ) 
+project(web_files)
 
-Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION componentfiles COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN "CMakeLists.txt" EXCLUDE )
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  DESTINATION ${SHARE_PATH}/componentfiles
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  PATTERN "CMakeLists.txt" EXCLUDE)

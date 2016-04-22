@@ -13,52 +13,48 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: wumanager 
+# Component: wumanager
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for wumanager
 #####################################################
 
-project( wumanager ) 
+project(wumanager)
 
 include(${HPCC_SOURCE_DIR}/esp/scm/smcscm.cmake)
 
-set (    SRCS 
-         ${ESPSCM_GENERATED_DIR}/common_esp.cpp
-         ${ESPSCM_GENERATED_DIR}/ws_workunits_esp.cpp
-         WUManager.cpp 
-    )
+set(
+  SRCS
+  ${ESPSCM_GENERATED_DIR}/common_esp.cpp
+  ${ESPSCM_GENERATED_DIR}/ws_workunits_esp.cpp
+  WUManager.cpp)
 
-include_directories ( 
-         ./../../../system/security/shared
-         ./../../../system/include 
-         ./../../bindings 
-         ./../../bindings/SOAP/xpp 
-         ./../../../system/xmllib 
-         ./../../../system/jlib 
-         ./../../platform 
-         ./../../clients 
-    )
+include_directories(
+  ./../../../system/security/shared
+  ./../../../system/include
+  ./../../bindings
+  ./../../bindings/SOAP/xpp
+  ./../../../system/xmllib
+  ./../../../system/jlib
+  ./../../platform
+  ./../../clients)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( wumanager ${SRCS} )
-add_dependencies ( wumanager espscm )
-#install ( TARGETS wumanager RUNTIME DESTINATION ${BIN_DIR} ) # do not install - this is an example program
+HPCC_ADD_EXECUTABLE(wumanager ${SRCS})
+add_dependencies(wumanager espscm)
+#install(TARGETS wumanager RUNTIME DESTINATION ${BIN_PATH}) # do not install - this is an example program
 
-target_link_libraries ( wumanager 
-         ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
-         jlib
-         xmllib 
-         esphttp
-    )
+target_link_libraries(
+  wumanager
+  ${XALAN_LIBRARIES}
+  ${XERCES_LIBRARIES}
+  jlib
+  xmllib
+  esphttp)
 
-IF (USE_OPENSSL)
-    target_link_libraries ( wumanager
-    	securesocket
-    )
-ENDIF()
+if(USE_OPENSSL)
+  target_link_libraries(wumanager securesocket)
+endif()
 

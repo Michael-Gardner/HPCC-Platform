@@ -13,42 +13,33 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: httptest 
-
+# Component: httptest
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for httptest
 #####################################################
 
+project(httptest)
 
-project( httptest ) 
+set(
+  SRCS
+  httptest.cpp
+  main.cpp)
 
-set (    SRCS 
-         httptest.cpp 
-         main.cpp 
-    )
+include_directories(
+  ./../../../system/include
+  ./../../../system/security/securesocket
+  ./../../bindings/http/platform
+  ./../../../system/jlib)
 
-include_directories ( 
-         ./../../../system/include 
-         ./../../../system/security/securesocket 
-         ./../../bindings/http/platform 
-         ./../../../system/jlib 
-    )
+add_definitions(-D_CONSOLE)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+HPCC_ADD_EXECUTABLE(httptest ${SRCS})
 
-HPCC_ADD_EXECUTABLE ( httptest ${SRCS} )
+target_link_libraries(httptest jlib)
 
-target_link_libraries ( httptest 
-         jlib
-    )
-
-IF (USE_OPENSSL)
-    target_link_libraries ( httptest
-    	securesocket
-    )
-ENDIF()
+if(USE_OPENSSL)
+  target_link_libraries(httptest securesocket)
+endif()
 

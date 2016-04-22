@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: espserverloggingagent
 #####################################################
 # Description:
@@ -22,48 +20,47 @@
 #	 Cmake Input File for espserverloggingagent
 #####################################################
 
-project( espserverloggingagent )
+project(espserverloggingagent)
 
-set ( SRCS
-    loggingagent.cpp
-)
+set(SRCS
+  loggingagent.cpp)
 
-include_directories (
-    ${HPCC_SOURCE_DIR}/esp/platform
-    ${HPCC_SOURCE_DIR}/system/include
-    ${HPCC_SOURCE_DIR}/system/jlib
-    ${HPCC_SOURCE_DIR}/system/xmllib
-    ${HPCC_SOURCE_DIR}/system/security/shared
-    ${HPCC_SOURCE_DIR}/esp/bindings
-    ${HPCC_SOURCE_DIR}/esp/bindings/http/client
-    ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/client
-    ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
-    ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/Platform
-    ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/LoggingService
-    ${HPCC_SOURCE_DIR}/esp/clients
-    ${HPCC_SOURCE_DIR}/esp/clients/espcommonclient
-    ${HPCC_SOURCE_DIR}/esp/esdl
-    ${HPCC_SOURCE_DIR}/esp/esplib
-    ${HPCC_SOURCE_DIR}/esp/logging
-    ./../..
-    ./..
-)
+include_directories(
+  ${HPCC_SOURCE_DIR}/esp/platform
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/xmllib
+  ${HPCC_SOURCE_DIR}/system/security/shared
+  ${HPCC_SOURCE_DIR}/esp/bindings
+  ${HPCC_SOURCE_DIR}/esp/bindings/http/client
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/client
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/Platform
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/LoggingService
+  ${HPCC_SOURCE_DIR}/esp/clients
+  ${HPCC_SOURCE_DIR}/esp/clients/espcommonclient
+  ${HPCC_SOURCE_DIR}/esp/esdl
+  ${HPCC_SOURCE_DIR}/esp/esplib
+  ${HPCC_SOURCE_DIR}/esp/logging
+  ./../..
+  ./..)
 
-ADD_DEFINITIONS( -D_USRDLL -DESPSERVERLOGGINGAGENT_EXPORTS )
+add_definitions(-D_USRDLL -DESPSERVERLOGGINGAGENT_EXPORTS)
 
-if (RELEASE_BUILD EQUAL 1)
-    ADD_DEFINITIONS( -DISC_NO_MAIN)
-endif (RELEASE_BUILD EQUAL 1)
+if(RELEASE_BUILD EQUAL 1)
+  add_definitions( -DISC_NO_MAIN)
+endif(RELEASE_BUILD EQUAL 1)
 
-HPCC_ADD_LIBRARY( espserverloggingagent SHARED ${SRCS} )
+HPCC_ADD_LIBRARY(espserverloggingagent SHARED ${SRCS})
 
-add_dependencies( espserverloggingagent espscm )
+add_dependencies(espserverloggingagent espscm)
 
-install ( TARGETS espserverloggingagent DESTINATION ${LIB_DIR} )
+install(TARGETS espserverloggingagent DESTINATION ${LIB_PATH})
 
-target_link_libraries ( espserverloggingagent
-    ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
-    jlib
-    xmllib
-    esphttp
-)
+target_link_libraries(
+  espserverloggingagent
+  ${XALAN_LIBRARIES}
+  ${XERCES_LIBRARIES}
+  jlib
+  xmllib
+  esphttp)

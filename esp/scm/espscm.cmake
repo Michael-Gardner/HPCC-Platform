@@ -64,7 +64,7 @@ foreach(loop_var ${ESPSCM_SRCS})
   set(ESP_GENERATED_INCLUDES ${ESP_GENERATED_INCLUDES} ${ESPSCM_GENERATED_DIR}/${result}.esp ${ESPSCM_GENERATED_DIR}/${result}.hpp ${ESPSCM_GENERATED_DIR}/${result}.int ${ESPSCM_GENERATED_DIR}/${result}.ipp ${ESPSCM_GENERATED_DIR}/${result}_esp.ipp ${ESPSCM_GENERATED_DIR}/${result}.xml)
   if(PLATFORM)
     install(FILES ${ESPSCM_GENERATED_DIR}/${result}.xml DESTINATION ${SHARE_PATH}/componentfiles/esdl_files COMPONENT Runtime)
-  endif(PLATFORM) 
+  endif(PLATFORM)
 endforeach(loop_var ${ESPSCM_SRCS})
 
 include_directories(${ESPSCM_GENERATED_DIR})

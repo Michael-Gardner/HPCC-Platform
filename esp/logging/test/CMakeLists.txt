@@ -13,50 +13,45 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: logging_test
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for logging_test
 #####################################################
 
+project(logging_test)
 
-project( logging_test )
+set(
+  SRCS
+  logging_test.cpp
+  main.cpp)
 
-set (    SRCS
-         logging_test.cpp
-         main.cpp
-    )
+include_directories(
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/xmllib
+  ${HPCC_SOURCE_DIR}/system/security/shared
+  ${HPCC_SOURCE_DIR}/system/security/securesocket
+  ${HPCC_SOURCE_DIR}/esp/platform
+  ${HPCC_SOURCE_DIR}/esp/bindings
+  ${HPCC_SOURCE_DIR}/esp/bindings/http/platform
+  ${HPCC_SOURCE_DIR}/esp/bindings/http/client
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/client
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/Platform
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/LoggingService
+  ${HPCC_SOURCE_DIR}/esp/clients
+  ${HPCC_SOURCE_DIR}/esp/clients/espcommonclient
+  ${HPCC_SOURCE_DIR}/esp/clients/LoggingClient
+  ${HPCC_SOURCE_DIR}/esp/logging)
 
-include_directories (
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/system/xmllib
-         ${HPCC_SOURCE_DIR}/system/security/shared
-         ${HPCC_SOURCE_DIR}/system/security/securesocket
-         ${HPCC_SOURCE_DIR}/esp/platform
-         ${HPCC_SOURCE_DIR}/esp/bindings
-         ${HPCC_SOURCE_DIR}/esp/bindings/http/platform
-         ${HPCC_SOURCE_DIR}/esp/bindings/http/client
-         ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/client
-         ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
-         ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/Platform
-         ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/LoggingService
-         ${HPCC_SOURCE_DIR}/esp/clients
-         ${HPCC_SOURCE_DIR}/esp/clients/espcommonclient
-         ${HPCC_SOURCE_DIR}/esp/clients/LoggingClient
-         ${HPCC_SOURCE_DIR}/esp/logging
-    )
+add_definitions(-D_CONSOLE)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+HPCC_ADD_EXECUTABLE(logging_test ${SRCS})
 
-HPCC_ADD_EXECUTABLE ( logging_test ${SRCS} )
-
-target_link_libraries ( logging_test
-         jlib
-         securesocket
-         loggingmanager
-    )
+target_link_libraries(
+  logging_test
+  jlib
+  securesocket
+  loggingmanager)

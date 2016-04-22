@@ -13,53 +13,49 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: esp 
+# Component: esp
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for esp
 #####################################################
 
-project( esp ) 
+project(esp)
 
-set (    SRCS 
-         espcfg.cpp 
-         espp.cpp 
-    )
+set(
+  SRCS
+  espcfg.cpp
+  espp.cpp)
 
-include_directories ( 
-         ./../bindings/SOAP/xpp 
-         ./../../system/xmllib 
-         ./../../system/security/shared 
-         ./../../system/security/securesocket 
-         ./../bindings 
-         ./../platform 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../system/jlib 
-         ./../bindings/http/platform 
-         ./../../common/environment 
-         ./../../system/mp 
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
+include_directories(
+  ./../bindings/SOAP/xpp
+  ./../../system/xmllib
+  ./../../system/security/shared
+  ./../../system/security/securesocket
+  ./../bindings
+  ./../platform
+  ./../../system/include
+  ./../../dali/base
+  ./../../system/jlib
+  ./../bindings/http/platform
+  ./../../common/environment
+  ./../../system/mp
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( esp ${SRCS} )
-install ( TARGETS esp RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( esp 
-         jlib
-         mp 
-         ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
-         xmllib 
-         esphttp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-    )
-
-
+HPCC_ADD_EXECUTABLE(esp ${SRCS})
+install(TARGETS esp RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  esp
+  jlib
+  mp
+  ${XALAN_LIBRARIES}
+  ${XERCES_LIBRARIES}
+  xmllib
+  esphttp
+  hrpc
+  remote
+  dalibase
+  environment)

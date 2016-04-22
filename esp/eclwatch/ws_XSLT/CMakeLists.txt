@@ -14,14 +14,13 @@
 #    limitations under the License.
 ################################################################################
 
-FOREACH ( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/exceptions.xslt
-    ${CMAKE_CURRENT_SOURCE_DIR}/BoolResponse.xslt
-)
-    Install ( FILES ${iFILES} DESTINATION componentfiles/xslt COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/BoolResponse.xslt)
+  install(FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles/xslt COMPONENT Runtime)
+endforeach(iFILES)
 
-FOREACH ( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/BoolResponse.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/GvcGraph.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/RoxieGVCGraph.xslt
@@ -174,17 +173,19 @@ FOREACH ( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/access_users.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/account.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/account_input.xslt
-    ${CMAKE_CURRENT_SOURCE_DIR}/account_myaccount.xslt
-)
-    Install ( FILES ${iFILES} DESTINATION componentfiles/smc_xslt COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/account_myaccount.xslt)
+  install(FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles/smc_xslt COMPONENT Runtime)
+endforeach(iFILES)
 
-FOREACH ( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/atts.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/result_lib.xslt
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib.xslt
-)
-    Install ( FILES ${iFILES} DESTINATION componentfiles/wsecl/wsecl COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib.xslt)
+  install(FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles/wsecl/wsecl COMPONENT Runtime)
+endforeach(iFILES)
 
-Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/nls DESTINATION componentfiles/smc_xslt COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE )
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/nls
+  DESTINATION ${SHARE_PATH}/componentfiles/smc_xslt
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  PATTERN ".svn" EXCLUDE)

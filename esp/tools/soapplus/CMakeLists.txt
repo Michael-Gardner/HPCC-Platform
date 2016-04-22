@@ -13,58 +13,51 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-# Component: soapplus 
-
+# Component: soapplus
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for soapplus
 #####################################################
 
+project(soapplus)
 
-project( soapplus ) 
+set(
+  SRCS
+  EspLogDeserializer.cpp
+  http.cpp
+  httpproxy.cpp
+  main.cpp
+  msggenerator.cpp
+  xmldiff.cpp)
 
-set (    SRCS 
-         EspLogDeserializer.cpp 
-         http.cpp 
-         httpproxy.cpp 
-         main.cpp 
-         msggenerator.cpp 
-         xmldiff.cpp 
-    )
+include_directories(
+  ./../../../system/include
+  ./../../../system/security/securesocket
+  ./../../bindings/http/platform
+  ./../../../system/xmllib
+  ./../../../system/jlib)
 
-include_directories ( 
-         ./../../../system/include 
-         ./../../../system/security/securesocket 
-         ./../../bindings/http/platform 
-         ./../../../system/xmllib 
-         ./../../../system/jlib 
-    )
-
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
 HPCC_ADD_EXECUTABLE ( soapplus ${SRCS} )
 install ( TARGETS soapplus RUNTIME DESTINATION ${BIN_DIR} COMPONENT Runtime)
 
-target_link_libraries ( soapplus 
-         jlib
-         xmllib 
-    )
-IF (USE_OPENSSL)
-    target_link_libraries ( soapplus 
-         securesocket 
-    )
-ENDIF()
+target_link_libraries ( soapplus
+  jlib
+  xmllib
+  )
+if(USE_OPENSSL)
+  target_link_libraries(soapplus securesocket)
+endif()
 
-FOREACH( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/EspMethods.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/README.txt
-)
-    Install ( FILES ${iFILES} DESTINATION componentfiles COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/README.txt)
+  install(FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles COMPONENT Runtime)
+endforeach(iFILES)
 
-if ( PLATFORM )
-    install ( PROGRAMS soapplus.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS soapplus.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+if(PLATFORM)
+  install(PROGRAMS soapplus.install DESTINATION ${SHARE_PATH}/install COMPONENT Runtime)
+  install(PROGRAMS soapplus.uninstall DESTINATION ${SHARE_PATH}/uninstall COMPONENT Runtime)
 endif()

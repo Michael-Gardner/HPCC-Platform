@@ -13,25 +13,21 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # component: esp/scm
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File esp/scm
 #####################################################
 
-project (scm)
+project(scm)
 
-set (SCM_BUILD ON)
-include ( ${CMAKE_CURRENT_SOURCE_DIR}/espscm.cmake)
-include ( ${CMAKE_CURRENT_SOURCE_DIR}/smcscm.cmake)
-include ( ${CMAKE_CURRENT_SOURCE_DIR}/additional.cmake)
-set (SCM_BUILD OFF)
+set(SCM_BUILD ON)
+include(${CMAKE_CURRENT_SOURCE_DIR}/espscm.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/smcscm.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/additional.cmake)
+set(SCM_BUILD OFF)
 
-ADD_CUSTOM_TARGET( 
+add_custom_target(
   espscm ALL
-  DEPENDS ${ESP_GENERATED_INCLUDES}
-)
+  DEPENDS ${ESP_GENERATED_INCLUDES})

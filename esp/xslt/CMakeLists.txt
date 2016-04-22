@@ -14,7 +14,7 @@
 #    limitations under the License.
 ################################################################################
 
-FOREACH( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/ui_configmgr.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/appframe.xsl
     ${CMAKE_CURRENT_SOURCE_DIR}/dict_sort.xsl
@@ -44,15 +44,13 @@ FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/esxdl2xsd.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/esdl2java_srvbase.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/esdl2java_srvdummy.xslt
-    ${CMAKE_CURRENT_SOURCE_DIR}/roxie_page.xsl
-)
-    Install ( FILES ${iFILES} DESTINATION componentfiles/xslt COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/roxie_page.xsl)
+  install(FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles/xslt COMPONENT Runtime)
+endforeach(iFILES)
 
-FOREACH ( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/wsecl2_form.xsl
     ${CMAKE_CURRENT_SOURCE_DIR}/wsecl_tabview.xsl
-    ${CMAKE_CURRENT_SOURCE_DIR}/wsecl_tree.xsl
-)
-    Install ( FILES ${iFILES} DESTINATION componentfiles/files COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/wsecl_tree.xsl)
+  install(FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles/files COMPONENT Runtime)
+endforeach(iFILES)

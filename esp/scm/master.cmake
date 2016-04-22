@@ -13,28 +13,25 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 #######################################################
 # Description:
 # ------------
 #           This is a top level CMake file for esp
-#           directory. This file process all the 
+#           directory. This file process all the
 #           subprojects within esp directory.
 #
 ########################################################
 
+project(AllProjects)
 
-project (AllProjects)
+message("printing {CMAKE_CURRENT_SOURCE_DIR} from master.cmake ${CMAKE_CURRENT_SOURCE_DIR}")
 
-message ( "printing {CMAKE_CURRENT_SOURCE_DIR} from master.cmake ${CMAKE_CURRENT_SOURCE_DIR}" )
+string(REGEX REPLACE "(.*/)+master\\.cmake" "\\1" result "${CMAKE_CURRENT_LIST_FILE}")
 
-string ( REGEX REPLACE "(.*/)+master\\.cmake" "\\1" result "${CMAKE_CURRENT_LIST_FILE}" )
+message("printing result from master.cmake ${result}")
 
-message ( "printing result from master.cmake ${result}" )
-
-include ( ${result}/espscm.cmake )
-include ( ${result}/smcscm.cmake )
-#include ( ${CMAKE_CURRENT_SOURCE_DIR}/smcscm.cmake)
-#include ( ${CMAKE_CURRENT_SOURCE_DIR}/smcscm.cmake)
+include(${result}/espscm.cmake)
+include(${result}/smcscm.cmake)
+#include(${CMAKE_CURRENT_SOURCE_DIR}/smcscm.cmake)
+#include(${CMAKE_CURRENT_SOURCE_DIR}/smcscm.cmake)
 

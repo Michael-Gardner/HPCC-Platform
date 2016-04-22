@@ -13,69 +13,66 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: esphttp 
-
+# Component: esphttp
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for esphttp
 #####################################################
 
+project(esphttp)
 
-project( esphttp ) 
+set(
+  SRCS
+  ../../bindings/bindutil.cpp
+  ../../bindings/http/client/httpclient.cpp
+  ../../bindings/http/platform/htmlpage.cpp
+  ../../bindings/http/platform/httpbinding.cpp
+  ../../bindings/http/platform/httpprot.cpp
+  ../../bindings/http/platform/httpsecurecontext.cpp
+  ../../bindings/http/platform/httpservice.cpp
+  ../../bindings/http/platform/httptransport.cpp
+  ../../bindings/http/platform/mime.cpp
+  ../../bindings/http/platform/msgbuilder.cpp
+  ../../bindings/SOAP/client/soapclient.cpp
+  ../../bindings/SOAP/Platform/soapbind.cpp
+  ../../bindings/SOAP/Platform/soapmessage.cpp
+  ../../bindings/SOAP/Platform/soapservice.cpp
+  ../../bindings/SOAP/Platform/soapparam.cpp
+  ../../platform/espcontext.cpp
+  ../../platform/espprotocol.cpp
+  ../../platform/espthread.cpp
+  ../../platform/sechandler.cpp
+  ../../platform/txsummary.cpp
+  mapinfo.cpp
+  plugin.cpp)
 
-set (    SRCS 
-         ../../bindings/bindutil.cpp 
-         ../../bindings/http/client/httpclient.cpp 
-         ../../bindings/http/platform/htmlpage.cpp 
-         ../../bindings/http/platform/httpbinding.cpp 
-         ../../bindings/http/platform/httpprot.cpp 
-         ../../bindings/http/platform/httpsecurecontext.cpp
-         ../../bindings/http/platform/httpservice.cpp 
-         ../../bindings/http/platform/httptransport.cpp 
-         ../../bindings/http/platform/mime.cpp 
-         ../../bindings/http/platform/msgbuilder.cpp 
-         ../../bindings/SOAP/client/soapclient.cpp 
-         ../../bindings/SOAP/Platform/soapbind.cpp 
-         ../../bindings/SOAP/Platform/soapmessage.cpp 
-         ../../bindings/SOAP/Platform/soapservice.cpp 
-         ../../bindings/SOAP/Platform/soapparam.cpp
-         ../../platform/espcontext.cpp 
-         ../../platform/espprotocol.cpp 
-         ../../platform/espthread.cpp 
-         ../../platform/sechandler.cpp 
-         ../../platform/txsummary.cpp
-         mapinfo.cpp 
-         plugin.cpp 
-    )
+include_directories(
+  ./../../../system/include
+  ./../../../system/security/shared
+  ./../../../system/security/securesocket
+  ./../../bindings
+  ./../../bindings/SOAP/xpp
+  ./../../../system/xmllib
+  ./../../../system/jlib
+  ./../../platform
+  ./../../../system/security/shared
+  ./../../../system/security/LdapSecurity)
 
-include_directories ( 
-         ./../../../system/include 
-         ./../../../system/security/shared
-         ./../../../system/security/securesocket 
-         ./../../bindings 
-         ./../../bindings/SOAP/xpp 
-         ./../../../system/xmllib 
-         ./../../../system/jlib 
-         ./../../platform 
-         ./../../../system/security/shared 
-         ./../../../system/security/LdapSecurity
-    )
+add_definitions(-DESPHTTP_EXPORTS -DESP_TIMING -D_USRDLL -DESP_PLUGIN)
 
-ADD_DEFINITIONS( -DESPHTTP_EXPORTS -DESP_TIMING -D_USRDLL -DESP_PLUGIN )
+HPCC_ADD_LIBRARY(esphttp SHARED ${SRCS})
+add_dependencies(esphttp  espscm)
+install(TARGETS esphttp RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  esphttp
+  ${XALAN_LIBRARIES}
+  ${XERCES_LIBRARIES}
+  jlib
+  xmllib)
 
-HPCC_ADD_LIBRARY( esphttp SHARED ${SRCS} )
-add_dependencies (esphttp  espscm )
-install ( TARGETS esphttp RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( esphttp 
-         ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
-         jlib
-         xmllib 
-    )
-IF (USE_OPENLDAP)
-target_link_libraries ( esphttp LdapSecurity )
-ENDIF(USE_OPENLDAP)
+if(USE_OPENLDAP)
+  target_link_libraries(esphttp LdapSecurity)
+endif(USE_OPENLDAP)
 
 

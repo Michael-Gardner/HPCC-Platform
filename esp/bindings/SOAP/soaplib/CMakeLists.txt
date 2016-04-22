@@ -13,67 +13,62 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: soaplib 
+# Component: soaplib
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for soaplib
 #####################################################
 
+project(soaplib)
 
-project( soaplib ) 
+set(
+  SRCS
+  ../../../platform/espcontext.cpp
+  ../../../platform/espprotocol.cpp
+  ../../../platform/espthread.cpp
+  ../../../platform/sechandler.cpp
+  ../../../platform/txsummary.cpp
+  ../../../protocols/http/mapinfo.cpp
+  ../../bindutil.cpp
+  ../../http/client/httpclient.cpp
+  ../../http/platform/htmlpage.cpp
+  ../../http/platform/httpbinding.cpp
+  ../../http/platform/httpprot.cpp
+  ../../http/platform/httpsecurecontext.cpp
+  ../../http/platform/httpservice.cpp
+  ../../http/platform/httptransport.cpp
+  ../../http/platform/mime.cpp
+  ../../http/platform/msgbuilder.cpp
+  ../client/soapclient.cpp
+  ../Platform/soapbind.cpp
+  ../Platform/soapmessage.cpp
+  ../Platform/soapservice.cpp)
 
-set (    SRCS 
-         ../../../platform/espcontext.cpp 
-         ../../../platform/espprotocol.cpp 
-         ../../../platform/espthread.cpp 
-         ../../../platform/sechandler.cpp 
-         ../../../platform/txsummary.cpp
-         ../../../protocols/http/mapinfo.cpp 
-         ../../bindutil.cpp 
-         ../../http/client/httpclient.cpp 
-         ../../http/platform/htmlpage.cpp 
-         ../../http/platform/httpbinding.cpp 
-         ../../http/platform/httpprot.cpp 
-         ../../http/platform/httpsecurecontext.cpp
-         ../../http/platform/httpservice.cpp 
-         ../../http/platform/httptransport.cpp 
-         ../../http/platform/mime.cpp 
-         ../../http/platform/msgbuilder.cpp 
-         ../client/soapclient.cpp 
-         ../Platform/soapbind.cpp 
-         ../Platform/soapmessage.cpp 
-         ../Platform/soapservice.cpp 
-    )
-
-include_directories ( 
-         ./../../../../system/include 
-         ./../../../../system/security/shared
-         ./../../../../system/security/securesocket 
-         ./../../../../system/security/LdapSecurity
-         ./../../../../system/jlib 
-         ./../../../bindings 
-         ./../../../platform 
-         ./../../../../system/xmllib 
-         ./.. 
-         ./../../../bindings/SOAP/xpp 
-    )
+include_directories(
+  ./../../../../system/include
+  ./../../../../system/security/shared
+  ./../../../../system/security/securesocket
+  ./../../../../system/security/LdapSecurity
+  ./../../../../system/jlib
+  ./../../../bindings
+  ./../../../platform
+  ./../../../../system/xmllib
+  ./..
+  ./../../../bindings/SOAP/xpp)
 
 
-if (WIN32)
-    ADD_DEFINITIONS( -D_LIB )
-    HPCC_ADD_LIBRARY( soaplib STATIC ${SRCS} )
-else (WIN32)
-    HPCC_ADD_LIBRARY( soaplib SHARED ${SRCS} )
-    install ( TARGETS soaplib RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-    target_link_libraries (soaplib 
-        jlib
-        )
-endif (WIN32)
-add_dependencies (soaplib 
-    jlib
-    espscm
-    )
-
+if(WIN32)
+  add_definitions(-D_LIB)
+  HPCC_ADD_LIBRARY(soaplib STATIC ${SRCS})
+else(WIN32)
+  HPCC_ADD_LIBRARY(soaplib SHARED ${SRCS})
+  install(TARGETS soaplib RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+  target_link_libraries(
+    soaplib
+    jlib)
+endif(WIN32)
+add_dependencies(
+  soaplib
+  jlib
+  espscm)

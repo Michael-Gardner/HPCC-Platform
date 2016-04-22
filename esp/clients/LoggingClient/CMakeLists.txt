@@ -13,56 +13,53 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: loggingclient 
+# Component: loggingclient
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for loggingclient
 #####################################################
 
-project( loggingclient ) 
+project(loggingclient)
 
 include(${HPCC_SOURCE_DIR}/esp/scm/espscm.cmake)
 
-set (    SRCS 
-         ../edwin.cpp 
-         ${ESPSCM_GENERATED_DIR}/esploggingservice_esp.cpp 
-         LocalDataLogger.cpp 
-         LogFailSafe.cpp 
-         loggingserviceclient.cpp 
-         LogSerializer.cpp 
-         LogThread.cpp 
-    )
+set(
+  SRCS
+  ../edwin.cpp
+  ${ESPSCM_GENERATED_DIR}/esploggingservice_esp.cpp
+  LocalDataLogger.cpp
+  LogFailSafe.cpp
+  loggingserviceclient.cpp
+  LogSerializer.cpp
+  LogThread.cpp)
 
-include_directories ( 
-         ./../../platform 
-         ./../../../system/jlib 
-         ./../../../system/security/shared
-         ./../../bindings/SOAP/client 
-         ./../../bindings/SOAP/Platform 
-         ./../../../system/xmllib 
-         ./../../../system/include 
-         ./../../clients 
-         ./../../clients/LoggingClient 
-         ./../../bindings 
-         ./../../bindings/SOAP/xpp 
-    )
+include_directories(
+  ./../../platform
+  ./../../../system/jlib
+  ./../../../system/security/shared
+  ./../../bindings/SOAP/client
+  ./../../bindings/SOAP/Platform
+  ./../../../system/xmllib
+  ./../../../system/include
+  ./../../clients
+  ./../../clients/LoggingClient
+  ./../../bindings
+  ./../../bindings/SOAP/xpp)
 
-ADD_DEFINITIONS( -D_USRDLL -DLOGGINGCLIENT_EXPORTS )
+add_definitions(-D_USRDLL -DLOGGINGCLIENT_EXPORTS)
 
-if (RELEASE_BUILD EQUAL 1)
-    ADD_DEFINITIONS( -DISC_NO_MAIN -DLOGGING_EXPORTS )
-endif (RELEASE_BUILD EQUAL 1)
+if(RELEASE_BUILD EQUAL 1)
+  add_definitions(-DISC_NO_MAIN -DLOGGING_EXPORTS)
+endif(RELEASE_BUILD EQUAL 1)
 
-HPCC_ADD_LIBRARY( loggingclient SHARED ${SRCS} )
-add_dependencies( loggingclient espscm )
-install ( TARGETS loggingclient RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( loggingclient
-         ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
-         jlib
-         xmllib 
-         esphttp 
-    )
-
+HPCC_ADD_LIBRARY(loggingclient SHARED ${SRCS})
+add_dependencies(loggingclient espscm)
+install(TARGETS loggingclient RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  loggingclient
+  ${XALAN_LIBRARIES}
+  ${XERCES_LIBRARIES}
+  jlib
+  xmllib
+  esphttp)
