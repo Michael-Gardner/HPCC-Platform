@@ -14,7 +14,6 @@
 #    limitations under the License.
 ################################################################################
 
-
 # Component: envgen
 #####################################################
 # Description:
@@ -22,37 +21,35 @@
 #    Cmake Input File for envgen
 #####################################################
 
-project( envgen ) 
+project(envgen) 
 
-set ( SRCS main.cpp )
+set(SRCS main.cpp)
 
-include_directories ( 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../system/mp 
-         ./../../common/environment 
-         ./../deploy/ 
-         ./../configgen/
-         ./../deployutils/ 
-         ./../../dali/base 
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
+include_directories( 
+  ./../../system/include 
+  ./../../system/jlib 
+  ./../../system/mp 
+  ./../../common/environment 
+  ./../deploy/ 
+  ./../configgen/
+  ./../deployutils/ 
+  ./../../dali/base 
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
 
-ADD_DEFINITIONS ( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( envgen ${SRCS} )
-install ( TARGETS envgen DESTINATION sbin )
-target_link_libraries ( envgen 
-        deploy
-        deployutils 
-        jlib 
-        environment 
-        )
+HPCC_ADD_EXECUTABLE(envgen ${SRCS})
+install(TARGETS envgen DESTINATION ${SBIN_PATH})
+target_link_libraries(
+  envgen 
+  deploy
+  deployutils 
+  jlib 
+  environment)
 
-IF (USE_OPENSSL)
-    target_link_libraries ( envgen 
-    	securesocket
-    )
-ENDIF()
-
+if(USE_OPENSSL)
+  target_link_libraries(
+    envgen 
+    securesocket)
+endif()

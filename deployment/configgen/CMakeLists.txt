@@ -14,7 +14,6 @@
 #    limitations under the License.
 ################################################################################
 
-
 # Component: configgen 
 #####################################################
 # Description:
@@ -22,33 +21,32 @@
 #    Cmake Input File for configgen
 #####################################################
 
-project( configgen ) 
+project(configgen) 
 
-set ( SRCS main.cpp )
+set(SRCS main.cpp)
 
-include_directories ( 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../system/mp 
-         ./../../common/environment 
-         ./../deploy/ 
-         ./../../dali/base 
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
+include_directories( 
+  ./../../system/include 
+  ./../../system/jlib 
+  ./../../system/mp 
+  ./../../common/environment 
+  ./../deploy/ 
+  ./../../dali/base 
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
 
-ADD_DEFINITIONS ( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( configgen ${SRCS} )
-install ( TARGETS configgen DESTINATION sbin )
-target_link_libraries ( configgen 
-        deploy 
-        jlib 
-        environment 
-        )
+HPCC_ADD_EXECUTABLE(configgen ${SRCS})
+install(TARGETS configgen DESTINATION ${SBIN_PATH})
+target_link_libraries(
+  configgen 
+  deploy 
+  jlib 
+  environment)
 
-IF (USE_OPENSSL)
-    target_link_libraries ( configgen
-    	securesocket
-    )
-ENDIF()
+if(USE_OPENSSL)
+  target_link_libraries(
+    configgen
+    securesocket)
+endif()
