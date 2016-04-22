@@ -13,10 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: pyembed
-
 #####################################################
 # Description:
 # ------------
@@ -29,53 +26,53 @@ set(DEBUG_PYTHON_LIBRARY "/usr/lib/libpython2.7_d.so")
 project(pyembed)
 
 if(PYEMBED)
-    ADD_PLUGIN(pyembed PACKAGES PythonLibs MINVERSION 2.6 MAXVERSION 2.7)
-    if(MAKE_PYEMBED)
-        set(
-            SRCS
-            pyembed.cpp)
+  ADD_PLUGIN(pyembed PACKAGES PythonLibs MINVERSION 2.6 MAXVERSION 2.7)
+  if(MAKE_PYEMBED)
+    set(
+      SRCS
+      pyembed.cpp)
 
-        include_directories(
-            "${PYTHON_INCLUDE_DIR}"
-            ./../../system/include
-            ./../../rtl/eclrtl
-            ./../../rtl/include
-            ./../../rtl/nbcd
-            ./../../common/deftype
-            ./../../roxie/roxiemem
-            ./../../system/jlib)
+    include_directories(
+      "${PYTHON_INCLUDE_DIR}"
+      ./../../system/include
+      ./../../rtl/eclrtl
+      ./../../rtl/include
+      ./../../rtl/nbcd
+      ./../../common/deftype
+      ./../../roxie/roxiemem
+      ./../../system/jlib)
 
-        add_definitions(-D_USRDLL -DPYEMBED_EXPORTS)
-        if(debug_python)
-            add_definitions(-DPy_DEBUG)
-        endif()
-
-        HPCC_ADD_LIBRARY(pyembed SHARED ${SRCS})
-        if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
-            message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
-        elseif(NOT APPLE)
-            set_target_properties(pyembed PROPERTIES NO_SONAME 1)
-        endif()
-
-        install(
-            TARGETS pyembed
-            DESTINATION plugins)
-        if(debug_python)
-            target_link_libraries(pyembed ${DEBUG_PYTHON_LIBRARY})
-        else()
-            target_link_libraries(pyembed ${PYTHON_LIBRARY})
-        endif()
-
-        target_link_libraries(
-            pyembed
-            eclrtl
-            roxiemem
-            jlib)
+    add_definitions(-D_USRDLL -DPYEMBED_EXPORTS)
+    if(debug_python)
+      add_definitions(-DPy_DEBUG)
     endif()
+
+    HPCC_ADD_LIBRARY(pyembed SHARED ${SRCS})
+    if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
+      message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
+    elseif(NOT APPLE)
+      set_target_properties(pyembed PROPERTIES NO_SONAME 1)
+    endif()
+
+    install(
+      TARGETS pyembed
+      DESTINATION ${LIB_PATH}/plugins)
+    if(debug_python)
+      target_link_libraries(pyembed ${DEBUG_PYTHON_LIBRARY})
+    else()
+      target_link_libraries(pyembed ${PYTHON_LIBRARY})
+    endif()
+
+    target_link_libraries(
+      pyembed
+      eclrtl
+      roxiemem
+      jlib)
+  endif()
 endif()
 if(PLATFORM)
-    install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/python.ecllib
-        DESTINATION plugins
-        COMPONENT Runtime)
+  install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/python.ecllib
+    DESTINATION ${LIB_PATH}/plugins
+    COMPONENT Runtime)
 endif()

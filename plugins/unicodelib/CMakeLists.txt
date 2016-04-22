@@ -13,34 +13,28 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: unicodelib 
-
+# Component: unicodelib
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for unicodelib
 #####################################################
 
-project( unicodelib ) 
+project(unicodelib)
 
-set (    SRCS 
-         unicodelib.cpp 
-    )
+set(
+  SRCS
+  unicodelib.cpp)
 
-include_directories ( 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../system/include
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_USRDLL -DUNICODELIB_EXPORTS )
+add_definitions(-D_USRDLL -DUNICODELIB_EXPORTS)
 
-HPCC_ADD_LIBRARY( unicodelib SHARED ${SRCS} )
-install ( TARGETS unicodelib DESTINATION plugins )
-target_link_libraries ( unicodelib 
-    jlib 
-    ${ICU_LIBRARIES} 
-    )
-
-
+HPCC_ADD_LIBRARY(unicodelib SHARED ${SRCS})
+install(TARGETS unicodelib DESTINATION ${LIB_PATH}/plugins)
+target_link_libraries(
+  unicodelib
+  jlib
+  ${ICU_LIBRARIES})

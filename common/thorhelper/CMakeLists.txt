@@ -13,50 +13,50 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-# Component: thorhelper 
+# Component: thorhelper
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for thorhelper
 #####################################################
 
-project(thorhelper) 
+project(thorhelper)
 
-set(SRCS 
+set(SRCS
 
   commonext.cpp
-  csvsplitter.cpp 
-  layouttrans.cpp 
-  thorcommon.cpp 
-  thorfile.cpp 
-  thorparse.cpp 
-  thorpipe.cpp 
-  thorrparse.cpp 
-  thorsoapcall.cpp 
-  thorstep.cpp 
-  thorstep2.cpp 
+  csvsplitter.cpp
+  layouttrans.cpp
+  thorcommon.cpp
+  thorfile.cpp
+  thorparse.cpp
+  thorpipe.cpp
+  thorrparse.cpp
+  thorsoapcall.cpp
+  thorstep.cpp
+  thorstep2.cpp
   thorstrand.cpp
-  thortalgo.cpp 
-  thortlex.cpp 
-  thortparse.cpp 
-  thorxmlread.cpp 
+  thortalgo.cpp
+  thortlex.cpp
+  thortparse.cpp
+  thorxmlread.cpp
   thorxmlwrite.cpp
   roxierow.cpp
   roxiehelper.cpp
   roxiedebug.cpp
 
   commonext.hpp
-  csvsplitter.hpp 
-  layouttrans.hpp 
-  thorcommon.hpp 
-  thorfile.hpp 
-  thorparse.hpp 
-  thorpipe.hpp 
-  thorrparse.hpp 
-  thorsoapcall.hpp 
-  thorstep.hpp 
+  csvsplitter.hpp
+  layouttrans.hpp
+  thorcommon.hpp
+  thorfile.hpp
+  thorparse.hpp
+  thorpipe.hpp
+  thorrparse.hpp
+  thorsoapcall.hpp
+  thorstep.hpp
   thorstrand.hpp
-  thorxmlread.hpp 
+  thorxmlread.hpp
   thorxmlwrite.hpp
   roxierow.hpp
   thorralgo.ipp
@@ -70,20 +70,20 @@ set(SRCS
   roxiehelper.ipp
   roxielmj.hpp)
 
-include_directories( 
-  ./../../system/security/securesocket 
-  ./../../common/remote 
-  ./../../system/jhtree 
-  ./../../rtl/eclrtl 
-  ./../../rtl/nbcd 
-  ./../../system/include 
+include_directories(
+  ./../../system/security/securesocket
+  ./../../common/remote
+  ./../../system/jhtree
+  ./../../rtl/eclrtl
+  ./../../rtl/nbcd
+  ./../../system/include
   ./../../system/mp
   ./../../system/jlib
   ./../../system/security/zcrypt
   ./../../dali/base
-  ./../deftype 
+  ./../deftype
   ./../workunit
-  ./../../rtl/include 
+  ./../../rtl/include
   ./../../roxie/roxiemem
   ./../../testing/unittests
   ${TBB_INCLUDE_DIR})
@@ -92,13 +92,13 @@ add_definitions(-DTHORHELPER_EXPORTS -D_USRDLL)
 
 HPCC_ADD_LIBRARY(thorhelper SHARED ${SRCS})
 install(TARGETS thorhelper RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
-target_link_libraries(i
+target_link_libraries(
   thorhelper
-  jlib 
-  nbcd 
-  eclrtl 
+  jlib
+  nbcd
+  eclrtl
   roxiemem
-  deftype 
+  deftype
   dalibase)
 
 if(USE_NUMA)
@@ -112,7 +112,7 @@ endif()
 
 if(USE_OPENSSL)
   target_link_libraries(
-    thorhelper 
+    thorhelper
     securesocket)
 endif()
 

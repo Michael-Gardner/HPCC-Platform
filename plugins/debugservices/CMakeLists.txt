@@ -13,28 +13,23 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: debugservices 
+# Component: debugservices
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for debugservices
 #####################################################
 
-project( debugservices ) 
+project(debugservices)
 
-set (    SRCS 
-         debugservices.cpp 
-    )
+set(
+  SRCS
+  debugservices.cpp)
 
-include_directories ( 
-         ./../../system/include 
-    )
+include_directories(
+  ./../../system/include)
 
-ADD_DEFINITIONS ( -DDEBUGSERVICES_EXPORTS -D_USRDLL )
+add_definitions(-DDEBUGSERVICES_EXPORTS -D_USRDLL)
 
-HPCC_ADD_LIBRARY( debugservices SHARED ${SRCS} )
-install ( TARGETS debugservices DESTINATION plugins )
-
-
+HPCC_ADD_LIBRARY(debugservices SHARED ${SRCS})
+install(TARGETS debugservices DESTINATION ${LIB_PATH}/plugins)

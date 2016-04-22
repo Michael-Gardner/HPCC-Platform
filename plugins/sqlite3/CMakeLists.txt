@@ -13,9 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: sqlite3embed
-
 #####################################################
 # Description:
 # ------------
@@ -25,46 +23,46 @@
 project(sqlite3embed)
 
 if(SQLITE3EMBED)
-    ADD_PLUGIN(sqlite3embed PACKAGES SQLITE3)
-    if(MAKE_SQLITE3EMBED)
-        set(
-            SRCS
-            sqlite3.cpp)
+  ADD_PLUGIN(sqlite3embed PACKAGES SQLITE3)
+  if(MAKE_SQLITE3EMBED)
+    set(
+      SRCS
+      sqlite3.cpp)
 
-        include_directories(
-            ./../../system/include
-            ./../../rtl/eclrtl
-            ./../../rtl/include
-            ./../../rtl/nbcd
-            ./../../common/deftype
-            ./../../system/jlib
-            ${SQLITE3_INCLUDE_DIR})
+    include_directories(
+      ./../../system/include
+      ./../../rtl/eclrtl
+      ./../../rtl/include
+      ./../../rtl/nbcd
+      ./../../common/deftype
+      ./../../system/jlib
+      ${SQLITE3_INCLUDE_DIR})
 
-        add_definitions(-D_USRDLL -DSQLITE3_EXPORTS)
+    add_definitions(-D_USRDLL -DSQLITE3_EXPORTS)
 
-        HPCC_ADD_LIBRARY(sqlite3embed SHARED ${SRCS})
-        if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
-            message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
-        elseif(NOT APPLE)
-            set_target_properties(sqlite3embed PROPERTIES NO_SONAME 1)
-        endif()
-
-        install(
-            TARGETS sqlite3embed
-            DESTINATION plugins)
-        target_link_libraries(
-            sqlite3embed
-            ${SQLITE3_LIBRARIES})
-        target_link_libraries(
-            sqlite3embed
-            eclrtl
-            jlib)
+    HPCC_ADD_LIBRARY(sqlite3embed SHARED ${SRCS})
+    if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
+      message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
+    elseif(NOT APPLE)
+      set_target_properties(sqlite3embed PROPERTIES NO_SONAME 1)
     endif()
+
+    install(
+      TARGETS sqlite3embed
+      DESTINATION ${LIB_PATH}/plugins)
+    target_link_libraries(
+      sqlite3embed
+      ${SQLITE3_LIBRARIES})
+    target_link_libraries(
+      sqlite3embed
+      eclrtl
+      jlib)
+  endif()
 endif()
 
 if(PLATFORM)
-    install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.ecllib
-        DESTINATION plugins
-        COMPONENT Runtime)
+  install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.ecllib
+    DESTINATION ${LIB_PATH}/plugins
+    COMPONENT Runtime)
 endif()

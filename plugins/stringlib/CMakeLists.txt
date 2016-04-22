@@ -1,4 +1,4 @@
-################################################################################
+##############################################################################
 #    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,36 +13,31 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: stringlib 
-
+# Component: stringlib
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for stringlib
 #####################################################
 
-set ( toolsdir "${HPCC_SOURCE_DIR}/tools" )
+set(toolsdir "${HPCC_SOURCE_DIR}/tools")
 
+project(stringlib)
 
-project( stringlib ) 
+set(
+  SRCS
+  stringlib.cpp)
 
-set (    SRCS 
-         stringlib.cpp 
-    )
+include_directories(
+  ./../../system/include
+  ./../../system/jlib
+  ./../../rtl/include
+  ./../../rtl/eclrtl)
 
-include_directories ( 
-         ./../../system/include 
-         ./../../system/jlib
-         ./../../rtl/include
-         ./../../rtl/eclrtl
-    )
+add_definitions(-D_USRDLL -DSTRINGLIB_EXPORTS)
 
-ADD_DEFINITIONS( -D_USRDLL -DSTRINGLIB_EXPORTS )
-
-HPCC_ADD_LIBRARY( stringlib SHARED ${SRCS} )
-install ( TARGETS stringlib DESTINATION plugins )
-target_link_libraries ( stringlib
-         eclrtl
-    )
+HPCC_ADD_LIBRARY(stringlib SHARED ${SRCS})
+install(TARGETS stringlib DESTINATION ${LIB_PATH}/plugins)
+target_link_libraries(
+  stringlib
+  eclrtl)

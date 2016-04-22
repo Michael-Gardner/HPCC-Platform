@@ -10,9 +10,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: Rembed
-
 #####################################################
 # Description:
 # ------------
@@ -25,42 +23,42 @@
 project(Rembed)
 
 if(REMBED)
-    ADD_PLUGIN(Rembed PACKAGES R)
-    if(MAKE_REMBED)
-        set(
-            SRCS
-            Rembed.cpp)
+  ADD_PLUGIN(Rembed PACKAGES R)
+  if(MAKE_REMBED)
+    set(
+      SRCS
+      Rembed.cpp)
 
-        include_directories(
-            ${R_INCLUDE_DIRS}
-            ./../../system/include
-            ./../../rtl/eclrtl
-            ./../../rtl/include
-            ./../../rtl/nbcd
-            ./../../common/deftype
-            ./../../system/jlib)
+    include_directories(
+      ${R_INCLUDE_DIRS}
+      ./../../system/include
+      ./../../rtl/eclrtl
+      ./../../rtl/include
+      ./../../rtl/nbcd
+      ./../../common/deftype
+      ./../../system/jlib)
 
-        add_definitions(-D_USRDLL -DREMBED_EXPORTS)
-        if(RCPP_LIBRARY STREQUAL "")
-            add_definitions(-DRCPP_HEADER_ONLY)
-        endif()
-
-        HPCC_ADD_LIBRARY(Rembed SHARED ${SRCS})
-        install(
-            TARGETS Rembed
-            DESTINATION plugins)
-
-        target_link_libraries(
-            Rembed
-            ${R_LIBRARIES}
-            eclrtl
-            jlib)
+    add_definitions(-D_USRDLL -DREMBED_EXPORTS)
+    if(RCPP_LIBRARY STREQUAL "")
+      add_definitions(-DRCPP_HEADER_ONLY)
     endif()
+
+    HPCC_ADD_LIBRARY(Rembed SHARED ${SRCS})
+    install(
+      TARGETS Rembed
+      DESTINATION ${LIB_PATH}/plugins)
+
+    target_link_libraries(
+      Rembed
+      ${R_LIBRARIES}
+      eclrtl
+      jlib)
+  endif()
 endif()
 
 if(PLATFORM)
-    install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/R.ecllib
-        DESTINATION plugins
-        COMPONENT Runtime)
+  install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/R.ecllib
+    DESTINATION ${LIB_PATH}/plugins
+    COMPONENT Runtime)
 endif()

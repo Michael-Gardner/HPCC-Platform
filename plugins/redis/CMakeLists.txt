@@ -13,9 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: redis
-
 #####################################################
 # Description:
 # ------------
@@ -25,45 +23,45 @@
 project(redis)
 
 if(REDIS)
-    ADD_PLUGIN(redis PACKAGES HIREDIS MINVERSION 0.13.0) #NOTE: If MINVERSION is altered then min versions in redis.hpp must also be altered.
-    if(MAKE_REDIS)
-        set(
-            SRCS
-            redis.hpp
-            redis.cpp)
+  ADD_PLUGIN(redis PACKAGES HIREDIS MINVERSION 0.13.0) #NOTE: If MINVERSION is altered then min versions in redis.hpp must also be altered.
+  if(MAKE_REDIS)
+    set(
+      SRCS
+      redis.hpp
+      redis.cpp)
 
-        include_directories(
-            ./../../system/include
-            ./../../rtl/eclrtl
-            ./../../rtl/include
-            ./../../common/deftype
-            ./../../system/jlib
-            ${HIREDIS_INCLUDE_DIR})
+    include_directories(
+      ./../../system/include
+      ./../../rtl/eclrtl
+      ./../../rtl/include
+      ./../../common/deftype
+      ./../../system/jlib
+      ${HIREDIS_INCLUDE_DIR})
 
-        add_definitions(-D_USRDLL -DECL_REDIS_EXPORTS)
+    add_definitions(-D_USRDLL -DECL_REDIS_EXPORTS)
 
-        HPCC_ADD_LIBRARY(redis SHARED ${SRCS})
-        if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
-            message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
-        elseif(NOT APPLE)
-            set_target_properties(redis PROPERTIES NO_SONAME 1)
-        endif()
-
-        install(
-            TARGETS redis
-            DESTINATION plugins)
-
-        target_link_libraries(
-            redis
-            eclrtl
-            jlib
-            ${HIREDIS_LIBRARY})
+    HPCC_ADD_LIBRARY(redis SHARED ${SRCS})
+    if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
+      message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
+    elseif(NOT APPLE)
+      set_target_properties(redis PROPERTIES NO_SONAME 1)
     endif()
+
+    install(
+      TARGETS redis
+      DESTINATION ${LIB_PATH}/plugins)
+
+    target_link_libraries(
+      redis
+      eclrtl
+      jlib
+      ${HIREDIS_LIBRARY})
+  endif()
 endif()
 
 if(PLATFORM)
-    install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_redis.ecllib
-        DESTINATION plugins
-        COMPONENT Runtime)
+  install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_redis.ecllib
+    DESTINATION ${LIB_PATH}/plugins
+    COMPONENT Runtime)
 endif()

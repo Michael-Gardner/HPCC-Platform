@@ -13,35 +13,29 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: parselib 
-
+# Component: parselib
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for parselib
 #####################################################
 
-project( parselib ) 
+project(parselib)
 
-set (    SRCS 
-         parselib.cpp 
-    )
+set(
+  SRCS
+  parselib.cpp)
 
-include_directories ( 
-         ./../../common/thorhelper 
-         ./../../rtl/eclrtl 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../common/thorhelper
+  ./../../rtl/eclrtl
+  ./../../system/include
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_USRDLL -DPARSELIB_EXPORTS )
+add_definitions(-D_USRDLL -DPARSELIB_EXPORTS)
 
-HPCC_ADD_LIBRARY( parselib SHARED ${SRCS} )
-install ( TARGETS parselib DESTINATION plugins )
-target_link_libraries ( parselib 
-         jlib
-    )
-
-
+HPCC_ADD_LIBRARY(parselib SHARED ${SRCS})
+install(TARGETS parselib DESTINATION ${LIB_PATH}/plugins)
+target_link_libraries(
+  parselib
+  jlib)

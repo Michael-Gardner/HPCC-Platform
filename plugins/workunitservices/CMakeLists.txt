@@ -13,51 +13,46 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: workunitservices 
+# Component: workunitservices
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for workunitservices
 #####################################################
 
-project( workunitservices ) 
+project(workunitservices)
 
-set (    SRCS 
-         workunitservices.cpp 
-         ../../dali/sasha/sacmd.cpp 
-    )
+set(
+  SRCS
+  workunitservices.cpp
+  ../../dali/sasha/sacmd.cpp)
 
-include_directories ( 
-         ./../../common/environment 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../../common/workunit 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../rtl/include 
-         ./../../ecl/eclagent 
-         ./../../common/thorhelper 
-         ./../../common/deftype 
-         ./../../rtl/eclrtl 
-         ./../../system/jhtree 
-         ./../../system/jlib 
-         ./../../dali/sasha 
-    )
+include_directories(
+  ./../../common/environment
+  ./../../common/remote
+  ./../../system/mp
+  ./../../common/workunit
+  ./../../system/include
+  ./../../dali/base
+  ./../../rtl/include
+  ./../../ecl/eclagent
+  ./../../common/thorhelper
+  ./../../common/deftype
+  ./../../rtl/eclrtl
+  ./../../system/jhtree
+  ./../../system/jlib
+  ./../../dali/sasha)
 
-ADD_DEFINITIONS( -D_USRDLL -DWORKUNITSERVICES_EXPORTS )
+add_definitions(-D_USRDLL -DWORKUNITSERVICES_EXPORTS)
 
-HPCC_ADD_LIBRARY( workunitservices SHARED ${SRCS} )
-install ( TARGETS workunitservices DESTINATION plugins )
-target_link_LIBRARies ( workunitservices 
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-         workunit 
-    )
-
-
+HPCC_ADD_LIBRARY(workunitservices SHARED ${SRCS})
+install(TARGETS workunitservices DESTINATION ${LIB_PATH}/plugins)
+target_link_LIBRARies(
+  workunitservices
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  environment
+  workunit)

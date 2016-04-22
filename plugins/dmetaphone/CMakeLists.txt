@@ -1,30 +1,27 @@
 # Component: dmetaphone
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for dmetaphone
 #####################################################
 
-set ( toolsdir "${HPCC_SOURCE_DIR}/tools" )
+set(toolsdir "${HPCC_SOURCE_DIR}/tools")
 
+project(dmetaphone)
 
-project( dmetaphone )
+set(
+  SRCS
+  dmetaphone.cpp
+  metaphone.cpp)
 
-set (    SRCS
-         dmetaphone.cpp
-         metaphone.cpp
-    )
+include_directories(
+  ${HPCC_SOURCE_DIR}/plugins/common
+  ${HPCC_SOURCE_DIR}/system/include)
 
-include_directories (
-         ${HPCC_SOURCE_DIR}/plugins/common
-         ${HPCC_SOURCE_DIR}/system/include
-    )
+add_definitions(-D_USRDLL -DDMETAPHONE_EXPORTS)
 
-ADD_DEFINITIONS( -D_USRDLL -DDMETAPHONE_EXPORTS )
-
-HPCC_ADD_LIBRARY( dmetaphone SHARED ${SRCS} )
-install ( TARGETS dmetaphone DESTINATION plugins )
-target_link_libraries ( dmetaphone
-         jlib
-    )
+HPCC_ADD_LIBRARY(dmetaphone SHARED ${SRCS})
+install(TARGETS dmetaphone DESTINATION ${LIB_PATH}/plugins)
+target_link_libraries(
+  dmetaphone
+  jlib)

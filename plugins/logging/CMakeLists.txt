@@ -13,32 +13,27 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: logging 
+# Component: logging
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for logging
 #####################################################
 
-project( logging ) 
+project(logging)
 
-set (    SRCS 
-         logging.cpp 
-    )
+set(
+  SRCS
+  logging.cpp)
 
-include_directories ( 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../system/include
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_USRDLL -DLOGGING_EXPORTS )
+add_definitions(-D_USRDLL -DLOGGING_EXPORTS)
 
-HPCC_ADD_LIBRARY( logging SHARED ${SRCS} )
-install ( TARGETS logging DESTINATION plugins )
-target_link_libraries ( logging 
-         jlib 
-    )
-
-
+HPCC_ADD_LIBRARY(logging SHARED ${SRCS})
+install(TARGETS logging DESTINATION ${LIB_PATH}/plugins)
+target_link_libraries(
+  logging
+  jlib)

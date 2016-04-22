@@ -13,36 +13,31 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: timelib 
-
+# Component: timelib
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for timelib
 #####################################################
 
-set ( toolsdir "${HPCC_SOURCE_DIR}/tools" )
+set(toolsdir "${HPCC_SOURCE_DIR}/tools")
 
+project(timelib)
 
-project( timelib ) 
+set(
+  SRCS
+  timelib.cpp)
 
-set (    SRCS 
-         timelib.cpp 
-    )
+include_directories(
+  ./../../system/include
+  ./../../system/jlib
+  ./../../rtl/include
+  ./../../rtl/eclrtl)
 
-include_directories ( 
-         ./../../system/include 
-         ./../../system/jlib
-         ./../../rtl/include
-         ./../../rtl/eclrtl
-    )
+add_definitions(-D_USRDLL -DTIMELIB_EXPORTS)
 
-ADD_DEFINITIONS( -D_USRDLL -DTIMELIB_EXPORTS )
-
-HPCC_ADD_LIBRARY( timelib SHARED ${SRCS} )
-install ( TARGETS timelib DESTINATION plugins )
-target_link_libraries ( timelib
-         eclrtl
-    )
+HPCC_ADD_LIBRARY(timelib SHARED ${SRCS})
+install(TARGETS timelib DESTINATION ${LIB_PATH}/plugins)
+target_link_libraries(
+  timelib
+  eclrtl)
