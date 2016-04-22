@@ -14,8 +14,6 @@
 #    limitations under the License.
 ################################################################################
 
-FOREACH( iFILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/git.sh
-)
-    install ( PROGRAMS ${iFILES} DESTINATION ${BIN_DIR} COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+foreach(iFILES ${CMAKE_CURRENT_SOURCE_DIR}/git.sh)
+  install(PROGRAMS ${iFILES} DESTINATION ${BIN_PATH} COMPONENT Runtime)
+endforeach(iFILES)

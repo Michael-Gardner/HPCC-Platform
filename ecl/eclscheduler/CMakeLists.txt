@@ -13,42 +13,34 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: eclscheduler
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for eclscheduler
 #####################################################
 
+project(eclscheduler)
 
-project( eclscheduler ) 
+set(SRCS
+  eclscheduler.cpp)
 
-set (    SRCS 
-         eclscheduler.cpp 
-    )
+set(INCLUDES)
 
-set (    INCLUDES
-    )
+include_directories(
+  ./../../common/remote
+  ./../../common/workunit
+  ./../../system/include
+  ./../../system/mp
+  ./../../dali/base
+  ./../../system/jlib
+  ./../../ecl/schedulectrl)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../common/workunit 
-         ./../../system/include 
-         ./../../system/mp 
-         ./../../dali/base 
-         ./../../system/jlib 
-         ./../../ecl/schedulectrl
-    )
+HPCC_ADD_EXECUTABLE(eclscheduler ${SRCS} ${INCLUDES})
+install(TARGETS eclscheduler RUNTIME DESTINATION ${BIN_PATH})
 
-HPCC_ADD_EXECUTABLE ( eclscheduler ${SRCS} ${INCLUDES} )
-install ( TARGETS eclscheduler RUNTIME DESTINATION ${BIN_DIR} )
-
-target_link_libraries ( eclscheduler 
-         jlib
-         schedulectrl
-         workunit
-    )
-
+target_link_libraries(
+  eclscheduler
+  jlib
+  schedulectrl
+  workunit)

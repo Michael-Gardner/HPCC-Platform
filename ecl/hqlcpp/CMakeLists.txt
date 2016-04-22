@@ -13,130 +13,124 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: hqlcpp 
-
+# Component: hqlcpp
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for hqlcpp
 #####################################################
 
+project(hqlcpp)
 
-project( hqlcpp ) 
+set(
+  SRCS
+  hqlalias.cpp
+  hqlcatom.cpp
+  hqlccommon.cpp
+  hqlckey.cpp
+  hqlcpp.cpp
+  hqlcppc.cpp
+  hqlcppcase.cpp
+  hqlcppds.cpp
+  hqlcpputil.cpp
+  hqlcse.cpp
+  hqlcset.cpp
+  hqlecl.cpp
+  hqlgraph.cpp
+  hqlhoist.cpp
+  hqlhtcpp.cpp
+  hqlinline.cpp
+  hqliproj.cpp
+  hqliter.cpp
+  hqllib.cpp
+  hqlnlp.cpp
+  hqlpopt.cpp
+  hqlregex.cpp
+  hqlres.cpp
+  hqlresource.cpp
+  hqlsource.cpp
+  hqlstep.cpp
+  hqlstmt.cpp
+  hqltcppc.cpp
+  hqltcppc2.cpp
+  hqltomita.cpp
+  hqlttcpp.cpp
+  hqlwcpp.cpp
 
-set (    SRCS 
-         hqlalias.cpp
-         hqlcatom.cpp
-         hqlccommon.cpp 
-         hqlckey.cpp 
-         hqlcpp.cpp 
-         hqlcppc.cpp 
-         hqlcppcase.cpp 
-         hqlcppds.cpp 
-         hqlcpputil.cpp 
-         hqlcse.cpp 
-         hqlcset.cpp 
-         hqlecl.cpp 
-         hqlgraph.cpp 
-         hqlhoist.cpp
-         hqlhtcpp.cpp 
-         hqlinline.cpp 
-         hqliproj.cpp 
-         hqliter.cpp 
-         hqllib.cpp 
-         hqlnlp.cpp 
-         hqlpopt.cpp 
-         hqlregex.cpp 
-         hqlres.cpp 
-         hqlresource.cpp 
-         hqlsource.cpp 
-         hqlstep.cpp 
-         hqlstmt.cpp 
-         hqltcppc.cpp 
-         hqltcppc2.cpp 
-         hqltomita.cpp 
-         hqlttcpp.cpp 
-         hqlwcpp.cpp 
-    
-         hqlalias.hpp
-         hqlcatom.hpp
-         hqlccommon.hpp
-         hqlcerrors.hpp
-         hqlcpp.hpp
-         hqlcppc.hpp
-         hqlcppds.hpp
-         hqlcpputil.hpp
-         hqlecl.hpp
-         hqlfunc.hpp
-         hqlinline.hpp
-         hqlpopt.hpp
-         hqlregex.hpp
-         hqlres.hpp
-         hqlresource.hpp
-         hqlstmt.hpp
-         hqltcppc.hpp
-         hqlwcpp.hpp
-         hqlcpp.ipp
-         hqlcse.ipp
-         hqlcset.ipp
-         hqlfunc.ipp
-         hqlgraph.ipp
-         hqlhoist.hpp
-         hqlhtcpp.ipp
-         hqliproj.ipp
-         hqliter.ipp
-         hqllib.ipp
-         hqlnlp.ipp
-         hqlregex.ipp
-         hqlresource.ipp
-         hqlsource.ipp
-         hqlstmt.ipp
-         hqltcppc.ipp
-         hqltomita.ipp
-         hqlttcpp.ipp
-         hqlwcpp.ipp
-         
-         hqlcppsys.ecl
-        )
+  hqlalias.hpp
+  hqlcatom.hpp
+  hqlccommon.hpp
+  hqlcerrors.hpp
+  hqlcpp.hpp
+  hqlcppc.hpp
+  hqlcppds.hpp
+  hqlcpputil.hpp
+  hqlecl.hpp
+  hqlfunc.hpp
+  hqlinline.hpp
+  hqlpopt.hpp
+  hqlregex.hpp
+  hqlres.hpp
+  hqlresource.hpp
+  hqlstmt.hpp
+  hqltcppc.hpp
+  hqlwcpp.hpp
+  hqlcpp.ipp
+  hqlcse.ipp
+  hqlcset.ipp
+  hqlfunc.ipp
+  hqlgraph.ipp
+  hqlhoist.hpp
+  hqlhtcpp.ipp
+  hqliproj.ipp
+  hqliter.ipp
+  hqllib.ipp
+  hqlnlp.ipp
+  hqlregex.ipp
+  hqlresource.ipp
+  hqlsource.ipp
+  hqlstmt.ipp
+  hqltcppc.ipp
+  hqltomita.ipp
+  hqlttcpp.ipp
+  hqlwcpp.ipp
+
+  hqlcppsys.ecl)
 
 
-include_directories ( 
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-         ./../../common/remote
-         ./../../common/workunit
-         ./../../common/deftype
-         ./../../system/include
-         ./../../ecl/hql
-         ./../../common/dllserver
-         ./../../system/jlib
-         ./../../system/jhtree
-         ./../../common/thorhelper
-         ./../../rtl/eclrtl
-         ./../../rtl/include
-    )
+include_directories(
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss
+  ./../../common/remote
+  ./../../common/workunit
+  ./../../common/deftype
+  ./../../system/include
+  ./../../ecl/hql
+  ./../../common/dllserver
+  ./../../system/jlib
+  ./../../system/jhtree
+  ./../../common/thorhelper
+  ./../../rtl/eclrtl
+  ./../../rtl/include)
 
-IF (NOT WIN32)
+if(NOT WIN32)
   include_directories(${BINUTILS_INCLUDE_DIR})
-ENDIF()
-
-ADD_DEFINITIONS( -DHQLCPP_EXPORTS -D_USRDLL )
-
-HPCC_ADD_LIBRARY( hqlcpp SHARED ${SRCS} )
-install ( TARGETS hqlcpp RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( hqlcpp
-         jlib
-         nbcd 
-         eclrtl 
-         deftype 
-         thorhelper 
-         hql 
-         workunit
-    )
-if (NOT WIN32)
-  target_link_libraries ( hqlcpp ${BINUTILS_LIBRARIES})
 endif()
 
+add_definitions(-DHQLCPP_EXPORTS -D_USRDLL)
 
+HPCC_ADD_LIBRARY(hqlcpp SHARED ${SRCS})
+install(TARGETS hqlcpp RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  hqlcpp
+  jlib
+  nbcd
+  eclrtl
+  deftype
+  thorhelper
+  hql
+  workunit)
+
+if(NOT WIN32)
+  target_link_libraries(hqlcpp ${BINUTILS_LIBRARIES})
+endif()

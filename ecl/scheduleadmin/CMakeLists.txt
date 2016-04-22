@@ -13,46 +13,40 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: scheduleadmin 
+# Component: scheduleadmin
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for scheduleadmin
 #####################################################
 
+project(scheduleadmin)
 
-project( scheduleadmin ) 
+set(
+  SRCS
+  scheduleadmin.cpp)
 
-set (    SRCS 
-         scheduleadmin.cpp 
-    )
+include_directories(
+  ./../../system/mp
+  ./../../system/include
+  ./../../dali/base
+  ./../../system/jlib
+  ./../schedulectrl
+  ./../../common/workunit)
 
-include_directories ( 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../system/jlib 
-         ./../schedulectrl 
-         ./../../common/workunit 
-    )
+add_definitions(-DNO_SYBASE -D_CONSOLE)
 
-ADD_DEFINITIONS( -DNO_SYBASE -D_CONSOLE )
-
-HPCC_ADD_EXECUTABLE ( scheduleadmin ${SRCS} )
-install ( TARGETS scheduleadmin RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( scheduleadmin 
-         jlib
-         remote 
-         dalibase 
-         environment 
-         dllserver 
-         nbcd 
-         eclrtl 
-         deftype 
-         workunit 
-         schedulectrl 
-    )
-
-
+HPCC_ADD_EXECUTABLE(scheduleadmin ${SRCS})
+install(TARGETS scheduleadmin RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  scheduleadmin
+  jlib
+  remote
+  dalibase
+  environment
+  dllserver
+  nbcd
+  eclrtl
+  deftype
+  workunit
+  schedulectrl)

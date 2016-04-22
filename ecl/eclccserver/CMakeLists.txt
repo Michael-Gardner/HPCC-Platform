@@ -13,44 +13,35 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: eclccserver
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for eclccserver
 #####################################################
 
+project(eclccserver)
 
-project( eclccserver ) 
+set(SRCS
+  eclccserver.cpp)
 
-set (    SRCS 
-         eclccserver.cpp 
-    )
+set(INCLUDES)
 
-set (    INCLUDES
-    )
+include_directories(
+  ./../../common/remote
+  ./../../common/workunit
+  ./../../common/environment
+  ./../../system/include
+  ./../../system/mp
+  ./../../dali/base
+  ./../../common/dllserver
+  ./../../system/jlib)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../common/workunit 
-         ./../../common/environment
-         ./../../system/include 
-         ./../../system/mp 
-         ./../../dali/base 
-         ./../../common/dllserver 
-         ./../../system/jlib 
-    )
+HPCC_ADD_EXECUTABLE(eclccserver ${SRCS} ${INCLUDES})
+install(TARGETS eclccserver RUNTIME DESTINATION ${BIN_PATH})
 
-HPCC_ADD_EXECUTABLE ( eclccserver ${SRCS} ${INCLUDES} )
-install ( TARGETS eclccserver RUNTIME DESTINATION ${BIN_DIR} )
+target_link_libraries(eclccserver
+  jlib
+  workunit)
 
-target_link_libraries ( eclccserver 
-         jlib
-         workunit
-    )
-
-HPCC_ADD_SUBDIRECTORY (vchooks "PLATFORM")
-
+HPCC_ADD_SUBDIRECTORY(vchooks "PLATFORM")

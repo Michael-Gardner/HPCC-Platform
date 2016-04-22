@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: eclagent
 #####################################################
 # Description:
@@ -22,29 +20,26 @@
 #    Cmake Input File for eclagent
 #####################################################
 
-project( eclagent )
+project(eclagent)
 
-set ( SRCS
-      eclagentmain.cpp
-    )
+set(SRCS
+  eclagentmain.cpp)
 
-include_directories (
-         .
-         ${HPCC_SOURCE_DIR}/ecl/hthor
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/rtl/include
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
+include_directories(
+  .
+  ${HPCC_SOURCE_DIR}/ecl/hthor
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/rtl/include
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
 
-ADD_DEFINITIONS( -DNO_SYBASE -D_CONSOLE )
+add_definitions(-DNO_SYBASE -D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( eclagent ${SRCS} )
-install ( TARGETS eclagent RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( eclagent
-      hthor           
-      ${CPPUNIT_LIBRARIES}
-    )
+HPCC_ADD_EXECUTABLE(eclagent ${SRCS})
+install(TARGETS eclagent RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(eclagent
+  hthor
+  ${CPPUNIT_LIBRARIES})
 
-Install ( PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/start_eclagent DESTINATION ${BIN_DIR} COMPONENT Runtime )
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/start_eclagent DESTINATION ${BIN_PATH} COMPONENT Runtime)

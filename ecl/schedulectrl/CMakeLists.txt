@@ -13,48 +13,41 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: schedulectrl 
-
+# Component: schedulectrl
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for schedulectrl
 #####################################################
 
+project(schedulectrl)
 
-project( schedulectrl ) 
+set(
+  SRCS
+  eventqueue.cpp
+  schedulectrl.cpp
+  scheduleread.cpp)
 
-set (    SRCS 
-         eventqueue.cpp 
-         schedulectrl.cpp 
-         scheduleread.cpp 
-    )
+include_directories(
+  ./../../system/mp
+  ./../../system/include
+  ./../../dali/base
+  ./../../system/jlib
+  ./../schedulectrl
+  ./../../common/workunit)
 
-include_directories ( 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../system/jlib 
-         ./../schedulectrl 
-         ./../../common/workunit 
-    )
+add_definitions(-D_USRDLL -DSCHEDULECTRL_EXPORTS)
 
-ADD_DEFINITIONS( -D_USRDLL -DSCHEDULECTRL_EXPORTS )
-
-HPCC_ADD_LIBRARY( schedulectrl SHARED ${SRCS} )
-install ( TARGETS schedulectrl RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( schedulectrl
-         jlib
-         remote 
-         dalibase 
-         environment 
-         dllserver 
-         nbcd 
-         eclrtl 
-         deftype 
-         workunit 
-    )
-
-
+HPCC_ADD_LIBRARY(schedulectrl SHARED ${SRCS})
+install(TARGETS schedulectrl RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  schedulectrl
+  jlib
+  remote
+  dalibase
+  environment
+  dllserver
+  nbcd
+  eclrtl
+  deftype
+  workunit)

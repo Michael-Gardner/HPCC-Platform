@@ -13,55 +13,50 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: eclcc 
+# Component: eclcc
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for eclcc
 #####################################################
 
+project(eclcc)
 
-project( eclcc ) 
+set(
+  SRCS
+  eclcc.hpp
+  eclcc.cpp)
 
-set (    SRCS
-         eclcc.hpp
-         eclcc.cpp
-    )
+include_directories(
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss
+  ./../../ecl/hqlcpp
+  ./../../common/workunit
+  ./../../common/deftype
+  ./../../system/include
+  ./../../ecl/hql
+  ./../../rtl/include
+  ./../../system/jlib
+  ./../../common/remote)
 
-include_directories ( 
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-         ./../../ecl/hqlcpp 
-         ./../../common/workunit 
-         ./../../common/deftype 
-         ./../../system/include 
-         ./../../ecl/hql 
-         ./../../rtl/include 
-         ./../../system/jlib 
-         ./../../common/remote
-    )
-
-ADD_DEFINITIONS( -D_CONSOLE )
+ADD_DEFINITIONS(-D_CONSOLE)
 
 #The transformations can use a lot of stack space processing very deep graphs
-if (WIN32)
-    set (CMAKE_EXE_LINKER_FLAGS "/STACK:10000000 ${CMAKE_EXE_LINKER_FLAGS}")
+if(WIN32)
+  set(CMAKE_EXE_LINKER_FLAGS "/STACK:10000000 ${CMAKE_EXE_LINKER_FLAGS}")
 endif()
 
-HPCC_ADD_EXECUTABLE ( eclcc ${SRCS} )
-install ( TARGETS eclcc RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( eclcc 
-         jlib
-         nbcd 
-         eclrtl 
-         deftype 
-         remote 
-         dalibase 
-         workunit 
-         thorhelper 
-         hql
-         hqlcpp
-    )
-
+HPCC_ADD_EXECUTABLE(eclcc ${SRCS})
+install(TARGETS eclcc RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  eclcc
+  jlib
+  nbcd
+  eclrtl
+  deftype
+  remote
+  dalibase
+  workunit
+  thorhelper
+  hql
+  hqlcpp)

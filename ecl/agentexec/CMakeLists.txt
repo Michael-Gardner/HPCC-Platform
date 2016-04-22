@@ -13,39 +13,34 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: agentexec 
+# Component: agentexec
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for agentexec
 #####################################################
 
-project( agentexec ) 
+project(agentexec)
 
-set (    SRCS 
-         agentexec.cpp 
-         agentexec.hpp 
-    )
+set(SRCS
+  agentexec.cpp
+  agentexec.hpp)
 
-include_directories ( 
-         ./../../system/hrpc 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../dali/remote 
-         ./../../common/workunit 
-         ./../../system/mp 
-         ./../../dali/base 
-    )
+include_directories(
+  ./../../system/hrpc
+  ./../../system/include
+  ./../../system/jlib
+  ./../../dali/remote
+  ./../../common/workunit
+  ./../../system/mp
+  ./../../dali/base)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( agentexec ${SRCS} )
-install ( TARGETS agentexec RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( agentexec
-         jlib 
-         dalibase 
-         eclrtl 
-         workunit
-    )
+HPCC_ADD_EXECUTABLE(agentexec ${SRCS})
+install(TARGETS agentexec RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(agentexec
+  jlib
+  dalibase
+  eclrtl
+  workunit)

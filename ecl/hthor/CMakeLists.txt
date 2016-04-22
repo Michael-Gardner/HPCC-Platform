@@ -13,86 +13,79 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: hthor
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for hthor
 #####################################################
 
+project(hthor)
 
-project( hthor )
+set(
+  SRCS
+  hthor.cpp
+  hthorkey.cpp
+  hthorstep.cpp
+  ../eclagent/eclagent.cpp
+  ../eclagent/eclgraph.cpp
+  sourcedoc.xml)
 
-set (    SRCS
-         hthor.cpp
-         hthorkey.cpp
-         hthorstep.cpp
-         ../eclagent/eclagent.cpp
-         ../eclagent/eclgraph.cpp
-         sourcedoc.xml
-    )
+set(
+  INCLUDES
+  hthor.ipp
+  hthor.hpp
+  hthorstep.ipp
+  ../eclagent/agentctx.hpp
+  ../eclagent/eclagent.ipp)
 
-set (    INCLUDES
-         hthor.ipp
-         hthor.hpp
-         hthorstep.ipp
-         ../eclagent/agentctx.hpp
-         ../eclagent/eclagent.ipp
-    )
+include_directories(
+  .
+  ${HPCC_SOURCE_DIR}/common/remote
+  ${HPCC_SOURCE_DIR}/system/jhtree
+  ${HPCC_SOURCE_DIR}/system/hrpc
+  ${HPCC_SOURCE_DIR}/system/mp
+  ${HPCC_SOURCE_DIR}/common/workunit
+  ${HPCC_SOURCE_DIR}/common/deftype
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/dali/base
+  ${HPCC_SOURCE_DIR}/rtl/include
+  ${HPCC_SOURCE_DIR}/ecl/eclagent
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/common/thorhelper
+  ${HPCC_SOURCE_DIR}/rtl/eclrtl
+  ${HPCC_SOURCE_DIR}/roxie/roxiemem
+  ${HPCC_SOURCE_DIR}/roxie/roxie
+  ${HPCC_SOURCE_DIR}/roxie/ccd
+  ${HPCC_SOURCE_DIR}/common/dllserver
+  ${HPCC_SOURCE_DIR}/common/environment
+  ${HPCC_SOURCE_DIR}/ecl/schedulectrl
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss
+  ${HPCC_SOURCE_DIR}/dali/ft)
 
-include_directories (
-         .
-         ${HPCC_SOURCE_DIR}/common/remote
-         ${HPCC_SOURCE_DIR}/system/jhtree
-         ${HPCC_SOURCE_DIR}/system/hrpc
-         ${HPCC_SOURCE_DIR}/system/mp
-         ${HPCC_SOURCE_DIR}/common/workunit
-         ${HPCC_SOURCE_DIR}/common/deftype
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/dali/base
-         ${HPCC_SOURCE_DIR}/rtl/include
-         ${HPCC_SOURCE_DIR}/ecl/eclagent
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/common/thorhelper
-         ${HPCC_SOURCE_DIR}/rtl/eclrtl
-         ${HPCC_SOURCE_DIR}/roxie/roxiemem
-         ${HPCC_SOURCE_DIR}/roxie/roxie
-         ${HPCC_SOURCE_DIR}/roxie/ccd
-         ${HPCC_SOURCE_DIR}/common/dllserver
-         ${HPCC_SOURCE_DIR}/common/environment
-         ${HPCC_SOURCE_DIR}/ecl/schedulectrl
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-         ${HPCC_SOURCE_DIR}/dali/ft
-    )
+add_definitions(-D_USRDLL -DHTHOR_EXPORTS -DSTARTQUERY_EXPORTS)
 
-ADD_DEFINITIONS( -D_USRDLL -DHTHOR_EXPORTS -DSTARTQUERY_EXPORTS )
+HPCC_ADD_LIBRARY(hthor SHARED ${SRCS} ${INCLUDES})
+install(TARGETS hthor RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH} ARCHIVE DESTINATION ${SHARE_PATH}/componentfiles/cl/lib )
+target_link_libraries(
+  hthor
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  environment
+  dllserver
+  nbcd
+  eclrtl
+  deftype
+  workunit
+  jhtree
+  thorhelper
+  roxiemem
+  schedulectrl)
 
-HPCC_ADD_LIBRARY( hthor SHARED ${SRCS} ${INCLUDES} )
-install ( TARGETS hthor RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib )
-target_link_libraries ( hthor
-         jlib
-         mp
-         hrpc
-         remote
-         dalibase
-         environment
-         dllserver
-         nbcd
-         eclrtl
-         deftype
-         workunit
-         jhtree
-         thorhelper
-         roxiemem
-         schedulectrl
-    )
-
-IF (USE_OPENSSL)
-    target_link_libraries ( hthor
-    	securesocket
-    )
-ENDIF()
+if(USE_OPENSSL)
+  target_link_libraries(hthor securesocket)
+endif()
