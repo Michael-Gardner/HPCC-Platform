@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: remote/hooks
 #####################################################
 # Description:
@@ -22,11 +20,11 @@
 #    Cmake Input File for remote/hooks
 #####################################################
 
-project( hooks )
+project(hooks)
 
-IF (USE_GIT)
+if(USE_GIT)
   add_subdirectory(git)
-ENDIF()
-IF (USE_LIBARCHIVE)
+endif()
+if(USE_LIBARCHIVE)
   add_subdirectory(libarchive)
-ENDIF()
+endif()

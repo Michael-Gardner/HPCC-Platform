@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: deftype 
 #####################################################
 # Description:
@@ -22,34 +20,29 @@
 #    Cmake Input File for deftype
 #####################################################
 
-project( deftype ) 
+project(deftype) 
 
-set (    SRCS 
-         deffield.cpp 
-         deftype.cpp 
-         defvalue.cpp 
-         
-         deffield.hpp
-         deftype.hpp
-         defvalue.hpp
-         
-    )
+set(SRCS 
+  deffield.cpp 
+  deftype.cpp 
+  defvalue.cpp 
+  deffield.hpp
+  deftype.hpp
+  defvalue.hpp)
 
-include_directories ( 
-         ./../../common/deftype 
-         ./../../rtl/eclrtl 
-         ./../../rtl/nbcd 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../common/deftype 
+  ./../../rtl/eclrtl 
+  ./../../rtl/nbcd 
+  ./../../system/include 
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_USRDLL -DDEFTYPE_EXPORTS )
+add_definitions(-D_USRDLL -DDEFTYPE_EXPORTS)
 
-HPCC_ADD_LIBRARY( deftype SHARED ${SRCS} )
-install ( TARGETS deftype RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( deftype 
-         jlib 
-         nbcd
-         eclrtl 
-    )
-
+HPCC_ADD_LIBRARY(deftype SHARED ${SRCS})
+install(TARGETS deftype RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  deftype
+  jlib 
+  nbcd
+  eclrtl)

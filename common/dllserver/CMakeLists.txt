@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: dllserver 
 #####################################################
 # Description:
@@ -22,45 +20,42 @@
 #    Cmake Input File for dllserver
 #####################################################
 
-project( dllserver ) 
+project(dllserver) 
 
-set (    SRCS 
-         dllserver.cpp 
-         thorplugin.cpp 
+set(SRCS
+  dllserver.cpp 
+  thorplugin.cpp 
+  dllserver.hpp 
+  thorplugin.hpp)
 
-         dllserver.hpp 
-         thorplugin.hpp 
-    )
+include_directories(
+  ./../../common/remote 
+  ./../../system/mp 
+  ./../../rtl/eclrtl 
+  ./../../system/include 
+  ./../../dali/base 
+  ./../../system/jlib 
+  ./../../common/environment)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../../rtl/eclrtl 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../system/jlib 
-         ./../../common/environment 
-    )
-
-IF (NOT WIN32)
+if(NOT WIN32)
   include_directories(${BINUTILS_INCLUDE_DIR})
-ENDIF()
+endif()
 
-ADD_DEFINITIONS( -D_USRDLL -DDLLSERVER_EXPORTS )
+add_definitions(-D_USRDLL -DDLLSERVER_EXPORTS)
 
-HPCC_ADD_LIBRARY( dllserver SHARED ${SRCS} )
-install ( TARGETS dllserver RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( dllserver
-         ${ZLIB_LIBRARIES}
-         jlib 
-         mp 
-         hrpc 
-         eclrtl 
-         remote 
-         dalibase 
-         environment 
-    )
-if (NOT WIN32)
-  target_link_libraries ( dllserver ${BINUTILS_LIBRARIES})
+HPCC_ADD_LIBRARY(dllserver SHARED ${SRCS})
+install(TARGETS dllserver RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  dllserver
+  ${ZLIB_LIBRARIES}
+  jlib 
+  mp 
+  hrpc 
+  eclrtl 
+  remote 
+  dalibase 
+  environment)
+if(NOT WIN32)
+  target_link_libraries(dllserver ${BINUTILS_LIBRARIES})
 endif()
 

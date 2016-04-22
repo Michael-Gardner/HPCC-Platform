@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: roxiecommlib 
 #####################################################
 # Description:
@@ -22,44 +20,40 @@
 #    Cmake Input File for roxiecommlib
 #####################################################
 
-project( roxiecommlib ) 
+project(roxiecommlib) 
 
 include(${HPCC_SOURCE_DIR}/esp/scm/espscm.cmake)
 
-set (    SRCS 
-         ${ESPSCM_GENERATED_DIR}/roxiecommlibscm_esp.cpp 
-                 ${HPCC_SOURCE_DIR}/esp/scm/roxiecommlibscm.ecm
-         roxiecommunicationclient.cpp 
-    )
+set(SRCS 
+  ${ESPSCM_GENERATED_DIR}/roxiecommlibscm_esp.cpp 
+  ${HPCC_SOURCE_DIR}/esp/scm/roxiecommlibscm.ecm
+  roxiecommunicationclient.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../../common/workunit 
-         ./../../common/environment 
-         ./../../roxie/ccd 
-         ./../../common/fileview2 
-         ./../../system/include 
-         ./../../system/security/shared
-         ./../../system/xmllib
-         ./../../dali/base 
-         ./../../rtl/include 
-         ./../../common/dllserver 
-         ./../../esp/platform 
-         ./../../esp/bindings 
-         ./../../esp/clients 
-         ./../../esp/bindings/SOAP/xpp 
-         ./../../system/jlib 
-         ./../../rtl/eclrtl 
-    )
+include_directories( 
+  ./../../common/remote 
+  ./../../system/mp 
+  ./../../common/workunit 
+  ./../../common/environment 
+  ./../../roxie/ccd 
+  ./../../common/fileview2 
+  ./../../system/include 
+  ./../../system/security/shared
+  ./../../system/xmllib
+  ./../../dali/base 
+  ./../../rtl/include 
+  ./../../common/dllserver 
+  ./../../esp/platform 
+  ./../../esp/bindings 
+  ./../../esp/clients 
+  ./../../esp/bindings/SOAP/xpp 
+  ./../../system/jlib 
+  ./../../rtl/eclrtl)
 
-ADD_DEFINITIONS( -D_USRDLL -DROXIECOMMLIB_EXPORTS )
+add_definitions(-D_USRDLL -DROXIECOMMLIB_EXPORTS)
 
-HPCC_ADD_LIBRARY( roxiecommlib SHARED ${SRCS} )
-add_dependencies( roxiecommlib espscm )
-install ( TARGETS roxiecommlib RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( roxiecommlib
-         jlib 
-    )
-
-
+HPCC_ADD_LIBRARY(roxiecommlib SHARED ${SRCS})
+add_dependencies(roxiecommlib espscm)
+install(TARGETS roxiecommlib RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  roxiecommlib
+  jlib)

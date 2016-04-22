@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: wuwebview
 #####################################################
 # Description:
@@ -22,32 +20,30 @@
 #    Cmake Input File for wuwebview
 #####################################################
 
-project( wuwebview )
+project(wuwebview)
 
-set (    SRCS
-         wuwebview.cpp
-         wuwebview.hpp
-         wuweberror.hpp
-    )
+set(SRCS
+  wuwebview.cpp
+  wuwebview.hpp
+  wuweberror.hpp)
 
-include_directories (
-         ./../../common/workunit
-         ./../../common/fileview2
-         ./../../system/include
-         ./../../common/dllserver
-         ./../../system/jlib
-         ./../../system/xmllib
-    )
+include_directories(
+  ./../../common/workunit
+  ./../../common/fileview2
+  ./../../system/include
+  ./../../common/dllserver
+  ./../../system/jlib
+  ./../../system/xmllib)
 
-HPCC_ADD_LIBRARY( wuwebview SHARED ${SRCS} )
+HPCC_ADD_LIBRARY(wuwebview SHARED ${SRCS})
 set_target_properties(wuwebview PROPERTIES
-    COMPILE_FLAGS -D_USRDLL
-    DEFINE_SYMBOL WUWEBVIEW_EXPORTS )
-install ( TARGETS wuwebview RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( wuwebview
-         jlib
-         workunit
-         fileview2
-         dllserver
-         xmllib
-    )
+  COMPILE_FLAGS -D_USRDLL
+  DEFINE_SYMBOL WUWEBVIEW_EXPORTS)
+install ( TARGETS wuwebview RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH} )
+target_link_libraries(
+  wuwebview
+  jlib
+  workunit
+  fileview2
+  dllserver
+  xmllib)

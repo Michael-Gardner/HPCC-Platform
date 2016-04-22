@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: environment 
 #####################################################
 # Description:
@@ -22,33 +20,29 @@
 #    Cmake Input File for environment
 #####################################################
 
-project( environment ) 
+project(environment) 
 
-set (    SRCS 
-         dalienv.cpp 
-         environment.cpp 
-    )
+set(SRCS
+  dalienv.cpp 
+  environment.cpp)
 
-set (    INCLUDES
-         dalienv.hpp 
-         environment.hpp 
-    )
+set(INCLUDES
+  dalienv.hpp 
+  environment.hpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../common/remote 
+  ./../../system/mp 
+  ./../../system/include 
+  ./../../dali/base 
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_USRDLL -DENVIRONMENT_EXPORTS )
-HPCC_ADD_LIBRARY( environment SHARED ${SRCS} ${INCLUDES} )
-install ( TARGETS environment RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( environment 
-         jlib 
-         mp 
-         remote 
-         dalibase 
-    )
-
+add_definitions(-D_USRDLL -DENVIRONMENT_EXPORTS)
+HPCC_ADD_LIBRARY(environment SHARED ${SRCS} ${INCLUDES})
+install(TARGETS environment RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  environment 
+  jlib 
+  mp 
+  remote 
+  dalibase)

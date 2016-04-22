@@ -14,7 +14,7 @@
 #    limitations under the License.
 ################################################################################
 
-add_subdirectory (prosysinfo)
+add_subdirectory(prosysinfo)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/preflight
   DESTINATION ${SBIN_PATH}
   COMPONENT Runtime)

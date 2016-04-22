@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: archivefile
 #####################################################
 # Description:
@@ -22,36 +20,33 @@
 #    Cmake Input File for archivefile
 #####################################################
 
-project( archivefile )
+project(archivefile)
 
-set (    SRCS
-         archive.cpp
-         archive.hpp
-    )
+set(SRCS
+  archive.cpp
+  archive.hpp)
 
-include_directories (
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-    )
+include_directories(
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib)
 
-include_directories ( ${LIBARCHIVE_INCLUDE_DIR} )
+include_directories(${LIBARCHIVE_INCLUDE_DIR})
 
-ADD_DEFINITIONS( -D_USRDLL -DARCHIVEFILE_EXPORTS )
-if ( WIN32 )
-  ADD_DEFINITIONS( -DLIBARCHIVE_STATIC )
-endif ( WIN32 )
+add_definitions(-D_USRDLL -DARCHIVEFILE_EXPORTS)
+if(WIN32)
+  add_definitions(-DLIBARCHIVE_STATIC)
+endif(WIN32)
 
-HPCC_ADD_LIBRARY( archivefile SHARED ${SRCS}  )
-install ( TARGETS archivefile RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+HPCC_ADD_LIBRARY(archivefile SHARED ${SRCS})
+install(TARGETS archivefile RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
 
-target_link_libraries ( archivefile
-    jlib
-    ${LIBARCHIVE_LIBRARIES}
-    )
+target_link_libraries(archivefile
+  jlib
+  ${LIBARCHIVE_LIBRARIES})
 
-if (WIN32)
-target_link_libraries ( archivefile
+if(WIN32)
+  target_link_libraries(
+    archivefile
     ${ZLIB_LIBRARIES}
-    ${BZIP2_LIBRARIES}
-    )
-endif (WIN32)
+    ${BZIP2_LIBRARIES})
+endif(WIN32)

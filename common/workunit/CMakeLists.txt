@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: workunit 
 #####################################################
 # Description:
@@ -22,58 +20,56 @@
 #    Cmake Input File for workunit
 #####################################################
 
-project( workunit ) 
+project(workunit) 
 
-set (    SRCS 
-         workunit.cpp 
-         wujobq.cpp
-         package.cpp
-         workflow.cpp
-         referencedfilelist.cpp
-                 
-         workunit.hpp 
-         wuerror.hpp
-         wujobq.hpp
-         package.h
-         workflow.hpp
-         pkgimpl.hpp
-         referencedfilelist.hpp
-    )
+set(SRCS 
+  workunit.cpp 
+  wujobq.cpp
+  package.cpp
+  workflow.cpp
+  referencedfilelist.cpp
 
-include_directories ( 
-         ./../../common/environment
-         ./../../common/workunit
-         ./../../system/mp 
-         ./../../dali/ft 
-         ./../../common/deftype 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../dali/dfu
-         ./../../rtl/include 
-         ./../../common/dllserver 
-         ./../../system/jlib
-         ./../../system/security/shared 
-         ./../../common/thorhelper 
-         ./../../rtl/eclrtl 
-         ./../../rtl/nbcd
-    )
+  workunit.hpp 
+  wuerror.hpp
+  wujobq.hpp
+  package.h
+  workflow.hpp
+  pkgimpl.hpp
+  referencedfilelist.hpp)
 
-HPCC_ADD_LIBRARY( workunit SHARED ${SRCS} )
+include_directories(
+  ./../../common/environment
+  ./../../common/workunit
+  ./../../system/mp 
+  ./../../dali/ft 
+  ./../../common/deftype 
+  ./../../system/include 
+  ./../../dali/base 
+  ./../../dali/dfu
+  ./../../rtl/include 
+  ./../../common/dllserver 
+  ./../../system/jlib
+  ./../../system/security/shared 
+  ./../../common/thorhelper 
+  ./../../rtl/eclrtl 
+  ./../../rtl/nbcd)
+
+HPCC_ADD_LIBRARY(workunit SHARED ${SRCS})
 set_target_properties(workunit PROPERTIES 
-    COMPILE_FLAGS -D_USRDLL
-    DEFINE_SYMBOL WORKUNIT_EXPORTS )
+  COMPILE_FLAGS -D_USRDLL
+  DEFINE_SYMBOL WORKUNIT_EXPORTS )
 if(NOT PLUGIN)
-    install(
-        TARGETS workunit
-        RUNTIME DESTINATION ${BIN_DIR}
-        LIBRARY DESTINATION ${LIB_DIR})
-    target_link_libraries(
-        workunit 
-        jlib 
-        dalibase 
-        dllserver 
-        nbcd 
-        eclrtl 
-        deftype
-        environment)
+  install(
+    TARGETS workunit
+    RUNTIME DESTINATION ${BIN_PATH}
+    LIBRARY DESTINATION ${LIB_PATH})
+  target_link_libraries(
+    workunit 
+    jlib 
+    dalibase 
+    dllserver 
+    nbcd 
+    eclrtl 
+    deftype
+    environment)
 endif()

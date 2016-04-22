@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: prosysinfo 
 #####################################################
 # Description:
@@ -22,11 +20,10 @@
 #    Cmake Input File for prosysinfo
 #####################################################
 
-project( prosysinfo ) 
+project(prosysinfo) 
 
-set (    SRCS 
-         main.cpp 
-    )
+set(SRCS 
+  main.cpp)
 
-HPCC_ADD_EXECUTABLE ( prosysinfo ${SRCS} )
-install ( TARGETS prosysinfo RUNTIME DESTINATION ${BIN_DIR} )
+HPCC_ADD_EXECUTABLE(prosysinfo ${SRCS})
+install(TARGETS prosysinfo RUNTIME DESTINATION ${BIN_PATH})

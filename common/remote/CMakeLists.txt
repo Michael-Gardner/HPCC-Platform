@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: remote 
 #####################################################
 # Description:
@@ -22,55 +20,52 @@
 #    Cmake Input File for remote
 #####################################################
 
-project( remote ) 
+project(remote) 
 
 HPCC_ADD_SUBDIRECTORY(hooks)
 
-set (    SRCS 
-         rmtfile.cpp 
-         rmtpass.cpp 
-         rmtspawn.cpp 
-         rmtssh.cpp 
-         rmtsmtp.cpp 
-         sockfile.cpp
-         
-         remoteerr.hpp
-         rmtfile.hpp
-         rmtpass.hpp
-         rmtsmtp.hpp
-         rmtspawn.hpp
-         rmtssh.hpp
-         sockfile.hpp
-    )
-if (USE_URIPARSER)
-  set ( SRCS
-        ${SRCS}
-        uri.cpp
-        uri.hpp
-      )
+set(SRCS 
+  rmtfile.cpp 
+  rmtpass.cpp 
+  rmtspawn.cpp 
+  rmtssh.cpp 
+  rmtsmtp.cpp 
+  sockfile.cpp
+
+  remoteerr.hpp
+  rmtfile.hpp
+  rmtpass.hpp
+  rmtsmtp.hpp
+  rmtspawn.hpp
+  rmtssh.hpp
+  sockfile.hpp)
+if(USE_URIPARSER)
+  set(SRCS
+    ${SRCS}
+    uri.cpp
+    uri.hpp)
 endif(USE_URIPARSER)
 
-include_directories (
-         ./../../system/hrpc 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../system/security/securesocket
-    )
+include_directories(
+  ./../../system/hrpc 
+  ./../../system/mp 
+  ./../../system/include 
+  ./../../system/jlib 
+  ./../../system/security/securesocket)
 
-ADD_DEFINITIONS( -D_USRDLL -DREMOTE_EXPORTS )
+add_definitions(-D_USRDLL -DREMOTE_EXPORTS)
 
-HPCC_ADD_LIBRARY( remote SHARED ${SRCS}  )
-install ( TARGETS remote RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+HPCC_ADD_LIBRARY(remote SHARED ${SRCS})
+install(TARGETS remote RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
 
-target_link_libraries ( remote 
-    jlib 
-    mp
-    ${URIPARSER_LIBRARIES}
-    )
+target_link_libraries(
+  remote 
+  jlib 
+  mp
+  ${URIPARSER_LIBRARIES})
 
-IF (USE_OPENSSL)
-    target_link_libraries ( remote 
-    	securesocket
-    )
-ENDIF()
+if(USE_OPENSSL)
+  target_link_libraries(
+    remote 
+    securesocket)
+endif()
