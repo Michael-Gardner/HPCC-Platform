@@ -20,42 +20,39 @@
 #    Cmake Input File for esdlcomp
 #####################################################
 
-project( esdlcomp )
+project(esdlcomp)
 
-SET (REENTRANTBISONCMD "${bisoncmd} -d")
-add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.h
-    COMMAND ${bisoncmdprefix} ${bisoncmd} --defines=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/esdlgram.y
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/esdlgram.y
-)
+set(REENTRANTBISONCMD "${bisoncmd} -d")
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.h
+  COMMAND ${bisoncmdprefix} ${bisoncmd} --defines=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/esdlgram.y
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/esdlgram.y)
 
-add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp
-    COMMAND ${flexcmdprefix} ${flexcmd} --outfile=${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp --header-file=${CMAKE_CURRENT_BINARY_DIR}/esdllex.hpp ${CMAKE_CURRENT_SOURCE_DIR}/esdllex.l
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/esdllex.l
-)
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp
+  COMMAND ${flexcmdprefix} ${flexcmd} --outfile=${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp --header-file=${CMAKE_CURRENT_BINARY_DIR}/esdllex.hpp ${CMAKE_CURRENT_SOURCE_DIR}/esdllex.l
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/esdllex.l)
 
-set ( SRCS
-        ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/esdlcomp.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/esdl_utils.cpp
-    )
+set(SRCS
+  ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/esdlcomp.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/esdl_utils.cpp)
 
-include_directories (
-         ${CMAKE_CURRENT_BINARY_DIR}   # for generated .h file
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}   # for generated .h file
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${CMAKE_CURRENT_SOURCE_DIR})
 
-ADD_DEFINITIONS( -D_CONSOLE -DESDLCOMP_EXPORTS )
-if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
-    ADD_DEFINITIONS( -O0 )
-endif ()
+add_definitions(-D_CONSOLE -DESDLCOMP_EXPORTS)
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
+  add_definitions( -O0 )
+endif()
 
-HPCC_ADD_LIBRARY ( esdlcomp SHARED ${SRCS} )
+HPCC_ADD_LIBRARY(esdlcomp SHARED ${SRCS})
 
-MESSAGE("----INSTALLING esdlcomp")
-install ( TARGETS esdlcomp RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+message("----INSTALLING esdlcomp")
+install(TARGETS esdlcomp RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
 
-target_link_libraries ( esdlcomp
-                   jlib )
+target_link_libraries(
+  esdlcomp
+  jlib)

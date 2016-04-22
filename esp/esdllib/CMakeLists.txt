@@ -15,42 +15,38 @@
 ################################################################################
 # Component: esdllib
 
-project( esdllib )
+project(esdllib)
 
-include_directories (
-    ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
-    ${HPCC_SOURCE_DIR}/system/xmllib
-    ${HPCC_SOURCE_DIR}/esp/bindings
-    ${HPCC_SOURCE_DIR}/esp/platform
-    ${HPCC_SOURCE_DIR}/system/include
-    ${HPCC_SOURCE_DIR}/esp/esdllib
-    ${HPCC_SOURCE_DIR}/system/jlib
-    ${HPCC_SOURCE_DIR}/system/security/shared
-    ${HPCC_SOURCE_DIR}/rtl/include #IXMLWriter
-    ${HPCC_SOURCE_DIR}/common/thorhelper #JSONWRITER
-)
+include_directories(
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
+  ${HPCC_SOURCE_DIR}/system/xmllib
+  ${HPCC_SOURCE_DIR}/esp/bindings
+  ${HPCC_SOURCE_DIR}/esp/platform
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/esp/esdllib
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/security/shared
+  ${HPCC_SOURCE_DIR}/rtl/include #IXMLWriter
+  ${HPCC_SOURCE_DIR}/common/thorhelper) #JSONWRITER
 
-ADD_DEFINITIONS ( -D_USRDLL -DESDLLIB_EXPORTS )
+add_definitions(-D_USRDLL -DESDLLIB_EXPORTS)
 
-set ( SRCS
-    esdl_def.cpp
-    esdl_def_helper.cpp
-    esdl_transformer2.cpp
-    params2xml.cpp
-    ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp/xpp/xpputils.cpp
-    ${HPCC_SOURCE_DIR}/esp/services/common/wsexcept.cpp
-)
+set(SRCS
+  esdl_def.cpp
+  esdl_def_helper.cpp
+  esdl_transformer2.cpp
+  params2xml.cpp
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp/xpp/xpputils.cpp
+  ${HPCC_SOURCE_DIR}/esp/services/common/wsexcept.cpp)
 
-HPCC_ADD_LIBRARY( esdllib SHARED ${SRCS}
-    ${HEADERS}
-)
+HPCC_ADD_LIBRARY(esdllib SHARED ${SRCS} ${HEADERS})
 
-install ( TARGETS esdllib RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+install(TARGETS esdllib RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
 
-add_dependencies ( esdllib jlib espscm)
+add_dependencies(esdllib jlib espscm)
 
-target_link_libraries ( esdllib
-    jlib
-    xmllib
-    thorhelper
-)
+target_link_libraries(
+  esdllib
+  jlib
+  xmllib
+  thorhelper)

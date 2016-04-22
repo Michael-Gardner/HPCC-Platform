@@ -16,48 +16,46 @@
 
 # Component: ws_loggingservice
 
-project( ws_loggingservice )
+project(ws_loggingservice)
 
 # include (${HPCC_SOURCE_DIR}/cmake_modules/shares.cmake)
 include(${HPCC_SOURCE_DIR}/esp/scm/espscm.cmake)
 
-include_directories (
-     ${HPCC_SOURCE_DIR}/system/include
-     ${HPCC_SOURCE_DIR}/system/jlib
-     ${HPCC_SOURCE_DIR}/system/xmllib
-     ${HPCC_SOURCE_DIR}/system/mp
-     ${HPCC_SOURCE_DIR}/system/security/shared
-     ${HPCC_SOURCE_DIR}/system/security/securesocket
-     ${HPCC_SOURCE_DIR}/common/environment
-     ${HPCC_SOURCE_DIR}/dali/base
-     ${HPCC_SOURCE_DIR}/esp/platform
-     ${HPCC_SOURCE_DIR}/esp/bindings
-     ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
-     ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/Platform
-     ${HPCC_SOURCE_DIR}/esp/esplib
-     ${HPCC_SOURCE_DIR}/esp/clients
-     ${HPCC_SOURCE_DIR}/esp/clients/LoggingClient
-     ${HPCC_SOURCE_DIR}/esp/clients/loggingmanager
-     ${HPCC_SOURCE_DIR}/esp/logging
-     ./..
-)
+include_directories(
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/system/xmllib
+  ${HPCC_SOURCE_DIR}/system/mp
+  ${HPCC_SOURCE_DIR}/system/security/shared
+  ${HPCC_SOURCE_DIR}/system/security/securesocket
+  ${HPCC_SOURCE_DIR}/common/environment
+  ${HPCC_SOURCE_DIR}/dali/base
+  ${HPCC_SOURCE_DIR}/esp/platform
+  ${HPCC_SOURCE_DIR}/esp/bindings
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
+  ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/Platform
+  ${HPCC_SOURCE_DIR}/esp/esplib
+  ${HPCC_SOURCE_DIR}/esp/clients
+  ${HPCC_SOURCE_DIR}/esp/clients/LoggingClient
+  ${HPCC_SOURCE_DIR}/esp/clients/loggingmanager
+  ${HPCC_SOURCE_DIR}/esp/logging
+  ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
-ADD_DEFINITIONS( -D_USRDLL -DLOGGINGCOMMON_EXPORTS )
+add_definitions(-D_USRDLL -DLOGGINGCOMMON_EXPORTS)
 
-set ( SRCS
-    ${ESPSCM_GENERATED_DIR}/ws_loggingservice_esp.cpp
-    ../../logging/LogSerializer.cpp
-    ../../logging/LogFailSafe.cpp
-    ../../logging/logthread.cpp
-    loggingservice.cpp
-    loggingserviceplugin.cpp
-)
+set(SRCS
+  ${ESPSCM_GENERATED_DIR}/ws_loggingservice_esp.cpp
+  ../../logging/LogSerializer.cpp
+  ../../logging/LogFailSafe.cpp
+  ../../logging/logthread.cpp
+  loggingservice.cpp
+  loggingserviceplugin.cpp)
 
-HPCC_ADD_LIBRARY( ws_loggingservice SHARED ${SRCS} )
+HPCC_ADD_LIBRARY(ws_loggingservice SHARED ${SRCS})
 
-install ( TARGETS ws_loggingservice RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
-add_dependencies (ws_loggingservice espscm)
-target_link_libraries ( ws_loggingservice
-    esphttp
-    jlib
-)
+install(TARGETS ws_loggingservice RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+add_dependencies(ws_loggingservice espscm)
+target_link_libraries(
+  ws_loggingservice
+  esphttp
+  jlib)
