@@ -14,13 +14,14 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_dafilesrv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_eclagent.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bin ALL DEPENDS ${outFiles})
+configure_file(init_dafilesrv.in init_dafilesrv @ONLY)
+configure_file(init_eclagent.in init_eclagent @ONLY)
+add_custom_target(configure-initfiles-etc-bin ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/init_dafilesrv ${CMAKE_CURRENT_BINARY_DIR}/init_eclagent)
 
-FOREACH( iFILES
-    ${outFiles}
+foreach(iFILES
+    ${CMAKE_CURRENT_BINARY_DIR}/init_dafilesrv
+    ${CMAKE_CURRENT_BINARY_DIR}/init_eclagent
     ${CMAKE_CURRENT_SOURCE_DIR}/init_configesp
     ${CMAKE_CURRENT_SOURCE_DIR}/init_dali
     ${CMAKE_CURRENT_SOURCE_DIR}/init_dfuserver
@@ -32,7 +33,6 @@ FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/init_roxie_cluster
     ${CMAKE_CURRENT_SOURCE_DIR}/init_sasha
     ${CMAKE_CURRENT_SOURCE_DIR}/init_thor
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_thorslave
-)
-    install ( PROGRAMS ${iFILES} DESTINATION ${BIN_DIR} COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    ${CMAKE_CURRENT_SOURCE_DIR}/init_thorslave)
+  install(PROGRAMS ${iFILES} DESTINATION ${BIN_PATH} COMPONENT Runtime)
+endforeach(iFILES)

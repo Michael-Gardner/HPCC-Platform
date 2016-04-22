@@ -66,7 +66,7 @@ envfile=$configs/$environment
 
 component=""
 runSetupOnly=0
-source @SBIN_PATH@/hpcc_setenv
+source @SBIN_PATH@/hpcc-setenv
 
 which_service
 get_commondirs

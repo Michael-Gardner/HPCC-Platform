@@ -24,10 +24,10 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-PATH_PRE=`type -path hpcc_setenv`
+PATH_PRE=`type -path hpcc-setenv`
 if [ -z "$PATH_PRE" ]; then
     # assume default conf location
-    PATH_PRE=`cat @CONFIG_PATH/environment.conf | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^path=" | sed -e 's/^path=//'`/sbin/hpcc_setenv
+    PATH_PRE=`cat @CONFIG_PATH/environment.conf | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^path=" | sed -e 's/^path=//'`/sbin/hpcc-setenv
 fi
 source ${PATH_PRE} ""
 is_user ${user}

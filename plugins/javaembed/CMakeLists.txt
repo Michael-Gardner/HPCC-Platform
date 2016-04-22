@@ -60,7 +60,7 @@ if(JAVAEMBED)
             DESTINATION plugins)
         install(
             FILES ${CMAKE_CURRENT_SOURCE_DIR}/HpccUtils.class
-            DESTINATION classes/com/HPCCSystems
+            DESTINATION ${SHARE_PATH}/classes/com/HPCCSystems
             COMPONENT Runtime)
 
         # We link against jsig so that signals are chained from the jvm

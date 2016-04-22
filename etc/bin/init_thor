@@ -16,7 +16,7 @@
 ################################################################################
 
 deploydir=$(dirname $(type -path $0))
-PATH_PRE=$(type -path hpcc_setenv)
+PATH_PRE=$(type -path hpcc-setenv)
 source ${PATH_PRE}
 
 INSTALL_DIR=$(dirname ${PATH_PRE})/..

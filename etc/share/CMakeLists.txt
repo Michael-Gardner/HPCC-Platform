@@ -1,4 +1,3 @@
-#!/bin/bash
 ################################################################################
 #    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
 #
@@ -15,9 +14,15 @@
 #    limitations under the License.
 ################################################################################
 
-HPCC_CONFIG=${HPCC_CONFIG:-@CONFIG_PATH@/@ENV_CONF_FILE@}
-SECTION="DEFAULT"
-PATH_PREFIX=`cat ${HPCC_CONFIG} | sed -n "/\[${SECTION}\]/,/\[/p" | grep "^path *= *" | sed -e 's/^path *= *//'`
-source @SBIN_PATH@/hpcc-setenv ""
+add_subdirectory(componentfiles)
 
-nohup ftslave $* 1>/dev/null 2>/dev/null &
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/classes
+  DESTINATION ${SHARE_PATH}
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  PATTERN ".svn" EXCLUDE)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples
+  DESTINATION ${SHARE_PATH}
+  COMPONENT Runtime
+  USE_SOURCE_PERMISSIONS
+  PATTERN ".svn" EXCLUDE)

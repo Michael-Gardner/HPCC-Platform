@@ -14,8 +14,8 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc_setenv.in" outFiles)
+configure_file(hpcc-setenv.in hpcc-setenv @ONLY)
+GENERATE_BASH(processor ${bash-vars} "hpcc-setenv.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "complete-uninstall.sh.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "keygen.sh.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "add_conf_settings.sh.in" outFiles)

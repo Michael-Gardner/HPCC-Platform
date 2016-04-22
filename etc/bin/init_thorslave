@@ -26,12 +26,12 @@ logpth=$8
 instancedir=$9
 deploydir=${10}
 hpcc_compname=${11}
-hpcc_setenv=${12}
+hpcc-setenv=${12}
 
 export logfile="${logpth}/${hpcc_compname}/${13}"
 
-source "$hpcc_setenv"
-source "$(dirname $hpcc_setenv)/../etc/init.d/hpcc-common"
+source "$hpcc-setenv"
+source "$(dirname $hpcc-setenv)/../etc/init.d/hpcc-common"
 
 slavename=thorslave_${hpcc_compname}
 
@@ -119,7 +119,7 @@ start_slaves()
 
 print_usage()
 {
-    log "usage: cmd ip slavespernode slaveport slaveportinc master masterport logdir workingdir deploydir hpcc_compname hpcc_setenv logredirect"
+    log "usage: cmd ip slavespernode slaveport slaveportinc master masterport logdir workingdir deploydir hpcc_compname hpcc-setenv logredirect"
 }
 
 ##  Main

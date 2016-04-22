@@ -18,7 +18,6 @@ cmake_minimum_required(VERSION 3.2)
 project(initfiles)
 
 if(PLATFORM AND UNIX)
-  add_subdirectory(bash)
   add_subdirectory(share)
   add_subdirectory(bin)
   add_subdirectory(HPCC_PROJECT_NAME)

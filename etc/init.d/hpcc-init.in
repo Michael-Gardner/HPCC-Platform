@@ -110,7 +110,7 @@ log_dir_owner=$(ls -ld @LOG_PATH@ | awk '{print $3}')
 chown ${user}:${user} $logfile
 
 #Sourcing the hpcc environment
-source @SBIN_PATH@/hpcc_setenv
+source @SBIN_PATH@/hpcc-setenv
 
 which_service
 get_commondirs

@@ -61,7 +61,7 @@ Directory structure of initfiles
   - configmgr.in - configmgr start script
   - hpcc-push.sh.in - script to push files to servers defined in environment using ssh keys
   - hpcc-run.sh.in - script to run init commands on servers defined in environment using ssh keys
-  - hpcc_setenv.in - source-able file that defines hpcc env vars, used by init system
+  - hpcc-setenv.in - source-able file that defines hpcc env vars, used by init system
   - install-cluster.sh.in - script to install platform on a cluster using environment file and expect
   - keygen.sh.in - script to generate ssh keys for hpcc user
   - killconfigmgr - script used to kill configmgr when running (used by configmgr start script)

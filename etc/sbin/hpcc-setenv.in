@@ -128,7 +128,7 @@ elif [[ $platform == 'mac' ]]; then
     done
 fi
 
-if [ `basename -- "$0"` = "hpcc_setenv" ]; then
+if [ `basename -- "$0"` = "hpcc-setenv" ]; then
     if [ -z ${PATH_PREFIX} ]; then
         echo "# Can't find path in ${SECTION} section in ${HPCC_CONFIG}"
         exit 1

@@ -15,7 +15,7 @@
 #    limitations under the License.
 ################################################################################
 
-PATH_PRE=$(type -path hpcc_setenv)
+PATH_PRE=$(type -path hpcc-setenv)
 source ${PATH_PRE}
 PID_NAME="$PID/$(basename $PWD).pid"
 source @SBIN_PATH@/hpcc-common
