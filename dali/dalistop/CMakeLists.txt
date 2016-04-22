@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: dalistop 
 #####################################################
 # Description:
@@ -22,26 +20,24 @@
 #    Cmake Input File for dalistop
 #####################################################
 
-project( dalistop ) 
+project(dalistop) 
 
-set (    SRCS 
-         dalistop.cpp 
-    )
+set(SRCS
+  dalistop.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../base 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../common/remote
+  ./../server
+  ./../base
+  ./../../system/mp
+  ./../../system/include
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( dalistop ${SRCS} )
-install ( TARGETS dalistop RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( dalistop 
-         jlib
-         mp 
-)
+HPCC_ADD_EXECUTABLE(dalistop ${SRCS})
+install(TARGETS dalistop RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  dalistop
+  jlib
+  mp)

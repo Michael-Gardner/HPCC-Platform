@@ -13,22 +13,17 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # component: dfu
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File dfu
 #####################################################
 
+project(AllProjects)
 
-project (AllProjects)
-
-if ( PLATFORM )
-    include ( dfuserver.cmake)
+if(PLATFORM)
+  include(dfuserver.cmake)
 endif()
 
-include ( dfuwu.cmake)
-
+include(dfuwu.cmake)

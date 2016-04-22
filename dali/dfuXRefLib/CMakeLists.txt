@@ -13,50 +13,43 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: dfuXRefLib 
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for dfuXRefLib
 #####################################################
 
+project(dfuXRefLib) 
 
-project( dfuXRefLib ) 
+set(SRCS
+  dfurdir.cpp
+  dfuxreflib.cpp
+  XRefFilesNode.cpp
+  XRefNodeManager.cpp)
 
-set (    SRCS 
-         dfurdir.cpp 
-         dfuxreflib.cpp 
-         XRefFilesNode.cpp 
-         XRefNodeManager.cpp 
-    )
+include_directories(
+  ./../../esp/bindings/SOAP/xpp
+  ./../../common/remote
+  ./../server
+  ./../../system/mp
+  .
+  ./../base
+  ./../ft
+  ./../../system/include
+  ./../../system/jlib
+  ./../../common/environment
+  ./../../common/workunit)
 
-include_directories ( 
-         ./../../esp/bindings/SOAP/xpp 
-         ./../../common/remote 
-         ./../server 
-         ./../../system/mp 
-         . 
-         ./../base 
-         ./../ft 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../common/environment 
-         ./../../common/workunit 
-    )
+add_definitions(-D_USRDLL -DDFUXREFLIB_EXPORTS)
 
-ADD_DEFINITIONS( -D_USRDLL -DDFUXREFLIB_EXPORTS )
-
-HPCC_ADD_LIBRARY( dfuXRefLib SHARED ${SRCS} )
-install ( TARGETS dfuXRefLib RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( dfuXRefLib
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-    )
-
+HPCC_ADD_LIBRARY(dfuXRefLib SHARED ${SRCS})
+install(TARGETS dfuXRefLib RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  dfuXRefLib
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  environment)

@@ -14,9 +14,7 @@
 #    limitations under the License.
 ################################################################################
 
-
-
-include (dafilesrv.cmake)
-if ( PLATFORM )
-    include (dafscontrol.cmake)
+include(dafilesrv.cmake)
+if(PLATFORM)
+  include(dafscontrol.cmake)
 endif()

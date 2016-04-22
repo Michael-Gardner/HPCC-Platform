@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: daunittest 
 #####################################################
 # Description:
@@ -22,33 +20,29 @@
 #    Cmake Input File for daunittest
 #####################################################
 
-project( daunittest ) 
+project(daunittest) 
 
-set (    SRCS 
-         daunittest.cpp 
-         dautdfs.cpp 
-    )
+set(SRCS 
+  daunittest.cpp
+  dautdfs.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../base 
-         ./../../system/mp 
-         . 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../common/remote
+  ./../server
+  ./../base
+  ./../../system/mp
+  .
+  ./../../system/include
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( daunittest ${SRCS} )
-target_link_libraries ( daunittest
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         ${CPPUNIT_LIBRARIES}
-    )
-
-
+HPCC_ADD_EXECUTABLE(daunittest ${SRCS})
+target_link_libraries(
+  daunittest
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  ${CPPUNIT_LIBRARIES})

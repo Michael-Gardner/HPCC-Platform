@@ -13,59 +13,52 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: dfuserver 
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for dfuserver
 #####################################################
 
+project(dfuserver)
 
-project( dfuserver ) 
+set(SRCS
+  dfurun.cpp
+  dfurunkdp.cpp
+  dfuserver.cpp
+  dfurepl.cpp)
 
-set (    SRCS 
-         dfurun.cpp 
-         dfurunkdp.cpp 
-         dfuserver.cpp 
-         dfurepl.cpp 
-    )
+include_directories(
+  ./../../common/remote
+  ./../../system/mp
+  ./../../system/jhtree
+  ./../../rtl/eclrtl
+  ./../../ecl/schedulectrl
+  ./../../rtl/include
+  ./../base
+  ./../../system/include
+  ./../../system/jlib
+  ./../ft
+  ./../../common/environment
+  ./../../common/workunit)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../../system/jhtree 
-         ./../../rtl/eclrtl 
-         ./../../ecl/schedulectrl 
-         ./../../rtl/include 
-         ./../base 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../ft 
-         ./../../common/environment 
-         ./../../common/workunit 
-    )
-
-HPCC_ADD_EXECUTABLE ( dfuserver ${SRCS} )
-set_target_properties ( dfuserver PROPERTIES 
-        COMPILE_FLAGS "-D_CONSOLE -D_DFUSERVER"
-        )
-install ( TARGETS dfuserver RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( dfuserver 
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-         dllserver 
-         nbcd 
-         eclrtl 
-         deftype 
-         workunit 
-         schedulectrl 
-         dalift 
-         jhtree 
-         dfuwu 
-    )
+HPCC_ADD_EXECUTABLE(dfuserver ${SRCS})
+set_target_properties(dfuserver PROPERTIES COMPILE_FLAGS "-D_CONSOLE -D_DFUSERVER")
+install(TARGETS dfuserver RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  dfuserver
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  environment
+  dllserver
+  nbcd
+  eclrtl
+  deftype
+  workunit
+  schedulectrl
+  dalift
+  jhtree
+  dfuwu)

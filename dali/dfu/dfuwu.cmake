@@ -13,44 +13,36 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: dfuwu 
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for dfuwu
 #####################################################
 
+project(dfuwu) 
 
-project( dfuwu ) 
+set(SRCS
+  dfuwu.cpp)
 
-set (    SRCS 
-         dfuwu.cpp 
-    )
+include_directories(
+  ./../../common/remote
+  ./../../system/mp
+  ./../base
+  ./../../system/include
+  ./../../system/jlib
+  ./../../common/workunit)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../base 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../common/workunit 
-    )
-
-HPCC_ADD_LIBRARY( dfuwu SHARED ${SRCS} )
-set_target_properties ( dfuwu PROPERTIES 
-        COMPILE_FLAGS "-DLOGMSGCOMPONENT=3 -D_USRDLL"
-        DEFINE_SYMBOL DALI_EXPORTS 
-        )
-install ( TARGETS dfuwu RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( dfuwu 
-         workunit
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-    )
-
+HPCC_ADD_LIBRARY(dfuwu SHARED ${SRCS})
+set_target_properties(dfuwu PROPERTIES
+  COMPILE_FLAGS "-DLOGMSGCOMPONENT=3 -D_USRDLL"
+  DEFINE_SYMBOL DALI_EXPORTS)
+install(TARGETS dfuwu RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(
+  dfuwu
+  workunit
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase)

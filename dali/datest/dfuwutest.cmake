@@ -13,7 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: dfuwutest 
 #####################################################
 # Description:
@@ -23,33 +22,30 @@
 
 project( dfuwutest ) 
 
-set (    SRCS 
-         ../dfu/dfuutil.cpp 
-         dfuwutest.cpp 
-    )
+set(SRCS 
+  ../dfu/dfuutil.cpp 
+  dfuwutest.cpp)
 
-include_directories ( 
-         ./../dfu 
-         ./../base 
-         ./../../common/remote 
-         ./../../system/mp 
-         . 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../common/workunit 
-         ../../common/environment 
-    )
+include_directories(
+  ./../dfu
+  ./../base
+  ./../../common/remote
+  ./../../system/mp
+  .
+  ./../../system/include
+  ./../../system/jlib
+  ./../../common/workunit
+  ../../common/environment)
 
-HPCC_ADD_EXECUTABLE ( dfuwutest ${SRCS} )
-set_target_properties (dfuwutest PROPERTIES COMPILE_FLAGS -D_CONSOLE)
-target_link_libraries ( dfuwutest
-         workunit
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         dfuwu 
-         environment 
-    )
-
+HPCC_ADD_EXECUTABLE(dfuwutest ${SRCS})
+set_target_properties(dfuwutest PROPERTIES COMPILE_FLAGS -D_CONSOLE)
+target_link_libraries(
+  dfuwutest
+  workunit
+  jlib
+  mp 
+  hrpc 
+  remote 
+  dalibase 
+  dfuwu 
+  environment)

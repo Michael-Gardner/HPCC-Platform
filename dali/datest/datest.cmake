@@ -13,7 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: datest 
 #####################################################
 # Description:
@@ -21,30 +20,26 @@
 #    Cmake Input File for datest
 #####################################################
 
-project( datest ) 
+project(datest) 
 
-set (    SRCS 
-         datest.cpp 
-    )
+set(SRCS 
+  datest.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../../system/mp 
-         . 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../common/remote
+  ./../server
+  ./../../system/mp
+  .
+  ./../../system/include
+  ./../../system/jlib)
 
-HPCC_ADD_EXECUTABLE ( datest ${SRCS} )
-set_target_properties (datest PROPERTIES COMPILE_FLAGS -D_CONSOLE)
-target_link_libraries ( datest 
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-                 ${CPPUNIT_LIBRARIES}
-    )
-
-
+HPCC_ADD_EXECUTABLE(datest ${SRCS})
+set_target_properties(datest PROPERTIES COMPILE_FLAGS -D_CONSOLE)
+target_link_libraries(
+  datest 
+  jlib
+  mp 
+  hrpc 
+  remote 
+  dalibase 
+  ${CPPUNIT_LIBRARIES})

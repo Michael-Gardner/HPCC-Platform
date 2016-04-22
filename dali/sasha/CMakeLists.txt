@@ -13,7 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Sasha and saserver
 #######################################################
 # Description:
@@ -22,95 +21,88 @@
 #
 ########################################################
 
-project (sasha)
+project(sasha)
 
-INCLUDE(CheckLibraryExists) 
+include(CheckLibraryExists) 
 
-if (NOT WIN32 AND NOT WIN64)
-CHECK_LIBRARY_EXISTS(crypt crypt "" HAVE_LIBCRYPT) 
-endif ()
-
-set (    SRCS 
-         saarch.cpp 
-         sacmd.cpp 
-         sacoalescer.cpp 
-         salds.cpp 
-         saqmon.cpp 
-         saserver.cpp 
-         sautil.cpp 
-         saverify.cpp 
-         saxref.cpp 
-    )
-
-include_directories ( 
-         . 
-         ${HPCC_SOURCE_DIR}/common/environment 
-         ${HPCC_SOURCE_DIR}/common/workunit 
-         ${HPCC_SOURCE_DIR}/common/dllserver 
-         ${HPCC_SOURCE_DIR}/dali/base 
-         ${HPCC_SOURCE_DIR}/system/mp 
-         ${HPCC_SOURCE_DIR}/system/include 
-         ${HPCC_SOURCE_DIR}/system/jlib 
-         ${HPCC_SOURCE_DIR}/common/remote 
-         ${HPCC_SOURCE_DIR}/plugins/workunitservices 
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
-
-ADD_DEFINITIONS( -D_CONSOLE )
-
-if (WIN32)
-    if ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-        set (CMAKE_EXE_LINKER_FLAGS "/STACK:262144 ${CMAKE_EXE_LINKER_FLAGS}")  
-    else ()
-        set (CMAKE_EXE_LINKER_FLAGS "/STACK:65536 ${CMAKE_EXE_LINKER_FLAGS}")
-    endif ()
+if(NOT WIN32 AND NOT WIN64)
+  CHECK_LIBRARY_EXISTS(crypt crypt "" HAVE_LIBCRYPT) 
 endif()
 
-HPCC_ADD_EXECUTABLE ( saserver ${SRCS} )
-install ( TARGETS saserver RUNTIME DESTINATION ${BIN_DIR})
+set(SRCS
+  saarch.cpp
+  sacmd.cpp
+  sacoalescer.cpp
+  salds.cpp
+  saqmon.cpp
+  saserver.cpp
+  sautil.cpp
+  saverify.cpp
+  saxref.cpp)
 
+include_directories(
+  .
+  ${HPCC_SOURCE_DIR}/common/environment
+  ${HPCC_SOURCE_DIR}/common/workunit
+  ${HPCC_SOURCE_DIR}/common/dllserver
+  ${HPCC_SOURCE_DIR}/dali/base
+  ${HPCC_SOURCE_DIR}/system/mp
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/common/remote
+  ${HPCC_SOURCE_DIR}/plugins/workunitservices
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
 
-if ( ${HAVE_LIBCRYPT} )
-target_link_libraries ( saserver crypt)
-endif ( ${HAVE_LIBCRYPT} )
+add_definitions(-D_CONSOLE)
 
-target_link_libraries ( saserver 
-         jlib 
-         remote 
-         dalibase 
-         environment 
-         dllserver 
-         nbcd 
-         eclrtl 
-         deftype 
-         workunit 
-    )
+if(WIN32)
+  if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+    set(CMAKE_EXE_LINKER_FLAGS "/STACK:262144 ${CMAKE_EXE_LINKER_FLAGS}")  
+  else()
+    set(CMAKE_EXE_LINKER_FLAGS "/STACK:65536 ${CMAKE_EXE_LINKER_FLAGS}")
+  endif()
+endif()
 
-set (    SRCS 
-         sacmd.cpp 
-         sasha.cpp 
-    )
+HPCC_ADD_EXECUTABLE(saserver ${SRCS})
+install(TARGETS saserver RUNTIME DESTINATION ${BIN_PATH})
 
-include_directories ( 
-         . 
-         ${HPCC_SOURCE_DIR}/system/mp 
-         ${HPCC_SOURCE_DIR}/system/include 
-         ${HPCC_SOURCE_DIR}/system/jlib 
-         ${HPCC_SOURCE_DIR}/common/remote 
-    )
+if(${HAVE_LIBCRYPT})
+  target_link_libraries(saserver crypt)
+endif(${HAVE_LIBCRYPT})
 
-ADD_DEFINITIONS ( -D_CONSOLE )
+target_link_libraries(
+  saserver
+  jlib
+  remote
+  dalibase
+  environment
+  dllserver
+  nbcd
+  eclrtl
+  deftype
+  workunit)
 
-HPCC_ADD_EXECUTABLE ( sasha ${SRCS} )
-install ( TARGETS sasha RUNTIME DESTINATION ${BIN_DIR})
+set(
+  SRCS
+  sacmd.cpp
+  sasha.cpp)
 
-target_link_libraries ( sasha 
-         ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
-         jlib
-         mp 
-    )
+include_directories(
+  .
+  ${HPCC_SOURCE_DIR}/system/mp
+  ${HPCC_SOURCE_DIR}/system/include
+  ${HPCC_SOURCE_DIR}/system/jlib
+  ${HPCC_SOURCE_DIR}/common/remote)
 
+ADD_DEFINITIONS(-D_CONSOLE)
 
+HPCC_ADD_EXECUTABLE(sasha ${SRCS})
+install(TARGETS sasha RUNTIME DESTINATION ${BIN_PATH})
 
-
+target_link_libraries(
+  sasha
+  ${XALAN_LIBRARIES}
+  ${XERCES_LIBRARIES}
+  jlib
+  mp)

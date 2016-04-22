@@ -13,41 +13,35 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: hellodali 
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for hellodali
 #####################################################
 
-project( hellodali ) 
+project(hellodali) 
 
-set ( SRCS qhellodali.cpp )
+set(SRCS qhellodali.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../../system/mp 
-         . 
-         ./../base 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../ft 
-    )
+include_directories(
+  ./../../common/remote
+  ./../server
+  ./../../system/mp
+  .
+  ./../base
+  ./../../system/include
+  ./../../system/jlib
+  ./../ft)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( hellodali ${SRCS} )
-install ( TARGETS hellodali RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( hellodali
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
- )
-
-
+HPCC_ADD_EXECUTABLE(hellodali ${SRCS})
+install(TARGETS hellodali RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  hellodali
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase)

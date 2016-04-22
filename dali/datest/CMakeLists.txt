@@ -14,7 +14,5 @@
 #    limitations under the License.
 ################################################################################
 
-
-
 include (datest.cmake)
 include (dfuwutest.cmake)

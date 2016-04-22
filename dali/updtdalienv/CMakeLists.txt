@@ -1,7 +1,7 @@
 ################################################################################
-#    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
+#    HPCC SYSTEMS software Copyright(C) 2012 HPCC Systems®.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License");
+#    Licensed under the Apache License, Version 2.0(the "License");
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
 #
@@ -13,40 +13,35 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: updtdalienv 
+# Component: updtdalienv
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for updtdalienv
 #####################################################
 
-project( updtdalienv ) 
+project(updtdalienv)
 
-set (    SRCS 
-         updtdalienv.cpp 
-    )
+set(SRCS
+  updtdalienv.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../base 
-         ./../../system/mp 
-         . 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../ft 
-    )
+include_directories(
+  ./../../common/remote
+  ./../server
+  ./../base
+  ./../../system/mp
+  .
+  ./../../system/include
+  ./../../system/jlib
+  ./../ft)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( updtdalienv ${SRCS} )
-install ( TARGETS updtdalienv RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( updtdalienv  
-         jlib
-         mp 
-         remote 
-         dalibase 
-    )
-
+HPCC_ADD_EXECUTABLE(updtdalienv ${SRCS})
+install(TARGETS updtdalienv RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  updtdalienv
+  jlib
+  mp
+  remote
+  dalibase)

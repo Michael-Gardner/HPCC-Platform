@@ -13,7 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: dalift 
 #####################################################
 # Description:
@@ -21,41 +20,36 @@
 #    Cmake Input File for dalift
 #####################################################
 
-project( dalift ) 
+project(dalift) 
 
-set (    SRCS 
-         daft.cpp 
-         daftdir.cpp 
-         daftformat.cpp 
-         daftmc.cpp 
-         daftprogress.cpp 
-         daftsize.cpp 
-         filecopy.cpp 
-         ftbase.cpp 
-         fttransform.cpp 
-    )
+set(SRCS
+  daft.cpp
+  daftdir.cpp
+  daftformat.cpp
+  daftmc.cpp
+  daftprogress.cpp
+  daftsize.cpp
+  filecopy.cpp
+  ftbase.cpp
+  fttransform.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../base 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../common/environment 
-    )
+include_directories(
+  ./../../common/remote
+  ./../../system/mp
+  ./../base
+  ./../../system/include
+  ./../../system/jlib
+  ./../../common/environment)
 
-HPCC_ADD_LIBRARY( dalift SHARED ${SRCS} )
-set_target_properties (dalift PROPERTIES 
-    COMPILE_FLAGS -D_CONSOLE
-    DEFINE_SYMBOL DALIFT_EXPORTS
-    )
-install ( TARGETS dalift RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( dalift 
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-    )
-
+HPCC_ADD_LIBRARY(dalift SHARED ${SRCS})
+set_target_properties(dalift PROPERTIES 
+  COMPILE_FLAGS -D_CONSOLE
+  DEFINE_SYMBOL DALIFT_EXPORTS)
+install(TARGETS dalift RUNTIME DESTINATION ${BIN_PATH} LIBRARY DESTINATION ${LIB_PATH})
+target_link_libraries(dalift
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  environment)

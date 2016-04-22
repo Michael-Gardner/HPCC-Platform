@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: ftslave 
 #####################################################
 # Description:
@@ -22,30 +20,27 @@
 #    Cmake Input File for ftslave
 #####################################################
 
-project( ftslave ) 
+project(ftslave) 
 
-set (    SRCS 
-         ftslave.cpp 
-    )
+set(SRCS
+  ftslave.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../base 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories(
+  ./../../common/remote
+  ./../../system/mp
+  ./../base
+  ./../../system/include
+  ./../../system/jlib)
 
-HPCC_ADD_EXECUTABLE ( ftslave ${SRCS} )
-set_target_properties (ftslave PROPERTIES COMPILE_FLAGS -D_CONSOLE)
-install ( TARGETS ftslave RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( ftslave
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-         dalift 
-    )
-
+HPCC_ADD_EXECUTABLE(ftslave ${SRCS})
+set_target_properties(ftslave PROPERTIES COMPILE_FLAGS -D_CONSOLE)
+install(TARGETS ftslave RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  ftslave
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  environment
+  dalift)

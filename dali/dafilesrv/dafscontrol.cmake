@@ -13,41 +13,34 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: dafscontrol 
-
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for dafscontrol
 #####################################################
 
+project(dafscontrol) 
 
-project( dafscontrol ) 
+set(SRCS 
+  dafscontrol.cpp)
 
-set (    SRCS 
-         dafscontrol.cpp 
-    )
+include_directories(
+  ./../../system/hrpc 
+  ./../../common/remote 
+  ./../../system/mp 
+  ./../../system/include 
+  ./../../dali/base 
+  ./../../system/jlib 
+  ./../../common/environment)
 
-include_directories ( 
-         ./../../system/hrpc 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../system/jlib 
-         ./../../common/environment 
-    )
-
-HPCC_ADD_EXECUTABLE ( dafscontrol ${SRCS} )
-set_target_properties (dafscontrol PROPERTIES COMPILE_FLAGS -D_CONSOLE)
-install ( TARGETS dafscontrol RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( dafscontrol  
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-    )
-
+HPCC_ADD_EXECUTABLE(dafscontrol ${SRCS})
+set_target_properties(dafscontrol PROPERTIES COMPILE_FLAGS -D_CONSOLE)
+install(TARGETS dafscontrol RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(dafscontrol
+  jlib
+  mp 
+  hrpc 
+  remote 
+  dalibase 
+  environment)

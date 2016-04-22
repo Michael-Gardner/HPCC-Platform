@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: dalidiag 
 #####################################################
 # Description:
@@ -22,30 +20,27 @@
 #    Cmake Input File for dalidiag
 #####################################################
 
-project( dalidiag ) 
+project(dalidiag) 
 
-set (    SRCS 
-         dalidiag.cpp 
-    )
+set(SRCS 
+  dalidiag.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../base 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../system/jlib 
-    )
+include_directories( 
+  ./../../common/remote
+  ./../server
+  ./../base
+  ./../../system/mp
+  ./../../system/include
+  ./../../system/jlib)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( dalidiag ${SRCS} )
-install ( TARGETS dalidiag RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( dalidiag 
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-    )
-
+HPCC_ADD_EXECUTABLE(dalidiag ${SRCS})
+install(TARGETS dalidiag RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  dalidiag
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase)

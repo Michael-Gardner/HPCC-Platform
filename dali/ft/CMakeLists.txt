@@ -14,13 +14,9 @@
 #    limitations under the License.
 ################################################################################
 
+project(all)
 
-
-project (all)
-
-if ( PLATFORM )
-    include (ftslave.cmake)
+if(PLATFORM)
+    include(ftslave.cmake)
 endif()
-include (dalift.cmake)
-
-
+include(dalift.cmake)

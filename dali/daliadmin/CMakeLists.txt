@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: daliadmin 
 #####################################################
 # Description:
@@ -22,35 +20,32 @@
 #    Cmake Input File for daliadmin
 #####################################################
 
-project( daliadmin ) 
+project(daliadmin) 
 
-set (    SRCS 
-         daliadmin.cpp 
-    )
+set(SRCS 
+  daliadmin.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../base 
-         ./../../system/mp 
-         . 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../ft 
-         ./../../common/workunit
-         ./../../common/dllserver
-    )
+include_directories(
+  ./../../common/remote
+  ./../server
+  ./../base
+  ./../../system/mp
+  .
+  ./../../system/include
+  ./../../system/jlib
+  ./../ft
+  ./../../common/workunit
+  ./../../common/dllserver)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( daliadmin ${SRCS} )
-install ( TARGETS daliadmin RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( daliadmin  
-         jlib
-         mp 
-         remote 
-         dalibase 
-         workunit
-         dllserver
-    )
-
+HPCC_ADD_EXECUTABLE(daliadmin ${SRCS})
+install(TARGETS daliadmin RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  daliadmin  
+  jlib
+  mp 
+  remote 
+  dalibase 
+  workunit
+  dllserver)

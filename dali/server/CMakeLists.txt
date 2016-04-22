@@ -13,54 +13,48 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: daserver 
-
+# Component: daserver
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for daserver
 #####################################################
 
+project(daserver)
 
-project( daserver ) 
+set(SRCS
+  daldap.cpp
+  daserver.cpp)
 
-set (    SRCS 
-         daldap.cpp 
-         daserver.cpp 
-    )
+include_directories(
+  ./../../common/remote
+  ./../../system/mp
+  ./../base
+  ./../../system/include
+  ./../../system/security/shared
+  ./../../system/security/LdapSecurity
+  ./../../system/jlib
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
+add_definitions(-D_CONSOLE)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../../system/mp 
-         ./../base 
-         ./../../system/include 
-         ./../../system/security/shared 
-         ./../../system/security/LdapSecurity 
-         ./../../system/jlib 
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
-ADD_DEFINITIONS( -D_CONSOLE )
-
-if (WIN32)
-    if ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-        set (CMAKE_EXE_LINKER_FLAGS "/STACK:262144 ${CMAKE_EXE_LINKER_FLAGS}")  
-    else ()
-        set (CMAKE_EXE_LINKER_FLAGS "/STACK:65536 ${CMAKE_EXE_LINKER_FLAGS}")
-    endif ()
+if(WIN32)
+  if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+    set(CMAKE_EXE_LINKER_FLAGS "/STACK:262144 ${CMAKE_EXE_LINKER_FLAGS}")
+  else()
+    set(CMAKE_EXE_LINKER_FLAGS "/STACK:65536 ${CMAKE_EXE_LINKER_FLAGS}")
+  endif()
 endif()
 
-HPCC_ADD_EXECUTABLE ( daserver ${SRCS} )
-install ( TARGETS daserver RUNTIME DESTINATION ${BIN_DIR})
-target_link_libraries ( daserver 
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-    )
-IF (USE_OPENLDAP)
-target_link_libraries ( daserver LdapSecurity )
-ENDIF(USE_OPENLDAP)
+HPCC_ADD_EXECUTABLE(daserver ${SRCS})
+install(TARGETS daserver RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  daserver
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase)
+if(USE_OPENLDAP)
+  target_link_libraries(daserver LdapSecurity)
+endif(USE_OPENLDAP)

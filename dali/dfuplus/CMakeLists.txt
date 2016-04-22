@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: dfuplus
 #####################################################
 # Description:
@@ -22,48 +20,44 @@
 #    Cmake Input File for dfuplus
 #####################################################
 
-project( dfuplus )
+project(dfuplus)
 
 include(${HPCC_SOURCE_DIR}/esp/scm/smcscm.cmake)
 
-set (    SRCS
-         ../../esp/bindings/bindutil.cpp
-         ${ESPSCM_GENERATED_DIR}/ws_dfu_esp.cpp
-         ${ESPSCM_GENERATED_DIR}/ws_fs_esp.cpp
-         dfuplus.cpp
-         main.cpp
-    )
+set(SRCS
+  ../../esp/bindings/bindutil.cpp
+  ${ESPSCM_GENERATED_DIR}/ws_dfu_esp.cpp
+  ${ESPSCM_GENERATED_DIR}/ws_fs_esp.cpp
+  dfuplus.cpp
+  main.cpp)
 
-include_directories (
-         ./../../system/security/shared
-         ./../../esp/bindings/SOAP/xpp
-         ./../dfu
-         ./../ft
-         ./../../system/xmllib
-         ./../../esp/platform
-         ./../../esp/clients
-         ./../../rtl/include
-         ./../../system/include
-         ./../../system/jlib
-         ./../../esp/bindings
-         ./../../common/workunit
-         ./../../common/remote
-         ${CMAKE_BINARY_DIR}
-         ${CMAKE_BINARY_DIR}/oss
-    )
+include_directories(
+  ./../../system/security/shared
+  ./../../esp/bindings/SOAP/xpp
+  ./../dfu
+  ./../ft
+  ./../../system/xmllib
+  ./../../esp/platform
+  ./../../esp/clients
+  ./../../rtl/include
+  ./../../system/include
+  ./../../system/jlib
+  ./../../esp/bindings
+  ./../../common/workunit
+  ./../../common/remote
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/oss)
 
-set_source_files_properties (dfuplus.cpp PROPERTIES COMPILE_FLAGS -DDAFILESRV_LOCAL)
+set_source_files_properties(dfuplus.cpp PROPERTIES COMPILE_FLAGS -DDAFILESRV_LOCAL)
 
-ADD_DEFINITIONS( -D_CONSOLE )
+add_definitions(-D_CONSOLE)
 
-HPCC_ADD_EXECUTABLE ( dfuplus ${SRCS} )
-add_dependencies ( dfuplus espscm )
-install ( TARGETS dfuplus RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( dfuplus
-         jlib
-         remote
-         xmllib
-         esphttp
-    )
-
-
+HPCC_ADD_EXECUTABLE(dfuplus ${SRCS})
+add_dependencies(dfuplus espscm)
+install(TARGETS dfuplus RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  dfuplus
+  jlib
+  remote
+  xmllib
+  esphttp)

@@ -13,45 +13,42 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
-# Component: treeview 
+# Component: treeview
 #####################################################
 # Description:
 # ------------
 #    Cmake Input File for treeview
 #####################################################
 
-if (WIN32)
-    project( treeview ) 
+if(WIN32)
+  project(treeview)
 
-    set (    SRCS 
-             connect.cpp 
-             inspectctrl.cpp 
-             newvaluedlg.cpp 
-             stdafx.cpp 
-             treeview.cpp 
-             treeview.rc 
-             treeviewdlg.cpp 
-             util.cpp 
-        )
+  set(SRCS
+    connect.cpp
+    inspectctrl.cpp
+    newvaluedlg.cpp
+    stdafx.cpp
+    treeview.cpp
+    treeview.rc
+    treeviewdlg.cpp
+    util.cpp)
 
-    include_directories ( 
-             ./../../system/mp 
-             ./../base 
-             ./../../system/include 
-             ./../../system/jlib 
-        )
 
-    add_definitions("-D_AFXDLL")
-    HPCC_ADD_EXECUTABLE ( treeview WIN32 ${SRCS} )
-    install ( TARGETS treeview RUNTIME DESTINATION ${BIN_DIR} )
-    target_link_libraries ( treeview
-             jlib
-             mp 
-             hrpc 
-             remote 
-             dalibase 
-        )
-endif (WIN32)
+  include_directories(
+    ./../../system/mp
+    ./../base
+    ./../../system/include
+    ./../../system/jlib)
 
+  add_definitions("-D_AFXDLL")
+  HPCC_ADD_EXECUTABLE(treeview WIN32 ${SRCS})
+  install(TARGETS treeview RUNTIME DESTINATION ${BIN_PATH})
+  target_link_libraries(
+    treeview
+    jlib
+    mp
+    hrpc
+    remote
+    dalibase)
+
+endif(WIN32)

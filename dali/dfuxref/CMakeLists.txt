@@ -13,8 +13,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
 # Component: dfuxref 
 #####################################################
 # Description:
@@ -22,37 +20,33 @@
 #    Cmake Input File for dfuxref
 #####################################################
 
-project( dfuxref ) 
+project(dfuxref) 
 
-set (    SRCS 
-         dfuxrefmain.cpp 
-    )
+set(SRCS
+  dfuxrefmain.cpp)
 
-include_directories ( 
-         ./../../common/remote 
-         ./../server 
-         ./../../system/mp 
-         . 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../ft 
-         ./../../common/environment 
-         ./../dfuXRefLib
-         ./../base
-    )
+include_directories(
+  ./../../common/remote
+  ./../server
+  ./../../system/mp
+  .
+  ./../../system/include
+  ./../../system/jlib
+  ./../ft
+  ./../../common/environment
+  ./../dfuXRefLib
+  ./../base)
 
-ADD_DEFINITIONS ( -D_CONSOLE -DMAIN_DFUXREF )
+add_definitions(-D_CONSOLE -DMAIN_DFUXREF)
 
-HPCC_ADD_EXECUTABLE ( dfuxref ${SRCS} )
-install ( TARGETS dfuxref RUNTIME DESTINATION ${BIN_DIR} )
-target_link_libraries ( dfuxref 
-         jlib
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-         dfuXRefLib 
-    )
-
-
+HPCC_ADD_EXECUTABLE(dfuxref ${SRCS})
+install(TARGETS dfuxref RUNTIME DESTINATION ${BIN_PATH})
+target_link_libraries(
+  dfuxref
+  jlib
+  mp
+  hrpc
+  remote
+  dalibase
+  environment
+  dfuXRefLib)
