@@ -15,7 +15,7 @@
 #    limitations under the License.
 ################################################################################
 HPCC_ADD_SUBDIRECTORY (util)
-Install ( DIRECTORY common regression util DESTINATION "./testing/regress/hpcc" COMPONENT Runtime
+Install ( DIRECTORY common regression util DESTINATION "${SHARE_PATH}/testing/regress/hpcc" COMPONENT Runtime
           USE_SOURCE_PERMISSIONS
           FILES_MATCHING
           PATTERN "common/config.py"

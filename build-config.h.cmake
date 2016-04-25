@@ -26,6 +26,10 @@
     #cmakedefine EXEC_DIR "${EXEC_PATH}"
 #endif
 
+#ifndef SHARE_DIR
+    #cmakedefine SHARE_DIR "${SHARE_PATH}"
+#endif
+
 #ifndef COMPONENTFILES_DIR
     #cmakedefine COMPONENTFILES_DIR "${COMPONENTFILES_PATH}"
 #endif

@@ -10,9 +10,9 @@
 #include "confighelper.hpp"
 
 #define STANDARD_CONFIG_BUILDSETFILE "buildset.xml"
-#define STANDARD_CONFIG_CONFIGXML_DIR "/componentfiles/configxml/"
-#define STANDARD_CONFIG_PLUGIN_DIR_NAME "/plugins/"
-#define STANDARD_CONFIG_PLUGINS_DIR STANDARD_CONFIG_CONFIGXML_DIR STANDARD_CONFIG_PLUGIN_DIR_NAME
+#define STANDARD_CONFIG_CONFIGXML_DIR "configxml"
+#define STANDARD_CONFIG_PLUGIN_DIR_NAME "plugins"
+#define STANDARD_CONFIG_PLUGINS_DIR STANDARD_CONFIG_CONFIGXML_DIR PATHSEPCHAR STANDARD_CONFIG_PLUGIN_DIR_NAME
 #define PLUGIN_CGEN_COMP_LIST  "cgencomplist.xml"
 #define ENV_GEN_RULES_DO_NOT_GENERATE_PROP "do_not_generate"
 
@@ -62,12 +62,12 @@ CConfigHelper* CConfigHelper::getInstance(const IPropertyTree *cfg, const char* 
 
             if (p_sConfigHelper->m_strConfigXMLDir.length() == 0)
             {
-              p_sConfigHelper->m_strConfigXMLDir = INSTALL_DIR;
+              p_sConfigHelper->m_strConfigXMLDir = COMPONENTFILES_DIR;
             }
 
             p_sConfigHelper->m_strBuildSetFileName = pParams->queryProp(TAG_BUILDSET);
 
-            p_sConfigHelper->m_strBuildSetFilePath.append(p_sConfigHelper->m_strConfigXMLDir).append(STANDARD_CONFIG_CONFIGXML_DIR).append(
+            p_sConfigHelper->m_strBuildSetFilePath.append(p_sConfigHelper->m_strConfigXMLDir).append(PATHSEPCHAR).append(STANDARD_CONFIG_CONFIGXML_DIR).append(PATHSEPCHAR).append(
                         p_sConfigHelper->m_strBuildSetFileName.length() > 0 ? p_sConfigHelper->m_strBuildSetFileName : STANDARD_CONFIG_BUILDSETFILE);
 
             try
@@ -160,7 +160,7 @@ void CConfigHelper::appendBuildSetFromPlugins()
     const char *pMask = "*";
 
     StringBuffer strPath(this->m_strConfigXMLDir);
-    strPath.append(STANDARD_CONFIG_CONFIGXML_DIR).append(STANDARD_CONFIG_PLUGIN_DIR_NAME);
+    strPath.append(STANDARD_CONFIG_CONFIGXML_DIR).append(PATHSEPCHAR).append(STANDARD_CONFIG_PLUGIN_DIR_NAME).append(PATHSEPCHAR);
 
     if (this->m_cbDeployment.get() != NULL)
     {
@@ -301,11 +301,11 @@ void CConfigHelper::addPluginsToConfigGenCompList(IPropertyTree *pCGenComplist, 
     if (m_strConfigXMLDir.length() > 0)
     {
         strPath.set(m_strConfigXMLDir.str());
-        strPath.append(STANDARD_CONFIG_CONFIGXML_DIR).append(STANDARD_CONFIG_PLUGIN_DIR_NAME);
+        strPath.append(STANDARD_CONFIG_CONFIGXML_DIR).append(PATHSEPCHAR).append(STANDARD_CONFIG_PLUGIN_DIR_NAME).append(PATHSEPCHAR);
     }
     else if(pPath != NULL)
     {
-        strPath.set(pPath).append(STANDARD_CONFIG_PLUGIN_DIR_NAME);
+        strPath.set(pPath).append(PATHSEPCHAR).append(STANDARD_CONFIG_PLUGIN_DIR_NAME).append(PATHSEPCHAR);
     }
     else
     {
@@ -410,7 +410,7 @@ void CConfigHelper::addPluginsToGenEnvRules(IProperties *pGenEnvRulesProps) cons
     const char *pMask = "*";
 
     StringBuffer strPath(this->m_strConfigXMLDir);
-    strPath.append(STANDARD_CONFIG_CONFIGXML_DIR).append(STANDARD_CONFIG_PLUGIN_DIR_NAME);
+    strPath.append(STANDARD_CONFIG_CONFIGXML_DIR).append(PATHSEPCHAR).append(STANDARD_CONFIG_PLUGIN_DIR_NAME).append(PATHSEPCHAR);
 
     Owned<IFile> pluginRootDir = createIFile(strPath.str());
 

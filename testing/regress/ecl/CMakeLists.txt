@@ -16,7 +16,7 @@
 ################################################################################
 HPCC_ADD_SUBDIRECTORY (setup)
 
-Install ( DIRECTORY setup common hthor key roxie thor DESTINATION "./testing/regress/ecl" COMPONENT Runtime
+Install ( DIRECTORY setup common hthor key roxie thor DESTINATION "${SHARE_PATH}/testing/regress/ecl" COMPONENT Runtime
           USE_SOURCE_PERMISSIONS
           FILES_MATCHING
           PATTERN "setup/*.ecl"

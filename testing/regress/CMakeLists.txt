@@ -19,9 +19,9 @@ HPCC_ADD_SUBDIRECTORY (ecl)
 
 configure_file("environment.xml.in" "environment.xml")
 
-Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/environment.xml DESTINATION "./testing/regress" COMPONENT Runtime )
+Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/environment.xml DESTINATION "${SHARE_PATH}/testing/regress" COMPONENT Runtime )
 
-Install ( DIRECTORY download hpcc ecl DESTINATION "./testing/regress" COMPONENT Runtime
+Install ( DIRECTORY download hpcc ecl DESTINATION "${SHARE_PATH}/testing/regress" COMPONENT Runtime
           USE_SOURCE_PERMISSIONS
           FILES_MATCHING
           PATTERN "hpcc/__init__.py"

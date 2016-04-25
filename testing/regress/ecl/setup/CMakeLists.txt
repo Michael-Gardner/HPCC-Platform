@@ -14,7 +14,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-Install ( DIRECTORY thor DESTINATION "./testing/regress/ecl/setup" COMPONENT Runtime
+Install ( DIRECTORY thor DESTINATION "${SHARE_PATH}/testing/regress/ecl/setup" COMPONENT Runtime
           USE_SOURCE_PERMISSIONS
           FILES_MATCHING
           PATTERN "thor/*.xml" )

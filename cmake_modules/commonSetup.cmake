@@ -53,6 +53,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   option(PLUGIN "Enable building of a plugin" OFF)
   option(USE_SHLIBDEPS "Enable the use of dpkg-shlibdeps on ubuntu packaging" OFF)
 
+  option(USE_FHS "Enable the use of Filesystem Heirarchy Standards in package deployment" OFF)
   option(SIGN_MODULES "Enable signing of ecl standard library modules" OFF)
   option(USE_CPPUNIT "Enable unit tests (requires cppunit)" OFF)
   option(USE_OPENLDAP "Enable OpenLDAP support (requires OpenLDAP)" ON)

@@ -32,7 +32,7 @@
 #define TRACE_SCHEMA_NODE(msg, schemaNode)
 
 #define CONFIGMGR_JSPATH "./"
-#define STANDARD_COMPFILESDIR INSTALL_DIR
+#define STANDARD_COMPFILESDIR COMPONENTFILES_DIR
 
 #define STANDARD_CONFIGXMLDIR COMPONENTFILES_DIR"/configxml"
 
@@ -1548,8 +1548,8 @@ public:
              wizDefVal.clear().append(m_pEnv->queryProp(tempPath.str()));
              if(!wizDefVal.length())
                 wizDefVal.append(STANDARD_COMPFILESDIR);
-
-             wizDefVal.append(PATHSEPSTR"componentfiles");
+             else
+                wizDefVal.append(PATHSEPSTR"componentfiles");
            }
            else if(!strcmp(attr.queryProp(tempPath.str()), "$processname"))
            {
