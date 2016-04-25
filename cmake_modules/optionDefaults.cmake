@@ -93,6 +93,10 @@ if ( NOT ENV_CONF_FILE )
     set( ENV_CONF_FILE "environment.conf" )
 endif()
 
+if ( NOT SHARE_DIR )
+    set( SHARE_DIR "/usr/share")
+endif()
+
 set( INSTALL_DIR "${PREFIX}/${DIR_NAME}" )
 set( CONFIG_DIR "${CONFIG_PREFIX}/${DIR_NAME}" )
 set( RUNTIME_PATH "${EXEC_PREFIX}/${RUNTIME_DIR}/${DIR_NAME}" )
@@ -103,15 +107,23 @@ set( CONFIG_SOURCE_PATH "${CONFIG_DIR}/${CONFIG_SOURCE_DIR}" )
 if( NOT USE_FHS )
     set( SHARE_PATH "${INSTALL_DIR}" )
     set( COMPONENTFILES_PATH "${INSTALL_DIR}/${COMPONENTFILES_DIR}" )
-    set( PLUGINS_PATH "${INSTALL_DIR}/${PLUGINS_DIR}" )
-    set( LIB_PATH "${INSTALL_DIR}/${LIB_DIR}" )
-    set( EXEC_PATH "${INSTALL_DIR}/${EXEC_DIR}" )
-    set( ADMIN_PATH "${INSTALL_DIR}/${ADMIN_DIR}" )
+    set( PLUGINS_PATH "${INSTALL_DIR}/${PLUGINS_PATH}" )
+    set( LIB_PATH "${INSTALL_DIR}/${LIB_PATH}" )
+    set( EXEC_PATH "${INSTALL_DIR}/${EXEC_PATH}" )
+    set( ADMIN_PATH "${INSTALL_DIR}/${ADMIN_PATH}" )
 else()
-    set( SHARE_PATH "/usr/share/${DIR_NAME}" )
+    set( SHARE_PATH "${SHARE_DIR}/${DIR_NAME}" )
     set( COMPONENTFILES_PATH "${SHARE_PATH}/${COMPONENTFILES_DIR}" )
-    set( LIB_PATH "/usr/${LIB_DIR}" )
-    set( PLUGINS_PATH "${LIB_PATH}/${PLUGINS_DIR}" )
-    set( EXEC_PATH "/usr/${EXEC_DIR}" )
-    set( ADMIN_PATH "/usr/${ADMIN_DIR}" )
+    set( LIB_PATH "/usr/${LIB_PATH}" )
+    set( PLUGINS_PATH "${LIB_PATH}/${PLUGINS_PATH}" )
+    set( EXEC_PATH "/usr/${EXEC_PATH}" )
+    set( ADMIN_PATH "/usr/${ADMIN_PATH}" )
 endif()
+
+message(STATUS "SHARE_PATH: ${SHARE_PATH}
+COMPONENTFILES_PATH: ${COMPONENTFILES_PATH}
+LIB_PATH: ${LIB_PATH}
+PLUGINS_PATH: ${PLUGINS_PATH}
+EXEC_PATH: ${EXEC_PATH}
+ADMIN_PATH: ${ADMIN_PATH}\n")
+

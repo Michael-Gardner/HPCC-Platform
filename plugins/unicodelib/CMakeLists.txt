@@ -37,7 +37,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DUNICODELIB_EXPORTS )
 
 HPCC_ADD_LIBRARY( unicodelib SHARED ${SRCS} )
-install ( TARGETS unicodelib DESTINATION plugins )
+install ( TARGETS unicodelib DESTINATION ${LIB_PATH}/plugins )
 target_link_libraries ( unicodelib 
     jlib 
     ${ICU_LIBRARIES} 

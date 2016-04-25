@@ -49,7 +49,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DWS_ECL_CLIENT_EXPORTS )
 
 HPCC_ADD_LIBRARY( ws_ecl_client SHARED ${SRCS} )
-install ( TARGETS ws_ecl_client RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_ecl_client RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} )
 target_link_libraries (  ws_ecl_client 
          ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
          jlib

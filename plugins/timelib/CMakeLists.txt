@@ -42,7 +42,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DTIMELIB_EXPORTS )
 
 HPCC_ADD_LIBRARY( timelib SHARED ${SRCS} )
-install ( TARGETS timelib DESTINATION plugins )
+install ( TARGETS timelib DESTINATION ${LIB_PATH}/plugins )
 target_link_libraries ( timelib
          eclrtl
     )

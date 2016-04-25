@@ -100,11 +100,11 @@ if(KAFKA)
 
         install(
             TARGETS kafka
-            DESTINATION plugins)
+            DESTINATION ${LIB_PATH}/plugins)
 
         install(
             FILES ${LIBRDKAFKA_LIB} ${LIBRDKAFKA_LIB_REAL} ${LIBRDKAFKACPP_LIB} ${LIBRDKAFKACPP_LIB_REAL}
-            DESTINATION ${LIB_DIR}
+            DESTINATION ${LIB_PATH}
             COMPONENT Runtime)
 
         target_link_libraries(
@@ -120,6 +120,6 @@ endif()
 if(PLATFORM)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/kafka.ecllib
-        DESTINATION plugins
+        DESTINATION ${LIB_PATH}/plugins
         COMPONENT Runtime)
 endif()

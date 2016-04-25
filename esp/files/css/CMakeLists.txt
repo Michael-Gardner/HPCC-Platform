@@ -29,5 +29,5 @@ set ( CSS_FILES
 )
 
 FOREACH( iFile ${CSS_FILES} )
-    Install( FILES ${iFile} DESTINATION componentfiles/files/css COMPONENT Runtime )
+    Install( FILES ${iFile} DESTINATION ${SHARE_PATH}/componentfiles/files/css COMPONENT Runtime )
 ENDFOREACH ( iFile )

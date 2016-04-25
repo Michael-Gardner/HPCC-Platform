@@ -51,6 +51,6 @@ HPCC_ADD_EXECUTABLE ( esdl-xml ${SRCS} )
 # pre-req. But it is not distributed in CE packages.
 if ("${BUILD_LEVEL}" STREQUAL "ENTERPRISE")
     MESSAGE("----INSTALLING ESDL-XML")
-    install ( TARGETS esdl-xml RUNTIME DESTINATION ${EXEC_DIR} )
+    install ( TARGETS esdl-xml RUNTIME DESTINATION ${EXEC_PATH} )
     add_dependencies ( esdl-xml esdlgram.cpp esdlgram.h esdllex.cpp )
 endif()

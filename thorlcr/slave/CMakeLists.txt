@@ -62,7 +62,7 @@ if (WIN32)
 endif()
 
 HPCC_ADD_EXECUTABLE ( thorslave_lcr ${SRCS} )
-install ( TARGETS thorslave_lcr RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS thorslave_lcr RUNTIME DESTINATION ${EXEC_PATH} )
 target_link_libraries (  thorslave_lcr 
          jlib
          remote 

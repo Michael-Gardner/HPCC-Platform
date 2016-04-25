@@ -38,5 +38,5 @@ HPCC_ADD_EXECUTABLE ( vkey ${SRCS} )
 target_link_libraries ( vkey 
          jlib
          )
-install ( TARGETS vkey RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS vkey RUNTIME DESTINATION ${EXEC_PATH} )
 

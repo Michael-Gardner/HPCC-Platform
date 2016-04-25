@@ -51,7 +51,7 @@ if(REDIS)
 
         install(
             TARGETS redis
-            DESTINATION plugins)
+            DESTINATION ${LIB_PATH}/plugins)
 
         target_link_libraries(
             redis
@@ -64,6 +64,6 @@ endif()
 if(PLATFORM)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_redis.ecllib
-        DESTINATION plugins
+        DESTINATION ${LIB_PATH}/plugins
         COMPONENT Runtime)
 endif()

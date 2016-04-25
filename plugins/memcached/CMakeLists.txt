@@ -83,12 +83,12 @@ if (MEMCACHED)
         install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${PROJECT_BINARY_DIR}:${PROJECT_BINARY_DIR}/libmemcached/.libs\")")
         install(
             TARGETS memcached
-            DESTINATION plugins)
+            DESTINATION ${LIB_PATH}/plugins)
         install(FILES
             ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so
             ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so.11
             ${CMAKE_CURRENT_BINARY_DIR}/libmemcached/.libs/libmemcached.so.11.0.0
-            DESTINATION lib
+            DESTINATION ${LIB_PATH}
             PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     endif()
 endif()
@@ -96,6 +96,6 @@ endif()
 if(PLATFORM)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_memcached.ecllib
-        DESTINATION plugins
+        DESTINATION ${LIB_PATH}/plugins
         COMPONENT Runtime)
 endif()

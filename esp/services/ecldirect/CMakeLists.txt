@@ -56,7 +56,7 @@ ADD_DEFINITIONS( -D_USRDLL )
 
 HPCC_ADD_LIBRARY( EclDirect SHARED ${SRCS} )
 add_dependencies( EclDirect espscm )
-install ( TARGETS EclDirect RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT Runtime)
+install ( TARGETS EclDirect RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} COMPONENT Runtime)
 target_link_libraries ( EclDirect  
          jlib
          xmllib 

@@ -41,7 +41,7 @@ HPCC_ADD_LIBRARY( swapnodelib SHARED ${SRCS} )
 set_target_properties(swapnodelib PROPERTIES
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL SWAPNODELIB_EXPORTS )
-install ( TARGETS swapnodelib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS swapnodelib RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} )
 target_link_libraries ( swapnodelib
          jlib
          remote

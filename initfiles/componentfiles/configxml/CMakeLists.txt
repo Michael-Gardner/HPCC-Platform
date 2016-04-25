@@ -88,7 +88,7 @@ FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/wslogging.xsd
     ${CMAKE_CURRENT_SOURCE_DIR}/daliplugin.xsd
 )
-    Install ( FILES ${iFILES} DESTINATION componentfiles/configxml COMPONENT Runtime)
+    Install ( FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles/configxml COMPONENT Runtime)
 ENDFOREACH ( iFILES )
 
 add_subdirectory (@temp)

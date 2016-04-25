@@ -72,7 +72,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DHTHOR_EXPORTS -DSTARTQUERY_EXPORTS )
 
 HPCC_ADD_LIBRARY( hthor SHARED ${SRCS} ${INCLUDES} )
-install ( TARGETS hthor RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib )
+install ( TARGETS hthor RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} ARCHIVE DESTINATION ${SHARE_PATH}/componentfiles/cl/lib )
 target_link_libraries ( hthor
          jlib
          mp

@@ -241,6 +241,11 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
 
   set(CMAKE_MODULE_PATH "${HPCC_SOURCE_DIR}/cmake_modules/")
 
+  if(NOT USE_FHS)
+    set(__CONFIG_DIR "${INSTALL_DIR}/${CONFIG_DIR}")
+  else()
+    set(__CONFIG_DIR "${CONFIG_DIR}")
+  endif()
   if(UNIX AND SIGN_MODULES)
     #export gpg public key used for signing to new installation
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/pub.key
@@ -253,8 +258,8 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
       DEPENDS ${CMAKE_BINARY_DIR}/pub.key
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       )
-    install(FILES ${CMAKE_BINARY_DIR}/pub.key DESTINATION .${CONFIG_DIR}/rpmnew  COMPONENT Runtime)
-    install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION etc/init.d/install COMPONENT Runtime)
+    install(FILES ${CMAKE_BINARY_DIR}/pub.key DESTINATION ${__CONFIG_DIR}/rpmnew  COMPONENT Runtime)
+    install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION ${SHARE_PATH}/etc/init.d/install COMPONENT Runtime)
   endif()
 
 
@@ -866,11 +871,11 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   endif ( PLATFORM OR PLUGIN )
   set (CMAKE_SKIP_BUILD_RPATH  FALSE)
   set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-  set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${LIB_DIR}")
+  set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${LIB_PATH}")
   set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
   if (APPLE)
     # used to locate libraries when compiling ECL
-    set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${LIB_DIR}")
+    set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${LIB_PATH}")
   endif()
   MACRO (FETCH_GIT_TAG workdir edition result)
       execute_process(COMMAND "${GIT_COMMAND}" describe --tags --dirty --abbrev=6 --match ${edition}*

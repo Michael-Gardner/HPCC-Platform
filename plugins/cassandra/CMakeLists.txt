@@ -111,12 +111,12 @@ if(USE_CASSANDRA)
 
         install(
             TARGETS cassandraembed
-            DESTINATION plugins
+            DESTINATION ${LIB_PATH}/plugins
             COMPONENT Runtime )
 
         install(
             TARGETS cassandraembed
-            DESTINATION ${LIB_DIR}
+            DESTINATION ${LIB_PATH}
             COMPONENT Runtime )
 
         # until such time as the cassandra cpp driver and libuv are available as standard in all distros we want to support,
@@ -126,12 +126,12 @@ if(USE_CASSANDRA)
         if(APPLE)
             install(
                 FILES ${PROJECT_BINARY_DIR}/libuv.dylib
-                DESTINATION ${LIB_DIR}
+                DESTINATION ${LIB_PATH}
                 COMPONENT Runtime)
         else()
             install(
                 FILES ${PROJECT_BINARY_DIR}/libuv.so.0.10
-                DESTINATION ${LIB_DIR}
+                DESTINATION ${LIB_PATH}
                 PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
                 COMPONENT Runtime)
         endif()
@@ -150,6 +150,6 @@ endif()
 if(PLATFORM)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/cassandra.ecllib
-        DESTINATION plugins
+        DESTINATION ${LIB_PATH}/plugins
         COMPONENT Runtime)
 endif()

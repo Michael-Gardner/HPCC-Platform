@@ -22,22 +22,38 @@ GENERATE_BASH(processor ${bash-vars} "hpcc-init.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "hpcc_common.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "uninstall-init.in" outFiles)
 
+if(NOT USE_FHS)
+    set(__ADMIN_PATH "etc/init.d")
+    set(__INIT_PATH "etc/init.d")
+else()
+    set(__INIT_PATH "/etc/init.d")
+endif()
+
 ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bash-etc-init.d ALL DEPENDS ${outFiles})
 FOREACH( oFILES
-    ${outFiles}
+    ${CMAKE_CURRENT_BINARY_DIR}/install-init
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc_common
+    ${CMAKE_CURRENT_BINARY_DIR}/uninstall-init
     ${CMAKE_CURRENT_SOURCE_DIR}/pid.sh
     ${CMAKE_CURRENT_SOURCE_DIR}/lock.sh
     ${CMAKE_CURRENT_SOURCE_DIR}/init-functions
     ${CMAKE_CURRENT_SOURCE_DIR}/export-path
+)
+    install ( PROGRAMS ${oFILES} DESTINATION ${__ADMIN_PATH} COMPONENT Runtime )
+ENDFOREACH ( oFILES )
+
+foreach( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init.service
     ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init@.service
     ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
     ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
+    ${CMAKE_CURRENT_BINARY_DIR}/dafilesrv
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init
 )
-    install ( PROGRAMS ${oFILES} DESTINATION etc/init.d COMPONENT Runtime )
-ENDFOREACH ( oFILES )
+    install ( PROGRAMS ${iFILES} DESTINATION ${__INIT_PATH} COMPONENT Runtime )
+endforeach()
 
 if ( PLATFORM )
-    install ( PROGRAMS hpcc-init.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS hpcc-init.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS hpcc-init.install DESTINATION ${SHARE_PATH}/etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS hpcc-init.uninstall DESTINATION ${SHARE_PATH}/etc/init.d/uninstall COMPONENT Runtime )
 endif()

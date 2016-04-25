@@ -80,6 +80,7 @@ option(LIB_DIR "Set the library install dir")
 option(EXEC_DIR "Set the executable install dir")
 option(COMPONENTFILES_DIR "Set the componentfiles dir")
 option(ADMIN_DIR "Set the admin dir")
+option(SHARE_DIR "Set the share directory")
 option(PLUGINS_DIR "Set the plugins dir")
 option(CONFIG_SOURCE_DIR "Set the configuration source dir")
 option(RUNTIME_DIR "Set the runtime dir")
@@ -162,7 +163,7 @@ if ( WIN32 )
     if (MSVC14)
         find_file(MSVC14_REDIST "vcredist_${CMAKE_MSVC_ARCH}.exe" HINTS ${MSVC14_REDIST_DIR}/1033 )
         if (EXISTS "${MSVC14_REDIST}")
-            install ( PROGRAMS ${MSVC14_REDIST} DESTINATION ${RUN_PATH}/tmp )
+            install ( PROGRAMS ${MSVC14_REDIST} DESTINATION /tmp )
             get_filename_component(MSVC14_REDIST_NAME ${MSVC14_REDIST} NAME)
             list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " 
                 ExecWait '$INSTDIR\\\\tmp\\\\${MSVC14_REDIST_NAME} /S'
@@ -430,7 +431,7 @@ endif(TOP_LEVEL_PROJECT)
 ## the hpcc platform.
 ###
 if(PLATFORM OR CLIENTTOOLS OR REMBED)
-    install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION ${CONFIG_PATH} COMPONENT Runtime)
+    install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION ${CONFIG_DIR} COMPONENT Runtime)
 endif()
 
 include(CPack)

@@ -60,7 +60,7 @@ ADD_DEFINITIONS( -D_USRDLL )
 
 HPCC_ADD_LIBRARY( ws_machine SHARED ${SRCS} )
 add_dependencies( ws_machine espscm )
-install ( TARGETS ws_machine RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_machine RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} )
 target_link_libraries ( ws_machine
          jlib
          roxiecommlib
@@ -90,6 +90,6 @@ FOREACH ( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/rexec.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/preflightControls.xslt
 )
-    Install ( FILES ${iFILES} DESTINATION componentfiles/smc_xslt/ws_machine COMPONENT Runtime )
+    Install ( FILES ${iFILES} DESTINATION ${SHARE_PATH}/componentfiles/smc_xslt/ws_machine COMPONENT Runtime )
 ENDFOREACH ( iFILES )
 

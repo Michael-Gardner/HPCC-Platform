@@ -39,7 +39,7 @@ include_directories (
 ADD_DEFINITIONS( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( dumpkey ${SRCS} )
-install ( TARGETS dumpkey RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS dumpkey RUNTIME DESTINATION ${EXEC_PATH} )
 
 target_link_libraries ( dumpkey 
          jlib

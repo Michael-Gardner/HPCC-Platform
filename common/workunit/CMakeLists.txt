@@ -65,8 +65,8 @@ set_target_properties(workunit PROPERTIES
 if(NOT PLUGIN)
     install(
         TARGETS workunit
-        RUNTIME DESTINATION ${EXEC_DIR}
-        LIBRARY DESTINATION ${LIB_DIR})
+        RUNTIME DESTINATION ${EXEC_PATH}
+        LIBRARY DESTINATION ${LIB_PATH})
     target_link_libraries(
         workunit 
         jlib 

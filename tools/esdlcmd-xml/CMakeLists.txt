@@ -41,10 +41,10 @@ ADD_DEFINITIONS( -D_CONSOLE -O0 )
 HPCC_ADD_EXECUTABLE ( esdl-xml ${SRCS} )
 
 MESSAGE("----INSTALLING ESDL-XML")
-install ( TARGETS esdl-xml RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS esdl-xml RUNTIME DESTINATION ${EXEC_PATH} )
 if ( UNIX )
-    install ( PROGRAMS esdl-xml.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS esdl-xml.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS esdl-xml.install DESTINATION ${SHARE_PATH}/etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS esdl-xml.uninstall DESTINATION ${SHARE_PATH}/etc/init.d/uninstall COMPONENT Runtime )
 endif ( UNIX )
 
 target_link_libraries ( esdl-xml

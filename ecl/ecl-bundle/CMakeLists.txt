@@ -58,7 +58,7 @@ include_directories (
 ADD_DEFINITIONS( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( ecl-bundle ${SRCS} )
-install ( TARGETS ecl-bundle RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS ecl-bundle RUNTIME DESTINATION ${EXEC_PATH} )
 target_link_libraries ( ecl-bundle
         jlib
         esphttp
@@ -66,6 +66,6 @@ target_link_libraries ( ecl-bundle
     )
 
 if ( UNIX )
-    install ( PROGRAMS ecl-bundle.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-bundle.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS ecl-bundle.install DESTINATION ${SHARE_PATH}/etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS ecl-bundle.uninstall DESTINATION ${SHARE_PATH}/etc/init.d/uninstall COMPONENT Runtime )
 endif ( UNIX )

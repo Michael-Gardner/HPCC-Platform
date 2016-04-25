@@ -53,7 +53,7 @@ if (WIN32)
 endif()
 
 HPCC_ADD_EXECUTABLE ( daserver ${SRCS} )
-install ( TARGETS daserver RUNTIME DESTINATION ${EXEC_DIR})
+install ( TARGETS daserver RUNTIME DESTINATION ${EXEC_PATH})
 target_link_libraries ( daserver 
          jlib
          mp 

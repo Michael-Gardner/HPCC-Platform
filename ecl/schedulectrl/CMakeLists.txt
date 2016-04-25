@@ -44,7 +44,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DSCHEDULECTRL_EXPORTS )
 
 HPCC_ADD_LIBRARY( schedulectrl SHARED ${SRCS} )
-install ( TARGETS schedulectrl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS schedulectrl RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} )
 target_link_libraries ( schedulectrl
          jlib
          remote 

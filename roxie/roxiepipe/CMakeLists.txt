@@ -38,7 +38,7 @@ include_directories (
 ADD_DEFINITIONS( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( roxiepipe ${SRCS} )
-install ( TARGETS roxiepipe RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS roxiepipe RUNTIME DESTINATION ${EXEC_PATH} )
 target_link_libraries ( roxiepipe
          jlib
     )

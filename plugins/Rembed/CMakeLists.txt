@@ -48,7 +48,7 @@ if(REMBED)
         HPCC_ADD_LIBRARY(Rembed SHARED ${SRCS})
         install(
             TARGETS Rembed
-            DESTINATION plugins)
+            DESTINATION ${LIB_PATH}/plugins)
 
         target_link_libraries(
             Rembed
@@ -61,6 +61,6 @@ endif()
 if(PLATFORM)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/R.ecllib
-        DESTINATION plugins
+        DESTINATION ${LIB_PATH}/plugins
         COMPONENT Runtime)
 endif()

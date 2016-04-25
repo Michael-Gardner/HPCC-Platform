@@ -21,6 +21,6 @@ set ( LOGO_FILES
 )
 
 FOREACH( iFile ${LOGO_FILES} )
-    Install( FILES ${iFile} DESTINATION componentfiles/files/logo COMPONENT Runtime )
+    Install( FILES ${iFile} DESTINATION ${SHARE_PATH}/componentfiles/files/logo COMPONENT Runtime )
 ENDFOREACH ( iFile )
 

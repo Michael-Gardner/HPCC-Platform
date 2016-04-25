@@ -50,7 +50,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DDFUXREFLIB_EXPORTS )
 
 HPCC_ADD_LIBRARY( dfuXRefLib SHARED ${SRCS} )
-install ( TARGETS dfuXRefLib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS dfuXRefLib RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} )
 target_link_libraries ( dfuXRefLib
          jlib
          mp 

@@ -17,6 +17,9 @@
 
 #pragma warning (disable : 4786)
 
+//for cmake path defaults
+#include "build-config.h"
+
 #include "esdl_binding.hpp"
 #include "params2xml.hpp"
 #include "wsexcept.hpp"

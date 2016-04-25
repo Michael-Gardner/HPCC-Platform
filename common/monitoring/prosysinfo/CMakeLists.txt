@@ -29,4 +29,4 @@ set (    SRCS
     )
 
 HPCC_ADD_EXECUTABLE ( prosysinfo ${SRCS} )
-install ( TARGETS prosysinfo RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS prosysinfo RUNTIME DESTINATION ${EXEC_PATH} )

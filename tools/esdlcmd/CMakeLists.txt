@@ -72,7 +72,7 @@ add_dependencies ( esdl
                    espscm
                  )
 
-install ( TARGETS esdl RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS esdl RUNTIME DESTINATION ${EXEC_PATH} )
 target_link_libraries ( esdl
         jlib
         esphttp
@@ -82,6 +82,6 @@ target_link_libraries ( esdl
     )
 
 if ( UNIX )
-    install ( PROGRAMS esdl.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS esdl.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS esdl.install DESTINATION ${SHARE_PATH}/etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS esdl.uninstall DESTINATION ${SHARE_PATH}/etc/init.d/uninstall COMPONENT Runtime )
 endif ( UNIX )

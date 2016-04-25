@@ -42,7 +42,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DSTRINGLIB_EXPORTS )
 
 HPCC_ADD_LIBRARY( stringlib SHARED ${SRCS} )
-install ( TARGETS stringlib DESTINATION plugins )
+install ( TARGETS stringlib DESTINATION ${LIB_PATH}/plugins )
 target_link_libraries ( stringlib
          eclrtl
     )

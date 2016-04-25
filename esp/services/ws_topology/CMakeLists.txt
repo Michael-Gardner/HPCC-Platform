@@ -61,7 +61,7 @@ ADD_DEFINITIONS( -D_USRDLL -DWS_TOPOLOGY_EXPORTS )
 
 HPCC_ADD_LIBRARY( ws_topology SHARED ${SRCS} )
 add_dependencies ( ws_topology espscm )
-install ( TARGETS ws_topology RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_topology RUNTIME DESTINATION ${EXEC_PATH} LIBRARY DESTINATION ${LIB_PATH} )
 target_link_libraries ( ws_topology
          jlib
          remote 
