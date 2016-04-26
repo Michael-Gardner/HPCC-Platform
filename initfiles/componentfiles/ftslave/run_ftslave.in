@@ -17,7 +17,7 @@
 
 ###<REPLACE>###
 
-HPCC_CONFIG=${HPCC_CONFIG:-${CONFIG_DIR}/${ENV_CONF_FILE}}
+HPCC_CONFIG=${HPCC_CONFIG:-@CONFIG_PATH@/@ENV_CONF_FILE@}
 SECTION="DEFAULT"
 PATH_PREFIX=`cat ${HPCC_CONFIG} | sed -n "/\[${SECTION}\]/,/\[/p" | grep "^path *= *" | sed -e 's/^path *= *//'`
 source ${PATH_PREFIX}/sbin/hpcc_setenv ""

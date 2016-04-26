@@ -14,8 +14,6 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "run_ftslave.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-componentfiles-ftslave ALL DEPENDS ${outFiles})
+configure_file("run_ftslave.in" run_ftslave @ONLY)
 
 Install ( PROGRAMS ${outFiles} DESTINATION ${EXEC_PATH} )

@@ -62,7 +62,7 @@
                                 </xs:appinfo>
                             </xs:annotation>
                         </xs:attribute>
-                        <xs:attribute name="program" type="xs:string" use="optional" default="${INSTALL_DIR}/bin/ftslave">
+                        <xs:attribute name="program" type="xs:string" use="optional" default="@SHARE_PATH@/bin/ftslave">
                             <xs:annotation>
                                 <xs:appinfo>
                                     <required>true</required>

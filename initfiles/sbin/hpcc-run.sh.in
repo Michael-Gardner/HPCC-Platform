@@ -22,9 +22,9 @@
 
 ###<REPLACE>###
 
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
-source  ${INSTALL_DIR}/etc/init.d/init-functions
-source  ${INSTALL_DIR}/etc/init.d/export-path
+source  @SHARE_PATH@/etc/init.d/hpcc_common
+source  @SHARE_PATH@/etc/init.d/init-functions
+source  @SHARE_PATH@/etc/init.d/export-path
 
 print_usage(){
     echo
@@ -42,9 +42,9 @@ print_usage(){
 
 getIPS(){
     if [[ -z "${comp}" ]]; then
-        IPS=`${INSTALL_DIR}/sbin/configgen -env ${envfile} -machines | awk -F, '{print \$1}'  | sort | uniq`
+        IPS=`@SHARE_PATH@/sbin/configgen -env ${envfile} -machines | awk -F, '{print \$1}'  | sort | uniq`
     else
-        IPS=`${INSTALL_DIR}/sbin/configgen -env ${envfile} -listall | grep -e "${comp}" | awk -F, '{ print \$3 }' | sort | uniq`
+        IPS=`@SHARE_PATH@/sbin/configgen -env ${envfile} -listall | grep -e "${comp}" | awk -F, '{ print \$3 }' | sort | uniq`
         if [[ -z "${IPS}" ]]; then
             log_failure_msg "Component ${comp} not found"
             print_usage
@@ -54,7 +54,7 @@ getIPS(){
 }
 
 getDali(){
-    DIP=`${INSTALL_DIR}/sbin/configgen -env ${envfile} -listall | grep Dali | awk -F, '{print \$3}'  | sort | uniq`
+    DIP=`@SHARE_PATH@/sbin/configgen -env ${envfile} -listall | grep Dali | awk -F, '{print \$3}'  | sort | uniq`
 }
 
 createIPListFile(){
@@ -142,7 +142,7 @@ SCRIPTFILE
 runScript() {
     if [[ "$RUN_CLUSTER_DISPLAY_OUTPUT" = "FALSE" ]] && [[ $hasPython -eq 1 ]]; then
         OPTIONS="${OPTIONS} -n ${concurrent}"
-        eval ${INSTALL_DIR}/sbin/cluster_script.py -f ${scriptFile} "$OPTIONS"
+        eval @SHARE_PATH@/sbin/cluster_script.py -f ${scriptFile} "$OPTIONS"
         local rc=$?
     else
         if [[ $hasPython -eq 0 ]]; then
@@ -297,7 +297,7 @@ if [[ "$(whoami)" != "root" ]] && [[ "$(whoami)" != "${user}" ]]; then
 fi
 
 envfile=$configs/$environment
-configfile=${CONFIG_DIR}/${ENV_CONF_FILE}
+configfile=@CONFIG_PATH@/@ENV_CONF_FILE@
 
 hasPython=0
 save=0

@@ -14,13 +14,12 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_dafilesrv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_eclagent.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bin ALL DEPENDS ${outFiles})
+configure_file("init_dafilesrv.in" "init_dafilesrv" @ONLY)
+configure_file("init_eclagent.in" "init_eclagent" @ONLY)
 
 FOREACH( iFILES
-    ${outFiles}
+    ${CMAKE_CURRENT_BINARY_DIR}/init_eclagent
+    ${CMAKE_CURRENT_BINARY_DIR}/init_dafilesrv
     ${CMAKE_CURRENT_SOURCE_DIR}/init_configesp
     ${CMAKE_CURRENT_SOURCE_DIR}/init_dali
     ${CMAKE_CURRENT_SOURCE_DIR}/init_dfuserver

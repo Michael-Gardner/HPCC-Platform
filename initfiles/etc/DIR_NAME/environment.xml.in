@@ -199,7 +199,7 @@
   </Topology>
   <DaliServerProcess build="_"
                      buildSet="dali"
-                     environment="${CONFIG_DIR}/${ENV_XML_FILE}"
+                     environment="@CONFIG_PATH@/@ENV_XML_FILE@"
                      name="mydali"
                      recoverFromIncErrors="true">
    <Instance computer="localhost"
@@ -766,7 +766,7 @@
   <mpStart>7101</mpStart>
   <jvmoptions>-XX:-UsePerfData</jvmoptions>
   <allow_pgcache_flush>true</allow_pgcache_flush>
-  <environment>${ENV_XML_FILE}</environment>
+  <environment>@ENV_XML_FILE@</environment>
   <home>${HOME_DIR}</home>
   <blockname>HPCCSystems</blockname>
   <mpEnd>7500</mpEnd>
@@ -774,17 +774,17 @@
   <interface>*</interface>
   <mpSoMaxConn>128</mpSoMaxConn>
   <user>${RUNTIME_USER}</user>
-  <classpath>${INSTALL_DIR}/classes</classpath>
+  <classpath>@SHARE_PATH@/classes</classpath>
   <log>${LOG_PATH}</log>
   <logfields>TIM+DAT+MLT+MID+PID+TID+COD+QUO+PFX</logfields>
   <use_epoll>true</use_epoll>
   <runtime>${RUNTIME_PATH}</runtime>
   <lock>${LOCK_PATH}</lock>
-  <configs>${CONFIG_DIR}</configs>
-  <path>${INSTALL_DIR}</path>
+  <configs>@CONFIG_PATH@</configs>
+  <path>@SHARE_PATH@</path>
  </EnvSettings>
  <Programs>
-  <Build name="_" url="${INSTALL_DIR}">
+  <Build name="_" url="@SHARE_PATH@">
    <BuildSet installSet="deploy_map.xml"
              name="dafilesrv"
              path="componentfiles/dafilesrv"
