@@ -109,6 +109,8 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   option(JAVAEMBED "Create a package with ONLY the javaembed plugin" OFF)
   option(SQLITE3EMBED "Create a package with ONLY the sqlite3embed plugin" OFF)
   option(KAFKA "Create a package with ONLY the kafkaembed plugin" OFF)
+  #"cmake -DEXAMPLE_PLUGIN=ON <path-to/HPCC-Platform/>" will configure the plugin makefiles to be built with "make".
+  option(EXAMPLEPLUGIN "Create a package with ONLY the exampleplugin plugin" OFF)
 
   if (APPLE OR WIN32)
       option(USE_TBB "Enable Threading Building Block support" OFF)
@@ -122,7 +124,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
 
 
     if(REMBED OR V8EMBED OR MEMCACHED OR PYEMBED OR REDIS OR JAVAEMBED OR MYSQLEMBED
-        OR SQLITE3EMBED OR KAFKA)
+        OR SQLITE3EMBED OR KAFKA OR EXAMPLEPLUGIN)
         set(PLUGIN ON)
         set(CLIENTTOOLS OFF)
         set(PLATFORM OFF)
@@ -131,7 +133,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
     endif()
 
     if(REMBED)
-	if(DEFINED pluginname)
+        if(DEFINED pluginname)
             message(FATAL_ERROR "Cannot enable rembed, already declared ${pluginname}")
 	    else()
             set(pluginname "rembed")
@@ -193,6 +195,13 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
             set(pluginname "kafka")
         endif()
     endif()
+    if(EXAMPLEPLUGIN)
+        if(DEFINED pluginname)
+            message(FATAL_ERROR "Cannot enable exampleplugin, already declared ${pluginname}")
+        else()
+           set(pluginname "exampleplugin")
+        endif()
+    endif()
 
   if ( USE_XALAN AND USE_LIBXSLT )
       set(USE_LIBXSLT OFF)
@@ -230,6 +239,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
         set(JAVAEMBED ON)
         set(SQLITE3EMBED ON)
         set(KAFKA ON)
+        set(EXAMPLEPLUGIN ON)#This example is OFF only for the sake of it being only an example, yours should be set ON.
     endif()
 
   option(PORTALURL "Set url to hpccsystems portal download page")
