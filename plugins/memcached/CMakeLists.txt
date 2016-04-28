@@ -24,7 +24,7 @@
 
 project( memcached )
 
-if (MEMCACHED)
+if (MEMCACHED AND USE_MEMCACHED)
     ADD_PLUGIN(memcached)
     if(MAKE_MEMCACHED)
         # Currently libmemcached versions are not sufficient on ubuntu 12.04 and 14.04 LTS
