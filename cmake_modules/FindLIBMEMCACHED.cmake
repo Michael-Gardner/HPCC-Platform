@@ -28,9 +28,9 @@
 
 
 IF (NOT LIBMEMCACHED_FOUND)
-    option(MEMCACHED_USE_EXTERNAL_LIBRARY "Pull and build source from external location if local is not found" ON)
+
     if(NOT LIBMEMCACHED_VERSION)
-        set(LIBMEMCACHED_VERSION "${LIBMEMCACHED_FIND_VERSION}")
+        set(LIBMEMCACHED_VERSION "${LIBMEMCACHED_FIND_VERSION}" CACHE STRING "Set libmemcache version string to fetch and build" FORCE)
     endif()
 
     # Search for native library to build against

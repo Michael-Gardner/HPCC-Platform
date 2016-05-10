@@ -110,6 +110,14 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   option(SQLITE3EMBED "Create a package with ONLY the sqlite3embed plugin" OFF)
   option(KAFKA "Create a package with ONLY the kafkaembed plugin" OFF)
 
+  option(MEMCACHED_USE_EXTERNAL_LIBRARY "Pull and build source from external location if local is not found" ON)
+  if(LIBMEMCACHED_VERSION)
+      set(LIBMEMCACHED_VERSION "${LIBMEMCACHED_VERSION}" CACHE STRING "Set libmemcache version string to fetch and build" FORCE)
+  else()
+      set(LIBMEMCACHED_VERSION "" CACHE STRING "Set libmemcache version string to fetch and build" FORCE)
+  endif()
+
+
   if (APPLE OR WIN32)
       option(USE_TBB "Enable Threading Building Block support" OFF)
   else()
