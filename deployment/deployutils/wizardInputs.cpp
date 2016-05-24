@@ -1001,6 +1001,15 @@ void CWizardInputs::getEspBindingInformation(IPropertyTree* pNewEnvTree)
   }
 }
 
+void CWizardInputs::addEnvSettings(IPropertyTree* pNewEnvTree)
+{
+  StringBuffer xpath;
+  if(!pNewEnvTree->hasProp("./" XML_TAG_ENVSETTINGS))
+    pNewEnvTree->addPropTree("./" XML_TAG_ENVSETTINGS, createPTree());
+
+
+}
+
 void CWizardInputs::addTopology(IPropertyTree* pNewEnvTree)
 {
   StringBuffer xpath;
