@@ -14,7 +14,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
+
 configure_file("configmgr.conf.in" "configmgr.conf")
 configure_file("esp.xml.in" "esp.xml")
-Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/configmgr.conf DESTINATION .${CONFIG_DIR}/configmgr COMPONENT Runtime ) # Don't delete the "."
-Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/esp.xml DESTINATION .${CONFIG_DIR}/configmgr COMPONENT Runtime ) # Don't delete the "."
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/configmgr.conf DESTINATION ${CONFIG_DIR}/configmgr COMPONENT Configuration)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/esp.xml DESTINATION ${CONFIG_DIR}/configmgr COMPONENT Configuration)

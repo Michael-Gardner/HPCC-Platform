@@ -53,7 +53,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL )
 
 HPCC_ADD_LIBRARY( ws_config SHARED ${SRCS} )
-install ( TARGETS ws_config RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT Runtime )
+install ( TARGETS ws_config RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT Runtime )
 add_dependencies (ws_config espscm)
 target_link_libraries ( ws_config 
          jlib

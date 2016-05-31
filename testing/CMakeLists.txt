@@ -15,7 +15,7 @@
 ################################################################################
 HPCC_ADD_SUBDIRECTORY (unittests)
 HPCC_ADD_SUBDIRECTORY (regress)
-install( DIRECTORY regress DESTINATION "./testing" COMPONENT Runtime
+install( DIRECTORY regress DESTINATION ${TEST_DIR} COMPONENT Runtime
          USE_SOURCE_PERMISSIONS
          FILES_MATCHING
          PATTERN "regress/ecl-test"

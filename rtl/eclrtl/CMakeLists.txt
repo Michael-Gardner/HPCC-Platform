@@ -90,7 +90,7 @@ target_link_libraries ( eclrtl
     )
 
 if (NOT PLUGIN)
-  install ( TARGETS eclrtl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib )
+    install ( TARGETS eclrtl RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION ${COMP_DIR}/cl/lib )
   FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/eclinclude4.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/eclrtl.hpp
@@ -101,6 +101,6 @@ if (NOT PLUGIN)
     ${CMAKE_CURRENT_SOURCE_DIR}/rtlfield_imp.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtlkey.hpp
   )
-    install ( FILES ${iFILES} DESTINATION componentfiles/cl/include COMPONENT Runtime )
+    install ( FILES ${iFILES} DESTINATION ${COMP_DIR}/cl/include COMPONENT Runtime )
   ENDFOREACH ( iFILES )
 endif()

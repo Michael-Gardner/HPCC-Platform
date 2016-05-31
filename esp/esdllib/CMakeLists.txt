@@ -45,7 +45,7 @@ HPCC_ADD_LIBRARY( esdllib SHARED ${SRCS}
     ${HEADERS}
 )
 
-install ( TARGETS esdllib RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+install ( TARGETS esdllib RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 
 add_dependencies ( esdllib jlib espscm)
 

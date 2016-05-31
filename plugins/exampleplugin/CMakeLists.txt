@@ -59,7 +59,7 @@ if(EXAMPLEPLUGIN)
 
         install(
             TARGETS exampleplugin
-            DESTINATION plugins)
+            DESTINATION ${PLUGIN_DIR})
 
         target_link_libraries(
             exampleplugin
@@ -79,6 +79,6 @@ endif()
 if(PLATFORM)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_exampleplugin.ecllib
-        DESTINATION plugins
+        DESTINATION ${PLUGIN_DIR}
         COMPONENT Runtime)
 endif()

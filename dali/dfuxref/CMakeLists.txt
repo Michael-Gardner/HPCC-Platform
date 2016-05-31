@@ -44,7 +44,7 @@ include_directories (
 ADD_DEFINITIONS ( -D_CONSOLE -DMAIN_DFUXREF )
 
 HPCC_ADD_EXECUTABLE ( dfuxref ${SRCS} )
-install ( TARGETS dfuxref RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS dfuxref RUNTIME DESTINATION ${BIN_DIR} )
 target_link_libraries ( dfuxref 
          jlib
          mp 

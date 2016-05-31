@@ -30,6 +30,6 @@ set(
 
 foreach(module ${SRCS})
     SIGN_MODULE(${module})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${module} DESTINATION share/ecllibrary/std COMPONENT Runtime)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${module} DESTINATION ${SHARE_DIR}/ecllibrary/std COMPONENT Runtime)
 endforeach()
   

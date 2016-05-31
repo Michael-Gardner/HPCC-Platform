@@ -263,8 +263,8 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
       DEPENDS ${CMAKE_BINARY_DIR}/pub.key
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       )
-    install(FILES ${CMAKE_BINARY_DIR}/pub.key DESTINATION .${CONFIG_DIR}/rpmnew  COMPONENT Runtime)
-    install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION etc/init.d/install COMPONENT Runtime)
+  install(FILES ${CMAKE_BINARY_DIR}/pub.key DESTINATION ${CONFIG_DIR}  COMPONENT Runtime)
+  install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION ${INSTALL_PATH}/etc/init.d/install COMPONENT Runtime)
   endif()
 
 
@@ -879,11 +879,15 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   ###
   ## The following sets the install directories and names.
   ###
-  if ( PLATFORM OR PLUGIN )
-    set ( CMAKE_INSTALL_PREFIX "${PREFIX}/${DIR_NAME}" )
-  else ( )
-    set ( CMAKE_INSTALL_PREFIX "${PREFIX}/${DIR_NAME}/${version}/clienttools" )
-  endif ( PLATFORM OR PLUGIN )
+  if ( PLATFORM OR PLUGINS )
+    if(NOT CMAKE_INSTALL_PREFIX)
+        set ( CMAKE_INSTALL_PREFIX "${INSTALL_PATH}" )
+    endif()
+  else()
+    if(NOT CMAKE_INSTALL_PREFIX)
+        set ( CMAKE_INSTALL_PREFIX "${INSTALL_PATH}/${version}/clienttools" )
+    endif()
+  endif()
   set (CMAKE_SKIP_BUILD_RPATH  FALSE)
   set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
   set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${LIB_DIR}")

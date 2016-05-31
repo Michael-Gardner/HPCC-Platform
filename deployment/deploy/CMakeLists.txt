@@ -57,7 +57,7 @@ include_directories (
 ADD_DEFINITIONS ( -D_USRDLL -DDEPLOY_EXPORTS )
 
 HPCC_ADD_LIBRARY( deploy SHARED ${SRCS} )
-install ( TARGETS deploy RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS deploy RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( deploy 
          jlib 
          environment 
@@ -72,6 +72,6 @@ IF (USE_OPENSSL)
 ENDIF()
 
 if ( PLATFORM )
-    install ( PROGRAMS configesp.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS configesp.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS configesp.install DESTINATION opt/HPCCSystems/etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS configesp.uninstall DESTINATION opt/HPCCSystems/etc/init.d/uninstall COMPONENT Runtime )
 endif()

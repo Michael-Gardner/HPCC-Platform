@@ -105,7 +105,7 @@ set ( IMG_FILES
 )
 
 FOREACH( iFile ${IMG_FILES} )
-    Install( FILES ${iFile} DESTINATION componentfiles/files/img COMPONENT Runtime )
+    Install( FILES ${iFile} DESTINATION ${COMP_DIR}/files/img COMPONENT Runtime )
 ENDFOREACH ( iFile )
 
-Install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/favlogo.png DESTINATION componentfiles/files COMPONENT Runtime )
+Install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/favlogo.png DESTINATION ${COMP_DIR}/files COMPONENT Runtime )

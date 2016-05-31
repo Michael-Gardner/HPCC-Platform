@@ -45,7 +45,7 @@ include_directories (
     )
 
 HPCC_ADD_EXECUTABLE ( eclccserver ${SRCS} ${INCLUDES} )
-install ( TARGETS eclccserver RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS eclccserver RUNTIME DESTINATION ${BIN_DIR} )
 
 target_link_libraries ( eclccserver 
          jlib

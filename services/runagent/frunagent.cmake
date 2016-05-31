@@ -46,7 +46,7 @@ include_directories (
 ADD_DEFINITIONS ( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( frunagent ${SRCS} )
-install ( TARGETS frunagent RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS frunagent RUNTIME DESTINATION ${BIN_DIR} COMPONENT Runtime )
 target_link_libraries ( frunagent 
          jlib
          homisc 

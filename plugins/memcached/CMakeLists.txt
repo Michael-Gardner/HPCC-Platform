@@ -70,13 +70,13 @@ if (MEMCACHED)
 
         install(
             TARGETS memcachedplugin
-            DESTINATION plugins)
+            DESTINATION ${PLUGIN_DIR})
     endif()
 endif()
 
 if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_memcached.ecllib
-        DESTINATION plugins
+        DESTINATION ${PLUGIN_DIR}
         COMPONENT Runtime)
 endif()

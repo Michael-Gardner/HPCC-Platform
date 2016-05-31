@@ -110,6 +110,7 @@ endif()
 
       add_definitions(-D_USRDLL -DCASSANDRAEMBED_EXPORTS)
 
+      set(CMAKE_INSTALL_LIBDIR "${LIB_DIR}")
       HPCC_ADD_LIBRARY(cassandraembed SHARED ${SRCS})
       if(NOT FORCE_WORKUNITS_TO_CASSANDRA)
         if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
@@ -121,7 +122,7 @@ endif()
 
       install(
         TARGETS cassandraembed
-        DESTINATION plugins
+        DESTINATION ${PLUGIN_DIR}
         COMPONENT Runtime )
 
       install(
@@ -143,6 +144,6 @@ endif()
   if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
       FILES ${CMAKE_CURRENT_SOURCE_DIR}/cassandra.ecllib
-      DESTINATION plugins
+      DESTINATION ${PLUGIN_DIR}
       COMPONENT Runtime)
   endif()

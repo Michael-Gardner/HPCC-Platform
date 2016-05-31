@@ -51,7 +51,7 @@ set ( SRCS
 
 HPCC_ADD_LIBRARY( cassandralogagent SHARED ${SRCS} )
 
-install ( TARGETS cassandralogagent RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+install ( TARGETS cassandralogagent RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 add_dependencies (cassandralogagent espscm)
 target_link_libraries ( cassandralogagent
     cassandra

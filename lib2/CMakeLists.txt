@@ -64,7 +64,7 @@ endif()
 foreach(dylib ${DYLIBS})
     get_filename_component(dylib_path ${dylib} REALPATH)
     if (WIN32)
-        install(PROGRAMS "${dylib_path}" DESTINATION ${EXEC_DIR})
+        install(PROGRAMS "${dylib_path}" DESTINATION ${BIN_DIR})
     elseif (APPLE)
         install(PROGRAMS "${dylib_path}" DESTINATION lib2)
         get_filename_component(dylib_name_ext ${dylib_path} NAME)
@@ -108,7 +108,7 @@ foreach(dylib ${DYLIBS})
         endif ()
 
         install(CODE "
-            file(GLOB files \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${EXEC_DIR}/*\" \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${LIB_DIR}/*.dylib\" \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/plugins/*.dylib\" \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/lib2/*.dylib\")
+            file(GLOB files \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${BIN_DIR}/*\" \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${LIB_DIR}/*.dylib\" \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/plugins/*.dylib\" \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/lib2/*.dylib\")
             foreach(file \${files})
               ${fixupCommand}
             endforeach ()

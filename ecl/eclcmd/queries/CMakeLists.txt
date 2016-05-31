@@ -46,7 +46,7 @@ ADD_DEFINITIONS( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( ecl-queries ${SRCS} )
 add_dependencies ( ecl-queries espscm)
-install ( TARGETS ecl-queries RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS ecl-queries RUNTIME DESTINATION ${BIN_DIR} )
 target_link_libraries ( ecl-queries
         jlib
         esphttp
@@ -54,6 +54,6 @@ target_link_libraries ( ecl-queries
     )
 
 if (UNIX)
-    install ( PROGRAMS ecl-queries.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-queries.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS ecl-queries.install DESTINATION opt/HPCCSystems/etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS ecl-queries.uninstall DESTINATION opt/HPCCSystems/etc/init.d/uninstall COMPONENT Runtime )
 endif (UNIX)

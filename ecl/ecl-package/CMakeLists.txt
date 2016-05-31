@@ -59,7 +59,7 @@ ADD_DEFINITIONS( -D_CONSOLE )
 HPCC_ADD_EXECUTABLE ( ecl-packagemap ${SRCS} )
 
 add_dependencies ( ecl-packagemap espscm )
-install ( TARGETS ecl-packagemap RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS ecl-packagemap RUNTIME DESTINATION ${BIN_DIR} )
 target_link_libraries ( ecl-packagemap
         jlib
         esphttp
@@ -67,7 +67,7 @@ target_link_libraries ( ecl-packagemap
     )
 
 if ( UNIX )
-    install ( PROGRAMS ecl-package.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-package.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS ecl-package.install DESTINATION opt/HPCCSystems/etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS ecl-package.uninstall DESTINATION opt/HPCCSystems/etc/init.d/uninstall COMPONENT Runtime )
 endif ( UNIX )
 

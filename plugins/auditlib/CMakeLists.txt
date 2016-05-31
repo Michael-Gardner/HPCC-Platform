@@ -36,7 +36,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DAUDITLIB_EXPORTS )
 
 HPCC_ADD_LIBRARY( auditlib SHARED ${SRCS} )
-install ( TARGETS auditlib DESTINATION plugins )
+install ( TARGETS auditlib DESTINATION ${PLUGIN_DIR} )
 target_link_libraries ( auditlib  
          jlib 
     )

@@ -44,7 +44,7 @@ HPCC_ADD_LIBRARY( udplib SHARED ${SRCS} )
 set_target_properties( udplib PROPERTIES 
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL UDPLIB_EXPORTS )
-install ( TARGETS udplib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS udplib RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( udplib 
          jlib
          roxiemem 

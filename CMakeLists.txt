@@ -75,13 +75,18 @@ endif(NOT BUILD_LEVEL)
 ###
 option(PREFIX "Set the install prefix")
 option(EXEC_PREFIX "Set the execution prefix")
-option(CONFIG_PREFIX "Set the configuration prefix")
 option(DIR_NAME "Set the install directory name")
 option(LIB_DIR "Set the library install dir")
-option(EXEC_DIR "Set the executable install dir")
-option(COMPONENTFILES_DIR "Set the componentfiles dir")
-option(ADMIN_DIR "Set the admin dir")
+option(BIN_DIR "Set the executable install dir")
+option(SBIN_DIR "Set the sbin dir")
+option(COMP_DIR "Set the componentfiles dir")
 option(PLUGINS_DIR "Set the plugins dir")
+option(TEST_DIR "Set the test dir")
+option(FILEHOOK_DIR "Set the relative filehook dir")
+option(SHARE_DIR "Set the relative share dir")
+option(CLASS_DIR "Set the relative class dir")
+
+
 option(CONFIG_SOURCE_DIR "Set the configuration source dir")
 option(RUNTIME_DIR "Set the runtime dir")
 option(HOME_DIR "Set the home dir")
@@ -434,13 +439,13 @@ endif(TOP_LEVEL_PROJECT)
 ## the hpcc platform.
 ###
 if(PLATFORM OR CLIENTTOOLS OR REMBED)
-    install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION "." COMPONENT Runtime)
+    install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION ${INSTALL_DIR} COMPONENT Runtime)
 endif()
 
 if(UNIX)
     add_custom_target(
         uninstall
-        bash -c 'while read file\; do rm -rf $file\; done < ${CMAKE_BINARY_DIR}/install_manifest.txt'
+        bash -c 'while read file\; do rm -rfv $file\; done < ${CMAKE_BINARY_DIR}/install_manifest.txt'
         DEPENDS ${CMAKE_BINARY_DIR}/install_manifest.txt
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Uninstalling targets"

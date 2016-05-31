@@ -61,7 +61,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DREMOTE_EXPORTS )
 
 HPCC_ADD_LIBRARY( remote SHARED ${SRCS}  )
-install ( TARGETS remote RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS remote RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 
 target_link_libraries ( remote 
     jlib 

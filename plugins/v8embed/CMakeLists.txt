@@ -52,7 +52,7 @@ if(V8EMBED)
 
         install(
             TARGETS v8embed
-            DESTINATION plugins)
+            DESTINATION ${PLUGIN_DIR})
         target_link_libraries(
             v8embed
             ${V8_LIBRARIES}
@@ -67,6 +67,6 @@ endif()
 if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/javascript.ecllib
-        DESTINATION plugins
+        DESTINATION ${PLUGIN_DIR}
         COMPONENT Runtime)
 endif()
