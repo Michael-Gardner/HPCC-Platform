@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
 
     //execute configgen to query the LDAP Server configuration(s)
     StringBuffer cmd;
-    cmd.appendf("%s%cconfiggen -env %s%c%s -listldapservers", ADMIN_DIR,PATHSEPCHAR,CONFIG_DIR, PATHSEPCHAR, ENV_XML_FILE);
+    cmd.appendf("%s%cconfiggen -env %s%c%s -listldapservers", ABS_SBIN_DIR,PATHSEPCHAR,CONFIG_DIR, PATHSEPCHAR, ENV_XML_FILE);
 
     char * configBuffer = NULL;
 

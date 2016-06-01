@@ -1370,7 +1370,7 @@ bool CWsDeployFileInfo::saveSetting(IEspContext &context, IEspSaveSettingRequest
             StringBuffer rundir;
 
             if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", pszCompType, pszNewValue, rundir))
-              rundir.clear().appendf(RUNTIME_DIR"/%s", pszNewValue);
+              rundir.clear().appendf(RUNTIME_PATH"/%s", pszNewValue);
 
             Owned<IPropertyTreeIterator> iterInsts = pComp->getElements(XML_TAG_INSTANCE);
 
@@ -1477,7 +1477,7 @@ bool CWsDeployFileInfo::saveSetting(IEspContext &context, IEspSaveSettingRequest
               StringBuffer sb;
               StringBuffer rundir;
               if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", pszCompType, pszCompName, rundir))
-                sb.clear().appendf(RUNTIME_DIR"/%s", pszCompName);
+                sb.clear().appendf(RUNTIME_PATH"/%s", pszCompName);
               else
                 sb.clear().append(rundir);
 
@@ -4393,7 +4393,7 @@ bool CWsDeployFileInfo::handleInstance(IEspContext &context, IEspHandleInstanceR
           {
             StringBuffer rundir;
             if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"),"run",buildSet,compName,rundir))
-              sb.clear().appendf(RUNTIME_DIR"/%s", compName);
+              sb.clear().appendf(RUNTIME_PATH"/%s", compName);
             else
               sb.clear().append(rundir);
 

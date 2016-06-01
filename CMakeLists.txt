@@ -312,7 +312,18 @@ if(NOT "${BASE_BUILD_TAG}" STREQUAL "")
     set(BASE_BUILD_TAG "${BUILD_TAG}")
 endif()
 message("-- Base build tag is '${BASE_BUILD_TAG}'")
+
+# build-config.h setup block
+if(NOT "$ENV{DESTDIR}" STREQUAL "")
+    message(STATUS "Appending $ENV{DESTDIR} to the installation path")
+endif()
+set(ABS_INSTALL_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
+set(ABS_COMPONENTFILES_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${COMP_DIR}")
+set(ABS_SBIN_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${SBIN_DIR}")
+message(STATUS "ABS_SBIN_DIR = ${ABS_SBIN_DIR}")
+
 configure_file(${HPCC_SOURCE_DIR}/build-config.h.cmake "build-config.h")
+
 
 if(USE_SHLIBDEPS)
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
@@ -439,13 +450,13 @@ endif(TOP_LEVEL_PROJECT)
 ## the hpcc platform.
 ###
 if(PLATFORM OR CLIENTTOOLS OR REMBED)
-    install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION ${INSTALL_DIR} COMPONENT Runtime)
+    install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION . COMPONENT Runtime)
 endif()
 
 if(UNIX)
     add_custom_target(
         uninstall
-        bash -c 'while read file\; do rm -rfv $file\; done < ${CMAKE_BINARY_DIR}/install_manifest.txt'
+        bash -c 'while read file\; do rm -vf $ENV{DESTDIR}\$file 1>&2 \; done < ${CMAKE_BINARY_DIR}/install_manifest.txt'
         DEPENDS ${CMAKE_BINARY_DIR}/install_manifest.txt
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Uninstalling targets"

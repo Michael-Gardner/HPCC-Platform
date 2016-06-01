@@ -102,8 +102,8 @@ IF (NOT LIBMEMCACHED_FOUND)
         add_custom_command(
             OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION}/libmemcached/.libs/libmemcached.so.11.0.0
             COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_CURRENT_SOURCE_DIR}/libmemcached-${LIBMEMCACHED_VERSION}.tar.gz -C ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION}
-            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION} ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION}/configure --prefix=\"${INSTALL_DIR}\" LDFLAGS=\"-L${LIB_PATH}\" > /dev/null
-            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION} ${CMAKE_MAKE_PROGRAM} LDFLAGS=\"-Wl,-rpath-link,${LIB_PATH}\" > /dev/null
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION} ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION}/configure --prefix=\"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}${INSTALL_PATH}\" LDFLAGS=\"-L${LIB_DIR}\" > /dev/null
+            COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION} ${CMAKE_MAKE_PROGRAM} LDFLAGS=\"-Wl,-rpath-link,${LIB_DIR}\" > /dev/null
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/libmemcached-${LIBMEMCACHED_VERSION}.tar.gz
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "building libmemcached-${LIBMEMCACHED_VERSION}")

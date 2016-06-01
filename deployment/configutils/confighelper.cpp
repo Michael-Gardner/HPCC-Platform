@@ -62,7 +62,7 @@ CConfigHelper* CConfigHelper::getInstance(const IPropertyTree *cfg, const char* 
 
             if (p_sConfigHelper->m_strConfigXMLDir.length() == 0)
             {
-              p_sConfigHelper->m_strConfigXMLDir = INSTALL_DIR;
+              p_sConfigHelper->m_strConfigXMLDir = ABS_INSTALL_DIR;
             }
 
             p_sConfigHelper->m_strBuildSetFileName = pParams->queryProp(TAG_BUILDSET);

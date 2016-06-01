@@ -59,7 +59,7 @@ if(KAFKA)
 		OUTPUT ${LIBRDKAFKA_LIB}
 		COMMAND cp -r ${PROJECT_SOURCE_DIR}/librdkafka ${PROJECT_BINARY_DIR}/src
 		COMMAND cd ${PROJECT_BINARY_DIR}/src && ./configure --prefix=${PROJECT_BINARY_DIR}
-		COMMAND cd ${PROJECT_BINARY_DIR}/src && make && make install
+        COMMAND cd ${PROJECT_BINARY_DIR}/src && make && env --unset=DESTDIR make install
 		COMMENT Copying and building librdkafka)
 
 	add_custom_target(librdkafka-build ALL DEPENDS ${LIBRDKAFKA_LIB})

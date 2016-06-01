@@ -150,7 +150,7 @@ public:
             if (getComponentFilesRelPathFromBin(tmp))
                 optXsltPath.set(tmp.str());
             else
-                optXsltPath.set(COMPONENTFILES_DIR);
+                optXsltPath.set(ABS_COMPONENTFILES_DIR);
         }
 
         fullxsltpath.set(optXsltPath);
@@ -718,7 +718,7 @@ public:
             if (checkFileExists(temp.append(binXsltPath).append(XSLT_ESDL2JAVABASE)))
                 optXsltPath.set(binXsltPath);
             else
-                optXsltPath.set(temp.set(COMPONENTFILES_DIR).append("/xslt/"));
+                optXsltPath.set(temp.set(ABS_COMPONENTFILES_DIR).append("/xslt/"));
         }
         return true;
     }

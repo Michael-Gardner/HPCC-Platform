@@ -194,7 +194,7 @@ public:
         if (getComponentFilesRelPathFromBin(componentsfolder))
             optHPCCCompFilesDir.set(componentsfolder.str());
         else
-            optHPCCCompFilesDir.set(COMPONENTFILES_DIR);
+            optHPCCCompFilesDir.set(ABS_COMPONENTFILES_DIR);
     }
 
     virtual bool parseCommandLineOptions(ArgvIterator &iter)

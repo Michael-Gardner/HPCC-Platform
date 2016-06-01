@@ -67,6 +67,7 @@ if(USE_CASSANDRA OR CASSANDRAEMBED)
   if(NOT WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-format-nonliteral") # Work around cassandra build error
   endif()
+  set(CMAKE_INSTALL_LIBDIR "${LIB_DIR}")
   add_subdirectory(cpp-driver ${PROJECT_BINARY_DIR}/cassandra)
   add_dependencies(cassandra libuv)
   set(CMAKE_CXX_FLAGS "${_SAVE_CMAKE_CXX_FLAGS}")
@@ -110,7 +111,6 @@ endif()
 
       add_definitions(-D_USRDLL -DCASSANDRAEMBED_EXPORTS)
 
-      set(CMAKE_INSTALL_LIBDIR "${LIB_DIR}")
       HPCC_ADD_LIBRARY(cassandraembed SHARED ${SRCS})
       if(NOT FORCE_WORKUNITS_TO_CASSANDRA)
         if(${CMAKE_VERSION} VERSION_LESS "2.8.9")

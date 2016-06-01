@@ -110,7 +110,7 @@ public:
         }
         else
         {
-            newPath.append(INSTALL_DIR).append(PATHSEPCHAR).append("classes").append(ENVSEPCHAR);
+            newPath.append(ABS_INSTALL_DIR).append(PATHSEPCHAR).append("classes").append(ENVSEPCHAR);
         }
         newPath.append(".");
         optionStrings.append(newPath);
