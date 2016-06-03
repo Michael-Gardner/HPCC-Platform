@@ -14,15 +14,11 @@
 #    limitations under the License.
 ################################################################################
 
-set(outFiles)
-
-GENERATE_BASH(processor ${bash-vars} "dafilesrv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "install-init.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc-init.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc_common.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "uninstall-init.in" outFiles)
-
-add_custom_target(ProcessFiles-initfiles-bash-etc-init.d ALL DEPENDS ${outFiles})
+configure_file("dafilesrv.in" "dafilesrv" @ONLY)
+configure_file("install-init.in" "install-init" @ONLY)
+configure_file("hpcc-init.in" "hpcc-init" @ONLY)
+configure_file("hpcc_common.in" "hpcc_common" @ONLY)
+configure_file("uninstall-init.in" "uninstall-init" @ONLY)
 
 foreach( oFILES
     ${CMAKE_CURRENT_BINARY_DIR}/hpcc_common

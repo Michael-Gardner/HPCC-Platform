@@ -17,6 +17,6 @@
 
 ###<REPLACE>###
 
-${INSTALL_DIR}/etc/init.d/install-init
+@ABS_INSTALL_DIR@/etc/init.d/install-init
 
 exit 0

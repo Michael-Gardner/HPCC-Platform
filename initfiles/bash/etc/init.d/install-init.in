@@ -17,8 +17,8 @@
 
 ###<REPLACE>###
 
-source ${INSTALL_DIR}/etc/init.d/hpcc_common
-source ${INSTALL_DIR}/etc/init.d/init-functions
+source @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
+source @ABS_INSTALL_DIR@/etc/init.d/init-functions
 
 installConfs ()
 {
@@ -31,18 +31,18 @@ installConfs ()
 
     if [ ! -e ${configPath}/${fileName} ]; then
         # Always install new files without comment
-        cp -f ${INSTALL_DIR}/${configPath}/rpmnew/${fileName} ${configPath}/${fileName}
-        cp -f ${INSTALL_DIR}/${configPath}/rpmnew/${fileName} ${configPath}/rpmnew/${fileName}
+        cp -f @ABS_INSTALL_DIR@/${configPath}/rpmnew/${fileName} ${configPath}/${fileName}
+        cp -f @ABS_INSTALL_DIR@/${configPath}/rpmnew/${fileName} ${configPath}/rpmnew/${fileName}
         log_success_msg
-    elif [ -e ${configPath}/rpmnew/${fileName} ] && ! `diff -q ${configPath}/rpmnew/${fileName} ${INSTALL_DIR}/${configPath}/rpmnew/${fileName} >/dev/null` ; then
+    elif [ -e ${configPath}/rpmnew/${fileName} ] && ! `diff -q ${configPath}/rpmnew/${fileName} @ABS_INSTALL_DIR@/${configPath}/rpmnew/${fileName} >/dev/null` ; then
         # There are changes in the default config since last installed
         if ! `diff -q ${configPath}/rpmnew/${fileName} ${configPath}/${fileName} >/dev/null` ; then
             # User has made their own changes too, so don't overwrite
             log_failure_msg "Not overwriting modified configuration file ${fileName}"
         else
             # User has NOT made their own changes - ok to update
-            cp -f ${INSTALL_DIR}/${configPath}/rpmnew/${fileName} ${configPath}/${fileName}
-            cp -f ${INSTALL_DIR}/${configPath}/rpmnew/${fileName} ${configPath}/rpmnew/${fileName}
+            cp -f @ABS_INSTALL_DIR@/${configPath}/rpmnew/${fileName} ${configPath}/${fileName}
+            cp -f @ABS_INSTALL_DIR@/${configPath}/rpmnew/${fileName} ${configPath}/rpmnew/${fileName}
             log_success_msg "Updated configuration file ${fileName}"
         fi
     else
@@ -130,14 +130,14 @@ fileCheck ()
 #---------------------------------------------------------------------
 SECTION=${SECTION:-DEFAULT}
 
-confToUse="${INSTALL_DIR}${CONFIG_DIR}/${ENV_CONF_FILE}"
+confToUse="@ABS_INSTALL_DIR@@ABS_CONFIG_DIR@/@ENV_CONF_FILE@"
 
-if [ -d ${CONFIG_DIR} ]; then
-    if [ -f ${CONFIG_DIR}/installed ] ; then
+if [ -d @ABS_CONFIG_DIR@ ]; then
+    if [ -f @ABS_CONFIG_DIR@/installed ] ; then
         exit 0
     fi
-    if [ -e ${CONFIG_DIR}/${ENV_CONF_FILE} ]; then
-        confToUse="${CONFIG_DIR}/${ENV_CONF_FILE}"
+    if [ -e @ABS_CONFIG_DIR@/@ENV_CONF_FILE@ ]; then
+        confToUse="@ABS_CONFIG_DIR@/@ENV_CONF_FILE@"
     fi
 fi
 
@@ -187,7 +187,7 @@ installConfs "environment.conf" $configs/ 1 || exit 1
 installConfs "environment.xml" $configs/  1 || exit 1
 installConfs "genenvrules.conf" $configs/ 1 || exit 1
 
-installFile "$path${CONFIG_DIR}/version" "${CONFIG_DIR}/version" 1 || exit 1
+installFile "$path@ABS_CONFIG_DIR@/version" "@ABS_CONFIG_DIR@/version" 1 || exit 1
 installFile "$initPath/dafilesrv" "/etc/init.d/dafilesrv" 1 || exit 1
 installFile "$binPath/dfuplus" "/usr/bin/dfuplus" 1 || exit 1
 installFile "$binPath/ecl" "/usr/bin/ecl" 1 || exit 1
@@ -197,22 +197,22 @@ installFile "$binPath/wuget" "/usr/bin/wuget" 1 || exit 1
 installFile "$configs/$environment" "$sourcedir/$environment" 0 "$sourcedir"
 
 # locate sub install files.
-if [ -d ${INSTALL_DIR}/etc/init.d/install ]; then
-    for subInstall in $(ls ${INSTALL_DIR}/etc/init.d/install); do
-        source ${INSTALL_DIR}/etc/init.d/install/${subInstall}
+if [ -d @ABS_INSTALL_DIR@/etc/init.d/install ]; then
+    for subInstall in $(ls @ABS_INSTALL_DIR@/etc/init.d/install); do
+        source @ABS_INSTALL_DIR@/etc/init.d/install/${subInstall}
     done
 fi
 
 # bash completion
-if [ -d ${INSTALL_DIR}/etc/bash_completion.d ] && [ -d /etc/bash_completion.d ]; then
-    for subInstall in $(ls ${INSTALL_DIR}/etc/bash_completion.d | grep -v dpkg-tmp); do
-        installFile ${INSTALL_DIR}/etc/bash_completion.d/$subInstall /etc/bash_completion.d/$subInstall 1 || exit 1
+if [ -d @ABS_INSTALL_DIR@/etc/bash_completion.d ] && [ -d /etc/bash_completion.d ]; then
+    for subInstall in $(ls @ABS_INSTALL_DIR@/etc/bash_completion.d | grep -v dpkg-tmp); do
+        installFile @ABS_INSTALL_DIR@/etc/bash_completion.d/$subInstall /etc/bash_completion.d/$subInstall 1 || exit 1
     done
 fi
 
 # Ubuntu Unity Launcher
-if [ -f ${INSTALL_DIR}/share/hpcc-systems.desktop ] && [ -d /usr/share/applications ]; then
-    installFile ${INSTALL_DIR}/share/hpcc-systems.desktop /usr/share/applications 1 || exit 1
+if [ -f @ABS_INSTALL_DIR@/share/hpcc-systems.desktop ] && [ -d /usr/share/applications ]; then
+    installFile @ABS_INSTALL_DIR@/share/hpcc-systems.desktop /usr/share/applications 1 || exit 1
 fi
 
 # SSH config dir
@@ -237,8 +237,8 @@ fi
 
 # Added code to change environment.conf file user home directory location for key generation
 if [ "$homeBase" != "$home" ]; then
-    sed -e "s;^[[:space:]]*home[[:space:]]*=.*$;home=$homeBase;" ${CONFIG_DIR}/${ENV_CONF_FILE} > temp.conf
-    mv temp.conf ${CONFIG_DIR}/${ENV_CONF_FILE}
+    sed -e "s;^[[:space:]]*home[[:space:]]*=.*$;home=$homeBase;" @ABS_CONFIG_DIR@/@ENV_CONF_FILE@ > temp.conf
+    mv temp.conf @ABS_CONFIG_DIR@/@ENV_CONF_FILE@
 fi
 
 
@@ -256,7 +256,7 @@ chown -R $user:$group ${homePath}
 
 $path/sbin/add_conf_settings.sh
 
-confPath=${path}${CONFIG_DIR}
+confPath=${path}@ABS_CONFIG_DIR@
 
 if [ -d ${confPath} ]; then
     for i in $(find $confPath)
@@ -289,15 +289,15 @@ if [ "${DISTRIB_NAME}" = "ubuntu" ] &&
 
    dpkg -l | grep -q -e "^ii[[:space:]]*systemd "
    if [ $? -eq 0 ]; then
-      cp ${INSTALL_DIR}/etc/init.d/hpcc-init.service /lib/systemd/system/
-      cp ${INSTALL_DIR}/etc/init.d/hpcc-init@.service /lib/systemd/system/
-      cp ${INSTALL_DIR}/etc/init.d/dafilesrv.service /lib/systemd/system/
-      cp ${INSTALL_DIR}/etc/init.d/dafilesrv@.service /lib/systemd/system/
+      cp @ABS_INSTALL_DIR@/etc/init.d/hpcc-init.service /lib/systemd/system/
+      cp @ABS_INSTALL_DIR@/etc/init.d/hpcc-init@.service /lib/systemd/system/
+      cp @ABS_INSTALL_DIR@/etc/init.d/dafilesrv.service /lib/systemd/system/
+      cp @ABS_INSTALL_DIR@/etc/init.d/dafilesrv@.service /lib/systemd/system/
       systemctl daemon-reload
    fi
 fi
 
 createRuntime
-[ -e  ${LOG_DIR}/hpcc-init.debug ] && chown ${user}:${user} ${LOG_DIR}/hpcc-init.debug
+[ -e  @LOG_PATH@/hpcc-init.debug ] && chown ${user}:${user} @LOG_PATH@/hpcc-init.debug
 
 exit 0

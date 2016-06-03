@@ -17,7 +17,7 @@
 
 ###<REPLACE>###
 
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source  @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
 which_pidof
 set_environmentvars
 
@@ -29,12 +29,12 @@ fi
 PATH_PRE=`type -path hpcc_setenv`
 if [ -z "$PATH_PRE" ]; then
     # assume default conf location
-    PATH_PRE=`cat ${CONFIG_DIR}/environment.conf | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^path=" | sed -e 's/^path=//'`/sbin/hpcc_setenv
+    PATH_PRE=`cat @ABS_CONFIG_DIR@/environment.conf | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^path=" | sed -e 's/^path=//'`/sbin/hpcc_setenv
 fi
 source ${PATH_PRE} ""
 is_user ${user}
-DEPLOY_DIR=${INSTALL_DIR}/bin
-ENVPATH=${CONFIG_DIR}/${ENV_XML_FILE}
+DEPLOY_DIR=@ABS_INSTALL_DIR@/bin
+ENVPATH=@ABS_CONFIG_DIR@/@ENV_XML_FILE@
 RUN_DIR=`cat ${HPCC_CONFIG} | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^runtime=" | sed -e 's/^runtime=//'`
 INSTANCE_DIR=$RUN_DIR/$1
 

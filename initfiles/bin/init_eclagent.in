@@ -20,19 +20,19 @@
 PATH_PRE=$(type -path hpcc_setenv)
 source ${PATH_PRE}
 PID_NAME="$PID/$(basename $PWD).pid"
-source ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @ABS_INSTALL_DIR@@INIT_DIR@/hpcc_common
 
 component=$(basename $PWD)
 dir.getByName lock
 lock="$dir_return"
-export logfile="${LOG_DIR}/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
+export logfile="@LOG_PATH@/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
 
 export SENTINEL="agentexec.sentinel"
 log "Removing $SENTINEL"
 rm -f ${SENTINEL}
 
 log "Removing $PID_DIR/hthortemp/*"
-rm -f ${PID_DIR}/hthortemp/*
+rm -f @PID_PATH@/hthortemp/*
 
 killed ()
 {
@@ -42,7 +42,7 @@ killed ()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock /var/lock/HPCCSystems/$component/${component}.lock
+        unlock @LOCK_PATH@/$component/${component}.lock
     fi
     exit 255
 }

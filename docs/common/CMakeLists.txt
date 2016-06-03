@@ -16,5 +16,5 @@
 
 
 
-configure_file(Version.xml.in ${CMAKE_CURRENT_BINARY_DIR}/Version.xml)
+configure_file(Version.xml.in ${CMAKE_CURRENT_BINARY_DIR}/Version.xml @ONLY)
 

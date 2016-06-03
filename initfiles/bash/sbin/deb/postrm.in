@@ -21,8 +21,8 @@
 #######################
 linkf=/tmp/.hpccinslink
 if [[ -f ${linkf} ]] ; then
-   if [[ -n ${INSTALL_DIR} ]] ; then
-      if [[ ! -d ${INSTALL_DIR} ]] ; then
+   if [[ -n @ABS_INSTALL_DIR@ ]] ; then
+      if [[ ! -d @ABS_INSTALL_DIR@ ]] ; then
          linkinfo=$(cat "${linkf}")
          if [[ -n ${linkinfo} ]] ; then
             ln -s ${linkinfo}
@@ -38,10 +38,10 @@ fi
 #
 # If the install dir is still present post-removal, must be an update
 
-if [ -f "${INSTALL_DIR}/etc/init.d/install-init" ]; then
-    ${INSTALL_DIR}/etc/init.d/install-init
+if [ -f "@ABS_INSTALL_DIR@/etc/init.d/install-init" ]; then
+    @ABS_INSTALL_DIR@/etc/init.d/install-init
 else
-   [ -d ${INSTALL_DIR}/sbin ] && rm -rf  ${INSTALL_DIR}/sbin
-   [ -d ${INSTALL_DIR}/bin ] && rm -rf  ${INSTALL_DIR}/bin
+   [ -d @ABS_INSTALL_DIR@/sbin ] && rm -rf  @ABS_INSTALL_DIR@/sbin
+   [ -d @ABS_INSTALL_DIR@/bin ] && rm -rf  @ABS_INSTALL_DIR@/bin
    exit 0
 fi

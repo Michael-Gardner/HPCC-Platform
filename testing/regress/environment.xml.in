@@ -19,7 +19,7 @@
             buildSet="DropZone"
             computer="localhost"
             description="DropZone process"
-            directory="${RUNTIME_PATH}/mydropzone"
+            directory="@RUNTIME_PATH@/mydropzone"
             name="mydropzone"
             umask="022"/>
   <RoxieCluster allFilesDynamic="true"
@@ -53,7 +53,7 @@
                 defaultSLAPriorityTimeWarning="5000"
                 defaultStripLeadingWhitespace="1"
                 description="Roxie cluster"
-                directory="${RUNTIME_PATH}/myroxie"
+                directory="@RUNTIME_PATH@/myroxie"
                 diskReadBufferSize="65536"
                 doIbytiDelay="true"
                 enableHeartBeat="true"
@@ -200,11 +200,11 @@
   </Topology>
   <DaliServerProcess build="_"
                      buildSet="dali"
-                     environment="${CONFIG_DIR}/${ENV_XML_FILE}"
+                     environment="@ABS_CONFIG_DIR@/@ENV_XML_FILE@"
                      name="mydali"
                      recoverFromIncErrors="true">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/mydali"
+             directory="@RUNTIME_PATH@/mydali"
              name="s1"
              netAddress="."
              port="7070"/>
@@ -219,7 +219,7 @@
                     queue="dfuserver_queue"
                     transferBufferSize="65536">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/mydfuserver"
+             directory="@RUNTIME_PATH@/mydfuserver"
              name="s1"
              netAddress="."/>
    <SSH SSHidentityfile="$HOME/.ssh/id_rsa"
@@ -238,7 +238,7 @@
                       name="myeclccserver"
                       traceLevel="1">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/myeclccserver"
+             directory="@RUNTIME_PATH@/myeclccserver"
              name="s1"
              netAddress="."/>
    <Option name="maxCompileThreads" value="2"/>
@@ -262,7 +262,7 @@
               perfReportDelay="60"
               portalurl="${PORTALURL}">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/myesp"
+             directory="@RUNTIME_PATH@/myesp"
              FQDN=""
              name="s1"
              netAddress="."/>
@@ -458,7 +458,7 @@
                    traceLevel="0"
                    wuQueueName="myeclagent_queue">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/myeclagent"
+             directory="@RUNTIME_PATH@/myeclagent"
              name="s1"
              netAddress="."/>
   </EclAgentProcess>
@@ -468,7 +468,7 @@
                   name="myftslave"
                   version="1">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/myftslave"
+             directory="@RUNTIME_PATH@/myftslave"
              name="s1"
              netAddress="."
              program="${EXEC_PATH}/ftslave"/>
@@ -526,7 +526,7 @@
                       xrefMaxMemory="4096"
                       xrefMaxScanThreads="500">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/mysasha"
+             directory="@RUNTIME_PATH@/mysasha"
              name="s1"
              netAddress="."
              port="8877"/>
@@ -706,7 +706,7 @@
                     throttleDelayMs="5000"
                     version="1">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/mydafilesrv"
+             directory="@RUNTIME_PATH@/mydafilesrv"
              name="s1"
              netAddress="."
              parallelRequestLimit="20"
@@ -755,19 +755,19 @@
                        description="EclScheduler process"
                        name="myeclscheduler">
    <Instance computer="localhost"
-             directory="${RUNTIME_PATH}/myeclscheduler"
+             directory="@RUNTIME_PATH@/myeclscheduler"
              name="s1"
              netAddress="."/>
   </EclSchedulerProcess>
  </Software>
  <EnvSettings>
-  <pid>${PID_DIR}</pid>
+  <pid>@PID_PATH@</pid>
   <sourcedir>${CONFIG_SOURCE_PATH}</sourcedir>
   <mpTraceLevel>0</mpTraceLevel>
   <mpStart>7101</mpStart>
   <jvmoptions>-XX:-UsePerfData</jvmoptions>
   <allow_pgcache_flush>true</allow_pgcache_flush>
-  <environment>${ENV_XML_FILE}</environment>
+  <environment>@ENV_XML_FILE@</environment>
   <home>${HOME_DIR}</home>
   <blockname>HPCCSystems</blockname>
   <mpEnd>7500</mpEnd>
@@ -775,17 +775,17 @@
   <interface>*</interface>
   <mpSoMaxConn>128</mpSoMaxConn>
   <user>${RUNTIME_USER}</user>
-  <classpath>${INSTALL_DIR}/classes</classpath>
+  <classpath>@ABS_INSTALL_DIR@/classes</classpath>
   <log>${LOG_PATH}</log>
   <logfields>TIM+DAT+MLT+MID+PID+TID+COD+QUO+PFX</logfields>
   <use_epoll>true</use_epoll>
-  <runtime>${RUNTIME_PATH}</runtime>
+  <runtime>@RUNTIME_PATH@</runtime>
   <lock>${LOCK_PATH}</lock>
-  <configs>${CONFIG_DIR}</configs>
-  <path>${INSTALL_DIR}</path>
+  <configs>@ABS_CONFIG_DIR@</configs>
+  <path>@ABS_INSTALL_DIR@</path>
  </EnvSettings>
  <Programs>
-  <Build name="_" url="${INSTALL_DIR}">
+  <Build name="_" url="@ABS_INSTALL_DIR@">
    <BuildSet installSet="deploy_map.xml"
              name="dafilesrv"
              path="componentfiles/dafilesrv"

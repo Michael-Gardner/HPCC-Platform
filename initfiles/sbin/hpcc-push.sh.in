@@ -22,9 +22,9 @@
 
 ###<REPLACE>###
 
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
-source  ${INSTALL_DIR}/etc/init.d/init-functions
-source  ${INSTALL_DIR}/etc/init.d/export-path
+source  @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
+source  @ABS_INSTALL_DIR@/etc/init.d/init-functions
+source  @ABS_INSTALL_DIR@/etc/init.d/export-path
 
 
 usage() {
@@ -89,7 +89,7 @@ fi
 source=
 target=
 exclude=0
-OPTION="-e ${CONFIG_DIR}/${ENV_CONF_FILE} -s ${SECTION:-DEFAULT}"
+OPTION="-e @ABS_CONFIG_DIR@/@ENV_CONF_FILE@ -s ${SECTION:-DEFAULT}"
 
 
 TEMP=`/usr/bin/getopt -o n:s:t:hx --long help,conrrent:,source:,target:,exclude -n 'hpcc-push' -- "$@"`
@@ -130,7 +130,7 @@ python_expected_version=2.6
 is_python_installed ${python_expected_version}
 if [ $? -eq 0 ]
 then
-   eval ${INSTALL_DIR}/sbin/cluster_script.py -f ${SCRIPT_FILE} $OPTION
+   eval @ABS_INSTALL_DIR@/sbin/cluster_script.py -f ${SCRIPT_FILE} $OPTION
 else
    echo ""
    echo "Cannot detect python version ${python_expected_version}+. Will run on the cluster hosts sequentially."

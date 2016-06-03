@@ -1,9 +1,6 @@
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "start_backupnode.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-componentfiles-thor ALL DEPENDS ${outFiles})
-
+configure_file("start_backupnode.in" "start_backupnode" @ONLY)
 FOREACH( iFILES
-    ${outFiles}
+    ${CMAKE_CURRENT_BINARY_DIR}/start_backupnode 
     ${CMAKE_CURRENT_SOURCE_DIR}/get_thor_options
     ${CMAKE_CURRENT_SOURCE_DIR}/multiscp
     ${CMAKE_CURRENT_SOURCE_DIR}/multissh

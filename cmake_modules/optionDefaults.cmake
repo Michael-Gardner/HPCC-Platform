@@ -40,9 +40,10 @@ if(NOT ENV_CONF_FILE)
     set(ENV_CONF_FILE "environment.conf")
 endif()
 if(NOT CONFIG_DIR)
-    set(CONFIG_DIR "/etc/${DIR_NAME}")
+    set(CONFIG_DIR "${CONFIG_PREFIX}/${DIR_NAME}")
 endif()
 set(CONFIG_SOURCE_DIR "${CONFIG_DIR}/source")
+set(INIT_DIR "${CONFIG_PREFIX}/init.d")
 
 # relative locations that get appended to $ENV{DESTDIR}CMAKE_INSTALL_PREFIX
 if(NOT INSTALL_PATH)

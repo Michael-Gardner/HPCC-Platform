@@ -28,32 +28,32 @@ fi
 # Stop all services before cleaning up
 ######################################
 /etc/init.d/hpcc-init stop
-if [ -f "${PID_DIR}/mydafilesrv.pid" ]; then
+if [ -f "@PID_PATH@/mydafilesrv.pid" ]; then
     /etc/init.d/dafilesrv stop
 fi
 
 # Remove edits from /etc files
 ##############################
-${INSTALL_DIR}/sbin/rm_conf_settings.sh
+@ABS_INSTALL_DIR@/sbin/rm_conf_settings.sh
 
 
 # Remove symlinks
 #################
-${INSTALL_DIR}/etc/init.d/uninstall-init
+@ABS_INSTALL_DIR@/etc/init.d/uninstall-init
 
 # Remove installed flag
 #######################
-if [ -f ${CONFIG_DIR}/installed ] ; then
-    rm ${CONFIG_DIR}/installed
+if [ -f @ABS_CONFIG_DIR@/installed ] ; then
+    rm @ABS_CONFIG_DIR@/installed
 fi
 
 # Check if install dir is a link
 #######################
-if [[ -n ${INSTALL_DIR} ]] ; then
+if [[ -n @ABS_INSTALL_DIR@ ]] ; then
 #  trim for readlink
-   ins_dir=$(echo "${INSTALL_DIR}" | sed 's/\/*$//')
+   ins_dir=$(echo "@ABS_INSTALL_DIR@" | sed 's/\/*$//')
    if [[ -h ${ins_dir} ]] ; then
-       echo "$(readlink "${ins_dir}") ${INSTALL_DIR}" > /tmp/.hpccinslink
+       echo "$(readlink "${ins_dir}") @ABS_INSTALL_DIR@" > /tmp/.hpccinslink
    fi
 fi
 

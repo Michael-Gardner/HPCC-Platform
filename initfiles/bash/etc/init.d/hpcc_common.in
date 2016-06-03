@@ -26,7 +26,7 @@
 
 ###<REPLACE>###
 
-START_STOP_DAEMON=${INSTALL_DIR}/bin/start-stop-daemon
+START_STOP_DAEMON=@ABS_INSTALL_DIR@/bin/start-stop-daemon
 
 which_service(){
     SERV=`type --path service`
@@ -52,10 +52,10 @@ which_pidof(){
     fi
 }
 
-source  ${INSTALL_DIR}/etc/init.d/lock.sh
-source  ${INSTALL_DIR}/etc/init.d/pid.sh
-source  ${INSTALL_DIR}/etc/init.d/init-functions
-source  ${INSTALL_DIR}/etc/init.d/export-path
+source  @ABS_INSTALL_DIR@/etc/init.d/lock.sh
+source  @ABS_INSTALL_DIR@/etc/init.d/pid.sh
+source  @ABS_INSTALL_DIR@/etc/init.d/init-functions
+source  @ABS_INSTALL_DIR@/etc/init.d/export-path
 
 
 cfg.parser () {
@@ -245,7 +245,7 @@ strstr() {
 }
 
 set_environmentvars() {
-    HPCC_CONFIG=${HPCC_CONFIG:-${CONFIG_DIR}/${ENV_CONF_FILE}}
+    HPCC_CONFIG=${HPCC_CONFIG:-@ABS_CONFIG_DIR@/@ENV_CONF_FILE@}
 
     ## Retrieve the Section to use from environment variable and if not set
     ## use default of "DEFAULT"
@@ -861,7 +861,7 @@ run_cluster() {
 
     if [[ -z "$3" ]]; then
         validate_configuration
-        t_IP=$(${INSTALL_DIR}/sbin/configgen -env ${CONFIG_DIR}/${ENV_XML_FILE} -machines)
+        t_IP=$(@ABS_INSTALL_DIR@/sbin/configgen -env @ABS_CONFIG_DIR@/@ENV_XML_FILE@ -machines)
         rc=$?
         if [[ $rc -ne 0 ]]; then
             log  "run_cluster(): failure in configgen call"
@@ -902,8 +902,8 @@ run_cluster() {
    _num_failed=0
    _num_processed=0
    _pregress=0
-   _log_file=${LOG_DIR}/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
-   [ ! -d ${LOG_DIR}/cluster ] && mkdir -p ${LOG_DIR}/cluster
+   _log_file=@LOG_PATH@/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
+   [ ! -d @LOG_PATH@/cluster ] && mkdir -p @LOG_PATH@/cluster
    [ -e $_log_file ] && rm -rf $_log_file
    if [ "$RUN_CLUSTER_DISPLAY_OUTPUT" != "TRUE" ]
    then
@@ -958,7 +958,7 @@ cluster_tools_init() {
    [ "$(id -u)" != "0" ] && _cmd_prefix=sudo
 
    # Check and set log directory
-   CLUSTER_LOG_DIR=${LOG_DIR}/cluster
+   CLUSTER_LOG_DIR=@LOG_PATH@/cluster
    [ ! -d $LOG_DIR ]  && ${_cmd_prefix} /etc/init.d/hpcc-init status > /dev/null 2>&1
 
    [ ! -d $CLUSTER_LOG_DIR ] && mkdir -p $CLUSTER_LOG_DIR
