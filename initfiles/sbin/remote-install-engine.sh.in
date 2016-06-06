@@ -32,8 +32,6 @@
 # 9. Return.
 #
 
-###<REPLACE>###
-
 REMOTE_INSTALL="/tmp/remote_install"
 CURR="${REMOTE_INSTALL}/curr_keys"
 NEW="${REMOTE_INSTALL}/new_keys"

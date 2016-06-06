@@ -20,8 +20,6 @@
 # relevant environment varibles if we are being sourced. Otherwise, just
 # echo bash-style commands to the caller that can in-turn be sourced.
 
-###<REPLACE>###
-
 function kill_process () {
     local PID=$1
     local PROCESS=$2

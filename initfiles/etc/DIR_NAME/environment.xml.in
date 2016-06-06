@@ -107,7 +107,7 @@
                 parallelAggregate="0"
                 perChannelFlowLimit="10"
                 pingInterval="60"
-                pluginsPath="${PLUGINS_PATH}"
+                pluginsPath="@ABS_INSTALL_DIR@/@PLUGIN_DIR@"
                 preabortIndexReadsThreshold="100"
                 preabortKeyedJoinsThreshold="100"
                 preferredSubnet=""
@@ -225,7 +225,7 @@
         SSHpassword=""
         SSHretries="3"
         SSHtimeout="0"
-        SSHusername="${RUNTIME_USER}"/>
+        SSHusername="@RUNTIME_USER@"/>
   </DfuServerProcess>
   <EclCCServerProcess build="_"
                       buildSet="eclccserver"
@@ -244,7 +244,7 @@
   </EclCCServerProcess>
   <EspProcess build="_"
               buildSet="esp"
-              componentfilesDir="${COMPONENTFILES_PATH}"
+              componentfilesDir="@ABS_INSTALL_DIR@/componentfiles"
               controlPort="8010"
               daliServers="mydali"
               description="ESP server"
@@ -259,7 +259,7 @@
               maxRequestEntityLength="8000000"
               name="myesp"
               perfReportDelay="60"
-              portalurl="${PORTALURL}">
+              portalurl="@PORTALURL@">
    <Instance computer="localhost"
              directory="@RUNTIME_PATH@/myesp"
              FQDN=""
@@ -280,7 +280,7 @@
           requireAddressMatch="false"
           state=""
           trustedPeers="anyone"/>
-   <Authentication htpasswdFile="/etc/HPCCSystems/.htpasswd"
+   <Authentication htpasswdFile="@ABS_CONFIG_DIR@/.htpasswd"
                    ldapAuthMethod="kerberos"
                    ldapConnections="10"
                    ldapServer=""
@@ -429,18 +429,18 @@
                   resource="WsEclAccess"/>
    </EspBinding>
   </EspProcess>
-  <Directories name="${DIR_NAME}">
-   <Category dir="${EXEC_PREFIX}/log/[NAME]/[INST]" name="log"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/[INST]" name="run"/>
-   <Category dir="${CONFIG_PREFIX}/[NAME]/[INST]" name="conf"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/[INST]/temp" name="temp"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-data/[COMPONENT]" name="data"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-data2/[COMPONENT]" name="data2"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-data3/[COMPONENT]" name="data3"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-mirror/[COMPONENT]" name="mirror"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/queries/[INST]" name="query"/>
-   <Category dir="${EXEC_PREFIX}/lock/[NAME]/[INST]" name="lock"/>
-   <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-data4/[COMPONENT]" name="data4"/>
+  <Directories name="@DIR_NAME@">
+   <Category dir="@EXEC_PREFIX@/log/[NAME]/[INST]" name="log"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/[INST]" name="run"/>
+   <Category dir="@ABS_CONFIG_DIR@/[NAME]/[INST]" name="conf"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/[INST]/temp" name="temp"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/hpcc-data/[COMPONENT]" name="data"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/hpcc-data2/[COMPONENT]" name="data2"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/hpcc-data3/[COMPONENT]" name="data3"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/hpcc-mirror/[COMPONENT]" name="mirror"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/queries/[INST]" name="query"/>
+   <Category dir="@EXEC_PREFIX@/lock/[NAME]/[INST]" name="lock"/>
+   <Category dir="@EXEC_PREFIX@/lib/[NAME]/hpcc-data4/[COMPONENT]" name="data4"/>
   </Directories>
   <EclAgentProcess allowedPipePrograms="*"
                    build="_"
@@ -452,7 +452,7 @@
                    heapUseHugePages="false"
                    heapUseTransparentHugePages="true"
                    name="myeclagent"
-                   pluginDirectory="${PLUGINS_PATH}"
+                   pluginDirectory="@ABS_INSTALL_DIR@/@PLUGIN_DIR@"
                    thorConnectTimeout="600"
                    traceLevel="0"
                    wuQueueName="myeclagent_queue">
@@ -470,7 +470,7 @@
              directory="@RUNTIME_PATH@/myftslave"
              name="s1"
              netAddress="."
-             program="${EXEC_PATH}/ftslave"/>
+             program="@ABS_INSTALL_DIR@/@BIN_DIR@/ftslave"/>
   </FTSlaveProcess>
   <SashaServerProcess autoRestartInterval="0"
                       build="_"
@@ -544,7 +544,7 @@
               monitorDaliFileServer="false"
               name="EclWatch"
               NodeGroupCacheMinutes="30"
-              pluginsPath="${PLUGINS_PATH}"
+              pluginsPath="@ABS_INSTALL_DIR@/@PLUGIN_DIR@"
               serverForArchivedECLWU=""
               syntaxCheckQueue=""
               viewTimeout="1000"
@@ -731,7 +731,7 @@
                monitorDaliFileServer="true"
                name="mythor"
                numaBindLocal="false"
-               pluginsPath="${PLUGINS_PATH}"
+               pluginsPath="@ABS_INSTALL_DIR@/@PLUGIN_DIR@"
                replicateAsync="false"
                replicateOutputs="false"
                slaveport="20100"
@@ -746,7 +746,7 @@
         SSHpassword=""
         SSHretries="3"
         SSHtimeout="0"
-        SSHusername="${RUNTIME_USER}"/>
+        SSHusername="@RUNTIME_USER@"/>
   </ThorCluster>
   <EclSchedulerProcess build="_"
                        buildSet="eclscheduler"
@@ -760,26 +760,26 @@
   </EclSchedulerProcess>
  </Software>
  <EnvSettings>
-  <pid>${PID_PATH}</pid>
-  <sourcedir>${CONFIG_SOURCE_PATH}</sourcedir>
+  <pid>@PID_PATH@</pid>
+  <sourcedir>@ABS_INSTALL_DIR@@CONFIG_SOURCE_PATH@</sourcedir>
   <mpTraceLevel>0</mpTraceLevel>
   <mpStart>7101</mpStart>
   <jvmoptions>-XX:-UsePerfData</jvmoptions>
   <allow_pgcache_flush>true</allow_pgcache_flush>
   <environment>@ENV_XML_FILE@</environment>
-  <home>${HOME_DIR}</home>
+  <home>@HOME_DIR@</home>
   <blockname>HPCCSystems</blockname>
   <mpEnd>7500</mpEnd>
-  <group>${RUNTIME_USER}</group>
+  <group>@RUNTIME_USER@</group>
   <interface>*</interface>
   <mpSoMaxConn>128</mpSoMaxConn>
-  <user>${RUNTIME_USER}</user>
+  <user>@RUNTIME_USER@</user>
   <classpath>@ABS_INSTALL_DIR@/classes</classpath>
-  <log>${LOG_PATH}</log>
+  <log>@LOG_PATH@</log>
   <logfields>TIM+DAT+MLT+MID+PID+TID+COD+QUO+PFX</logfields>
   <use_epoll>true</use_epoll>
   <runtime>@RUNTIME_PATH@</runtime>
-  <lock>${LOCK_PATH}</lock>
+  <lock>@LOCK_PATH@</lock>
   <configs>@ABS_CONFIG_DIR@</configs>
   <path>@ABS_INSTALL_DIR@</path>
  </EnvSettings>

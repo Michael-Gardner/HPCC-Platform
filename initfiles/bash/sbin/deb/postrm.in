@@ -15,8 +15,6 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
 # Restore install link if it was present
 #######################
 linkf=/tmp/.hpccinslink
@@ -38,8 +36,8 @@ fi
 #
 # If the install dir is still present post-removal, must be an update
 
-if [ -f "@ABS_INSTALL_DIR@/etc/init.d/install-init" ]; then
-    @ABS_INSTALL_DIR@/etc/init.d/install-init
+if [ -f "@ABS_INSTALL_DIR@@INIT_DIR@/install-init" ]; then
+    @ABS_INSTALL_DIR@@INIT_DIR@/install-init
 else
    [ -d @ABS_INSTALL_DIR@/sbin ] && rm -rf  @ABS_INSTALL_DIR@/sbin
    [ -d @ABS_INSTALL_DIR@/bin ] && rm -rf  @ABS_INSTALL_DIR@/bin

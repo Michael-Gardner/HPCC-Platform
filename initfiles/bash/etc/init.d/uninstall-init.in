@@ -15,10 +15,8 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
-source @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
-source @ABS_INSTALL_DIR@/etc/init.d/init-functions
+source @ABS_INSTALL_DIR@/@SBIN_DIR@/hpcc_common
+source @ABS_INSTALL_DIR@/@SBIN_DIR@/init-functions
 
 removeSymlink ()
 {

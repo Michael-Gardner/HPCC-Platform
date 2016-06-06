@@ -14,16 +14,16 @@
 #    limitations under the License.
 ################################################################################
 
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/dropzone.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/dropzone.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/eclagent_config.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/eclagent_config.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/esp.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/esp.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/espsmcservice.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/espsmcservice.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/ftslave_linux.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/ftslave_linux.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/roxie.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/roxie.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/thor.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/thor.xsd)
+configure_file(dropzone.xsd.in dropzone.xsd @ONLY)
+configure_file(eclagent_config.xsd.in eclagent_config.xsd @ONLY)
+configure_file(esp.xsd.in esp.xsd @ONLY)
+configure_file(espsmcservice.xsd.in espsmcservice.xsd @ONLY)
+configure_file(ftslave_linux.xsd.in ftslave_linux.xsd @ONLY)
+configure_file(roxie.xsd.in roxie.xsd @ONLY)
+configure_file(thor.xsd.in thor.xsd @ONLY)
 
 if ( "${HPCC_PROJECT}" STREQUAL "community" )
-    configure_file("buildsetCC.xml.in" "buildset.xml")
+    configure_file(buildsetCC.xml.in buildset.xml @ONLY)
 endif()
 
 FOREACH( iFILES

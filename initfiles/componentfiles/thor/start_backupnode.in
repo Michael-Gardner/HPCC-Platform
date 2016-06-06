@@ -15,8 +15,6 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
 source  @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
 which_pidof
 set_environmentvars
@@ -29,7 +27,7 @@ fi
 PATH_PRE=`type -path hpcc_setenv`
 if [ -z "$PATH_PRE" ]; then
     # assume default conf location
-    PATH_PRE=`cat @ABS_CONFIG_DIR@/environment.conf | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^path=" | sed -e 's/^path=//'`/sbin/hpcc_setenv
+    PATH_PRE=`cat @ABS_CONFIG_DIR@/@ENV_CONF_FILE@ | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^path=" | sed -e 's/^path=//'`/sbin/hpcc_setenv
 fi
 source ${PATH_PRE} ""
 is_user ${user}

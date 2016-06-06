@@ -42,9 +42,6 @@
 #                         General Purpose Functions                           
 ##-----------------------------------------------------------------------------
 
-###<REPLACE>###
-
-
 function print_usage {
     echo "Usage: $0 [-c component] {start|stop|restart|status|setup}
        $0 [--componentlist] Display node component name list.
@@ -84,11 +81,11 @@ function print_types {
 
 
 
-source  @ABS_INSTALL_DIR@/etc/init.d/lock.sh
-source  @ABS_INSTALL_DIR@/etc/init.d/pid.sh
-source  @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
-source  @ABS_INSTALL_DIR@/etc/init.d/init-functions
-source  @ABS_INSTALL_DIR@/etc/init.d/export-path
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/lock.sh
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/pid.sh
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/hpcc_common
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/init-functions
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/export-path
 
 export logfile=@LOG_PATH@/hpcc-init.log
 
@@ -107,8 +104,8 @@ set_environmentvars
 envfile=$configs/$environment
 
 # Know HPCC user after set_environmentvars
-log_dir_owner=$(ls -ld $LOG_DIR | awk '{print $3}')
-[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} $LOG_DIR
+log_dir_owner=$(ls -ld @LOG_PATH@ | awk '{print $3}')
+[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} @LOG_PATH@
 chown ${user}:${user} $logfile
 
 #Sourcing the hpcc environment
@@ -273,11 +270,11 @@ if [ -z $arg ] || [ $# -ne 1 ]; then
     print_usage
 fi
 
-log "Debug log written to $LOG_DIR/hpcc-init.debug"
-[ -e $LOG_DIR/hpcc-init.debug ] && rm -rf @LOG_PATH@/hpcc-init.debug
+log "Debug log written to @LOG_PATH@/hpcc-init.debug"
+[ -e @LOG_PATH@/hpcc-init.debug ] && rm -rf @LOG_PATH@/hpcc-init.debug
 touch @LOG_PATH@/hpcc-init.debug
 chown ${user}:${user} @LOG_PATH@/hpcc-init.debug
-exec 2>$LOG_DIR/hpcc-init.debug
+exec 2>@LOG_PATH@/hpcc-init.debug
 set -x
 
 if [ -z ${component} ]; then
@@ -330,18 +327,18 @@ fi
 if [ ! -z "${compDafilesrv}" ];then
     case "$1" in
         start)
-            /etc/init.d/dafilesrv status 1>/dev/null 2>/dev/null
+            @ABS_INIT_DIR@/dafilesrv status 1>/dev/null 2>/dev/null
             if [ $? -ne 0 ];then
               log "--------------------------"
               log "${compDafilesrv} ---> ${cmd}"
-              /etc/init.d/dafilesrv $1 2>/dev/null
+              @ABS_INIT_DIR@/dafilesrv $1 2>/dev/null
             else
               log  "Dependent service dafilesrv, ${compDafilesrv} is already running."
               echo "Dependent service dafilesrv, ${compDafilesrv} is already running."
             fi
             ;;
         status|setup)
-            /etc/init.d/dafilesrv ${1} 2>/dev/null
+            @ABS_INIT_DIR@/dafilesrv ${1} 2>/dev/null
             ;;
         stop|restart)
             ;;
@@ -386,11 +383,11 @@ if [ ${cmd} = "restart" ] && [ "${isComp}" -eq 0 ]; then
     echo "Starting the entire System"
     echo "***************************************************"
     cmd=start
-    /etc/init.d/dafilesrv status 1>/dev/null 2>/dev/null
+    @ABS_INIT_DIR@/dafilesrv status 1>/dev/null 2>/dev/null
     if [ $? -ne 0 ];then
         log "--------------------------"
         log "${compDafilesrv} ---> ${cmd}"
-        /etc/init.d/dafilesrv $1 2>/dev/null
+        @ABS_INIT_DIR@/dafilesrv $1 2>/dev/null
     fi
 
     statForStart=0
@@ -449,7 +446,7 @@ done
 
 if [ "$cmd" = "stop" ] && [ -n "$compDafilesrv" ]
 then
-    /etc/init.d/dafilesrv status 1>/dev/null 2>/dev/null
+    @ABS_INIT_DIR@/dafilesrv status 1>/dev/null 2>/dev/null
     if [ $? -ne 0 ];then
       log  "Service dafilesrv, ${compDafilesrv} is already stopped."
       echo "Service dafilesrv, ${compDafilesrv} is already stopped."

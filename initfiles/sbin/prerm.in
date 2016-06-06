@@ -15,8 +15,6 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
 # Checking if configmgr is still running
 ########################################
 configmgr_status=`ps -ef | grep 'configmgr' | grep -cE '(python|bash)'`
@@ -27,19 +25,19 @@ fi
 
 # Stop all services before cleaning up
 ######################################
-/etc/init.d/hpcc-init stop
+@ABS_INIT_DIR@/hpcc-init stop
 if [ -f "@PID_PATH@/mydafilesrv.pid" ]; then
-    /etc/init.d/dafilesrv stop
+    @ABS_INIT_DIR@/dafilesrv stop
 fi
 
 # Remove edits from /etc files
 ##############################
-@ABS_INSTALL_DIR@/sbin/rm_conf_settings.sh
+@ABS_INSTALL_DIR@/@SBIN_DIR@/rm_conf_settings.sh
 
 
 # Remove symlinks
 #################
-@ABS_INSTALL_DIR@/etc/init.d/uninstall-init
+@ABS_INSTALL_DIR@@INIT_DIR@/uninstall-init
 
 # Remove installed flag
 #######################

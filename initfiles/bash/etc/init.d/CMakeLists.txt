@@ -19,12 +19,13 @@ configure_file("install-init.in" "install-init" @ONLY)
 configure_file("hpcc-init.in" "hpcc-init" @ONLY)
 configure_file("hpcc_common.in" "hpcc_common" @ONLY)
 configure_file("uninstall-init.in" "uninstall-init" @ONLY)
+configure_file("init-functions.in" "init-functions" @ONLY)
 
 foreach( oFILES
     ${CMAKE_CURRENT_BINARY_DIR}/hpcc_common
+    ${CMAKE_CURRENT_BINARY_DIR}/init-functions
     ${CMAKE_CURRENT_SOURCE_DIR}/pid.sh
     ${CMAKE_CURRENT_SOURCE_DIR}/lock.sh
-    ${CMAKE_CURRENT_SOURCE_DIR}/init-functions
     ${CMAKE_CURRENT_SOURCE_DIR}/export-path
 )
     install ( PROGRAMS ${oFILES} DESTINATION ${SBIN_DIR} COMPONENT Runtime )
@@ -38,5 +39,5 @@ foreach( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
     ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
 )
-    install(PROGRAMS ${iFILES} DESTINATION etc/init.d COMPONENT Runtime)
+    install(PROGRAMS ${iFILES} DESTINATION /etc/init.d COMPONENT Runtime)
 endforeach(iFILES)

@@ -15,9 +15,9 @@
 #    limitations under the License.
 ################################################################################
 
-configure_file("version.in" "version")
-configure_file("environment.conf.in" "environment.conf")
-configure_file("environment.xml.in" "environment.xml")
+configure_file("version.in" "version" @ONLY)
+configure_file("environment.conf.in" "environment.conf" @ONLY)
+configure_file("environment.xml.in" "environment.xml" @ONLY)
 
 foreach( iFILES
     ${CMAKE_CURRENT_BINARY_DIR}/environment.xml

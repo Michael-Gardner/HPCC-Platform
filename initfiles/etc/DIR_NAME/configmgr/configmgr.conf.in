@@ -5,4 +5,4 @@ configmgr=esp;@ABS_CONFIG_DIR@/configmgr
 brokenconntimeout=60
 buildset=buildset.xml
 wizardalgorithm=genenvrules.conf
-autodetectipscript=${ADMIN_PATH}/get_ip_address_wiz.sh
+autodetectipscript=@ABS_INSTALL_DIR@/@SBIN_DIR@/get_ip_address_wiz.sh

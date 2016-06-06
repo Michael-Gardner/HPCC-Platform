@@ -42,7 +42,7 @@ pidofproc () {
 
     base=${1##*/}
     if [ ! "$specified" ]; then
-        pidfile="/var/run/$base.pid"
+        pidfile="@PID_PATH@/$base.pid"
     fi
 
     if [ -n "${pidfile:-}" -a -r "$pidfile" ]; then
@@ -88,7 +88,7 @@ killproc () {
 
     base=${1##*/}
     if [ ! $pidfile ]; then
-        name_param="--name $base --pidfile /var/run/$base.pid"
+        name_param="--name $base --pidfile @PID_PATH@/$base.pid"
     else
         name_param="--pidfile $pidfile"
     fi

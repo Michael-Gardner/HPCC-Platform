@@ -27,11 +27,9 @@
 # 3. Return.
 #
 
-###<REPLACE>###
-
-source  @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
-source  @ABS_INSTALL_DIR@/etc/init.d/init-functions
-source  @ABS_INSTALL_DIR@/etc/init.d/export-path
+source  @ABS_INSTALL_DIR@@INIT_DIR@/hpcc_common
+source  @ABS_INSTALL_DIR@@INIT_DIR@/init-functions
+source  @ABS_INSTALL_DIR@@INIT_DIR@/export-path
 
 export REMOTE_INSTALL="/tmp/remote_install"
 export NEW="${REMOTE_INSTALL}/new_keys"
@@ -116,7 +114,7 @@ createPayload(){
     cp -r ${PKG} ${REMOTE_INSTALL}
     cp -r @ABS_CONFIG_DIR@/@ENV_XML_FILE@ ${REMOTE_INSTALL}
     cp -r @ABS_CONFIG_DIR@/@ENV_CONF_FILE@ ${REMOTE_INSTALL}
-    cp -r @ABS_INSTALL_DIR@/sbin/remote-install-engine.sh ${REMOTE_INSTALL}
+    cp -r @ABS_INSTALL_DIR@/@SBIN_DIR@/remote-install-engine.sh ${REMOTE_INSTALL}
 
     echo "tar -zcvf /tmp/remote_install.tgz ${REMOTE_INSTALL}/*"
     tar -zcvf /tmp/remote_install.tgz ${REMOTE_INSTALL}/*
@@ -210,12 +208,12 @@ is_python_installed ${expected_python_version}
 
 if [ $? -eq 0 ]
 then
-   chksum=$(md5sum @ABS_INSTALL_DIR@/sbin/install-hpcc.exp | cut -d' ' -f1)
-   eval @ABS_INSTALL_DIR@/sbin/cluster_script.py -f @ABS_INSTALL_DIR@/sbin/install-hpcc.exp -c $chksum $OPTIONS
+   chksum=$(md5sum @ABS_INSTALL_DIR@/@SBIN_DIR@/install-hpcc.exp | cut -d' ' -f1)
+   eval @ABS_INSTALL_DIR@/@SBIN_DIR@/cluster_script.py -f @ABS_INSTALL_DIR@/@SBIN_DIR@/install-hpcc.exp -c $chksum $OPTIONS
 else
    echo ""
    echo "Cannot detect python version ${expected_python_version}+. Will run on the cluster hosts sequentially."
    echo ""
-   run_cluster @ABS_INSTALL_DIR@/sbin/install-hpcc.exp 0
+   run_cluster @ABS_INSTALL_DIR@/@SBIN_DIR@/install-hpcc.exp 0
 fi
 removePayload;

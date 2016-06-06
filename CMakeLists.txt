@@ -117,6 +117,42 @@ endif()
 
 include(${HPCC_SOURCE_DIR}/cmake_modules/commonSetup.cmake)
 
+# build-config.h setup block
+if(NOT "$ENV{DESTDIR}" STREQUAL "")
+    message(STATUS "Appending $ENV{DESTDIR} to the installation path")
+endif()
+set(ABS_INSTALL_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
+set(ABS_CONFIG_DIR "$ENV{DESTDIR}${CONFIG_DIR}")
+set(ABS_INIT_DIR "$ENV{DESTDIR}${INIT_DIR}")
+set(ABS_COMPONENTFILES_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${COMP_DIR}")
+set(ABS_SBIN_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${SBIN_DIR}")
+message(STATUS "ABS_SBIN_DIR = ${ABS_SBIN_DIR}")
+###
+## Run file configuration to set build tag along with install lines for generated
+## config files.
+###
+set(BUILD_TAG "${projname}_${version}-${stagever}")
+if(USE_GIT_DESCRIBE OR CHECK_GIT_TAG)
+    FETCH_GIT_TAG(${CMAKE_SOURCE_DIR} ${projname}_${version} GIT_BUILD_TAG)
+    message("-- Git tag is '${GIT_BUILD_TAG}'")
+    if(NOT "${GIT_BUILD_TAG}" STREQUAL "${BUILD_TAG}")
+        if(CHECK_GIT_TAG)
+            message(FATAL_ERROR "Git tag '${GIT_BUILD_TAG}' does not match source version '${BUILD_TAG}'")
+        else()
+            if(NOT "${GIT_BUILD_TAG}" STREQUAL "") # probably means being built from a tarball...
+                set(BUILD_TAG "${BUILD_TAG}[${GIT_BUILD_TAG}]")
+            endif()
+        endif()
+    endif()
+endif()
+message("-- Build tag is '${BUILD_TAG}'")
+if(NOT "${BASE_BUILD_TAG}" STREQUAL "")
+    set(BASE_BUILD_TAG "${BUILD_TAG}")
+endif()
+message("-- Base build tag is '${BASE_BUILD_TAG}'")
+
+configure_file(${HPCC_SOURCE_DIR}/build-config.h.cmake "build-config.h")
+
 if ( PLUGIN )
     HPCC_ADD_SUBDIRECTORY (roxie/roxiemem)
     HPCC_ADD_SUBDIRECTORY (rtl/nbcd)
@@ -289,41 +325,7 @@ if(TOP_LEVEL_PROJECT)
         )
 endif(TOP_LEVEL_PROJECT)
 
-###
-## Run file configuration to set build tag along with install lines for generated
-## config files.
-###
-set(BUILD_TAG "${projname}_${version}-${stagever}")
-if(USE_GIT_DESCRIBE OR CHECK_GIT_TAG)
-    FETCH_GIT_TAG(${CMAKE_SOURCE_DIR} ${projname}_${version} GIT_BUILD_TAG)
-    message("-- Git tag is '${GIT_BUILD_TAG}'")
-    if(NOT "${GIT_BUILD_TAG}" STREQUAL "${BUILD_TAG}")
-        if(CHECK_GIT_TAG)
-            message(FATAL_ERROR "Git tag '${GIT_BUILD_TAG}' does not match source version '${BUILD_TAG}'")
-        else()
-            if(NOT "${GIT_BUILD_TAG}" STREQUAL "") # probably means being built from a tarball...
-                set(BUILD_TAG "${BUILD_TAG}[${GIT_BUILD_TAG}]")
-            endif()
-        endif()
-    endif()
-endif()
-message("-- Build tag is '${BUILD_TAG}'")
-if(NOT "${BASE_BUILD_TAG}" STREQUAL "")
-    set(BASE_BUILD_TAG "${BUILD_TAG}")
-endif()
-message("-- Base build tag is '${BASE_BUILD_TAG}'")
 
-# build-config.h setup block
-if(NOT "$ENV{DESTDIR}" STREQUAL "")
-    message(STATUS "Appending $ENV{DESTDIR} to the installation path")
-endif()
-set(ABS_INSTALL_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
-set(ABS_CONFIG_DIR "$ENV{DESTDIR}${CONFIG_DIR}")
-set(ABS_COMPONENTFILES_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${COMP_DIR}")
-set(ABS_SBIN_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${SBIN_DIR}")
-message(STATUS "ABS_SBIN_DIR = ${ABS_SBIN_DIR}")
-
-configure_file(${HPCC_SOURCE_DIR}/build-config.h.cmake "build-config.h")
 
 
 if(USE_SHLIBDEPS)

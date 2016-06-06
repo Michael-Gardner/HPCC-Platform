@@ -24,8 +24,6 @@
 ## $1="<path to ini file>"
 ####
 
-###<REPLACE>###
-
 START_STOP_DAEMON=@ABS_INSTALL_DIR@/bin/start-stop-daemon
 
 which_service(){
@@ -52,10 +50,10 @@ which_pidof(){
     fi
 }
 
-source  @ABS_INSTALL_DIR@/etc/init.d/lock.sh
-source  @ABS_INSTALL_DIR@/etc/init.d/pid.sh
-source  @ABS_INSTALL_DIR@/etc/init.d/init-functions
-source  @ABS_INSTALL_DIR@/etc/init.d/export-path
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/lock.sh
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/pid.sh
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/init-functions
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/export-path
 
 
 cfg.parser () {
@@ -390,12 +388,12 @@ cleanupRuntimeEnvironment() {
 
 
 start_dafilesrv() {
-   /etc/init.d/dafilesrv status 1>/dev/null 2>/dev/null
+   @ABS_INIT_DIR@/dafilesrv status 1>/dev/null 2>/dev/null
    if [ $? -ne 0 ];then
       #Dafilesrv is not running so start it , before starting cleanup the lock and pid file.
       cleanupRuntimeEnvironment
       noStatusCheck=1
-      /etc/init.d/dafilesrv setup 1>/dev/null 2>/dev/null
+      @ABS_INIT_DIR@/dafilesrv setup 1>/dev/null 2>/dev/null
       startCmd ${compName} ${noStatusCheck}
       return $?
    else
@@ -619,15 +617,15 @@ start_component() {
 
 restart_component() {
     if strstr "${compType}" "dafilesrv" ;then
-      /etc/init.d/dafilesrv status 1>/dev/null 2>/dev/null
+      @ABS_INIT_DIR@/dafilesrv status 1>/dev/null 2>/dev/null
       if [ $? -eq 0 ];then
-        /etc/init.d/dafilesrv stop 2>/dev/null
+        @ABS_INIT_DIR@/dafilesrv stop 2>/dev/null
       else
         log  "$compName ---> Stopped.  Now Starting ..."
         echo "Component $compName was not running. Will start it now for you ..."
         cleanupRuntimeEnvironment
       fi
-      /etc/init.d/dafilesrv start 2>/dev/null
+      @ABS_INIT_DIR@/dafilesrv start 2>/dev/null
     else
       check_status ${PIDPATH} ${LOCKPATH} ${COMPPIDPATH} 1
       RCRESTART=$?
@@ -959,7 +957,7 @@ cluster_tools_init() {
 
    # Check and set log directory
    CLUSTER_LOG_DIR=@LOG_PATH@/cluster
-   [ ! -d $LOG_DIR ]  && ${_cmd_prefix} /etc/init.d/hpcc-init status > /dev/null 2>&1
+   [ ! -d $LOG_DIR ]  && ${_cmd_prefix} @ABS_INIT_DIR@/hpcc-init status > /dev/null 2>&1
 
    [ ! -d $CLUSTER_LOG_DIR ] && mkdir -p $CLUSTER_LOG_DIR
    # workaround inconsistency of stat command

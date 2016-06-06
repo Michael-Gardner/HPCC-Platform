@@ -20,10 +20,7 @@
 # This is acomplished with a standard scp command with the use of the
 # runtime users id_rsa file.
 
-###<REPLACE>###
-
-
-source  @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
+source  @ABS_INSTALL_DIR@@INIT_DIR@/hpcc_common
 
 usage() {
     echo ""
@@ -118,7 +115,7 @@ addScriptDeployFiles() {
 
    cat >> $SCRIPT_FILE <<SCRIPTMARKER
 
-@ABS_INSTALL_DIR@/sbin/deploy-java-files.exp --ip \$IP --source "${source}" \
+@ABS_INSTALL_DIR@/@SBIN_DIR@/deploy-java-files.exp --ip \$IP --source "${source}" \
    --target ${target} --user ${file_transfer_user} ${_options} || exit 1
 
 SCRIPTMARKER
@@ -132,7 +129,7 @@ SCRIPTMARKER
 ######################################################################
 resetClasspath() {
    cat >> $SCRIPT_FILE <<SCRIPTPATH
-NEW_JAVA_CLASSPATH="@ABS_INSTALL_DIR@/classes"
+NEW_JAVA_CLASSPATH="@ABS_INSTALL_DIR@/@CLASS_DIR@"
 SCRIPTPATH
 }
 

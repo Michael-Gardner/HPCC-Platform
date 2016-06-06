@@ -15,8 +15,6 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
-@ABS_INSTALL_DIR@/etc/init.d/install-init
+@ABS_INSTALL_DIR@@INIT_DIR@/install-init
 
 exit 0

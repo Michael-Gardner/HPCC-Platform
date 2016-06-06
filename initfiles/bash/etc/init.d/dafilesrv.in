@@ -42,19 +42,17 @@
 #                         General Purpose Functions
 ##-----------------------------------------------------------------------------
 
-###<REPLACE>###
-
 function print_usage {
     echo >&2 "Usage: $0 {start|stop|restart|status|setup}
         $0 [-h] [--help]"
     exit 0
 }
 
-source  @ABS_INSTALL_DIR@/etc/init.d/lock.sh
-source  @ABS_INSTALL_DIR@/etc/init.d/pid.sh
-source  @ABS_INSTALL_DIR@/etc/init.d/hpcc_common
-source  @ABS_INSTALL_DIR@/etc/init.d/init-functions
-source  @ABS_INSTALL_DIR@/etc/init.d/export-path
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/lock.sh
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/pid.sh
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/hpcc_common
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/init-functions
+source  @ABS_INSTALL_DIR@/@SBIN_DIR@/export-path
 
 ## Debug variable allowing verbose debug output
 ##
@@ -62,11 +60,11 @@ DEBUG=${DEBUG:-NO_DEBUG}
 TRACE=${TRACE:-0}
 VERBOSE=${VERBOSE:-0}
 
-configgen_path=@ABS_INSTALL_DIR@/sbin
+configgen_path=@ABS_INSTALL_DIR@/@SBIN_DIR@
 basepath=`pwd`
 set_environmentvars
 envfile=$configs/$environment
-bin_path=@ABS_INSTALL_DIR@/bin
+bin_path=@ABS_INSTALL_DIR@/@BIN_DIR@
 
 component=""
 runSetupOnly=0
