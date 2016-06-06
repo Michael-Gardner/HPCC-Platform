@@ -16,7 +16,7 @@
 ################################################################################
 
 if [ -z $1 ]; then
-        log=@LOG_PATH@
+        log=@ABS_LOG_PATH@
 else
         log=$1
 fi
@@ -33,7 +33,7 @@ export handlelimit=32768
 component=$(basename $PWD)
 dir.getByName lock
 lock="$dir_return"
-export logfile="@LOG_PATH@/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
+export logfile="@ABS_LOG_PATH@/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
 
 export SENTINEL="dafilesrv.sentinel"
 log "Removing ${SENTINEL}"
@@ -47,7 +47,7 @@ killed()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock @LOCK_PATH@/$component/${component}.lock
+        unlock @ABS_LOCK_PATH@/$component/${component}.lock
     fi
     exit 255
 }

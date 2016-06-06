@@ -880,9 +880,9 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   ## The following sets the install directories and names.
   ###
   if ( PLATFORM OR PLUGINS )
-      set(CMAKE_INSTALL_PREFIX "/${INSTALL_PATH}" CACHE PATH "Cmake installation prefix" FORCE)
+      set(CMAKE_INSTALL_PREFIX "${INSTALL_PATH}" CACHE PATH "Cmake installation prefix" FORCE)
   else()
-    set(CMAKE_INSTALL_PREFIX "/${INSTALL_PATH}/${version}/clienttools" CACHE PATH "Cmake installation prefix" FORCE)
+    set(CMAKE_INSTALL_PREFIX "${INSTALL_PATH}/${version}/clienttools" CACHE PATH "Cmake installation prefix" FORCE)
   endif()
   set (CMAKE_SKIP_BUILD_RPATH  FALSE)
   set (CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)

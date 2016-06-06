@@ -19,7 +19,7 @@
             buildSet="DropZone"
             computer="localhost"
             description="DropZone process"
-            directory="@RUNTIME_PATH@/mydropzone"
+            directory="@ABS_RUNTIME_PATH@/mydropzone"
             name="mydropzone"
             umask="022"/>
   <RoxieCluster allFilesDynamic="true"
@@ -52,7 +52,7 @@
                 defaultSLAPriorityTimeWarning="5000"
                 defaultStripLeadingWhitespace="1"
                 description="Roxie cluster"
-                directory="@RUNTIME_PATH@/myroxie"
+                directory="@ABS_RUNTIME_PATH@/myroxie"
                 diskReadBufferSize="65536"
                 doIbytiDelay="true"
                 enableHeartBeat="true"
@@ -203,7 +203,7 @@
                      name="mydali"
                      recoverFromIncErrors="true">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/mydali"
+             directory="@ABS_RUNTIME_PATH@/mydali"
              name="s1"
              netAddress="."
              port="7070"/>
@@ -218,7 +218,7 @@
                     queue="dfuserver_queue"
                     transferBufferSize="65536">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/mydfuserver"
+             directory="@ABS_RUNTIME_PATH@/mydfuserver"
              name="s1"
              netAddress="."/>
    <SSH SSHidentityfile="$HOME/.ssh/id_rsa"
@@ -237,7 +237,7 @@
                       name="myeclccserver"
                       traceLevel="1">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/myeclccserver"
+             directory="@ABS_RUNTIME_PATH@/myeclccserver"
              name="s1"
              netAddress="."/>
    <Option name="maxCompileThreads" value="2"/>
@@ -261,7 +261,7 @@
               perfReportDelay="60"
               portalurl="@PORTALURL@">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/myesp"
+             directory="@ABS_RUNTIME_PATH@/myesp"
              FQDN=""
              name="s1"
              netAddress="."/>
@@ -457,7 +457,7 @@
                    traceLevel="0"
                    wuQueueName="myeclagent_queue">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/myeclagent"
+             directory="@ABS_RUNTIME_PATH@/myeclagent"
              name="s1"
              netAddress="."/>
   </EclAgentProcess>
@@ -467,7 +467,7 @@
                   name="myftslave"
                   version="1">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/myftslave"
+             directory="@ABS_RUNTIME_PATH@/myftslave"
              name="s1"
              netAddress="."
              program="@ABS_INSTALL_DIR@/@BIN_DIR@/ftslave"/>
@@ -525,7 +525,7 @@
                       xrefMaxMemory="4096"
                       xrefMaxScanThreads="500">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/mysasha"
+             directory="@ABS_RUNTIME_PATH@/mysasha"
              name="s1"
              netAddress="."
              port="8877"/>
@@ -705,7 +705,7 @@
                     throttleDelayMs="5000"
                     version="1">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/mydafilesrv"
+             directory="@ABS_RUNTIME_PATH@/mydafilesrv"
              name="s1"
              netAddress="."
              parallelRequestLimit="20"
@@ -754,13 +754,13 @@
                        description="EclScheduler process"
                        name="myeclscheduler">
    <Instance computer="localhost"
-             directory="@RUNTIME_PATH@/myeclscheduler"
+             directory="@ABS_RUNTIME_PATH@/myeclscheduler"
              name="s1"
              netAddress="."/>
   </EclSchedulerProcess>
  </Software>
  <EnvSettings>
-  <pid>@PID_PATH@</pid>
+  <pid>@ABS_PID_PATH@</pid>
   <sourcedir>@ABS_INSTALL_DIR@@CONFIG_SOURCE_PATH@</sourcedir>
   <mpTraceLevel>0</mpTraceLevel>
   <mpStart>7101</mpStart>
@@ -775,11 +775,11 @@
   <mpSoMaxConn>128</mpSoMaxConn>
   <user>@RUNTIME_USER@</user>
   <classpath>@ABS_INSTALL_DIR@/classes</classpath>
-  <log>@LOG_PATH@</log>
+  <log>@ABS_LOG_PATH@</log>
   <logfields>TIM+DAT+MLT+MID+PID+TID+COD+QUO+PFX</logfields>
   <use_epoll>true</use_epoll>
-  <runtime>@RUNTIME_PATH@</runtime>
-  <lock>@LOCK_PATH@</lock>
+  <runtime>@ABS_RUNTIME_PATH@</runtime>
+  <lock>@ABS_LOCK_PATH@</lock>
   <configs>@ABS_CONFIG_DIR@</configs>
   <path>@ABS_INSTALL_DIR@</path>
  </EnvSettings>

@@ -28,7 +28,7 @@ lock="$dir_return"
 PID_NAME="$PID/${component}.pid"
 
 timestamp="$(date +%Y_%m_%d_%H_%M_%S)"
-export logfile="@LOG_PATH@/${component}/init_${component}_${timestamp}.log"
+export logfile="@ABS_LOG_PATH@/${component}/init_${component}_${timestamp}.log"
 
 # for use by init_thorslave call
 logredirect="init_thorslave_${component}_${timestamp}.log"
@@ -80,11 +80,11 @@ kill_slaves()
             FRUNSSH_RC=$?
             if [[ ${FRUNSSH_RC} -gt 0 ]]; then
                 log "Error ${FRUNSSH_RC} in frunssh"
-                log "Please check $(dirname @LOG_PATH@)/frunssh for more details"
+                log "Please check $(dirname @ABS_LOG_PATH@)/frunssh for more details"
                 # clean up any slaves it was able to reach
                 log "Stopping ${component}"
                 kill_process ${PID_NAME} thormaster_${component} 30
-                unlock @LOCK_PATH@/$component/${component}.lock
+                unlock @ABS_LOCK_PATH@/$component/${component}.lock
                 rm -f $INIT_PID_NAME $instancedir/slaves > /dev/null 2>&1
                 exit 255
             fi
@@ -102,7 +102,7 @@ killed()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock @LOCK_PATH@/$component/${component}.lock
+        unlock @ABS_LOCK_PATH@/$component/${component}.lock
         kill_slaves
         log "removing init.pid file and slaves file"
         rm -f $INIT_PID_NAME $instancedir/slaves > /dev/null 2>&1
@@ -140,7 +140,7 @@ while [[ 1 ]]; do
         FRUNSSH_RC=$?
         if [[ ${FRUNSSH_RC} -gt 0 ]]; then
             log "Error ${FRUNSSH_RC} in frunssh"
-            log "Please check $(dirname @LOG_PATH@)/frunssh for more details"
+            log "Please check $(dirname @ABS_LOG_PATH@)/frunssh for more details"
             # clean up any slaves it was able to reach
             killed
         fi

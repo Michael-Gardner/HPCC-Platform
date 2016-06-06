@@ -87,7 +87,7 @@ option(SHARE_DIR "Set the relative share dir")
 option(CLASS_DIR "Set the relative class dir")
 
 
-option(CONFIG_SOURCE_DIR "Set the configuration source dir")
+option(SOURCE_DIR "Set the configuration source dir")
 option(RUNTIME_DIR "Set the runtime dir")
 option(HOME_DIR "Set the home dir")
 option(LOCK_DIR "Set the lock dir")
@@ -126,7 +126,12 @@ set(ABS_CONFIG_DIR "$ENV{DESTDIR}${CONFIG_DIR}")
 set(ABS_INIT_DIR "$ENV{DESTDIR}${INIT_DIR}")
 set(ABS_COMPONENTFILES_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${COMP_DIR}")
 set(ABS_SBIN_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${SBIN_DIR}")
-message(STATUS "ABS_SBIN_DIR = ${ABS_SBIN_DIR}")
+set(ABS_RUNTIME_DIR "$ENV{DESTDIR}${RUNTIME_PATH}")
+set(ABS_LOG_DIR "$ENV{DESTDIR}${LOG_PATH}")
+set(ABS_LOCK_DIR "$ENV{DESTDIR}${LOCK_PATH}")
+set(ABS_PID_DIR "$ENV{DESTDIR}${PID_PATH}")
+
+
 ###
 ## Run file configuration to set build tag along with install lines for generated
 ## config files.

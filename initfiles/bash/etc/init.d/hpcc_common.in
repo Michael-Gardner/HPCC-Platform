@@ -900,8 +900,8 @@ run_cluster() {
    _num_failed=0
    _num_processed=0
    _pregress=0
-   _log_file=@LOG_PATH@/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
-   [ ! -d @LOG_PATH@/cluster ] && mkdir -p @LOG_PATH@/cluster
+   _log_file=@ABS_LOG_PATH@/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
+   [ ! -d @ABS_LOG_PATH@/cluster ] && mkdir -p @ABS_LOG_PATH@/cluster
    [ -e $_log_file ] && rm -rf $_log_file
    if [ "$RUN_CLUSTER_DISPLAY_OUTPUT" != "TRUE" ]
    then
@@ -956,7 +956,7 @@ cluster_tools_init() {
    [ "$(id -u)" != "0" ] && _cmd_prefix=sudo
 
    # Check and set log directory
-   CLUSTER_LOG_DIR=@LOG_PATH@/cluster
+   CLUSTER_LOG_DIR=@ABS_LOG_PATH@/cluster
    [ ! -d $LOG_DIR ]  && ${_cmd_prefix} @ABS_INIT_DIR@/hpcc-init status > /dev/null 2>&1
 
    [ ! -d $CLUSTER_LOG_DIR ] && mkdir -p $CLUSTER_LOG_DIR

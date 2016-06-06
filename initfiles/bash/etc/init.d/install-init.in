@@ -296,6 +296,6 @@ if [ "${DISTRIB_NAME}" = "ubuntu" ] &&
 fi
 
 createRuntime
-[ -e  @LOG_PATH@/hpcc-init.debug ] && chown ${user}:${user} @LOG_PATH@/hpcc-init.debug
+[ -e  @ABS_LOG_PATH@/hpcc-init.debug ] && chown ${user}:${user} @ABS_LOG_PATH@/hpcc-init.debug
 
 exit 0

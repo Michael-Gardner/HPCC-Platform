@@ -35,7 +35,7 @@
 #endif
 
 #ifndef RUNTIME_PATH
-    #cmakedefine RUNTIME_PATH "${RUNTIME_PATH}"
+    #cmakedefine RUNTIME_PATH "${ABS_RUNTIME_PATH}"
 #endif
 
 #ifndef RUNTIME_USER

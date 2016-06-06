@@ -26,7 +26,7 @@ fi
 # Stop all services before cleaning up
 ######################################
 @ABS_INIT_DIR@/hpcc-init stop
-if [ -f "@PID_PATH@/mydafilesrv.pid" ]; then
+if [ -f "@ABS_PID_PATH@/mydafilesrv.pid" ]; then
     @ABS_INIT_DIR@/dafilesrv stop
 fi
 

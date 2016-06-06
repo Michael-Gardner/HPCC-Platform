@@ -87,7 +87,7 @@ source  @ABS_INSTALL_DIR@/@SBIN_DIR@/hpcc_common
 source  @ABS_INSTALL_DIR@/@SBIN_DIR@/init-functions
 source  @ABS_INSTALL_DIR@/@SBIN_DIR@/export-path
 
-export logfile=@LOG_PATH@/hpcc-init.log
+export logfile=@ABS_LOG_PATH@/hpcc-init.log
 
 [ ! -e ${logfile}  ] && touch $logfile
 
@@ -104,8 +104,8 @@ set_environmentvars
 envfile=$configs/$environment
 
 # Know HPCC user after set_environmentvars
-log_dir_owner=$(ls -ld @LOG_PATH@ | awk '{print $3}')
-[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} @LOG_PATH@
+log_dir_owner=$(ls -ld @ABS_LOG_PATH@ | awk '{print $3}')
+[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} @ABS_LOG_PATH@
 chown ${user}:${user} $logfile
 
 #Sourcing the hpcc environment
@@ -270,11 +270,11 @@ if [ -z $arg ] || [ $# -ne 1 ]; then
     print_usage
 fi
 
-log "Debug log written to @LOG_PATH@/hpcc-init.debug"
-[ -e @LOG_PATH@/hpcc-init.debug ] && rm -rf @LOG_PATH@/hpcc-init.debug
-touch @LOG_PATH@/hpcc-init.debug
-chown ${user}:${user} @LOG_PATH@/hpcc-init.debug
-exec 2>@LOG_PATH@/hpcc-init.debug
+log "Debug log written to @ABS_LOG_PATH@/hpcc-init.debug"
+[ -e @ABS_LOG_PATH@/hpcc-init.debug ] && rm -rf @ABS_LOG_PATH@/hpcc-init.debug
+touch @ABS_LOG_PATH@/hpcc-init.debug
+chown ${user}:${user} @ABS_LOG_PATH@/hpcc-init.debug
+exec 2>@ABS_LOG_PATH@/hpcc-init.debug
 set -x
 
 if [ -z ${component} ]; then

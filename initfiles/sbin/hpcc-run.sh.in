@@ -245,7 +245,7 @@ init() {
     fi
 
     dateTime=$(date +"%Y%m%d_%H%M%S")
-    reportDir=@LOG_PATH@/cluster/$1/${dateTime}
+    reportDir=@ABS_LOG_PATH@/cluster/$1/${dateTime}
     mkdir -p $reportDir
     chown -R ${user}:${user} ${reportDir}/..
 }
