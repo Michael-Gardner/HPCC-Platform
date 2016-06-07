@@ -1,9 +1,9 @@
 #ifndef EXEC_PREFIX
-    #cmakedefine EXEC_PREFIX "${EXEC_PREFIX}"
+#cmakedefine EXEC_PREFIX "${ABS_EXEC_PREFIX}"
 #endif
 
 #ifndef CONFIG_PREFIX
-    #cmakedefine CONFIG_PREFIX "${CONFIG_PREFIX}"
+#cmakedefine CONFIG_PREFIX "${ABS_CONFIG_PREFIX}"
 #endif
 
 #ifndef DIR_NAME
@@ -19,11 +19,11 @@
 #endif
 
 #ifndef CONFIG_DIR
-    #define CONFIG_DIR "${CONFIG_DIR}"
+#define CONFIG_DIR "${ABS_CONFIG_DIR}"
 #endif
 
 #ifndef CONFIG_SOURCE_DIR
-    #cmakedefine CONFIG_SOURCE_DIR "${CONFIG_SOURCE_DIR}"
+#cmakedefine CONFIG_SOURCE_DIR "${ABS_CONFIG_DIR}/${SOURCE_DIR}"
 #endif
 
 #ifndef ABS_SBIN_DIR

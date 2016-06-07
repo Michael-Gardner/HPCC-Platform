@@ -117,20 +117,6 @@ endif()
 
 include(${HPCC_SOURCE_DIR}/cmake_modules/commonSetup.cmake)
 
-# build-config.h setup block
-if(NOT "$ENV{DESTDIR}" STREQUAL "")
-    message(STATUS "Appending $ENV{DESTDIR} to the installation path")
-endif()
-set(ABS_INSTALL_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
-set(ABS_CONFIG_DIR "$ENV{DESTDIR}${CONFIG_DIR}")
-set(ABS_INIT_DIR "$ENV{DESTDIR}${INIT_DIR}")
-set(ABS_COMPONENTFILES_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${COMP_DIR}")
-set(ABS_SBIN_DIR "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${SBIN_DIR}")
-set(ABS_RUNTIME_DIR "$ENV{DESTDIR}${RUNTIME_PATH}")
-set(ABS_LOG_DIR "$ENV{DESTDIR}${LOG_PATH}")
-set(ABS_LOCK_DIR "$ENV{DESTDIR}${LOCK_PATH}")
-set(ABS_PID_DIR "$ENV{DESTDIR}${PID_PATH}")
-
 
 ###
 ## Run file configuration to set build tag along with install lines for generated
