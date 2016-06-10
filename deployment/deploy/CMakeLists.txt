@@ -72,6 +72,6 @@ IF (USE_OPENSSL)
 ENDIF()
 
 if ( PLATFORM )
-    install ( PROGRAMS configesp.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS configesp.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS configesp.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
+    install ( PROGRAMS configesp.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
 endif()

@@ -38,6 +38,6 @@ target_link_libraries ( testsocket
 install ( TARGETS testsocket RUNTIME DESTINATION ${EXEC_DIR} )
 
 if ( PLATFORM )
-    install ( PROGRAMS testsocket.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS testsocket.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS testsocket.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
+    install ( PROGRAMS testsocket.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
 endif()

@@ -13,4 +13,4 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-Install ( PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/g++ DESTINATION componentfiles/cl/bin COMPONENT Runtime )
+Install ( PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/g++ DESTINATION ${COMP_DIR}/cl/bin COMPONENT Runtime )

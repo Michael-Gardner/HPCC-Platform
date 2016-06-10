@@ -67,7 +67,7 @@ target_link_libraries ( ecl-packagemap
     )
 
 if ( UNIX )
-    install ( PROGRAMS ecl-package.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-package.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS ecl-package.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
+    install ( PROGRAMS ecl-package.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
 endif ( UNIX )
 

@@ -59,7 +59,7 @@ if(PYEMBED)
 
         install(
             TARGETS pyembed
-            DESTINATION plugins)
+            DESTINATION ${PLUGINS_DIR})
         if(debug_python)
             target_link_libraries(pyembed ${DEBUG_PYTHON_LIBRARY})
         else()
@@ -76,6 +76,6 @@ endif()
 if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/python.ecllib
-        DESTINATION plugins
+        DESTINATION ${PLUGINS_DIR}
         COMPONENT Runtime)
 endif()

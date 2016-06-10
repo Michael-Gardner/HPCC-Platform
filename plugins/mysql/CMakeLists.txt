@@ -52,7 +52,7 @@ if(MYSQLEMBED)
 
         install(
             TARGETS mysqlembed
-            DESTINATION plugins )
+            DESTINATION ${PLUGINS_DIR} )
         target_link_libraries(
             mysqlembed
             ${MYSQL_LIBRARIES}
@@ -65,6 +65,6 @@ endif()
 if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/mysql.ecllib
-        DESTINATION plugins
+        DESTINATION ${PLUGINS_DIR}
         COMPONENT Runtime)
 endif()

@@ -69,6 +69,6 @@ set ( SCRIPTS_FILES
 )
 
 FOREACH( iFile ${SCRIPTS_FILES} )
-    Install( FILES ${iFile} DESTINATION componentfiles/files/scripts COMPONENT Runtime )
+    Install( FILES ${iFile} DESTINATION ${COMP_DIR}/files/scripts COMPONENT Runtime )
 ENDFOREACH ( iFile )
 

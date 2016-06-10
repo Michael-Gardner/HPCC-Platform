@@ -14,6 +14,6 @@
 #    limitations under the License.
 ################################################################################
 
-Install ( FILES "${CMAKE_CURRENT_SOURCE_DIR}/htpasswd_secmgr.xsd"  DESTINATION "componentfiles/configxml" COMPONENT Runtime)
-Install ( FILES "${CMAKE_CURRENT_SOURCE_DIR}/buildset.xml"         DESTINATION "componentfiles/configxml/plugins/htpasswd_secmgr" COMPONENT Runtime)
-Install ( FILES "${CMAKE_CURRENT_SOURCE_DIR}/genenvrules.conf"     DESTINATION "componentfiles/configxml/plugins/htpasswd_secmgr" COMPONENT Runtime)
+Install ( FILES "${CMAKE_CURRENT_SOURCE_DIR}/htpasswd_secmgr.xsd"  DESTINATION ${COMP_DIR}/configxml COMPONENT Runtime)
+Install ( FILES "${CMAKE_CURRENT_SOURCE_DIR}/buildset.xml"         DESTINATION ${COMP_DIR}/configxml/plugins/htpasswd_secmgr COMPONENT Runtime)
+Install ( FILES "${CMAKE_CURRENT_SOURCE_DIR}/genenvrules.conf"     DESTINATION ${COMP_DIR}/configxml/plugins/htpasswd_secmgr COMPONENT Runtime)

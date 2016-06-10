@@ -90,6 +90,6 @@ FOREACH ( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/rexec.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/preflightControls.xslt
 )
-    Install ( FILES ${iFILES} DESTINATION componentfiles/smc_xslt/ws_machine COMPONENT Runtime )
+    Install ( FILES ${iFILES} DESTINATION ${COMP_DIR}/smc_xslt/ws_machine COMPONENT Runtime )
 ENDFOREACH ( iFILES )
 

@@ -51,7 +51,7 @@ if(SQLITE3EMBED)
 
         install(
             TARGETS sqlite3embed
-            DESTINATION plugins)
+            DESTINATION ${PLUGINS_DIR})
         target_link_libraries(
             sqlite3embed
             ${SQLITE3_LIBRARIES})
@@ -65,6 +65,6 @@ endif()
 if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/sqlite3.ecllib
-        DESTINATION plugins
+        DESTINATION ${PLUGINS_DIR}
         COMPONENT Runtime)
 endif()

@@ -57,10 +57,10 @@ if(JAVAEMBED)
 
         install(
             TARGETS javaembed
-            DESTINATION plugins)
+            DESTINATION ${PLUGINS_DIR})
         install(
             FILES ${CMAKE_CURRENT_SOURCE_DIR}/HpccUtils.class
-            DESTINATION classes/com/HPCCSystems
+            DESTINATION ${CLASS_DIR}/com/HPCCSystems
             COMPONENT Runtime)
 
         # We link against jsig so that signals are chained from the jvm
@@ -86,6 +86,6 @@ endif()
 if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/java.ecllib
-        DESTINATION plugins
+        DESTINATION ${PLUGINS_DIR}
         COMPONENT Runtime)
 endif()

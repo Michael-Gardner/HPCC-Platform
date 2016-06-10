@@ -66,6 +66,6 @@ target_link_libraries ( ecl-bundle
     )
 
 if ( UNIX )
-    install ( PROGRAMS ecl-bundle.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-bundle.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS ecl-bundle.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
+    install ( PROGRAMS ecl-bundle.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
 endif ( UNIX )

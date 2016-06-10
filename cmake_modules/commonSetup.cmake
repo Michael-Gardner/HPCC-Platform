@@ -264,8 +264,8 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
       DEPENDS ${CMAKE_BINARY_DIR}/pub.key
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       )
-    install(FILES ${CMAKE_BINARY_DIR}/pub.key DESTINATION .${CONFIG_DIR}/rpmnew  COMPONENT Runtime)
-    install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION etc/init.d/install COMPONENT Runtime)
+    install(FILES ${CMAKE_BINARY_DIR}/pub.key DESTINATION ${CONFIG_DIR}/rpmnew  COMPONENT Runtime)
+    install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime)
   endif()
 
 

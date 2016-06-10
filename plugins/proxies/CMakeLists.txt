@@ -14,8 +14,8 @@
 #    limitations under the License.
 ################################################################################
 
-install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_saltlib.ecllib DESTINATION plugins COMPONENT Runtime)
-install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_metaphone.ecllib DESTINATION plugins COMPONENT Runtime)
-install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_thorlib.ecllib DESTINATION plugins COMPONENT Runtime)
-install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_word.ecllib DESTINATION plugins COMPONENT Runtime)
+install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_saltlib.ecllib DESTINATION ${PLUGINS_DIR} COMPONENT Runtime)
+install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_metaphone.ecllib DESTINATION ${PLUGINS_DIR} COMPONENT Runtime)
+install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_thorlib.ecllib DESTINATION ${PLUGINS_DIR} COMPONENT Runtime)
+install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_word.ecllib DESTINATION ${PLUGINS_DIR} COMPONENT Runtime)
 

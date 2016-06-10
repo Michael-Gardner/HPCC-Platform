@@ -82,6 +82,6 @@ target_link_libraries ( esdl
     )
 
 if ( UNIX )
-    install ( PROGRAMS esdl.install DESTINATION etc/init.d/install COMPONENT Runtime )
+    install ( PROGRAMS esdl.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
     install ( PROGRAMS esdl.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
 endif ( UNIX )

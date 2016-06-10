@@ -34,10 +34,10 @@ FOREACH( oFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
     ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
 )
-    install ( PROGRAMS ${oFILES} DESTINATION etc/init.d COMPONENT Runtime )
+    install ( PROGRAMS ${oFILES} DESTINATION ${INIT_DIR} COMPONENT Runtime )
 ENDFOREACH ( oFILES )
 
 if ( PLATFORM )
-    install ( PROGRAMS hpcc-init.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS hpcc-init.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS hpcc-init.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
+    install ( PROGRAMS hpcc-init.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
 endif()

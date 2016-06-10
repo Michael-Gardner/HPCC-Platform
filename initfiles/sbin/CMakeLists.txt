@@ -42,9 +42,9 @@ FOREACH( oFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/deploy-java-files.exp
     ${CMAKE_CURRENT_SOURCE_DIR}/install-hpcc.exp
 )
-    install ( PROGRAMS ${oFILES} DESTINATION sbin COMPONENT Runtime )
+    install ( PROGRAMS ${oFILES} DESTINATION ${ADMIN_DIR} COMPONENT Runtime )
 ENDFOREACH ( oFILES )
 
-install( DIRECTORY hpcc DESTINATION sbin COMPONENT Runtime
+install( DIRECTORY hpcc DESTINATION ${ADMIN_DIR} COMPONENT Runtime
          USE_SOURCE_PERMISSIONS
          PATTERN *.pyc EXCLUDE )

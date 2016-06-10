@@ -112,8 +112,7 @@ if(USE_CASSANDRA)
 
   install(
     TARGETS cassandraembed
-    DESTINATION plugins
-    COMPONENT Runtime )
+    DESTINATION ${PLUGINS_DIR}
 
   install(
     TARGETS cassandraembed
@@ -132,7 +131,7 @@ if(USE_CASSANDRA)
   if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
       FILES ${CMAKE_CURRENT_SOURCE_DIR}/cassandra.ecllib
-      DESTINATION plugins
+      DESTINATION ${PLUGINS_DIR}
       COMPONENT Runtime)
   endif()
 endif(USE_CASSANDRA)

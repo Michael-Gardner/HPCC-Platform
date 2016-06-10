@@ -14,6 +14,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-Install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/.ssh.md5 DESTINATION etc/sshkey COMPONENT Runtime )
+Install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/.ssh.md5 DESTINATION ${CONFIG_DIR}/sshkey COMPONENT Runtime )
 
 ADD_SUBDIRECTORY(.ssh)

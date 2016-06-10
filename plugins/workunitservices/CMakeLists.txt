@@ -49,7 +49,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL -DWORKUNITSERVICES_EXPORTS )
 
 HPCC_ADD_LIBRARY( workunitservices SHARED ${SRCS} )
-install ( TARGETS workunitservices DESTINATION plugins )
+install ( TARGETS workunitservices DESTINATION ${PLUGINS_DIR} )
 target_link_LIBRARies ( workunitservices 
          jlib
          mp 

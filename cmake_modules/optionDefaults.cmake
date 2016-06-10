@@ -21,32 +21,17 @@ if ( NOT CONFIG_PREFIX )
     set( CONFIG_PREFIX "/etc" )
 endif()
 
-if ( NOT DIR_NAME )
-    set( DIR_NAME "HPCCSystems" )
-endif()
-
-if ( NOT ARCHIVE_DIR )
-    set( ARCHIVE_DIR "lib" )
-endif()
-
-if ( NOT LIB_DIR )
-    set( LIB_DIR "lib" )
-endif()
-
-if ( NOT EXEC_DIR )
-    set( EXEC_DIR "bin" )
-endif()
+set(DIR_NAME "HPCCSystems" CACHE STRING "project directory name")
+set(LIB_DIR "lib" CACHE STRING "directory for libraries")
+set(EXEC_DIR "bin" CACHE STRING "directory for executables")
+set(ADMIN_DIR "sbin" CACHE STRING "directory for scripts")
+set(PLUGINS_DIR "plugins" CACHE STRING "directory for plugins")
+set(COMP_DIR "componentfiles" CACHE STRING "directory for componentfiles")
+set(TEST_DIR "testing" CACHE STRING "directory for test suite")
+set(INIT_DIR "etc/init.d" CACHE STRING "directory for installation scripts and helper scripts")
 
 if ( NOT COMPONENTFILES_DIR )
     set( COMPONENTFILES_DIR "componentfiles" )
-endif()
-
-if ( NOT ADMIN_DIR )
-    set( ADMIN_DIR "sbin" )
-endif()
-
-if ( NOT PLUGINS_DIR )
-    set( PLUGINS_DIR "plugins" )
 endif()
 
 if ( NOT CONFIG_SOURCE_DIR )
@@ -101,3 +86,4 @@ set( PLUGINS_PATH "${INSTALL_DIR}/${PLUGINS_DIR}" )
 set( LIB_PATH "${INSTALL_DIR}/${LIB_DIR}" )
 set( EXEC_PATH "${INSTALL_DIR}/${EXEC_DIR}" )
 set( ADMIN_PATH "${INSTALL_DIR}/${ADMIN_DIR}" )
+

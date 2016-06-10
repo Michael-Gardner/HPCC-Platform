@@ -129,7 +129,7 @@ IF (NOT LIBMEMCACHED_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION}/libmemcached/.libs/libmemcachedutil.so
             ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION}/libmemcached/.libs/libmemcachedutil.so.2
             ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION}/libmemcached/.libs/libmemcachedutil.so.2.0.0
-            DESTINATION lib)
+            DESTINATION ${LIB_DIR})
 
         set(LIBMEMCACHED_LIBRARIES $<TARGET_FILE:libmemcached> $<TARGET_FILE:libmemcachedutil>)
         set(LIBMEMCACHED_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/libmemcached-${LIBMEMCACHED_VERSION})

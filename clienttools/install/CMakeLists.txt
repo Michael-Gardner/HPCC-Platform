@@ -6,4 +6,4 @@ elseif (UNIX)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/postrm.in" "postrm" )
 endif(APPLE)
 
-install ( PROGRAMS post_install.sh DESTINATION etc/init.d/install COMPONENT Runtime )
+install ( PROGRAMS post_install.sh DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
