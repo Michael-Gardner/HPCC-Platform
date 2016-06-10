@@ -150,7 +150,7 @@ public:
             if (getComponentFilesRelPathFromBin(tmp))
                 optXsltPath.set(tmp.str());
             else
-                optXsltPath.set(COMPONENTFILES_DIR);
+                optXsltPath.set(COMP_DIR);
         }
 
         fullxsltpath.set(optXsltPath);

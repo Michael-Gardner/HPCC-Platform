@@ -34,7 +34,7 @@
 #define CONFIGMGR_JSPATH "./"
 #define STANDARD_COMPFILESDIR INSTALL_DIR
 
-#define STANDARD_CONFIGXMLDIR COMPONENTFILES_DIR"/configxml"
+#define STANDARD_CONFIGXMLDIR COMP_DIR"/configxml"
 
 static bool schemaNodeHasAttributes(IPropertyTree* pNode)
 {
@@ -125,7 +125,7 @@ void getInstalledComponents(const char* pszInstallDir, StringBuffer& sbOutComps,
   if (pszInstallDir && *pszInstallDir)
     sbDir.append(pszInstallDir);
   else
-    sbDir.append(COMPONENTFILES_DIR"/configxml");
+    sbDir.append(COMP_DIR"/configxml");
 
   bool getFromDirs = false;
   if (getFromDirs)

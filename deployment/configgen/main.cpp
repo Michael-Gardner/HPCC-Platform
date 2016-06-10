@@ -23,7 +23,7 @@
 #include "jhash.ipp"
 #include "portlist.h"
 
-#define STANDARD_INDIR COMPONENTFILES_DIR"/configxml"
+#define STANDARD_INDIR COMP_DIR"/configxml"
 #define STANDARD_OUTDIR RUNTIME_DIR
 
 void usage()
@@ -48,7 +48,7 @@ void usage()
   puts("          configgencomplist.xml. If not specified, the following ");
   puts("          defaults are used. ");
   puts("          For win32, 'c:\\trunk\\initfiles\\componentfiles\\configxml'");
-  puts("          For Linux, '" COMPONENTFILES_DIR "/configxml/'");
+  puts("          For Linux, '" COMP_DIR "/configxml/'");
   puts("   -od <output directory>: The output directory for the generated files.");
   puts("          If not specified, the following defaults are used. ");
   puts("          For win32, '.'");

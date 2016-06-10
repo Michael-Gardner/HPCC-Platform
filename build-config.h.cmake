@@ -31,7 +31,7 @@
 #endif
 
 #ifndef CONFIG_DIR
-    #define CONFIG_DIR "${CONFIG_DIR}"
+    #define CONFIG_DIR "/${CONFIG_DIR}"
 #endif
 
 #ifndef CONFIG_SOURCE_DIR
@@ -48,10 +48,6 @@
 
 #ifndef RUNTIME_DIR
     #cmakedefine RUNTIME_DIR "${RUNTIME_PATH}"
-#endif
-
-#ifndef HOME_DIR
-    #cmakedefine HOME_DIR "${HOME_DIR}"
 #endif
 
 #ifndef LOCK_DIR
