@@ -59,7 +59,7 @@ include_directories (
 ADD_DEFINITIONS( -D_USRDLL )
 
 HPCC_ADD_LIBRARY( ws_esdlconfig SHARED ${SRCS} )
-install ( TARGETS ws_esdlconfig RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_esdlconfig RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( ws_esdlconfig
          jlib
          esphttp

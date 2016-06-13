@@ -30,21 +30,21 @@
 #define strlwr _strlwr
 #endif
 
-#define STANDARD_CONFIG_BACKUPDIR CONFIG_DIR"/backup"
-#define STANDARD_CONFIG_SOURCEDIR CONFIG_DIR
-#define STANDARD_CONFIG_STAGED_PATH CONFIG_DIR "/" ENV_XML_FILE
+#define STANDARD_CONFIG_BACKUPDIR ABS_CONF_PATH"/backup"
+#define STANDARD_CONFIG_SOURCEDIR ABS_CONF_PATH
+#define STANDARD_CONFIG_STAGED_PATH ABS_CONF_PATH "/" ENV_XML_FILE
 
 #define DEFAULT_DIRECTORIES "<Directories name=\"" DIR_NAME "\">\
-      <Category dir=\"" EXEC_PREFIX "/log/[NAME]/[INST]\" name=\"log\"/>\
-      <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/[INST]\" name=\"run\"/>\
-      <Category dir=\"" CONFIG_PREFIX "/[NAME]/[INST]\" name=\"conf\"/>\
-      <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/[INST]/temp\" name=\"temp\"/> \
-      <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/hpcc-data/[COMPONENT]\" name=\"data\"/> \
-      <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/hpcc-data2/[COMPONENT]\" name=\"data2\"/> \
-      <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/hpcc-data3/[COMPONENT]\" name=\"data3\"/> \
-      <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/hpcc-mirror/[COMPONENT]\" name=\"mirror\"/> \
-      <Category dir=\"" EXEC_PREFIX "/lib/[NAME]/queries/[INST]\" name=\"query\"/> \
-      <Category dir=\"" EXEC_PREFIX "/lock/[NAME]/[INST]\" name=\"lock\"/> \
+      <Category dir=\""ABS_EXEC_PREFIX"/log/[NAME]/[INST]\" name=\"log\"/>\
+      <Category dir=\""ABS_EXEC_PREFIX"/lib/[NAME]/[INST]\" name=\"run\"/>\
+      <Category dir=\"" ABS_CONF_PREFIX "/[NAME]/[INST]\" name=\"conf\"/>\
+      <Category dir=\""ABS_EXEC_PREFIX"/lib/[NAME]/[INST]/temp\" name=\"temp\"/> \
+      <Category dir=\""ABS_EXEC_PREFIX"/lib/[NAME]/hpcc-data/[COMPONENT]\" name=\"data\"/> \
+      <Category dir=\""ABS_EXEC_PREFIX"/lib/[NAME]/hpcc-data2/[COMPONENT]\" name=\"data2\"/> \
+      <Category dir=\""ABS_EXEC_PREFIX"/lib/[NAME]/hpcc-data3/[COMPONENT]\" name=\"data3\"/> \
+      <Category dir=\""ABS_EXEC_PREFIX"/lib/[NAME]/hpcc-mirror/[COMPONENT]\" name=\"mirror\"/> \
+      <Category dir=\""ABS_EXEC_PREFIX"/lib/[NAME]/queries/[INST]\" name=\"query\"/> \
+      <Category dir=\""ABS_EXEC_PREFIX"/lock/[NAME]/[INST]\" name=\"lock\"/> \
       </Directories>"
 #include <vector>
 
@@ -1370,7 +1370,7 @@ bool CWsDeployFileInfo::saveSetting(IEspContext &context, IEspSaveSettingRequest
             StringBuffer rundir;
 
             if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", pszCompType, pszNewValue, rundir))
-              rundir.clear().appendf(RUNTIME_DIR"/%s", pszNewValue);
+              rundir.clear().appendf(ABS_RUNTIME_PATH"/%s", pszNewValue);
 
             Owned<IPropertyTreeIterator> iterInsts = pComp->getElements(XML_TAG_INSTANCE);
 
@@ -1477,7 +1477,7 @@ bool CWsDeployFileInfo::saveSetting(IEspContext &context, IEspSaveSettingRequest
               StringBuffer sb;
               StringBuffer rundir;
               if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", pszCompType, pszCompName, rundir))
-                sb.clear().appendf(RUNTIME_DIR"/%s", pszCompName);
+                sb.clear().appendf(ABS_RUNTIME_PATH"/%s", pszCompName);
               else
                 sb.clear().append(rundir);
 
@@ -4393,7 +4393,7 @@ bool CWsDeployFileInfo::handleInstance(IEspContext &context, IEspHandleInstanceR
           {
             StringBuffer rundir;
             if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"),"run",buildSet,compName,rundir))
-              sb.clear().appendf(RUNTIME_DIR"/%s", compName);
+              sb.clear().appendf(ABS_RUNTIME_PATH"/%s", compName);
             else
               sb.clear().append(rundir);
 
@@ -5538,7 +5538,7 @@ const char* CWsDeployFileInfo::GetDisplayProcessName(const char* processName, ch
 
 void CWsDeployFileInfo::setFilePath(StringBuffer &filePath, const char* targetName)
 {
-  filePath.clear().append(CONFIG_SOURCE_DIR);
+  filePath.clear().append(ABS_CONF_SOURCE_PATH);
 
   if (filePath.charAt(filePath.length() - 1) != PATHSEPCHAR)
     filePath.append(PATHSEPCHAR);
@@ -7243,7 +7243,7 @@ bool CWsDeployFileInfo::checkForRequiredComponents(IPropertyTree* pEnvRoot, cons
       const char* cfgpath = pEnvParams->queryProp("configs");
 
       if (!cfgpath || !*cfgpath)
-        cfgpath = CONFIG_DIR;
+        cfgpath = ABS_CONF_PATH;
 
       genEnvConf.clear().append(cfgpath);
 

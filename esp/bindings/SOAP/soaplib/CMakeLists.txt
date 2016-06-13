@@ -67,7 +67,7 @@ if (WIN32)
     HPCC_ADD_LIBRARY( soaplib STATIC ${SRCS} )
 else (WIN32)
     HPCC_ADD_LIBRARY( soaplib SHARED ${SRCS} )
-    install ( TARGETS soaplib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+    install ( TARGETS soaplib RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
     target_link_libraries (soaplib 
         jlib
         )

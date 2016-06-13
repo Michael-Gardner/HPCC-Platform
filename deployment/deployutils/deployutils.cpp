@@ -32,9 +32,9 @@
 #define TRACE_SCHEMA_NODE(msg, schemaNode)
 
 #define CONFIGMGR_JSPATH "./"
-#define STANDARD_COMPFILESDIR INSTALL_DIR
+#define STANDARD_COMPFILESDIR ABS_INSTALL_PATH
 
-#define STANDARD_CONFIGXMLDIR COMP_DIR"/configxml"
+#define STANDARD_CONFIGXMLDIR ABS_COMP_PATH"/configxml"
 
 static bool schemaNodeHasAttributes(IPropertyTree* pNode)
 {
@@ -125,7 +125,7 @@ void getInstalledComponents(const char* pszInstallDir, StringBuffer& sbOutComps,
   if (pszInstallDir && *pszInstallDir)
     sbDir.append(pszInstallDir);
   else
-    sbDir.append(COMP_DIR"/configxml");
+    sbDir.append(ABS_COMP_PATH"/configxml");
 
   bool getFromDirs = false;
   if (getFromDirs)
@@ -1860,7 +1860,7 @@ IPropertyTree* generateTreeFromXsd(const IPropertyTree* pEnv, IPropertyTree* pSc
       const char* cfgpath = pEnvParams->queryProp("configs");
 
       if (!cfgpath || !*cfgpath)
-        cfgpath = CONFIG_DIR;
+        cfgpath = ABS_CONF_PATH;
 
       genEnvConf.clear().append(cfgpath);
 
@@ -3317,7 +3317,7 @@ void addInstanceToCompTree(const IPropertyTree* pEnvRoot,const IPropertyTree* pI
         {
           StringBuffer rundir;
           if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", processName, compName, rundir))
-            sb.clear().appendf(RUNTIME_DIR"/%s", compName);
+            sb.clear().appendf(ABS_RUNTIME_PATH"/%s", compName);
           else
             sb.clear().append(rundir);
 

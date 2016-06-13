@@ -1,69 +1,41 @@
-#ifndef PREFIX
-    #cmakedefine PREFIX "${PREFIX}"
+#ifndef ABS_EXEC_PREFIX
+    #cmakedefine ABS_EXEC_PREFIX "${ABS_EXEC_PREFIX}"
 #endif
 
-#ifndef EXEC_PREFIX
-    #cmakedefine EXEC_PREFIX "${EXEC_PREFIX}"
-#endif
-
-#ifndef CONFIG_PREFIX
-    #cmakedefine CONFIG_PREFIX "${CONFIG_PREFIX}"
+#ifndef ABS_CONF_PREFIX
+    #cmakedefine ABS_CONF_PREFIX "${ABS_CONF_PREFIX}"
 #endif
 
 #ifndef DIR_NAME
     #cmakedefine DIR_NAME "${DIR_NAME}"
 #endif
 
-#ifndef INSTALL_DIR
-    #define INSTALL_DIR "${INSTALL_DIR}"
+#ifndef ABS_INSTALL_PATH
+    #define ABS_INSTALL_PATH "${ABS_INSTALL_PATH}"
 #endif
 
-#ifndef LIB_DIR
-    #cmakedefine LIB_DIR "${LIB_PATH}"
+#ifndef ABS_COMP_PATH
+    #cmakedefine ABS_COMP_PATH "${ABS_COMP_PATH}"
 #endif
 
-#ifndef EXEC_DIR
-    #cmakedefine EXEC_DIR "${EXEC_PATH}"
+#ifndef ABS_CONF_PATH
+    #define ABS_CONF_PATH "${ABS_CONF_PATH}"
 #endif
 
-#ifndef COMPONENTFILES_DIR
-    #cmakedefine COMPONENTFILES_DIR "${COMPONENTFILES_PATH}"
+#ifndef ABS_CONF_SOURCE_PATH
+    #cmakedefine ABS_CONF_SOURCE_PATH "${ABS_CONF_SOURCE_PATH}"
 #endif
 
-#ifndef CONFIG_DIR
-    #define CONFIG_DIR "/${CONFIG_DIR}"
+#ifndef ABS_CLASS_PATH
+    #cmakedefine ABS_CLASS_PATH "${ABS_CLASS_PATH}"
 #endif
 
-#ifndef CONFIG_SOURCE_DIR
-    #cmakedefine CONFIG_SOURCE_DIR "${CONFIG_SOURCE_PATH}"
+#ifndef ABS_SBIN_PATH    
+    #cmakedefine ABS_SBIN_PATH "${ABS_SBIN_PATH}"
 #endif
 
-#ifndef ADMIN_DIR
-    #cmakedefine ADMIN_DIR "${ADMIN_PATH}"
-#endif
-
-#ifndef PLUGINS_DIR
-    #cmakedefine PLUGINS_DIR "${PLUGINS_PATH}"
-#endif
-
-#ifndef RUNTIME_DIR
-    #cmakedefine RUNTIME_DIR "${RUNTIME_PATH}"
-#endif
-
-#ifndef LOCK_DIR
-    #cmakedefine LOCK_DIR "${LOCK_PATH}"
-#endif
-
-#ifndef PID_DIR
-    #cmakedefine PID_DIR "${PID_PATH}"
-#endif
-
-#ifndef LOG_DIR
-    #cmakedefine LOG_DIR "${LOG_PATH}"
-#endif
-
-#ifndef RUNTIME_USER
-    #cmakedefine RUNTIME_USER "${RUNTIME_USER}"
+#ifndef ABS_RUNTIME_PATH
+    #cmakedefine ABS_RUNTIME_PATH "${ABS_RUNTIME_PATH}"
 #endif
 
 #ifndef ENV_XML_FILE

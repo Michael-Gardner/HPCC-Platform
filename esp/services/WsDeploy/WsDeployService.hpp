@@ -240,7 +240,7 @@ private:
 
       virtual void main()
       {
-        Owned<IFile> configFiles = createIFile(CONFIG_SOURCE_DIR);
+        Owned<IFile> configFiles = createIFile(ABS_CONF_SOURCE_PATH);
 
         while ( m_quitThread == false )
         {

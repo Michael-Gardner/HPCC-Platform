@@ -40,7 +40,7 @@ include_directories (
 ADD_DEFINITIONS ( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( configgen ${SRCS} )
-install ( TARGETS configgen DESTINATION ${ADMIN_DIR} )
+install ( TARGETS configgen DESTINATION ${SBIN_DIR} )
 target_link_libraries ( configgen 
         deploy 
         jlib 

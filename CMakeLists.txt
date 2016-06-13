@@ -73,25 +73,7 @@ if ("${BUILD_LEVEL}" STREQUAL "COMMUNITY")
     set ( HPCC_PROJECT_ABBR  "CC")
 endif()
 
-###
-## Config Block
-###
-option(PREFIX "Set the install prefix")
-option(EXEC_PREFIX "Set the execution prefix")
-option(CONFIG_PREFIX "Set the configuration prefix")
-option(COMPONENTFILES_DIR "Set the componentfiles dir")
-option(CONFIG_SOURCE_DIR "Set the configuration source dir")
-option(RUNTIME_DIR "Set the runtime dir")
-option(HOME_DIR "Set the home dir")
-option(LOCK_DIR "Set the lock dir")
-option(PID_DIR "Set the pid dir")
-option(LOG_DIR "Set the log dir")
-option(RUNTIME_USER "Set the runtime username")
-option(RUNTIME_GROUP "Set the runtime group")
-option(ENV_XML_FILE "Set the environment xml file name.")
-option(ENV_CONF_FILE "Set the environment conf file name.")
 option(LICENSE_FILE "Set the license file to use.")
-
 if(NOT LICENSE_FILE)
     if(REMBED)
         set(LICENSE_FILE "R-LICENSE.txt")

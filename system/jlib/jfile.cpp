@@ -2788,7 +2788,7 @@ static inline bool isPCFlushAllowed()
     CriticalBlock block(flushsect);
     if (gbl_flush_allowed == FLUSH_INIT)
     {
-        Owned<IProperties> conf = createProperties(CONFIG_DIR PATHSEPSTR "environment.conf", true);
+        Owned<IProperties> conf = createProperties(ABS_CONF_PATH PATHSEPSTR "environment.conf", true);
         if (conf->getPropBool("allow_pgcache_flush", true))
             gbl_flush_allowed = FLUSH_ALLOWED;
         else

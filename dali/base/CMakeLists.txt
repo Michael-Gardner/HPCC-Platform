@@ -72,7 +72,7 @@ HPCC_ADD_LIBRARY( dalibase SHARED ${SRCS} ${INCLUDES} )
 if(NOT PLUGIN)
     install(
         TARGETS dalibase
-        RUNTIME DESTINATION ${EXEC_DIR}
+        RUNTIME DESTINATION ${BIN_DIR}
         LIBRARY DESTINATION ${LIB_DIR})
     target_link_libraries(
         dalibase 

@@ -23,8 +23,8 @@
 #include "jhash.ipp"
 #include "portlist.h"
 
-#define STANDARD_INDIR COMP_DIR"/configxml"
-#define STANDARD_OUTDIR RUNTIME_DIR
+#define STANDARD_INDIR ABS_COMP_PATH"/configxml"
+#define STANDARD_OUTDIR ABS_RUNTIME_PATH
 
 void usage()
 {
@@ -48,11 +48,11 @@ void usage()
   puts("          configgencomplist.xml. If not specified, the following ");
   puts("          defaults are used. ");
   puts("          For win32, 'c:\\trunk\\initfiles\\componentfiles\\configxml'");
-  puts("          For Linux, '" COMP_DIR "/configxml/'");
+  puts("          For Linux, '" ABS_COMP_PATH "/configxml/'");
   puts("   -od <output directory>: The output directory for the generated files.");
   puts("          If not specified, the following defaults are used. ");
   puts("          For win32, '.'");
-  puts("          For Linux, '" CONFIG_DIR "'");
+  puts("          For Linux, '" ABS_CONF_PATH "'");
   puts("   -ldapconfig : Generates a .ldaprc file and puts it in the specified");
   puts("          output directory. If output directory is not specified,");
   puts("          default output directory is used as mentioned in -od option");

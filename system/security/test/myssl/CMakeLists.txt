@@ -38,7 +38,7 @@ include_directories (
 ADD_DEFINITIONS( -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( myssl ${SRCS} )
-install ( TARGETS myssl RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS myssl RUNTIME DESTINATION ${BIN_DIR} )
 target_link_libraries ( myssl 
          jlib
          securesocket 

@@ -99,7 +99,7 @@ include_directories (
 ADD_DEFINITIONS( -DTHORHELPER_EXPORTS -D_USRDLL )
 
 HPCC_ADD_LIBRARY( thorhelper SHARED ${SRCS} )
-install ( TARGETS thorhelper RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS thorhelper RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( thorhelper 
          jlib 
          nbcd 

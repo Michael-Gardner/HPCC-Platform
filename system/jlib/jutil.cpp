@@ -2291,7 +2291,7 @@ IPropertyTree *getHPCCEnvironment(const char *configFileName)
 #ifdef _WIN32 
         return NULL;
 #else
-        configFileSpec.set(CONFIG_DIR).append(PATHSEPSTR).append("environment.conf");
+        configFileSpec.set(ABS_CONF_PATH).append(PATHSEPSTR).append("environment.conf");
 #endif  
     Owned<IProperties> props = createProperties(configFileSpec.str());
     if (props)
@@ -2336,7 +2336,7 @@ jlib_decl bool querySecuritySettings(bool *          _useSSL,
             {
                 StringBuffer configFileSpec;
 #ifndef _WIN32
-                configFileSpec.set(CONFIG_DIR).append(PATHSEPSTR).append("environment.conf");
+                configFileSpec.set(ABS_CONF_PATH).append(PATHSEPSTR).append("environment.conf");
 #endif
                 Owned<IProperties> conf = createProperties(configFileSpec.str(), true);
                 useSSL = conf->getPropBool("dfsUseSSL", false);

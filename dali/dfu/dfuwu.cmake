@@ -44,7 +44,7 @@ set_target_properties ( dfuwu PROPERTIES
         COMPILE_FLAGS "-DLOGMSGCOMPONENT=3 -D_USRDLL"
         DEFINE_SYMBOL DALI_EXPORTS 
         )
-install ( TARGETS dfuwu RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS dfuwu RUNTIME DESTINATION ${BIN_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( dfuwu 
          workunit
          jlib

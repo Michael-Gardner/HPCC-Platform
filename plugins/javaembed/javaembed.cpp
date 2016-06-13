@@ -101,7 +101,7 @@ public:
             newPath.append(origPath).append(ENVSEPCHAR);
         }
         StringBuffer envConf;
-        envConf.append(CONFIG_DIR).append(PATHSEPSTR).append("environment.conf");
+        envConf.append(ABS_CONF_PATH).append(PATHSEPSTR).append("environment.conf");
         Owned<IProperties> conf = createProperties(envConf.str(), true);
         if (conf && conf->hasProp("classpath"))
         {
@@ -110,7 +110,7 @@ public:
         }
         else
         {
-            newPath.append(INSTALL_DIR).append(PATHSEPCHAR).append("classes").append(ENVSEPCHAR);
+            newPath.append(ABS_CLASS_PATH).append(ENVSEPCHAR);
         }
         newPath.append(".");
         optionStrings.append(newPath);

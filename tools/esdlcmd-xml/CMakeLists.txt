@@ -41,7 +41,7 @@ ADD_DEFINITIONS( -D_CONSOLE -O0 )
 HPCC_ADD_EXECUTABLE ( esdl-xml ${SRCS} )
 
 MESSAGE("----INSTALLING ESDL-XML")
-install ( TARGETS esdl-xml RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS esdl-xml RUNTIME DESTINATION ${BIN_DIR} )
 if ( UNIX )
     install ( PROGRAMS esdl-xml.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
     install ( PROGRAMS esdl-xml.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )

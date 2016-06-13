@@ -19,8 +19,8 @@
 #include "deployutils.hpp"
 #include "build-config.h"
 
-#define ENVGEN_PATH_TO_ESP_CONFIG INSTALL_DIR "" CONFIG_DIR "/configmgr/esp.xml"
-#define STANDARD_CONFIGXMLDIR COMP_DIR"/configxml/"
+#define ENVGEN_PATH_TO_ESP_CONFIG ABS_CONF_PATH "/configmgr/esp.xml"
+#define STANDARD_CONFIGXMLDIR ABS_COMP_PATH"/configxml/"
 #define STANDARD_CONFIG_BUILDSETFILE "buildset.xml"
 
 bool validateInteger(const char *str,int &out)

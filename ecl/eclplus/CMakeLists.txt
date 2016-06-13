@@ -62,7 +62,7 @@ ADD_DEFINITIONS( -DECLPLUS_EXPORTS -D_CONSOLE )
 
 HPCC_ADD_EXECUTABLE ( eclplus ${SRCS} )
 add_dependencies ( eclplus espscm )
-install ( TARGETS eclplus RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS eclplus RUNTIME DESTINATION ${BIN_DIR} )
 target_link_libraries (  eclplus 
          jlib
          esphttp 

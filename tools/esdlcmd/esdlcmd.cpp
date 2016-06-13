@@ -25,7 +25,7 @@
 #include "esdlcmd_common.hpp"
 #include "esdlcmd_core.hpp"
 
-#define SYSTEMCONFDIR CONFIG_DIR
+#define SYSTEMCONFDIR ABS_CONF_PATH
 #define SYSTEMCONFFILE ENV_CONF_FILE
 
 
