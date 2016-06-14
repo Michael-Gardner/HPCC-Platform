@@ -14,7 +14,7 @@
 #    limitations under the License.
 ################################################################################
 
-FOREACH ( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/esp_service_ecldirect.xsl
     ${CMAKE_CURRENT_SOURCE_DIR}/esp_service.xsl
     ${CMAKE_CURRENT_SOURCE_DIR}/wsecl_onchange.xslt
@@ -25,5 +25,5 @@ FOREACH ( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/esp_service_DynamicESDL.xsl
     ${CMAKE_CURRENT_SOURCE_DIR}/esp_service_wslogging.xsl
 )
-    Install ( FILES ${iFILES} DESTINATION ${COMP_DIR}/configxml/@temp COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    install(FILES ${iFILES} DESTINATION ${COMP_DIR}/configxml/@temp COMPONENT Runtime)
+endforeach(iFILES)

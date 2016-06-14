@@ -15,9 +15,9 @@
 ################################################################################
 
 cmake_minimum_required(VERSION 2.8)
-PROJECT(initfiles)
+project(initfiles)
 
-if ( PLATFORM AND UNIX )
+if(PLATFORM AND UNIX)
     HPCC_ADD_EXECUTABLE(processor processor.cpp)
 
     MACRO(GENERATE_BASH processor bash-vars in out)
@@ -38,12 +38,12 @@ if ( PLATFORM AND UNIX )
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/bash-vars.in" "${CMAKE_BINARY_DIR}/bash-vars")
     set(bash-vars "${CMAKE_BINARY_DIR}/bash-vars")
 
-    ADD_SUBDIRECTORY(bash)
-    ADD_SUBDIRECTORY(bin)
-    ADD_SUBDIRECTORY(etc)
-    ADD_SUBDIRECTORY(sbin)
-    ADD_SUBDIRECTORY(componentfiles)
-endif ()
+    add_subdirectory(packaging)
+    add_subdirectory(bin)
+    add_subdirectory(etc)
+    add_subdirectory(sbin)
+    add_subdirectory(componentfiles)
+endif()
 
-Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples DESTINATION ${EXAMPLE_DIR} COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE )
-Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/classes DESTINATION ${CLASS_DIR} COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE )
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/examples DESTINATION ${EXAMPLE_DIR} COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/classes DESTINATION ${CLASS_DIR} COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE)

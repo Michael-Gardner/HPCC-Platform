@@ -14,12 +14,14 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
+set(outFiles)
 GENERATE_BASH(processor ${bash-vars} "init_dafilesrv.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "init_eclagent.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bin ALL DEPENDS ${outFiles})
+GENERATE_BASH(processor ${bash-vars} "run_ftslave.in" outFiles)
+GENERATE_BASH(processor ${bash-vars} "start_backupnode.in" outFiles)
+add_custom_target(ProcessFiles-initfiles-bin ALL DEPENDS ${outFiles})
 
-FOREACH( iFILES
+foreach(iFILES
     ${outFiles}
     ${CMAKE_CURRENT_SOURCE_DIR}/init_configesp
     ${CMAKE_CURRENT_SOURCE_DIR}/init_dali
@@ -32,7 +34,14 @@ FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/init_roxie_cluster
     ${CMAKE_CURRENT_SOURCE_DIR}/init_sasha
     ${CMAKE_CURRENT_SOURCE_DIR}/init_thor
+    ${CMAKE_CURRENT_SOURCE_DIR}/get_thor_options
+    ${CMAKE_CURRENT_SOURCE_DIR}/multiscp
+    ${CMAKE_CURRENT_SOURCE_DIR}/multissh
+    ${CMAKE_CURRENT_SOURCE_DIR}/scpslaves
+    ${CMAKE_CURRENT_SOURCE_DIR}/setup_nfs
+    ${CMAKE_CURRENT_SOURCE_DIR}/setup_one_nfs
+    ${CMAKE_CURRENT_SOURCE_DIR}/sshslaves
     ${CMAKE_CURRENT_SOURCE_DIR}/init_thorslave
 )
-    install ( PROGRAMS ${iFILES} DESTINATION ${BIN_DIR} COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+    install(PROGRAMS ${iFILES} DESTINATION ${BIN_DIR} COMPONENT Runtime)
+endforeach(iFILES)

@@ -26,12 +26,10 @@ GENERATE_BASH(processor ${bash-vars} "hpcc-push.sh.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "hpcc-run.sh.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "remote-install-engine.sh.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "deploy-java-files.sh.in" outFiles)
-
-SET(noInstall)
-GENERATE_BASH(processor ${bash-vars} "prerm.in" noInstall)
+GENERATE_BASH(processor ${bash-vars} "hpcc_common.in" outFiles)
 
 
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-sbin ALL DEPENDS ${outFiles} ${noInstall})
+ADD_CUSTOM_TARGET(ProcessFiles-initfiles-sbin ALL DEPENDS ${outFiles})
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/regex.awk.in.cmake" "${CMAKE_CURRENT_BINARY_DIR}/regex.awk")
 
 FOREACH( oFILES
@@ -41,6 +39,12 @@ FOREACH( oFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cluster_script.py
     ${CMAKE_CURRENT_SOURCE_DIR}/deploy-java-files.exp
     ${CMAKE_CURRENT_SOURCE_DIR}/install-hpcc.exp
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc_common
+    ${CMAKE_CURRENT_SOURCE_DIR}/pid.sh
+    ${CMAKE_CURRENT_SOURCE_DIR}/lock.sh
+    ${CMAKE_CURRENT_SOURCE_DIR}/export-path
+    ${CMAKE_CURRENT_SOURCE_DIR}/init-functions
+    ${CMAKE_CURRENT_SOURCE_DIR}/lsb-base-logging.sh
 )
     install ( PROGRAMS ${oFILES} DESTINATION ${SBIN_DIR} COMPONENT Runtime )
 ENDFOREACH ( oFILES )

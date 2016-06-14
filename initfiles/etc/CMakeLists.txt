@@ -14,6 +14,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
+add_subdirectory(init.d)
 ADD_SUBDIRECTORY(DIR_NAME)
-ADD_SUBDIRECTORY(sshkey)
 ADD_SUBDIRECTORY(bash_completion)

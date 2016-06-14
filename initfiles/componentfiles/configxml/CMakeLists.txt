@@ -14,20 +14,20 @@
 #    limitations under the License.
 ################################################################################
 
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/dropzone.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/dropzone.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/eclagent_config.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/eclagent_config.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/esp.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/esp.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/espsmcservice.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/espsmcservice.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/ftslave_linux.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/ftslave_linux.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/roxie.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/roxie.xsd)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/thor.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/thor.xsd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dropzone.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/dropzone.xsd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/eclagent_config.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/eclagent_config.xsd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/esp.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/esp.xsd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/espsmcservice.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/espsmcservice.xsd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ftslave_linux.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/ftslave_linux.xsd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/roxie.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/roxie.xsd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/thor.xsd.in ${CMAKE_CURRENT_BINARY_DIR}/thor.xsd)
 
 if("${HPCC_PROJECT_ABBR}" STREQUAL "CC")
     configure_file("buildset${HPCC_PROJECT_ABBR}.xml.in" "buildset.xml")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/buildset.xml DESTINATION componentfiles/configxml COMPONENT Runtime)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/buildset.xml DESTINATION ${COMP_DIR}/configxml COMPONENT Runtime)
 endif()
 
-FOREACH( iFILES
+foreach(iFILES
     ${CMAKE_CURRENT_BINARY_DIR}/dropzone.xsd
     ${CMAKE_CURRENT_BINARY_DIR}/eclagent_config.xsd
     ${CMAKE_CURRENT_BINARY_DIR}/esp.xsd
@@ -88,7 +88,7 @@ FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/wslogging.xsd
     ${CMAKE_CURRENT_SOURCE_DIR}/daliplugin.xsd
 )
-    Install ( FILES ${iFILES} DESTINATION ${COMP_DIR}/configxml COMPONENT Runtime)
-ENDFOREACH ( iFILES )
+    install(FILES ${iFILES} DESTINATION ${COMP_DIR}/configxml COMPONENT Runtime)
+endforeach(iFILES)
 
-add_subdirectory (@temp)
+add_subdirectory(@temp)

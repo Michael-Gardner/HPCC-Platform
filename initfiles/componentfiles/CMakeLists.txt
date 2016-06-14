@@ -14,7 +14,7 @@
 #    limitations under the License.
 ################################################################################
 
-ADD_SUBDIRECTORY(ftslave)
-ADD_SUBDIRECTORY(configxml)
-ADD_SUBDIRECTORY(thor)
-ADD_SUBDIRECTORY(launcher)
+add_subdirectory(ftslave)
+add_subdirectory(configxml)
+add_subdirectory(thor)
+add_subdirectory(launcher)

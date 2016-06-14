@@ -14,8 +14,15 @@
 #    limitations under the License.
 ################################################################################
 
-ADD_SUBDIRECTORY(deb)
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "bash_postinst.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bash-sbin ALL DEPENDS ${outFiles})
+GENERATE_BASH(processor ${bash-vars} "dafilesrv.in" outFiles)
+GENERATE_BASH(processor ${bash-vars} "hpcc-init.in" outFiles)
 
+foreach(iFile
+        ${CMAKE_CURRENT_BINARY_DIR}/dafilesrv
+        ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init
+        ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
+        ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
+        ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init.service
+        ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init@.service)
+    install(PROGRAMS ${iFILE} DESTINATION ${INIT_DIR} COMPONENT Runtime)
+endforeach(iFile)
