@@ -15,33 +15,8 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
-# Restore install link if it was present
-#######################
-linkf=/tmp/.hpccinslink
-if [[ -f ${linkf} ]] ; then
-   if [[ -n ${INSTALL_DIR} ]] ; then
-      if [[ ! -d ${INSTALL_DIR} ]] ; then
-         linkinfo=$(cat "${linkf}")
-         if [[ -n ${linkinfo} ]] ; then
-            ln -s ${linkinfo}
-         fi
-      fi
-   fi
-   rm -f ${linkf}
+if id @RUNTIME_USER@ > /dev/null 2>&1; then
+  userdel --remove @RUNTIME_USER@ > /dev/null 2>&1 || exit 1
 fi
 
-# On some systems, when running an update (as opposed to a remove) the postinstall script does
-# not get run. To work around that issue, we run the post-install actions in the post-remove script
-# (which IS run)
-#
-# If the install dir is still present post-removal, must be an update
-
-if [ -f "${INSTALL_DIR}/etc/init.d/install-init" ]; then
-    ${INSTALL_DIR}/etc/init.d/install-init
-else
-   [ -d ${INSTALL_DIR}/sbin ] && rm -rf  ${INSTALL_DIR}/sbin
-   [ -d ${INSTALL_DIR}/bin ] && rm -rf  ${INSTALL_DIR}/bin
-   exit 0
-fi
+exit 0

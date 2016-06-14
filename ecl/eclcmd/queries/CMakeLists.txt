@@ -52,8 +52,3 @@ target_link_libraries ( ecl-queries
         esphttp
         workunit
     )
-
-if (UNIX)
-    install ( PROGRAMS ecl-queries.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-queries.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
-endif (UNIX)

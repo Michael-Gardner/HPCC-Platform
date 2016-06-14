@@ -24,6 +24,7 @@
 #include "dadfs.hpp"
 #include "jencrypt.hpp"
 #include "confighelper.hpp"
+#include "build-config.h"
 
 #ifdef _WINDOWS
 #include <winsock2.h>
@@ -1370,7 +1371,7 @@ bool CWsDeployFileInfo::saveSetting(IEspContext &context, IEspSaveSettingRequest
             StringBuffer rundir;
 
             if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", pszCompType, pszNewValue, rundir))
-              rundir.clear().appendf(ABS_RUNTIME_PATH"/%s", pszNewValue);
+              rundir.clear().appendf(ABS_RUNTIME_PATH"/"DIR_NAME"/%s", pszNewValue);
 
             Owned<IPropertyTreeIterator> iterInsts = pComp->getElements(XML_TAG_INSTANCE);
 
@@ -1477,7 +1478,7 @@ bool CWsDeployFileInfo::saveSetting(IEspContext &context, IEspSaveSettingRequest
               StringBuffer sb;
               StringBuffer rundir;
               if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", pszCompType, pszCompName, rundir))
-                sb.clear().appendf(ABS_RUNTIME_PATH"/%s", pszCompName);
+                sb.clear().appendf(ABS_RUNTIME_PATH"/"DIR_NAME"/%s", pszCompName);
               else
                 sb.clear().append(rundir);
 
@@ -4393,7 +4394,7 @@ bool CWsDeployFileInfo::handleInstance(IEspContext &context, IEspHandleInstanceR
           {
             StringBuffer rundir;
             if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"),"run",buildSet,compName,rundir))
-              sb.clear().appendf(ABS_RUNTIME_PATH"/%s", compName);
+              sb.clear().appendf(ABS_RUNTIME_PATH"/"DIR_NAME"/%s", compName);
             else
               sb.clear().append(rundir);
 

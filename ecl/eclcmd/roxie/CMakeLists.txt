@@ -54,8 +54,3 @@ target_link_libraries ( ecl-roxie
         esphttp
         workunit
     )
-
-if (UNIX)
-    install ( PROGRAMS ecl-roxie.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-roxie.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
-endif (UNIX)

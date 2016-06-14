@@ -70,8 +70,3 @@ IF (USE_OPENSSL)
     	securesocket
     )
 ENDIF()
-
-if ( PLATFORM )
-    install ( PROGRAMS configesp.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
-    install ( PROGRAMS configesp.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
-endif()

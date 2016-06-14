@@ -3317,7 +3317,7 @@ void addInstanceToCompTree(const IPropertyTree* pEnvRoot,const IPropertyTree* pI
         {
           StringBuffer rundir;
           if (!getConfigurationDirectory(pEnvRoot->queryPropTree("Software/Directories"), "run", processName, compName, rundir))
-            sb.clear().appendf(ABS_RUNTIME_PATH"/%s", compName);
+            sb.clear().appendf(ABS_RUNTIME_PATH"/"DIR_NAME"/%s", compName);
           else
             sb.clear().append(rundir);
 

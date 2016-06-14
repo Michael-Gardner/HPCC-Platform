@@ -14,41 +14,47 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc_setenv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "complete-uninstall.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "keygen.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "add_conf_settings.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "rm_conf_settings.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "configmgr.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "install-cluster.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc-push.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc-run.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "remote-install-engine.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "deploy-java-files.sh.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc_common.in" outFiles)
+configure_file(hpcc_setenv.in hpcc_setenv @ONLY)
+configure_file(complete-uninstall.sh.in complete-uninstall.sh @ONLY)
+configure_file(keygen.sh.in keygen.sh @ONLY)
+configure_file(add_conf_settings.sh.in add_conf_settings.sh @ONLY)
+configure_file(rm_conf_settings.sh.in rm_conf_settings.sh @ONLY)
+configure_file(configmgr.in configmgr @ONLY)
+configure_file(install-cluster.sh.in install-cluster.sh @ONLY)
+configure_file(hpcc-push.in hpcc-push @ONLY)
+configure_file(hpcc-run.in hpcc-run @ONLY)
+configure_file(remote-install-engine.sh.in remote-install-engine.sh @ONLY)
+configure_file(deploy-java-files.sh.in deploy-java-files.sh @ONLY)
+configure_file(hpcc_common.in hpcc_common @ONLY)
+configure_file(regex.awk.in regex.awk @ONLY)
 
+foreach(oFILES
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc_common
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc_setenv
+    ${CMAKE_CURRENT_SOURCE_DIR}/hpcc_pid
+    ${CMAKE_CURRENT_SOURCE_DIR}/hpcc_lock
+    ${CMAKE_CURRENT_SOURCE_DIR}/hpcc_export_path
+    ${CMAKE_CURRENT_SOURCE_DIR}/hpcc_init_functions
+    ${CMAKE_CURRENT_SOURCE_DIR}/hpcc_lsb_base_logging
 
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-sbin ALL DEPENDS ${outFiles})
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/regex.awk.in.cmake" "${CMAKE_CURRENT_BINARY_DIR}/regex.awk")
-
-FOREACH( oFILES
-    ${outFiles}
     ${CMAKE_CURRENT_BINARY_DIR}/regex.awk
+    ${CMAKE_CURRENT_BINARY_DIR}/complete-uninstall.sh
+    ${CMAKE_CURRENT_BINARY_DIR}/keygen.sh
+    ${CMAKE_CURRENT_BINARY_DIR}/add_conf_settings.sh
+    ${CMAKE_CURRENT_BINARY_DIR}/rm_conf_settings.sh
+    ${CMAKE_CURRENT_BINARY_DIR}/configmgr
+    ${CMAKE_CURRENT_BINARY_DIR}/install-cluster.sh
+    ${CMAKE_CURRENT_BINARY_DIR}/remote-install-engine.sh
+    ${CMAKE_CURRENT_BINARY_DIR}/deploy-java-files.sh
     ${CMAKE_CURRENT_SOURCE_DIR}/alter_confs.sh
     ${CMAKE_CURRENT_SOURCE_DIR}/cluster_script.py
-    ${CMAKE_CURRENT_SOURCE_DIR}/deploy-java-files.exp
     ${CMAKE_CURRENT_SOURCE_DIR}/install-hpcc.exp
-    ${CMAKE_CURRENT_BINARY_DIR}/hpcc_common
-    ${CMAKE_CURRENT_SOURCE_DIR}/pid.sh
-    ${CMAKE_CURRENT_SOURCE_DIR}/lock.sh
-    ${CMAKE_CURRENT_SOURCE_DIR}/export-path
-    ${CMAKE_CURRENT_SOURCE_DIR}/init-functions
-    ${CMAKE_CURRENT_SOURCE_DIR}/lsb-base-logging.sh
 )
-    install ( PROGRAMS ${oFILES} DESTINATION ${SBIN_DIR} COMPONENT Runtime )
-ENDFOREACH ( oFILES )
+    install(PROGRAMS ${oFILES} DESTINATION ${SBIN_DIR} COMPONENT Runtime)
+endforeach(oFILES)
 
-install( DIRECTORY hpcc DESTINATION ${SBIN_DIR} COMPONENT Runtime
-         USE_SOURCE_PERMISSIONS
-         PATTERN *.pyc EXCLUDE )
+install(DIRECTORY hpcc
+    DESTINATION ${SBIN_DIR}
+    COMPONENT Runtime
+    USE_SOURCE_PERMISSIONS
+    PATTERN *.pyc EXCLUDE)

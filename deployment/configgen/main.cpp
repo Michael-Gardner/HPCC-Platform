@@ -24,7 +24,7 @@
 #include "portlist.h"
 
 #define STANDARD_INDIR ABS_COMP_PATH"/configxml"
-#define STANDARD_OUTDIR ABS_RUNTIME_PATH
+#define STANDARD_OUTDIR ABS_RUNTIME_PATH"/"DIR_NAME
 
 void usage()
 {

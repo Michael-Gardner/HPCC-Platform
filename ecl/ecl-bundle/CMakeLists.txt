@@ -64,8 +64,3 @@ target_link_libraries ( ecl-bundle
         esphttp
         workunit
     )
-
-if ( UNIX )
-    install ( PROGRAMS ecl-bundle.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-bundle.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
-endif ( UNIX )

@@ -15,5 +15,7 @@
 #    limitations under the License.
 ################################################################################
 add_subdirectory(init.d)
-ADD_SUBDIRECTORY(DIR_NAME)
-ADD_SUBDIRECTORY(bash_completion)
+add_subdirectory(security/limits.d)
+add_subdirectory(sudoers.d)
+add_subdirectory(DIR_NAME)
+add_subdirectory(bash_completion)

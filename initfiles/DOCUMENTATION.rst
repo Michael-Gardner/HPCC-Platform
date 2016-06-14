@@ -112,7 +112,7 @@ Directory structure of initfiles
     - hpcc-init.uninstall - hpcc-init uninstall script used by package uninstall
     - init-functions - common functions related completely to init
     - install-init.in - script used to install hpcc init system on package install
-    - lock.sh - common functions related to lock files
+    - hpcc_lock - common functions related to lock files
     - lsb-base-logging.sh - common functions related to logging to terminal
     - pid.sh - common functions related to pid files
     - uninstall-init.in - script used to uninstall hpcc init system on package uninstall

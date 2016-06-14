@@ -14,10 +14,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-FOREACH( iFILES
+
+foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/authorized_keys
     ${CMAKE_CURRENT_SOURCE_DIR}/id_rsa.pub
 )
-    Install ( FILES ${iFILES} DESTINATION ${CONFIG_DIR}/sshkey/.ssh COMPONENT Runtime )
-ENDFOREACH ( iFILES )
-Install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/id_rsa DESTINATION ${CONFIG_DIR}/sshkey/.ssh COMPONENT Runtime PERMISSIONS OWNER_READ OWNER_WRITE  )
+    install(FILES ${iFILES} DESTINATION ${CONF_DIR}/.ssh COMPONENT Runtime)
+endforeach(iFILES)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/id_rsa DESTINATION ${CONF_DIR}/.ssh COMPONENT Runtime PERMISSIONS OWNER_READ OWNER_WRITE)

@@ -63,8 +63,3 @@ FOREACH( iFILES
 )
     Install ( FILES ${iFILES} DESTINATION ${COMP_DIR} COMPONENT Runtime )
 ENDFOREACH ( iFILES )
-
-if ( PLATFORM )
-    install ( PROGRAMS soapplus.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
-    install ( PROGRAMS soapplus.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
-endif()

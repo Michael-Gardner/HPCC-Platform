@@ -15,9 +15,8 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
+source  @ABS_SBIN_PATH@/hpcc_common
 
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
 which_pidof
 set_environmentvars
 
@@ -26,17 +25,12 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-PATH_PRE=`type -path hpcc_setenv`
-if [ -z "$PATH_PRE" ]; then
-    # assume default conf location
-    PATH_PRE=`cat ${CONFIG_DIR}/environment.conf | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^path=" | sed -e 's/^path=//'`/sbin/hpcc_setenv
-fi
-source ${PATH_PRE} ""
+source @ABS_SBIN_PATH@/hpcc_setenv
+
 is_user ${user}
-DEPLOY_DIR=${INSTALL_DIR}/bin
-ENVPATH=${CONFIG_DIR}/${ENV_XML_FILE}
+ENVPATH=@ABS_CONF_PATH@/@ENV_XML_FILE@
 RUN_DIR=`cat ${HPCC_CONFIG} | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^runtime=" | sed -e 's/^runtime=//'`
-INSTANCE_DIR=$RUN_DIR/$1
+INSTANCE_DIR=@ABS_RUNTIME_PATH@/@DIR_NAME@/$1
 
 LOGPATH=`updtdalienv $ENVPATH -d log backupnode backupnode`
 export logpthtail="`date +%Y_%m_%d_%H_%M_%S`"
@@ -104,7 +98,7 @@ if [ -z "$THORPRIMARY" ]; then
 fi
 
 
-$DEPLOY_DIR/backupnode -O $DALISERVER $NODEGROUP $BACKUPNODE_DATA >> $logfile 2>&1
+@ABS_EXEC_PATH@/backupnode -O $DALISERVER $NODEGROUP $BACKUPNODE_DATA >> $logfile 2>&1
 if [ $? -ne 0 ]; then
   echo Backupnode failed - see $logfile
   exit 1
@@ -114,8 +108,8 @@ fi
 MAXTHREADS=1000
 
 frunssh $INSTANCE_DIR/backupnode.slaves "killall backupnode" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1
-log "frunssh $INSTANCE_DIR/backupnode.slaves \"/bin/sh -c 'mkdir -p $LOGPATH; mkdir -p $INSTANCE_DIR; $DEPLOY_DIR/backupnode -T -X $BACKUPNODE_REMOTEDATA %n %c %a %x $2 > $LOGPATH/backup_node_%n_${logpthtail}.log 2>&1'\" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1"
-frunssh $INSTANCE_DIR/backupnode.slaves "/bin/sh -c 'mkdir -p $LOGPATH; mkdir -p $INSTANCE_DIR; $DEPLOY_DIR/backupnode -T -X $BACKUPNODE_REMOTEDATA %n %c %a %x $2 > $LOGPATH/backup_node_%n_${logpthtail}.log 2>&1'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1
+log "frunssh $INSTANCE_DIR/backupnode.slaves \"/bin/sh -c 'mkdir -p $LOGPATH; mkdir -p $INSTANCE_DIR; @ABS_EXEC_PATH@/backupnode -T -X $BACKUPNODE_REMOTEDATA %n %c %a %x $2 > $LOGPATH/backup_node_%n_${logpthtail}.log 2>&1'\" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1"
+frunssh $INSTANCE_DIR/backupnode.slaves "/bin/sh -c 'mkdir -p $LOGPATH; mkdir -p $INSTANCE_DIR; @ABS_EXEC_PATH@/backupnode -T -X $BACKUPNODE_REMOTEDATA %n %c %a %x $2 > $LOGPATH/backup_node_%n_${logpthtail}.log 2>&1'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1
 
 log "------------------------------"
 log "Waiting for backup to complete"

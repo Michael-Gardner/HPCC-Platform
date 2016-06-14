@@ -32,8 +32,6 @@
 # 9. Return.
 #
 
-###<REPLACE>###
-
 REMOTE_INSTALL="/tmp/remote_install"
 CURR="${REMOTE_INSTALL}/curr_keys"
 NEW="${REMOTE_INSTALL}/new_keys"
@@ -72,7 +70,7 @@ pkgCmd(){
 }
 
 checkInstall(){
-    _FILE=`ls ${INSTALL_DIR}${CONFIG_DIR}/version 2>&1 1>/dev/null; echo $?`
+    _FILE=`ls @ABS_CONF_PATH@/version 2>&1 1>/dev/null; echo $?`
     checkUser "hpcc"
     _USER=$?
     if [ "${_FILE}" == 0 ] && [ ${_USER} -eq 1 ]; then
@@ -198,13 +196,13 @@ checkUser "hpcc"
 _USER=$?
 if [ ${_USER} -eq 1 ]; then
     checkKeys id_rsa
-    if [ -e ${REMOTE_INSTALL}/${ENV_XML_FILE} ]; then
-        cp -r ${REMOTE_INSTALL}/${ENV_XML_FILE}  ${CONFIG_DIR}/${ENV_XML_FILE}
-        chown hpcc:hpcc ${CONFIG_DIR}/${ENV_XML_FILE}
+    if [ -e ${REMOTE_INSTALL}/@ENV_XML_FILE@ ]; then
+        cp -r ${REMOTE_INSTALL}/@ENV_XML_FILE@  @ABS_CONF_PATH@/@ENV_XML_FILE@
+        chown hpcc:hpcc @ABS_CONF_PATH@/@ENV_XML_FILE@
     fi
-    if [ -e ${REMOTE_INSTALL}/${ENV_CONF_FILE} ]; then
-        cp -r ${REMOTE_INSTALL}/${ENV_CONF_FILE}  ${CONFIG_DIR}/${ENV_CONF_FILE}
-	chown hpcc:hpcc ${CONFIG_DIR}/${ENV_CONF_FILE}
+    if [ -e ${REMOTE_INSTALL}/@ENV_CONF_FILE@ ]; then
+        cp -r ${REMOTE_INSTALL}/@ENV_CONF_FILE@  @ABS_CONF_PATH@/@ENV_CONF_FILE@
+	chown hpcc:hpcc @ABS_CONF_PATH@/@ENV_CONF_FILE@
     fi
 fi
 rm -rf ${REMOTE_INSTALL}

@@ -14,6 +14,12 @@
 #    limitations under the License.
 ################################################################################
 
-configure_file(postinst.in postinst @ONLY)
-configure_file(postrm.in postrm @ONLY)
-configure_file(prerm.in prerm @ONLY)
+project(systemd-service)
+
+foreach(serviceFile
+  ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
+  ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
+  ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init.service
+  ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init@.service)
+  install(PROGRAMS ${serviceFile} DESTINATION ${SERVICE_FILE_DIR} COMPONENT Runtime)
+endforeach()

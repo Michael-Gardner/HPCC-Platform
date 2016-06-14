@@ -15,16 +15,6 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
-HPCC_CONFIG=${HPCC_CONFIG:-${CONFIG_DIR}/${ENV_CONF_FILE}}
-SECTION="DEFAULT"
-PATH_PREFIX=`cat ${HPCC_CONFIG} | sed -n "/\[${SECTION}\]/,/\[/p" | grep "^path *= *" | sed -e 's/^path *= *//'`
-source ${PATH_PREFIX}/sbin/hpcc_setenv ""
-
+source @ABS_SBIN_PATH@/hpcc_setenv ""
 
 nohup ftslave $* 1>/dev/null 2>/dev/null &
-
-    
-    
-    

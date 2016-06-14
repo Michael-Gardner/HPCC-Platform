@@ -16,19 +16,20 @@
 ################################################################################
 
 deploydir=$(dirname $(type -path $0))
-PATH_PRE=$(type -path hpcc_setenv)
-source ${PATH_PRE}
 
-INSTALL_DIR=$(dirname ${PATH_PRE})/..
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @ABS_SBIN_PATH@/hpcc_setenv
+source @ABS_SBIN_PATH@/hpcc_common
+
 component=$(basename $PWD)
+PID_NAME=@ABS_PID_PATH@/@DIR_NAME@/${component}.pid
+
 dir.getByName lock
 lock="$dir_return"
 
 PID_NAME="$PID/${component}.pid"
 
 timestamp="$(date +%Y_%m_%d_%H_%M_%S)"
-export logfile="${LOG_DIR}/${component}/init_${component}_${timestamp}.log"
+export logfile="@ABS_LOG_PATH@/@DIR_NAME@/${component}/init_${component}_${timestamp}.log"
 
 # for use by init_thorslave call
 logredirect="init_thorslave_${component}_${timestamp}.log"
@@ -48,8 +49,6 @@ source $instancedir/setvars
 slaveportinc=$(($channelsperslave * $localthorportinc))
 
 ln -s -f $deploydir/thormaster_lcr thormaster_$THORNAME
-
-ENV_DIR=$(cat ${HPCC_CONFIG} | sed -n "/\[DEFAULT\]/,/\[/p" | grep "^configs=" | sed -e 's/^configs=//')
 
 contains()
 {
@@ -71,20 +70,20 @@ kill_slaves()
     log "Killing slaves"
     # NB: many of the parameters to init_thorslave not used by 'stop' command
     if [[ "$localthor" = "true" ]]; then
-        $deploydir/init_thorslave stop localhost $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT $LOG_DIR $instancedir $deploydir $THORNAME $PATH_PRE $logredirect
+        $deploydir/init_thorslave stop localhost $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT @ABS_LOG_PATH@/@DIR_NAME@ $instancedir $deploydir $THORNAME @ABS_SBIN_PATH@ $logredirect
     else
         # we want to kill only slaves that have already been started in run_thor
         if [[ -r $instancedir/uslaves ]]; then
             clusternodes=$(cat $instancedir/uslaves 2> /dev/null | wc -l)
-            $deploydir/frunssh $instancedir/slaves "/bin/sh -c '$deploydir/init_thorslave stop localhost $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT $LOG_DIR $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$clusternodes 2>&1
+            $deploydir/frunssh $instancedir/slaves "/bin/sh -c '$deploydir/init_thorslave stop localhost $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT @ABS_LOG_PATH@/@DIR_NAME@ $instancedir $deploydir $THORNAME @ABS_SBIN_PATH@ $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$clusternodes 2>&1
             FRUNSSH_RC=$?
             if [[ ${FRUNSSH_RC} -gt 0 ]]; then
                 log "Error ${FRUNSSH_RC} in frunssh"
-                log "Please check $(dirname ${LOG_DIR})/frunssh for more details"
+                log "Please check $(dirname @ABS_LOG_PATH@/@DIR_NAME@)/frunssh for more details"
                 # clean up any slaves it was able to reach
                 log "Stopping ${component}"
                 kill_process ${PID_NAME} thormaster_${component} 30
-                unlock /var/lock/HPCCSystems/$component/${component}.lock
+                unlock @ABS_LOCK_PATH@/@DIR_NAME@/$component/${component}.lock
                 rm -f $INIT_PID_NAME $instancedir/slaves > /dev/null 2>&1
                 exit 255
             fi
@@ -102,7 +101,7 @@ killed()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock /var/lock/HPCCSystems/$component/${component}.lock
+        unlock @ABS_LOCK_PATH@/@DIR_NAME@/$component/${component}.lock
         kill_slaves
         log "removing init.pid file and slaves file"
         rm -f $INIT_PID_NAME $instancedir/slaves > /dev/null 2>&1
@@ -133,14 +132,15 @@ while [[ 1 ]]; do
 
     if [[ "$localthor" = "true" ]]; then
         slaveip=$(head -n 1 $instancedir/uslaves)
-        $deploydir/init_thorslave start $slaveip $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT $LOG_DIR $instancedir $deploydir $THORNAME $PATH_PRE $logredirect
+        log "$deploydir/init_thorslave start $slaveip $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT @ABS_LOG_PATH@/@DIR_NAME@ $instancedir $deploydir $THORNAME @ABS_SBIN_PATH@ $logredirect"
+        $deploydir/init_thorslave start $slaveip $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT @ABS_LOG_PATH@/@DIR_NAME@ $instancedir $deploydir $THORNAME @ABS_SBIN_PATH@ $logredirect
     else
         clusternodes=$(cat $instancedir/uslaves | wc -l)
-        $deploydir/frunssh $instancedir/uslaves "/bin/sh -c '$deploydir/init_thorslave start %a $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT $LOG_DIR $instancedir $deploydir $THORNAME $PATH_PRE $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$clusternodes 2>&1
+        $deploydir/frunssh $instancedir/uslaves "/bin/sh -c '$deploydir/init_thorslave start %a $slavespernode $THORSLAVEPORT $slaveportinc $THORMASTER $THORMASTERPORT @ABS_LOG_PATH@/@DIR_NAME@ $instancedir $deploydir $THORNAME @ABS_SBIN_PATH@ $logredirect'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$clusternodes 2>&1
         FRUNSSH_RC=$?
         if [[ ${FRUNSSH_RC} -gt 0 ]]; then
             log "Error ${FRUNSSH_RC} in frunssh"
-            log "Please check $(dirname ${LOG_DIR})/frunssh for more details"
+            log "Please check $(dirname @ABS_LOG_PATH@/@DIR_NAME@)/frunssh for more details"
             # clean up any slaves it was able to reach
             killed
         fi

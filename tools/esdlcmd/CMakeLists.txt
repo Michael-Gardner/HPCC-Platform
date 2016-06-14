@@ -80,8 +80,3 @@ target_link_libraries ( esdl
         esdllib
         esdlcomp
     )
-
-if ( UNIX )
-    install ( PROGRAMS esdl.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
-    install ( PROGRAMS esdl.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
-endif ( UNIX )

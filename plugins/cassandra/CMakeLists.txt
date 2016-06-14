@@ -113,11 +113,12 @@ if(USE_CASSANDRA)
   install(
     TARGETS cassandraembed
     DESTINATION ${PLUGINS_DIR}
+    COMPONENT Runtime)
 
   install(
     TARGETS cassandraembed
     DESTINATION ${LIB_DIR}
-    COMPONENT Runtime )
+    COMPONENT Runtime)
 
   target_link_libraries(
     cassandraembed

@@ -186,6 +186,7 @@ if(TOP_LEVEL_PROJECT)
     set(CPACK_RPM_PACKAGE_VENDOR "HPCC Systems®")
     set(CPACK_PACKAGE_VENDOR "HPCC Systems®")
     set(CPACK_PACKAGE_VENDOR_WITHOUT_TRADEMARK "HPCC Systems")
+    set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION /etc/security /etc/security/limits.d /etc/sudoers.d)
 
     if(WIN32)
         if(${ARCH64BIT} EQUAL 1)
@@ -317,7 +318,7 @@ if(TOP_LEVEL_PROJECT)
 "${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postinst;${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/prerm; ${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postrm")
             endif(CLIENTTOOLS_ONLY)
             if(PLATFORM)
-                set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postinst;${CMAKE_CURRENT_BINARY_DIR}/initfiles/sbin/prerm;${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postrm")
+                set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/postinst;${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/prerm;${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/postrm")
             endif(PLATFORM)
 
             # Standard sections values:
@@ -339,9 +340,9 @@ if(TOP_LEVEL_PROJECT)
                 set(CPACK_RPM_PACKAGE_SUMMARY "HPCC Systems® Client Tools.")
             endif()
             if(PLATFORM)
-                set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postinst")
-                set(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/sbin/prerm")
-                set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postrm")
+                set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/postinst")
+                set(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/prerm")
+                set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/postrm")
                 # Standard group names: http://fedoraroject.org/wiki/RPMGroups
                 set(CPACK_RPM_PACKAGE_GROUP "development/system")
                 set(CPACK_RPM_PACKAGE_SUMMARY "${PACKAGE_FILE_NAME_PREFIX}")
@@ -423,5 +424,14 @@ endif(TOP_LEVEL_PROJECT)
 if(PLATFORM OR CLIENTTOOLS OR REMBED)
     install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION "." COMPONENT Runtime)
 endif()
+
+#uninstall target
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
 include(CPack)

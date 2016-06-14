@@ -1,22 +1,22 @@
 ## Default environment configuration file for OpenHPCC
 
 [DEFAULT]
-configs=${CONFIG_DIR}
-path=${INSTALL_DIR}
-classpath=${INSTALL_DIR}/classes
-runtime=${RUNTIME_PATH}
-lock=${LOCK_PATH}
+configs=@ABS_CONF_PATH@
+path=@ABS_INSTALL_PATH@
+classpath=@ABS_CLASS_PATH@
+runtime=@ABS_RUNTIME_PATH@/@DIR_NAME@
+lock=@ABS_LOCK_PATH@/@DIR_NAME@
 # Supported logging fields: AUD,CLS,DET,MID,TIM,DAT,PID,TID,NOD,JOB,USE,SES,COD,MLT,MCT,NNT,COM,QUO,PFX,ALL,STD
 logfields=TIM+DAT+MLT+MID+PID+TID+COD+QUO+PFX
-pid=${PID_PATH}
-log=${LOG_PATH}
-user=${RUNTIME_USER}
-group=${RUNTIME_GROUP}
+pid=@ABS_PID_PATH@/@DIR_NAME@
+log=@ABS_LOG_PATH@/@DIR_NAME@
+user=@RUNTIME_USER@
+group=@RUNTIME_GROUP@
 #umask=022
-home=${HOME_DIR}
-environment=${ENV_XML_FILE}
-sourcedir=${CONFIG_SOURCE_PATH}
-blockname=${DIR_NAME}
+home=@ABS_HOME_PREFIX@
+environment=@ENV_XML_FILE@
+sourcedir=@ABS_CONF_SOURCE_PATH@
+blockname=@DIR_NAME@
 interface=*
 # enable epoll method for notification events (true/false)
 use_epoll=true

@@ -14,15 +14,11 @@
 #    limitations under the License.
 ################################################################################
 
-GENERATE_BASH(processor ${bash-vars} "dafilesrv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "hpcc-init.in" outFiles)
+configure_file(dafilesrv.in dafilesrv @ONLY)
+configure_file(hpcc-init.in hpcc-init @ONLY)
 
 foreach(iFile
         ${CMAKE_CURRENT_BINARY_DIR}/dafilesrv
-        ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init
-        ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv.service
-        ${CMAKE_CURRENT_SOURCE_DIR}/dafilesrv@.service
-        ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init.service
-        ${CMAKE_CURRENT_SOURCE_DIR}/hpcc-init@.service)
-    install(PROGRAMS ${iFILE} DESTINATION ${INIT_DIR} COMPONENT Runtime)
+        ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init)
+    install(PROGRAMS ${iFile} DESTINATION ${INIT_DIR} COMPONENT Runtime)
 endforeach(iFile)

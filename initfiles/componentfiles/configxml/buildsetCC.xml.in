@@ -18,21 +18,21 @@
 -->
 <Environment>
 <Software>
-    <Directories name="${DIR_NAME}">
-      <Category dir="${EXEC_PREFIX}/log/[NAME]/[INST]" name="log"/>
-      <Category dir="${EXEC_PREFIX}/lib/[NAME]/[INST]" name="run"/>
-      <Category dir="${CONFIG_PREFIX}/[NAME]/[INST]" name="conf"/>
-      <Category dir="${EXEC_PREFIX}/lib/[NAME]/[INST]/temp" name="temp"/>
-      <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-data/[COMPONENT]" name="data"/>
-      <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-data2/[COMPONENT]" name="data2"/>
-      <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-data3/[COMPONENT]" name="data3"/>
-      <Category dir="${EXEC_PREFIX}/lib/[NAME]/hpcc-mirror/[COMPONENT]" name="mirror"/>
-      <Category dir="${EXEC_PREFIX}/lib/[NAME]/queries/[INST]" name="query"/>
-      <Category dir="${EXEC_PREFIX}/lock/[NAME]/[INST]" name="lock"/>
+    <Directories name="@DIR_NAME@">
+      <Category dir="@ABS_EXEC_PREFIX@/log/[NAME]/[INST]" name="log"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lib/[NAME]/[INST]" name="run"/>
+      <Category dir="@ABS_CONF_PREFIX@/[NAME]/[INST]" name="conf"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lib/[NAME]/[INST]/temp" name="temp"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lib/[NAME]/hpcc-data/[COMPONENT]" name="data"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lib/[NAME]/hpcc-data2/[COMPONENT]" name="data2"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lib/[NAME]/hpcc-data3/[COMPONENT]" name="data3"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lib/[NAME]/hpcc-mirror/[COMPONENT]" name="mirror"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lib/[NAME]/queries/[INST]" name="query"/>
+      <Category dir="@ABS_EXEC_PREFIX@/lock/[NAME]/[INST]" name="lock"/>
     </Directories>  
 </Software>
 <Programs>
-  <Build name="${CPACK_RPM_PACKAGE_VERSION}_${CPACK_RPM_PACKAGE_RELEASE}" url="${PREFIX}/${DIR_NAME}">
+  <Build name="@CPACK_RPM_PACKAGE_VERSION@_@CPACK_RPM_PACKAGE_RELEASE@" url="@ABS_INSTALL_PATH@">
    <BuildSet installSet="deploy_map.xml"
              name="dafilesrv"
              path="componentfiles/dafilesrv"

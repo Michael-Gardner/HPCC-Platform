@@ -1,7 +1,8 @@
 ################################################################################
-#    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
+#    HPCC SYSTEMS software Copyright (C) 2016 HPCC Systems®.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License");
+#    All rights reserved. This program is free software: you can redistribute it
+#    and/or modify
 #    you may not use this file except in compliance with the License.
 #    You may obtain a copy of the License at
 #
@@ -13,7 +14,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-configure_file(postinst.in postinst @ONLY)
-configure_file(postrm.in postrm @ONLY)
-configure_file(prerm.in prerm @ONLY)
+configure_file(hpcc-platform-user.in hpcc-platform-user @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcc-platform-user
+    DESTINATION ${CONF_PREFIX}/sudoers.d
+    PERMISSIONS OWNER_READ GROUP_READ
+    COMPONENT Configuration)

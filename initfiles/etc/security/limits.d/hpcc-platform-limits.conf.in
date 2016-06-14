@@ -1,5 +1,5 @@
 ################################################################################
-#    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
+#    HPCC SYSTEMS software Copyright (C) 2016 HPCC Systems®.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -14,6 +14,13 @@
 #    limitations under the License.
 ################################################################################
 
-configure_file(postinst.in postinst @ONLY)
-configure_file(postrm.in postrm @ONLY)
-configure_file(prerm.in prerm @ONLY)
+@RUNTIME_USER@ soft nofile 8192
+@RUNTIME_USER@ hard nofile 32768
+@RUNTIME_USER@ soft core unlimited
+@RUNTIME_USER@ hard core unlimited
+@RUNTIME_USER@ soft nproc 4096
+@RUNTIME_USER@ hard nproc 8192
+@RUNTIME_USER@ soft rtprio 0
+@RUNTIME_USER@ hard rtprio 4
+@RUNTIME_USER@ soft memlock unlimited
+@RUNTIME_USER@ hard memlock unlimited

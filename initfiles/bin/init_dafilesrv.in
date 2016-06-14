@@ -15,27 +15,25 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
-
 if [ -z $1 ]; then
-        log=${LOG_DIR}
+        log=@ABS_LOG_PATH@/@DIR_NAME@
 else
         log=$1
 fi
 shift
 
-PATH_PRE=$(type -path hpcc_setenv)
-source ${PATH_PRE}
-PID_NAME="$PID/$(basename $PWD).pid"
-source ${INSTALL_DIR}/etc/init.d/hpcc_common
+source @ABS_SBIN_PATH@/hpcc_setenv
+source @ABS_SBIN_PATH@/hpcc_common
+
+component=$(basename $PWD)
+PID_NAME=@ABS_PID_PATH@/@DIR_NAME@/${component}.pid
 
 # this must match jsocket hard limit
 export handlelimit=32768
 
-component=$(basename $PWD)
 dir.getByName lock
 lock="$dir_return"
-export logfile="${LOG_DIR}/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
+export logfile="@ABS_LOG_PATH@/@DIR_NAME@/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
 
 export SENTINEL="dafilesrv.sentinel"
 log "Removing ${SENTINEL}"
@@ -49,7 +47,7 @@ killed()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock /var/lock/HPCCSystems/$component/${component}.lock
+        unlock @ABS_LOCK_PATH@/@DIR_NAME@/$component/${component}.lock
     fi
     exit 255
 }

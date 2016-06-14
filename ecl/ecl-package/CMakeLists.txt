@@ -65,9 +65,3 @@ target_link_libraries ( ecl-packagemap
         esphttp
         workunit
     )
-
-if ( UNIX )
-    install ( PROGRAMS ecl-package.install DESTINATION ${INIT_DIR}/install COMPONENT Runtime )
-    install ( PROGRAMS ecl-package.uninstall DESTINATION ${INIT_DIR}/uninstall COMPONENT Runtime )
-endif ( UNIX )
-

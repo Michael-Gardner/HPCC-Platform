@@ -15,8 +15,25 @@
 #    limitations under the License.
 ################################################################################
 
-###<REPLACE>###
+# setup user if it doesn't exist
+id -u @RUNTIME_USER@ 1>/dev/null 2>&1
+if [[ "$?" -ne 0 ]]; then
+  set -e
+  useradd -m -d @ABS_HOME_PREFIX@/@RUNTIME_USER@ @RUNTIME_USER@
+  cp -R @ABS_CONF_PATH@/.ssh @ABS_HOME_PREFIX@/@RUNTIME_USER@
+  if [[ -e "@ABS_CONF_SOURCE_PATH@/pub.key" ]]; then
+    cp @ABS_CONF_SOURCE_PATH@/pub.key @ABS_HOME_PREFIX@/@RUNTIME_USER@/pub.key
+    chown @RUNTIME_USER@:@RUNTIME_GROUP@ @ABS_HOME_PREFIX@/@RUNTIME_USER@/pub.key
+    sudo -H -u @RUNTIME_USER@ bash -c "gpg --import @ABS_HOME_PREFIX@/@RUNTIME_USER@/pub.key" > /dev/null 2>&1
+    rm -f @ABS_HOME_PREFIX@/@RUNTIME_USER@/pub.key
+  fi
+  chown -R @RUNTIME_USER@:@RUNTIME_GROUP@ @ABS_HOME_PREFIX@/@RUNTIME_USER@
+  set +e
+fi
 
-${INSTALL_DIR}/etc/init.d/install-init
+# setup configuration files if they don't exist
+[[ ! -f @ABS_CONF_PATH@/@ENV_XML_FILE@ ]] && cp @ABS_CONF_SOURCE_PATH@/@ENV_XML_FILE@ @ABS_CONF_PATH@/@ENV_XML_FILE@
+[[ ! -f @ABS_CONF_PATH@/@ENV_CONF_FILE@ ]] && cp @ABS_CONF_SOURCE_PATH@/@ENV_CONF_FILE@ @ABS_CONF_PATH@/@ENV_CONF_FILE@
+[[ ! -f @ABS_CONF_PATH@/genenvrules.conf ]] && cp @ABS_CONF_SOURCE_PATH@/genenvrules.conf @ABS_CONF_PATH@/genenvrules.conf
 
 exit 0

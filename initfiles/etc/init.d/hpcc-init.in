@@ -42,9 +42,6 @@
 #                         General Purpose Functions                           
 ##-----------------------------------------------------------------------------
 
-###<REPLACE>###
-
-
 function print_usage {
     echo "Usage: $0 [-c component] {start|stop|restart|status|setup}
        $0 [--componentlist] Display node component name list.
@@ -58,12 +55,12 @@ function print_usage {
 
 function print_components {
     if [ ! -z ${compList} ];then
-        echo  "Components on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}:"
+        echo  "Components on this node as defined by @ABS_CONF_PATH@/@ENV_XML_FILE@:"
         IFS=$'\n'
         echo  "${compList[*]}"
         unset IFS
     else
-        echo  "No components on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}."
+        echo  "No components on this node as defined by @ABS_CONF_PATH@/@ENV_XML_FILE@."
     fi
     echo
     exit 0
@@ -71,12 +68,12 @@ function print_components {
 
 function print_types {
     if [ ! -z ${compList} ];then
-        echo  "Components types on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}:"
+        echo  "Components types on this node as defined by @ABS_CONF_PATH@/@ENV_XML_FILE@:"
         IFS=$'\n'
         echo  "${compTypeList[*]}"
         unset IFS
     else
-        echo  "No components on this node as defined by ${CONFIG_DIR}/${ENV_XML_FILE}."
+        echo  "No components on this node as defined by @ABS_CONF_PATH@/@ENV_XML_FILE@."
     fi
     echo
     exit 0
@@ -84,13 +81,20 @@ function print_types {
 
 
 
-source  ${INSTALL_DIR}/etc/init.d/lock.sh
-source  ${INSTALL_DIR}/etc/init.d/pid.sh
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
-source  ${INSTALL_DIR}/etc/init.d/init-functions
-source  ${INSTALL_DIR}/etc/init.d/export-path
+source  @ABS_SBIN_PATH@/hpcc_lock
+source  @ABS_SBIN_PATH@/hpcc_pid
+source  @ABS_SBIN_PATH@/hpcc_common
+source  @ABS_SBIN_PATH@/hpcc_init_functions
+source  @ABS_SBIN_PATH@/hpcc_export_path
 
-export logfile=${LOG_DIR}/hpcc-init.log
+export logfile=@ABS_LOG_PATH@/@DIR_NAME@/hpcc-init.log
+
+if [[ ! -d "@ABS_LOG_PATH@/@DIR_NAME@" ]]; then
+    set -e
+    mkdir -p @ABS_LOG_PATH@/@DIR_NAME@
+    chown @RUNTIME_USER@:@RUNTIME_GROUP@ @ABS_LOG_PATH@/@DIR_NAME@
+    set +e
+fi
 
 [ ! -e ${logfile}  ] && touch $logfile
 
@@ -104,17 +108,14 @@ DAFILESRV=${DAFILESRV:-0}
 FORCE=${FORCE:-NO_FORCE}
 
 set_environmentvars
-envfile=$configs/$environment
 
 # Know HPCC user after set_environmentvars
-log_dir_owner=$(ls -ld $LOG_DIR | awk '{print $3}')
-[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} $LOG_DIR
+log_dir_owner=$(ls -ld @ABS_LOG_PATH@/@DIR_NAME@ | awk '{print $3}')
+[ "log_dir_owner" != "${user}" ] && chown ${user}:${user} @ABS_LOG_PATH@/@DIR_NAME@
 chown ${user}:${user} $logfile
 
 #Sourcing the hpcc environment
-configgen_path=${path}/sbin
-bin_path=${path}/bin
-source ${configgen_path}/hpcc_setenv
+source @ABS_SBIN_PATH@/hpcc_setenv
 
 which_service
 get_commondirs
@@ -143,7 +144,7 @@ chown -cR $user:$group ${home}/${user} 1>/dev/null 2>/dev/null
 basepath=`pwd`
 
 validate_configuration
-COMPS=$(${configgen_path}/configgen -env ${envfile} -list)
+COMPS=$(@ABS_SBIN_PATH@/configgen -env @ABS_CONF_PATH@/@ENV_XML_FILE@ -list)
 if [[ $rc -ne 0 ]]; then
     log "hpcc-init: failure to build COMPS from configgen call"
     echo -e "\033[31merror\033[0m: hpcc-init -> failure to build COMPS from configgen call"
@@ -273,11 +274,11 @@ if [ -z $arg ] || [ $# -ne 1 ]; then
     print_usage
 fi
 
-log "Debug log written to $LOG_DIR/hpcc-init.debug"
-[ -e $LOG_DIR/hpcc-init.debug ] && rm -rf ${LOG_DIR}/hpcc-init.debug
-touch ${LOG_DIR}/hpcc-init.debug
-chown ${user}:${user} ${LOG_DIR}/hpcc-init.debug
-exec 2>$LOG_DIR/hpcc-init.debug
+log "Debug log written to @ABS_LOG_PATH@/@DIR_NAME@/hpcc-init.debug"
+[ -e @ABS_LOG_PATH@/@DIR_NAME@/hpcc-init.debug ] && rm -rf @ABS_LOG_PATH@/@DIR_NAME@/hpcc-init.debug
+touch @ABS_LOG_PATH@/@DIR_NAME@/hpcc-init.debug
+chown ${user}:${user} @ABS_LOG_PATH@/@DIR_NAME@/hpcc-init.debug
+exec 2>@ABS_LOG_PATH@/@DIR_NAME@/hpcc-init.debug
 set -x
 
 if [ -z ${component} ]; then

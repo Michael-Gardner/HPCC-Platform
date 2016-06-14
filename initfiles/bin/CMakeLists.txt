@@ -14,26 +14,38 @@
 #    limitations under the License.
 ################################################################################
 
-set(outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_dafilesrv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_eclagent.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "run_ftslave.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "start_backupnode.in" outFiles)
-add_custom_target(ProcessFiles-initfiles-bin ALL DEPENDS ${outFiles})
+configure_file(init_dafilesrv.in init_dafilesrv @ONLY)
+configure_file(init_eclagent.in init_eclagent @ONLY)
+configure_file(run_ftslave.in run_ftslave @ONLY)
+configure_file(start_backupnode.in start_backupnode @ONLY)
+configure_file(init_configesp.in init_configesp @ONLY)
+configure_file(init_dali.in init_dali @ONLY)
+configure_file(init_dfuserver.in init_dfuserver @ONLY)
+configure_file(init_eclccserver.in init_eclccserver @ONLY)
+configure_file(init_eclscheduler.in init_eclscheduler @ONLY)
+configure_file(init_esp.in init_esp @ONLY)
+configure_file(init_roxie.in init_roxie @ONLY)
+configure_file(init_sasha.in init_sasha @ONLY)
+configure_file(init_thor.in init_thor @ONLY)
+configure_file(init_thorslave.in init_thorslave @ONLY)
 
 foreach(iFILES
-    ${outFiles}
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_configesp
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_dali
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_dfuserver
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_eclccserver
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_eclscheduler
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_esp
+    ${CMAKE_CURRENT_BINARY_DIR}/init_dafilesrv
+    ${CMAKE_CURRENT_BINARY_DIR}/init_eclagent
+    ${CMAKE_CURRENT_BINARY_DIR}/run_ftslave
+    ${CMAKE_CURRENT_BINARY_DIR}/start_backupnode
+    ${CMAKE_CURRENT_BINARY_DIR}/init_configesp
+    ${CMAKE_CURRENT_BINARY_DIR}/init_dali
+    ${CMAKE_CURRENT_BINARY_DIR}/init_dfuserver
+    ${CMAKE_CURRENT_BINARY_DIR}/init_eclccserver
+    ${CMAKE_CURRENT_BINARY_DIR}/init_eclscheduler
+    ${CMAKE_CURRENT_BINARY_DIR}/init_esp
     ${CMAKE_CURRENT_SOURCE_DIR}/init_ftslave
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_roxie
+    ${CMAKE_CURRENT_BINARY_DIR}/init_roxie
     ${CMAKE_CURRENT_SOURCE_DIR}/init_roxie_cluster
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_sasha
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_thor
+    ${CMAKE_CURRENT_BINARY_DIR}/init_sasha
+    ${CMAKE_CURRENT_BINARY_DIR}/init_thor
+    ${CMAKE_CURRENT_BINARY_DIR}/init_thorslave
     ${CMAKE_CURRENT_SOURCE_DIR}/get_thor_options
     ${CMAKE_CURRENT_SOURCE_DIR}/multiscp
     ${CMAKE_CURRENT_SOURCE_DIR}/multissh
@@ -41,7 +53,6 @@ foreach(iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/setup_nfs
     ${CMAKE_CURRENT_SOURCE_DIR}/setup_one_nfs
     ${CMAKE_CURRENT_SOURCE_DIR}/sshslaves
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_thorslave
 )
     install(PROGRAMS ${iFILES} DESTINATION ${BIN_DIR} COMPONENT Runtime)
 endforeach(iFILES)

@@ -61,5 +61,5 @@ target_link_libraries ( esp
          dalibase 
          environment 
     )
-
+install(PROGRAMS $<TARGET_FILE:esp> DESTINATION ${BIN_DIR} COMPONENT Runtime RENAME configesp) 
 

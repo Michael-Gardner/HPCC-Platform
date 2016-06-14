@@ -20,10 +20,7 @@
 # This is acomplished with a standard scp command with the use of the
 # runtime users id_rsa file.
 
-###<REPLACE>###
-
-
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source  @ABS_SBIN_PATH@/hpcc_common
 
 usage() {
     echo ""
@@ -118,7 +115,7 @@ addScriptDeployFiles() {
 
    cat >> $SCRIPT_FILE <<SCRIPTMARKER
 
-${INSTALL_DIR}/sbin/deploy-java-files.exp --ip \$IP --source "${source}" \
+@ABS_SBIN_PATH@/deploy-java-files.exp --ip \$IP --source "${source}" \
    --target ${target} --user ${file_transfer_user} ${_options} || exit 1
 
 SCRIPTMARKER
@@ -127,12 +124,12 @@ SCRIPTMARKER
 
 ######################################################################
 #
-# Reset classpath to ${INSTALL_DIR}/classes
+# Reset classpath to @ABS_CLASS_PATH@
 #
 ######################################################################
 resetClasspath() {
    cat >> $SCRIPT_FILE <<SCRIPTPATH
-NEW_JAVA_CLASSPATH="${INSTALL_DIR}/classes"
+NEW_JAVA_CLASSPATH="@ABS_CLASS_PATH@"
 SCRIPTPATH
 }
 
@@ -368,7 +365,7 @@ setUser() {
 
   if [ "$file_transfer_user" != "root" ]
   then
-     echo $target | grep -q ${INSTALL_DIR}
+     echo $target | grep -q @ABS_INSTALL_PATH@
      [ $? -eq 0 ] && run_as_sudo=1
   fi
 
@@ -440,7 +437,7 @@ fi
 
 if [ -z "$target" ]; then
    if [ -n "$source" ]; then
-       target=${INSTALL_DIR}/classes
+       target=@ABS_CLASS_PATH@
    elif  [ $reset_classpath -eq 0 ]; then
        echo ""
        echo "Missing target"
@@ -461,7 +458,7 @@ fi
 
 [ -n "$source" ] && setUser
 
-HPCC_CONFIG=${CONFIG_DIR}/${ENV_CONF_FILE}
+HPCC_CONFIG=@ABS_CONF_PATH@/@ENV_CONF_FILE@
 
 
 if [[ $target = */ ]]
@@ -483,7 +480,7 @@ expected_python_version=2.6
 is_python_installed ${expected_python_version}
 if [ $? -eq 0 ]
 then
-   eval ${INSTALL_DIR}/sbin/cluster_script.py -e ${HPCC_CONFIG} -f "${SCRIPT_FILE}" -l DEBUG -s $SECTION $OPTION
+   eval @ABS_SBIN_PATH@/cluster_script.py -e ${HPCC_CONFIG} -f "${SCRIPT_FILE}" -l DEBUG -s $SECTION $OPTION
 else
    echo ""
    echo "Cannot detect python version ${expected_python_version}+. Will run on the cluster hosts sequentially."
