@@ -17,8 +17,6 @@
 configure_file(hpcc_setenv.in hpcc_setenv @ONLY)
 configure_file(complete-uninstall.sh.in complete-uninstall.sh @ONLY)
 configure_file(keygen.sh.in keygen.sh @ONLY)
-configure_file(add_conf_settings.sh.in add_conf_settings.sh @ONLY)
-configure_file(rm_conf_settings.sh.in rm_conf_settings.sh @ONLY)
 configure_file(configmgr.in configmgr @ONLY)
 configure_file(install-cluster.sh.in install-cluster.sh @ONLY)
 configure_file(hpcc-push.in hpcc-push @ONLY)
@@ -40,8 +38,6 @@ foreach(oFILES
     ${CMAKE_CURRENT_BINARY_DIR}/regex.awk
     ${CMAKE_CURRENT_BINARY_DIR}/complete-uninstall.sh
     ${CMAKE_CURRENT_BINARY_DIR}/keygen.sh
-    ${CMAKE_CURRENT_BINARY_DIR}/add_conf_settings.sh
-    ${CMAKE_CURRENT_BINARY_DIR}/rm_conf_settings.sh
     ${CMAKE_CURRENT_BINARY_DIR}/configmgr
     ${CMAKE_CURRENT_BINARY_DIR}/install-cluster.sh
     ${CMAKE_CURRENT_BINARY_DIR}/remote-install-engine.sh

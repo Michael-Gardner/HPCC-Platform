@@ -18,7 +18,7 @@ set(CONF_PREFIX "/etc" CACHE STRING "System prefix for configuration files")
 set(HOME_PREFIX "/home" CACHE STRING "System prefix for user home directory")
 
 set(RUNTIME_USER "hpcc" CACHE STRING "Runtime user for hpcc platform")
-set(RUNTIME_GROUP "hpcc" CACHE STRING "Runtime group for hpcc platform")
+set(RUNTIME_GROUP "${RUNTIME_USER}" CACHE STRING "Runtime group for hpcc platform")
 set(ENV_XML_FILE "environment.xml" CACHE STRING "Name of xml configuration file")
 set(ENV_CONF_FILE "environment.conf" CACHE STRING "Name of .conf file")
 
