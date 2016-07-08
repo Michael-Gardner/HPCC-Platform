@@ -760,7 +760,7 @@
   </EclSchedulerProcess>
  </Software>
  <EnvSettings>
-  <pid>@ABS_PID_PATH@/@DIR_NAME</pid>
+  <pid>@ABS_PID_PATH@/@DIR_NAME@</pid>
   <sourcedir>@ABS_CONF_SOURCE_PATH@</sourcedir>
   <mpTraceLevel>0</mpTraceLevel>
   <mpStart>7101</mpStart>

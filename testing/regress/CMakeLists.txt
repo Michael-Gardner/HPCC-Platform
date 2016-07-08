@@ -17,7 +17,7 @@
 HPCC_ADD_SUBDIRECTORY (hpcc)
 HPCC_ADD_SUBDIRECTORY (ecl)
 
-configure_file("environment.xml.in" "environment.xml")
+configure_file(environment.xml.in environment.xml @ONLY)
 
 Install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/environment.xml DESTINATION ${TEST_DIR}/regress COMPONENT Runtime )
 
