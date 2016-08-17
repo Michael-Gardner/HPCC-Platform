@@ -344,7 +344,7 @@ public:
             CriticalBlock block1(sect);
             if (!dryrun) {
                 if (slaves.ordinality()>1)
-                    PROGLOG("%d: starting %s (%d of %d finished)",i,slaves.item(i),done.ordinality(),slaves.ordinality());
+                    //PROGLOG("%d: starting %s (%d of %d finished)",i,slaves.item(i),done.ordinality(),slaves.ordinality());
             }
         }
         int retcode=-1;
@@ -512,7 +512,7 @@ public:
         if (dryrun)
             return;
         if (slaves.ordinality()>1) {
-            PROGLOG("Results: (%d of %d finished)",done.ordinality(),slaves.ordinality());
+//PROGLOG("Results: (%d of %d finished)",done.ordinality(),slaves.ordinality());
             int errCode = 0;
             Owned<IMultiException> multiException = MakeMultiException();
             for (unsigned i=0;i<done.ordinality();i++) {
@@ -520,22 +520,22 @@ public:
                 StringBuffer res(replytext.item(n));
                 while (res.length()&&(res.charAt(res.length()-1)<=' '))
                     res.setLength(res.length()-1);
-                if (res.length()==0 && !reply.item(n))
-                    PROGLOG("%d: %s(%d): [OK]",n+1,slaves.item(n),reply.item(n));
+/*if (res.length()==0 && !reply.item(n))
+//PROGLOG("%d: %s(%d): [OK]",n+1,slaves.item(n),reply.item(n));
                 else if (strchr(res.str(),'\n')==NULL) {
-                    PROGLOG("%d: %s(%d): %s",n+1,slaves.item(n),reply.item(n),res.str());
+//PROGLOG("%d: %s(%d): %s",n+1,slaves.item(n),reply.item(n),res.str());
                     if (reply.item(n)) {
                         errCode = reply.item(n);
                         multiException->append(*MakeStringExceptionDirect(reply.item(n),res.str()));
                     }
                 }
                 else {
-                    PROGLOG("%d: %s(%d):\n---------------------------\n%s\n===========================",n+1,slaves.item(n),reply.item(n),res.str());
+//PROGLOG("%d: %s(%d):\n---------------------------\n%s\n===========================",n+1,slaves.item(n),reply.item(n),res.str());
                     if (reply.item(n)) {
                         errCode = reply.item(n);
                         multiException->append(*MakeStringExceptionDirect(reply.item(n),res.str()));
                     }
-                }
+                }*/
             }
             if (errCode)
                 throw multiException.getClear();
@@ -544,7 +544,7 @@ public:
             StringBuffer res(replytext.item(0));
             while (res.length()&&(res.charAt(res.length()-1)<=' '))
                 res.setLength(res.length()-1);
-            PROGLOG("%s result(%d):\n%s",useplink?"plink":"ssh",reply.item(0),res.str());
+//            PROGLOG("%s result(%d):\n%s",useplink?"plink":"ssh",reply.item(0),res.str());
             if (reply.item(0))
                 throw MakeStringExceptionDirect(reply.item(0), res.str());
         }
