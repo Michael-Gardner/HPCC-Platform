@@ -68,7 +68,21 @@
 #########################################################
 
 project(hpccsystems-platform)
-cmake_minimum_required(VERSION 2.8.11)
+
+if(UNIX AND NOT APPLE)
+    execute_process(
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/distrocheck.sh
+        OUTPUT_VARIABLE packageManagement
+        ERROR_VARIABLE  packageManagement)
+
+        if("${packageManagement}" STREQUAL "RPM")
+            cmake_minimum_required(VERSION 3.3.2)
+        else()
+            cmake_minimum_required(VERSION 2.8.12)
+        endif()
+else()
+    cmake_minimum_required(VERSION 2.8.11)
+endif()
 
 set(TOP_LEVEL_PROJECT ON)
 if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -252,11 +266,6 @@ if(TOP_LEVEL_PROJECT)
 
     if(UNIX AND NOT APPLE)
         execute_process(
-            COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/distrocheck.sh
-            OUTPUT_VARIABLE packageManagement
-            ERROR_VARIABLE  packageManagement
-            )
-        execute_process(
             COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/getpackagerevisionarch.sh
             OUTPUT_VARIABLE packageRevisionArch
             ERROR_VARIABLE  packageRevisionArch
@@ -266,6 +275,7 @@ if(TOP_LEVEL_PROJECT)
             OUTPUT_VARIABLE packageRevision
             ERROR_VARIABLE  packageRevision
             )
+
 
         message("-- Auto Detecting Packaging type")
         message("-- distro uses ${packageManagement}, revision is ${packageRevisionArch}")
