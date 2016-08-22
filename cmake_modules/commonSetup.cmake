@@ -53,7 +53,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   option(PLUGIN "Enable building of a plugin" OFF)
   option(USE_SHLIBDEPS "Enable the use of dpkg-shlibdeps on ubuntu packaging" OFF)
 
-  option(SIGN_MODULES "Enable signing of ecl standard library modules" OFF)
+  option(SIGN_MODULES "Enable signing of ecl standard library modules" ON)
   option(USE_CPPUNIT "Enable unit tests (requires cppunit)" OFF)
   option(USE_OPENLDAP "Enable OpenLDAP support (requires OpenLDAP)" ON)
   option(USE_ICU "Enable unicode support (requires ICU)" ON)
@@ -113,6 +113,11 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   #"cmake -DEXAMPLEPLUGIN=ON <path-to/HPCC-Platform/>" will configure the plugin makefiles to be built with "make".
   option(EXAMPLEPLUGIN "Create a package with ONLY the exampleplugin plugin" OFF)
   option(COUCHBASEEMBED "Create a package with ONLY the couchbaseembed plugin" OFF)
+
+  if (NOT DEFINED SIGN_MODULES_KEYID)
+      set(SIGN_MODULES_KEYID "8DAA417D")
+      message(STATUS "Defaulting SIGN_MODULES_KEYID to ${SIGN_MODULES_KEYID}")
+  endif()
 
   if (APPLE OR WIN32)
       option(USE_TBB "Enable Threading Building Block support" OFF)
