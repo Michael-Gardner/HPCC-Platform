@@ -103,6 +103,13 @@ struct SocketEndpointV4
         val.setNetAddress(sizeof(ip),&ip);
         val.port = port;
     }
+    StringBuffer & getUrlStr(StringBuffer &val)
+    {
+        SocketEndpoint s;
+        s.setNetAddress(sizeof(ip),&ip);
+        s.port = port;
+        return s.getUrlStr(val);
+    }
 };
 
 class PacketHeader // standard packet header - no virtuals 
@@ -844,7 +851,7 @@ protected: friend class CMPPacketReader;
                                 e->Release();
 
 #ifdef _TRACE
-                                LOG(MCdebugInfo(100), unknownJob, "MP: Retrying connection to %s, %d attempts left",remoteep.getUrlStr(str).toCharArray(),retrycount+1);
+                                LOG(MCdebugInfo(100), unknownJob, "MP: Retrying connection to %s, %d attempts left",remoteep.getUrlStr(str).str(),retrycount+1);
 #endif
                         }
                         else
@@ -1070,7 +1077,7 @@ public:
                 return true;
         }
         StringBuffer ep;
-        remoteep.getUrlStr(ep);
+        remoteep.getUrlStr(ep); 
         loop {
             CTimeMon pingtm(1000*60);
             if (sendPing(pingtm)) 
