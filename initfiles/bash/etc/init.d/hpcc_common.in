@@ -391,11 +391,11 @@ cleanupRuntimeEnvironment() {
 
 
 start_dafilesrv() {
-   ${INIT_PATH}/dafilesrv status 1>/dev/null 2>/dev/null
+   service dafilesrv status 1>/dev/null 2>/dev/null
    if [ $? -ne 0 ];then
       #Dafilesrv is not running so start it , before starting cleanup the lock and pid file.
       cleanupRuntimeEnvironment
-      ${INIT_PATH}/dafilesrv setup 1>/dev/null 2>/dev/null
+      service dafilesrv setup 1>/dev/null 2>/dev/null
       startCmd ${compName} 0
       return $?
    else
@@ -622,15 +622,15 @@ start_component() {
 
 restart_component() {
     if strstr "${compType}" "dafilesrv" ;then
-      ${INIT_PATH}/dafilesrv status 1>/dev/null 2>/dev/null
+      service dafilesrv status 1>/dev/null 2>/dev/null
       if [ $? -eq 0 ];then
-        ${INIT_PATH}/dafilesrv stop 2>/dev/null
+        service dafilesrv stop 2>/dev/null
       else
         log  "$compName ---> Stopped.  Now Starting ..."
         echo "Component $compName was not running. Will start it now for you ..."
         cleanupRuntimeEnvironment
       fi
-      ${INIT_PATH}/dafilesrv start 2>/dev/null
+      service dafilesrv start 2>/dev/null
     else
       check_status ${PIDPATH} ${LOCKPATH} ${COMPPIDPATH} 1
       RCRESTART=$?
