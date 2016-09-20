@@ -31,7 +31,8 @@ if grep "\\#includedir /etc/sudoers.d" /etc/sudoers > /dev/null 2>&1; then
   cat > /etc/sudoers.d/${USER_NAME}  <<- EOF
 Cmnd_Alias HPCC_DAFILESRV = /etc/init.d/dafilesrv
 Cmnd_Alias HPCC_HPCCINIT = /etc/init.d/hpcc-init
-${USER_NAME} ALL = NOPASSWD: HPCC_DAFILESRV, HPCC_HPCCINIT
+Cmnd_Alias HPCC_SERVICE = /usr/sbin/service dafilesrv
+${USER_NAME} ALL = NOPASSWD: HPCC_DAFILESRV, HPCC_HPCCINIT, HPCC_SERVICE
 Defaults:${USER_NAME} !requiretty
 EOF
   chmod 0440 /etc/sudoers.d/${USER_NAME}
