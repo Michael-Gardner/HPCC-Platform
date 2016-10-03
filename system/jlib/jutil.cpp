@@ -1573,14 +1573,15 @@ int make_daemon(bool printpid)
 
 }
 
-int make_daemon(const char * pidfile, bool printpid)
+int make_daemon(const char * instance, bool printpid)
 {
     if(!make_daemon(printpid)) {
-        FILE * fd = fopen(pidfile,"w+");
-        if(fd == NULL) {
-            fprintf(stderr, "failed to open pidfile for writing");
+        
+        StringBuffer pidfile;
+        pidfile.append(PID_DIR).append(PATHSEPCHAR).append(instance).append(".pid");
+        FILE * fd = fopen(pidfile.str(),"w+");
+        if(fd == NULL)
             return(EXIT_FAILURE);
-        }
         fprintf(fd,"%d",getpid());    
         fclose(fd);
         return(EXIT_SUCCESS);

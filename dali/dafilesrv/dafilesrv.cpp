@@ -304,9 +304,9 @@ void sighandler(int signum, siginfo_t *info, void *extra)
         server->stop();
 }
 
-int initDaemon()
+int initDaemon(const char * instance)
 {
-    int ret = make_daemon("/var/run/HPCCSystems/mydafilesrv.pid",true);
+    int ret = make_daemon(instance,true);
     if (ret)
         return ret;
     struct sigaction act;
@@ -646,7 +646,7 @@ int main(int argc,char **argv)
         service.start();
         return 0;
 #else
-        int ret = initDaemon();
+        int ret = initDaemon(instanceName.str());
         if (ret)
             return ret;
 #endif
