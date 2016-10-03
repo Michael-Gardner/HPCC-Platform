@@ -29,8 +29,7 @@ set(componentList
     sasha
     thorslave)
 
-dafilesrv -L $log -I $component &
-set(dafilesrv "dafilesrv" "-L ${LOG_PATH} -I %i" "" "Facilitate file transfers across a hpcc cluster.")
+set(dafilesrv "dafilesrv" "-L ${LOG_PATH} -I %i -D" "" "Facilitate file transfers across a hpcc cluster.")
 set(dali "daserver" "" "" "Stores metadata on queries, workunits, data.")
 set(dfuserver "dfuserver" "" "" "data file information store.")
 set(eclagent "agentexec" "" "" "ecl workunit controller.")
@@ -41,8 +40,8 @@ set(esp "esp" "" "" "Handles remote calls to the hpccsystems-platform.")
 set(roxie "roxie" "--topology=RoxieTopology.xml --logfile --restarts=2 --stdlog=0" "" "Allows for queries of structured data.")
 set(sasha "saserver" "" "" "Metadata in-memory store.")
 #TODO: thor environment variables
-set(thor "thormaster_lcr" "MASTER=\${THORMASTER}:\${THORMASTERPORT}" "Coalesces raw data into structured data that can be effectiently served up by roxie.")
-set(thorslave "thorslave_lcr" "master=\${master}:\${masterport} slave=.:\${slaveport} slavenum=\${slavenum} slaveprocessnum=\${slave} logDir=@LOG_PATH@/%i" "Slave for thor processing")
+set(thor "thormaster_lcr" "MASTER=\${THORMASTER}:\${THORMASTERPORT}" "" "Coalesces raw data into structured data that can be effectiently served up by roxie.")
+set(thorslave "thorslave_lcr" "master=\${master}:\${masterport} slave=.:\${slaveport} slavenum=\${slavenum} slaveprocessnum=\${slave} logDir=${LOG_PATH}/%i" "" "Slave for thor processing")
 
 
 foreach(component ${componentList})
@@ -51,7 +50,7 @@ foreach(component ${componentList})
     list(GET "${component}" 2 dependencies)
     list(GET "${component}" 3 description)
     configure_file(component@instance.service.in ${component}@.service @ONLY)
-    install(FILES ${component}@.service DESTINATION ${SYSTEMD_PATH} COMPONENT Systemd)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${component}@.service DESTINATION ${SYSTEMD_PATH} COMPONENT Systemd)
 endforeach()
 
 configure_file(hpccsystems-platform.driver.in hpccsystems-platform @ONLY)

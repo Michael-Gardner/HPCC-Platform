@@ -33,6 +33,7 @@
 #include <float.h> //for _isnan and _fpclass
 #else
 #include <unistd.h> // read()
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <pwd.h>
 #ifdef __linux__
@@ -1570,6 +1571,21 @@ int make_daemon(bool printpid)
      return 0;
 #endif
 
+}
+
+int make_daemon(const char * pidfile, bool printpid)
+{
+    if(!make_daemon(printpid)) {
+        FILE * fd = fopen(pidfile,"w+");
+        if(fd == NULL) {
+            fprintf(stderr, "failed to open pidfile for writing");
+            return(EXIT_FAILURE);
+        }
+        fprintf(fd,"%d",getpid());    
+        fclose(fd);
+        return(EXIT_SUCCESS);
+    }
+    return(EXIT_FAILURE);
 }
 
 //Calculate the greatest common divisor using Euclid's method

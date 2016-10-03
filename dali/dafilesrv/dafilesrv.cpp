@@ -306,7 +306,7 @@ void sighandler(int signum, siginfo_t *info, void *extra)
 
 int initDaemon()
 {
-    int ret = make_daemon(true);
+    int ret = make_daemon("/var/run/HPCCSystems/mydafilesrv.pid",true);
     if (ret)
         return ret;
     struct sigaction act;

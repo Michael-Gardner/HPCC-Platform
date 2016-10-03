@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+################################################################################
+#    HPCC SYSTEMS software Copyright (C) 2016 HPCC Systems®.
+#
+#    All rights reserved. This program is free software: you can redistribute it
+#    and/or modify
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+################################################################################
+#    hpccsystems-platform:
+#       driver for cluster instances located on this node
+################################################################################
+
+function help()
+{
+    echo "hpccsystems-platform [option] start|stop|restart"
+    printf "%-20s: %-58s\n" "-c <instance>" "instance of hpccsystems-platform to act upon"
+    printf "%-20s: %-58s\n" "-t <type>" "component type of hpccsystems-platform to act upon"
+    exit 1
+}
+
+# fetch components on this node
+function fetch()
+{
+    configgen_output=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ ${instanceName} ${processType} -ip localhost -list | awk 'BEGIN {FS="[;= ]"; n=2;} $2 ~ /dafilesrv/ {componentName[0]=$1;processName[0]=$2;workingDirectory[0]=$3;next;} $2 ~ /dali/ {componentName[1]=$1;processName[1]=$2;workingDirectory[1]=$3;next;} $2 !~ /dafilesrv|dali|ftslave/ {componentName[n]=$1;processName[n]=$2;workingDirectory[n]=$3;n++;next;} END {for(i=0;i<n;i++){ print componentName[i], processName[i], workingDirectory[i];}}')
+    a_componentName=($(echo "${configgen_output}" | awk '{print $1;}'))
+    a_processName=($(echo "${configgen_output}" | awk '{print $2;}'))
+    a_workingDirectory=($(echo "${configgen_output}" | awk '{print $3;}'))
+}
+
+function setup()
+{
+    local _compname=$1
+    mkdir -p @RUNTIME_PATH@/${_compname} @PID_PATH@ @LOG_PATH@/${_compname}
+    @ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -od @RUNTIME_PATH@ -id @COMPONENTFILES_PATH@/configxml -c ${_compname}
+    chown -R @RUNTIME_USER@:@RUNTIME_GROUP@ @RUNTIME_PATH@/${_compname} @PID_PATH@ @LOG_PATH@/${_compname}
+}
+
+function start()
+{
+    for((i=0;i<${#a_componentName[@]};i++)); do
+        setup ${a_componentName[$i]}
+        systemctl start "${a_processName[$i]}@${a_componentName[$i]}.service"
+    done
+}
+
+function stop()
+{
+    for((i=${#a_componentName[@]}-1;i>=0;i--)); do
+        systemctl stop "${a_processName[$i]}@${a_componentName[$i]}.service"
+    done
+}
+
+function status()
+{
+    for((i=0;i<${#a_componentName[@]};i++)); do
+        systemctl status "${a_processName[$i]}@${a_componentName[$i]}.service"
+    done
+}
+
+function list()
+{
+    printf "%-20s | %-57s\n\n" "Process" "Instance"
+    for((i=0;i<${#a_componentName[@]};i++)); do
+        printf "%-20s | %-57s\n" "${a_processName[$i]}" "${a_componentName[$i]}"
+    done
+}
+
+instanceName=""
+processType=""
+while getopts ":c:t:" opts; do
+    case "${opts}" in
+        c)
+            instanceName="-c ${OPTARG}"
+            ;;
+        t)
+            processType="-t ${OPTARG}"
+            ;;
+        *)
+            help
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+action=${1}
+declare -a a_componentName a_processName a_workingDirectory
+fetch
+case "${action}" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    status)
+        status
+        ;;
+    list)
+        list
+        ;;
+    *)
+        help
+        ;;
+esac
