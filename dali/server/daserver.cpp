@@ -22,6 +22,7 @@
 #include "jlog.ipp"
 #include "jptree.hpp"
 #include "jmisc.hpp"
+#include "jutil.hpp"
 
 #include "mpbase.hpp"
 #include "mpcomm.hpp"
@@ -316,6 +317,11 @@ int main(int argc, char* argv[])
         }
         else
             serverConfig.setown(createPTree());
+
+        // TODO: setup signal handling
+        int ret = make_daemon(serverConfig->queryProp("@name"),false);
+        if(ret)
+            return ret;
 
         NamedMutex globalNamedMutex("DASERVER");
         if (!serverConfig->getPropBool("allowMultipleDalis"))
