@@ -54,6 +54,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   option(USE_SHLIBDEPS "Enable the use of dpkg-shlibdeps on ubuntu packaging" OFF)
 
   option(SIGN_MODULES "Enable signing of ecl standard library modules" OFF)
+  option(USE_SYSTEMD "Enable the use of systemd. Disable sysV" OFF)
   option(USE_CPPUNIT "Enable unit tests (requires cppunit)" OFF)
   option(USE_OPENLDAP "Enable OpenLDAP support (requires OpenLDAP)" ON)
   option(USE_ICU "Enable unicode support (requires ICU)" ON)
