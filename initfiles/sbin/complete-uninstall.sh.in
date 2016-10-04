@@ -99,6 +99,7 @@ if [ -n "${lpath}" -a -h "${lpath}" ] ; then
     # echo "\"${lpath}\" is a soft-link to \"${mklink}\""
 fi
 
+[[ -e /opt/HPCCSystems/sbin/hpccsystems-platform ]] && /opt/HPCCSystems/sbin/hpccsystems-platform stop
 if [ -e /etc/debian_version ]; then
     echo "Removing DEB"
     apt-get remove -y hpccsystems-platform
@@ -118,7 +119,6 @@ fi
 distrib_check
 if [ "${DISTRIB_NAME}" = "ubuntu" ] &&
    [ ${DISTRIB_MAJOR_VERSION} -ge 15 ]; then
-
    dpkg -l | grep -q -e "^ii[[:space:]]*systemd "
    if [ $? -eq 0 ]; then
       echo "Remove systemd service"
@@ -166,6 +166,7 @@ removedir ${pid}
 echo "Removing Directory - ${runtime}"
 removedir ${runtime}
 
+killall -9 -u ${user}
 echo "Removing user - ${user}"
 if [ -e /usr/sbin/userdel ]; then
     /usr/sbin/userdel -r ${user}

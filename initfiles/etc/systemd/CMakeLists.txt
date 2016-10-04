@@ -37,7 +37,7 @@ set(eclccserver "eclccserver" "" "" "compilation server for ecl to c++ to machin
 set(eclscheduler "eclscheduler" "" "" "scheduler for ecl workunits.")
 #TODO: look into snmpid=$$ for esp processArgs
 set(esp "esp" "" "" "Handles remote calls to the hpccsystems-platform.")
-set(roxie "roxie" "--topology=RoxieTopology.xml --logfile --restarts=2 --stdlog=0" "" "Allows for queries of structured data.")
+set(roxie "roxie" "--topology=RoxieTopology.xml --logfile --restarts=2 --stdlog=0 --daemon --instance %i" "" "Allows for queries of structured data.")
 set(sasha "saserver" "" "" "Metadata in-memory store.")
 #TODO: thor environment variables
 set(thor "thormaster_lcr" "MASTER=\${THORMASTER}:\${THORMASTERPORT}" "" "Coalesces raw data into structured data that can be effectiently served up by roxie.")

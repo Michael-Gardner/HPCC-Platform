@@ -221,7 +221,7 @@ class CIStringArray : public StringArray, public CInterface
 extern jlib_decl unsigned msTick();
 extern jlib_decl unsigned usTick();
 extern jlib_decl int make_daemon(bool printpid=false);  // outputs pid to stdout if printpid true
-extern jlib_decl int make_daemon(const char * instance, bool printpid=false);
+extern jlib_decl int make_daemon(const char * instance, void(*cleanup)()=NULL);
 extern jlib_decl void doStackProbe();
 
 #ifndef arraysize

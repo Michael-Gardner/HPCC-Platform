@@ -25,7 +25,7 @@
 #include <jlog.hpp>
 #include <jprop.hpp>
 #include <jfile.hpp>
-#include "jutil.hpp"
+#include <jutil.hpp>
 #include <build-config.h>
 
 #include "dalienv.hpp"
@@ -359,6 +359,8 @@ static void roxie_common_usage(const char * progName)
     printf("\t--tracelevel=[integer]\t: Amount of information to dump on logs\n");
     printf("\t--stdlog=[boolean]\t: Standard log format (based on tracelevel)\n");
     printf("\t--logfile\t: Outputs to logfile, rather than stdout\n");
+    printf("\t--daemon|-d\t: Run as daemon\n");
+    printf("\t--instance|-i\t: Instance name");
     printf("\t--help|-h\t: This message\n");
     printf("\n");
 }
@@ -435,15 +437,29 @@ int STARTQUERY_API start_query(int argc, const char *argv[])
     InitModuleObjects();
     init_signals();
 
+    int isDaemon = 0;
+    StringBuffer instance = StringBuffer("dali");
     // stand alone usage only, not server
-    for (unsigned i=0; i<(unsigned)argc; i++)
-    {
+    for (unsigned i=0; i<(unsigned)argc; i++) {
         if (stricmp(argv[i], "--help")==0 ||
-            stricmp(argv[i], "-h")==0)
-        {
+            stricmp(argv[i], "-h")==0) {
             roxie_common_usage(argv[0]);
             return EXIT_SUCCESS;
         }
+        else if (stricmp(argv[i], "--daemon")==0 ||
+            stricmp(argv[i], "-d")==0) {
+            isDaemon = 1; 
+        }
+        else if (stricmp(argv[i], "--instance")==0 ||
+            stricmp(argv[i], "-i")==0) {
+            instance.clear().append(argv[++i]);
+        }
+    }
+
+    if(isDaemon) {
+        int ret = make_daemon(instance.str(),NULL);
+        if(ret)
+            return ret;
     }
 
     #ifdef _USE_CPPUNIT

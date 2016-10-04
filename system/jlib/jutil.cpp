@@ -1573,20 +1573,45 @@ int make_daemon(bool printpid)
 
 }
 
-int make_daemon(const char * instance, bool printpid)
+int make_daemon(const char * instance, void(*cleanup)())
 {
-    if(!make_daemon(printpid)) {
-        
-        StringBuffer pidfile;
-        pidfile.append(PID_DIR).append(PATHSEPCHAR).append(instance).append(".pid");
-        FILE * fd = fopen(pidfile.str(),"w+");
-        if(fd == NULL)
-            return(EXIT_FAILURE);
-        fprintf(fd,"%d",getpid());    
-        fclose(fd);
-        return(EXIT_SUCCESS);
+#ifndef _WIN32
+    pid_t   pid, sid;
+    pid = fork();
+    if (pid < 0)
+        return(EXIT_FAILURE);
+    if (pid > 0) {
+        if((*cleanup) != NULL)
+            cleanup();
+        exit(EXIT_SUCCESS); 
     }
-    return(EXIT_FAILURE);
+    if ((sid = setsid()) < 0)
+        return(EXIT_FAILURE);
+    umask(0);
+
+    pid = fork();                           // To prevent zombies
+    if (pid < 0)                        
+        return(EXIT_FAILURE);
+    if (pid > 0)
+        exit(EXIT_SUCCESS);
+    if (!freopen("/dev/null", "r", stdin) ||
+        !freopen("/dev/null", "w", stdout) ||
+        !freopen("/dev/null", "w", stderr)) {
+        return(EXIT_FAILURE);
+    }
+    
+    StringBuffer pidfile;
+    pidfile.append(PID_DIR).append(PATHSEPCHAR).append(instance).append(".pid");
+    FILE * fd = fopen(pidfile.str(), "w+");
+    if(fd == NULL)
+        return(EXIT_FAILURE);
+    fprintf(fd,"%d",getpid());
+    fclose(fd);
+
+    return(EXIT_SUCCESS);
+#else
+     return 0;
+#endif
 }
 
 //Calculate the greatest common divisor using Euclid's method

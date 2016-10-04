@@ -69,6 +69,11 @@ MODULE_EXIT()
     delete stopServerCrit;
 }
 
+void prefork_exit()
+{
+    serverConfig.clear();
+}
+
 #define DEFAULT_PERF_REPORT_DELAY 60
 #define DEFAULT_MOUNT_POINT "/mnt/dalimirror/"
 
@@ -131,6 +136,13 @@ int main(int argc, char* argv[])
 {
     InitModuleObjects();
     NoQuickEditSection x;
+    OwnedIFile confIFile = createIFile(DALICONF);
+    if (confIFile->exists())
+        serverConfig.setown(createPTreeFromXMLFile(DALICONF));
+    StringBuffer instance = serverConfig->queryProp("@name");
+    int ret = make_daemon(instance.str(),&prefork_exit);
+    if(ret)
+        return ret;
     try {
 
         EnableSEHtoExceptionMapping();
@@ -156,7 +168,6 @@ int main(int argc, char* argv[])
         Owned<IFile> sentinelFile = createSentinelTarget();
         removeSentinelFile(sentinelFile);
 	
-        OwnedIFile confIFile = createIFile(DALICONF);
         if (confIFile->exists())
             serverConfig.setown(createPTreeFromXMLFile(DALICONF));
 
@@ -318,10 +329,6 @@ int main(int argc, char* argv[])
         else
             serverConfig.setown(createPTree());
 
-        // TODO: setup signal handling
-        int ret = make_daemon(serverConfig->queryProp("@name"),false);
-        if(ret)
-            return ret;
 
         NamedMutex globalNamedMutex("DASERVER");
         if (!serverConfig->getPropBool("allowMultipleDalis"))

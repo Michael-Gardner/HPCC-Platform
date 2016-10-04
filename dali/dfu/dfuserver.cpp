@@ -60,7 +60,11 @@ void usage()
     printf("  DFUSERVER DALISERVERS=<ip> STOP=1 QUEUE=<q-name>   -- stops DFU Server\n\n");
 }
 
-
+void m_exit()
+{
+// engine->abortListeners();
+    globals.clear();
+}
 
 static bool exitDFUserver()
 {
@@ -103,12 +107,19 @@ int main(int argc, const char *argv[])
     EnableSEHtoExceptionMapping();
 
     NoQuickEditSection xxx;
-
+    
     Owned<IFile> file = createIFile("dfuserver.xml");
     if (file->exists())
         globals.setown(createPTreeFromXMLFile("dfuserver.xml", ipt_caseInsensitive));
     else
         globals.setown(readOldIni());
+
+    StringBuffer instance = globals->queryProp("@name");
+    if(!instance.length())
+        instance.append("dafilesrv");
+    int ret = make_daemon(instance.str(),&m_exit);
+    if(ret)
+        return ret;
 
     for (unsigned i=1;i<(unsigned)argc;i++) {
         const char *arg = argv[i];
@@ -127,6 +138,7 @@ int main(int argc, const char *argv[])
                 globals->setProp(prop.str(), val.str());
         }
     }
+    
     StringBuffer daliServer;
     StringBuffer queue;
     if (!globals->getProp("@DALISERVERS", daliServer)||!globals->getProp("@QUEUE", queue)) {
@@ -234,9 +246,7 @@ int main(int argc, const char *argv[])
         }
         if (!stop) {
             serverstatus->commitProperties();
-
             writeSentinelFile(sentinelFile);
-
             engine->joinListeners();
             if (replserver.get())
                 replserver->stopServer();

@@ -306,7 +306,7 @@ void sighandler(int signum, siginfo_t *info, void *extra)
 
 int initDaemon(const char * instance)
 {
-    int ret = make_daemon(instance,true);
+    int ret = make_daemon(instance);
     if (ret)
         return ret;
     struct sigaction act;
