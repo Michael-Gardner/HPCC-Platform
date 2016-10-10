@@ -21,7 +21,7 @@ if(NOT CBLAS_FOUND)
         set(cblas_lib cblas tatlas satlas)
     endif()
 
-    find_path(CBLAS_INCLUDE_DIR NAMES cblas.h)
+    find_path(CBLAS_INCLUDE_DIR NAMES cblas.h PATH_SUFFIXES openblas/include )
     find_library(CBLAS_LIBRARIES NAMES ${cblas_lib} PATHS /usr/lib/atlas /usr/lib64/atlas)
 
     include(FindPackageHandleStandardArgs)

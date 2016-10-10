@@ -115,6 +115,12 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
         set( MAKE_CONFIGURATOR ON )
   endif()
 
+  if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+      cmake_policy(SET CMP0042 OLD)
+      set(CMAKE_FIND_FRAMEWORK LAST)
+      set(CMAKE_INCLUDE_PATH /usr/local/opt)
+  endif()
+
     MACRO(SET_PLUGIN_PACKAGE plugin)
         string(TOLOWER "${plugin}" pname)
 	    if(DEFINED pluginname)
