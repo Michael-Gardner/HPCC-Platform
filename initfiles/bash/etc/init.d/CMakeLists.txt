@@ -38,15 +38,5 @@ FOREACH( oFILES
     install ( PROGRAMS ${oFILES} DESTINATION etc/init.d COMPONENT Runtime )
 ENDFOREACH ( oFILES )
 
-FOREACH( sFILES
-    ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init.service
-    ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init@.service
-    ${CMAKE_CURRENT_BINARY_DIR}/dafilesrv.service
-    ${CMAKE_CURRENT_BINARY_DIR}/dafilesrv@.service
-)
-    install ( FILES ${sFILES} DESTINATION etc/init.d COMPONENT Runtime
-        PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ )
-ENDFOREACH ( sFILES )
-
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/dafilesrv ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init
     DESTINATION ${CONFIG_PREFIX}/init.d COMPONENT Runtime)

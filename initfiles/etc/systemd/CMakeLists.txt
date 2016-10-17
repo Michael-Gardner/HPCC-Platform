@@ -53,5 +53,5 @@ foreach(component ${componentList})
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${component}@.service DESTINATION ${SYSTEMD_PATH} COMPONENT Systemd)
 endforeach()
 
-configure_file(hpccsystems-platform.driver.in hpccsystems-platform @ONLY)
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/hpccsystems-platform DESTINATION ${ADMIN_PATH} COMPONENT Systemd)
+configure_file(hpcc-init.service.in hpcc-init.service @ONLY)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init.service DESTINATION ${INIT_PATH} COMPONENT Systemd)
