@@ -157,7 +157,7 @@ for C in ${component} ; do
     else
        xcmd="${cmd}_component ${C}"
     fi
-    if [ ${DEBUG} != "NO_DEBUG" ]; then
+    if [ ${DEBUG:-NO_DEBUG} != "NO_DEBUG" ]; then
         echo $xcmd
     fi
     eval $xcmd

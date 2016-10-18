@@ -281,6 +281,8 @@ if(TOP_LEVEL_PROJECT)
 %define __getdeps() while read file; do /usr/lib/rpm/rpmdeps -%{1} ${file} | %{__grep} -v libRInside.so | %{__grep} -v libRcpp.so ; done | /bin/sort -u
 %define __find_provides /bin/sh -c '%{__getdeps P}'
 %define __find_requires /bin/sh -c '%{__getdeps R}'")
+            set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION /etc/systemd /etc/systemd/system)
+            set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS TRUE CACHE BOOL "suppress developer warnings")
         endif()
 
         if("${packageManagement}" STREQUAL "DEB")

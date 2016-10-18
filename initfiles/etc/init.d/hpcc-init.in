@@ -19,9 +19,21 @@
 #       driver for cluster instances located on this node
 ################################################################################
 
+source @INSTALL_DIR@/etc/init.d/hpcc_common
+
+# check which init system to use.  defaults to sysV
+which systemctl 2>&1 1>/dev/null
+_use_systemd=$?
+
+# setup logging
+export logfile=@LOG_PATH@/hpcc-init.log
+createDir @LOG_PATH@
+[[ ! -e ${logfile} ]] && touch $logfile
+[[ "$(ls -ld @LOG_PATH@ | awk '{print $3}')" != "@RUNTIME_USER@" ]] && chown -R @RUNTIME_USER@:@RUNTIME_GROUP@ @LOG_PATH@
+
 function help()
 {
-    echo "hpccsystems-platform [option] start|stop|restart"
+    echo "hpcc-init [option] start|stop|restart"
     printf "%-20s: %-58s\n" "-c <instance>" "instance of hpccsystems-platform to act upon"
     printf "%-20s: %-58s\n" "-t <type>" "component type of hpccsystems-platform to act upon"
     exit 1
@@ -40,29 +52,59 @@ function setup()
 {
     local _compname=$1
     mkdir -p @RUNTIME_PATH@/${_compname} @PID_PATH@ @LOG_PATH@/${_compname}
-    @ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -od @RUNTIME_PATH@ -id @COMPONENTFILES_PATH@/configxml -c ${_compname}
+    @ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -od @RUNTIME_PATH@ -id @COMPONENTFILES_PATH@/configxml -c ${_compname} 1>/dev/null 2>&1
     chown -R @RUNTIME_USER@:@RUNTIME_GROUP@ @RUNTIME_PATH@/${_compname} @PID_PATH@ @LOG_PATH@/${_compname}
 }
 
 function start()
 {
     for((i=0;i<${#a_componentName[@]};i++)); do
+        log "start ${a_componentName[$i]}"
         setup ${a_componentName[$i]}
-        systemctl start "${a_processName[$i]}@${a_componentName[$i]}.service"
+        if [[ $_use_systemd -eq 0 ]]; then
+            printf "Starting %-21s" "${a_componentName[$i]}... "
+            systemctl start "${a_processName[$i]}@${a_componentName[$i]}.service" 1>/dev/null 2>&1
+            if [[ $? -eq 0 ]]; then
+                log_success_msg
+            else
+                log_failure_msg
+            fi
+        else
+            set_componentvars ${a_componentName[$i]}
+            start_component ${a_componentName[$i]}
+        fi
     done
 }
 
 function stop()
 {
     for((i=${#a_componentName[@]}-1;i>=0;i--)); do
-        systemctl stop "${a_processName[$i]}@${a_componentName[$i]}.service"
+        log "stop ${a_componentName[$i]}"
+        if [[ $_use_systemd -eq 0 ]]; then
+            printf "Stopping %-21s" "${a_componentName[$i]}... "
+            systemctl stop "${a_processName[$i]}@${a_componentName[$i]}.service" 1>/dev/null 2>&1
+            if [[ $? -eq 0 ]]; then
+                log_success_msg
+            else
+                log_failure_msg
+            fi
+        else
+            set_componentvars ${a_componentName[$i]}
+            stop_component ${a_componentName[$i]}
+        fi
     done
 }
 
 function status()
 {
     for((i=0;i<${#a_componentName[@]};i++)); do
-        systemctl status "${a_processName[$i]}@${a_componentName[$i]}.service"
+        log "status ${a_componentName[$i]}"
+        if [[ $_use_systemd -eq 0 ]]; then
+            systemctl --no-pager --lines=0 status "${a_processName[$i]}@${a_componentName[$i]}.service"
+        else
+            set_componentvars ${a_componentName[$i]}
+            status_component ${a_componentName[$i]}
+        fi
     done
 }
 

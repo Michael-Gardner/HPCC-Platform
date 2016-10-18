@@ -14,25 +14,5 @@
 #    limitations under the License.
 ################################################################################
 
-SET(outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_dafilesrv.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_eclagent.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_dali.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_thor.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_configesp.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_dfuserver.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_eclccserver.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_eclscheduler.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_esp.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_roxie.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_sasha.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_thorslave.in" outFiles)
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bin ALL DEPENDS ${outFiles})
-
-FOREACH( iFILES
-    ${outFiles}
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_ftslave
-    ${CMAKE_CURRENT_SOURCE_DIR}/init_roxie_cluster
-)
-    install ( PROGRAMS ${iFILES} DESTINATION ${EXEC_DIR} COMPONENT Runtime )
-ENDFOREACH ( iFILES )
+configure_file(hpcc-init.in hpcc-init @ONLY)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/hpcc-init DESTINATION ${INIT_PATH} COMPONENT Systemd)

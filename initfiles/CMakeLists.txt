@@ -40,6 +40,7 @@ if ( PLATFORM AND UNIX )
 
     ADD_SUBDIRECTORY(bash)
     ADD_SUBDIRECTORY(etc)
+    ADD_SUBDIRECTORY(bin)
     ADD_SUBDIRECTORY(sbin)
     ADD_SUBDIRECTORY(componentfiles)
 endif ()

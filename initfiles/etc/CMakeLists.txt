@@ -17,5 +17,5 @@
 add_subdirectory(DIR_NAME)
 add_subdirectory(sshkey)
 add_subdirectory(bash_completion)
-add_subdirectory(systemd)
+add_subdirectory(systemd/system)
 add_subdirectory(init.d)
