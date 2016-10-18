@@ -26,7 +26,7 @@
 
 ###<REPLACE>###
 
-START_STOP_DAEMON=${INSTALL_DIR}/bin/start-stop-daemon
+START_STOP_DAEMON=@INSTALL_DIR@/bin/start-stop-daemon
 
 which_service(){
     SERV=`type --path service`
@@ -52,10 +52,10 @@ which_pidof(){
     fi
 }
 
-source  ${INSTALL_DIR}/etc/init.d/lock.sh
-source  ${INSTALL_DIR}/etc/init.d/pid.sh
-source  ${INSTALL_DIR}/etc/init.d/init-functions
-source  ${INSTALL_DIR}/etc/init.d/export-path
+source  @INSTALL_DIR@/etc/init.d/lock.sh
+source  @INSTALL_DIR@/etc/init.d/pid.sh
+source  @INSTALL_DIR@/etc/init.d/init-functions
+source  @INSTALL_DIR@/etc/init.d/export-path
 
 
 cfg.parser () {
@@ -247,7 +247,7 @@ strstr() {
 }
 
 set_environmentvars() {
-    HPCC_CONFIG=${HPCC_CONFIG:-${CONFIG_DIR}/${ENV_CONF_FILE}}
+    HPCC_CONFIG=${HPCC_CONFIG:-@CONFIG_DIR@/@ENV_CONF_FILE@}
 
     ## Retrieve the Section to use from environment variable and if not set
     ## use default of "DEFAULT"
@@ -274,8 +274,8 @@ set_componentvars() {
 }
 
 validate_configuration() {
-    if ! validation_error=$(${configgen_path}/configgen -env ${envfile} -validateonly 2>&1); then
-        log  "validate_configuration(): validation failure ${envfile}"
+    if ! validation_error=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -validateonly 2>&1); then
+        log  "validate_configuration(): validation failure @CONFIG_DIR@/@ENV_XML_FILE@"
         log  "${validation_error}"
         echo -e "\033[31merror\033[0m: configgen xml validation failure"
         exit 1
@@ -284,7 +284,7 @@ validate_configuration() {
 
 get_commondirs() {
     componentFile="${path}/componentfiles/configxml"
-    DIRS=$(${configgen_path}/configgen -env ${envfile} -id ${componentFile} -listcommondirs)
+    DIRS=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -id ${componentFile} -listcommondirs)
     rc=$?
     if [[ $rc -ne 0 ]]; then
         log  "get_commondirs(): failure in configgen call"
@@ -300,7 +300,7 @@ configGenCmd() {
     # Creating logfiles for component
     logDir=$log/${compName}
 
-    configcmd="${configgen_path}/configgen -env ${envfile} -od ${runtime} -id ${componentFile} -c ${compName}"
+    configcmd="@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -od ${runtime} -id ${componentFile} -c ${compName}"
     log "$configcmd"
     if [ "$(whoami)" != "${user}" ]; then
         su ${user} -c "$configcmd" 2>/dev/null
@@ -541,7 +541,7 @@ startCmd() {
     log_timeout_msg
     log "${compName} has timed out, but may still be starting"
 
-    chmod 644 ${envfile}
+    chmod 644 @CONFIG_DIR@/@ENV_XML_FILE@
 
     return ${RCSTART}
 }
@@ -693,7 +693,7 @@ setup_component() {
 create_dropzone() {
     OIFS=${IFS}
     unset IFS
-    dropzones=$(${configgen_path}/configgen -env ${envfile} -listdirs)
+    dropzones=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -listdirs)
     rc=$?
     if [[ $rc -ne 0 ]]; then
         log  "create_dropzone(): failure in configgen call"
@@ -866,7 +866,7 @@ run_cluster() {
 
     if [[ -z "$3" ]]; then
         validate_configuration
-        t_IP=$(${INSTALL_DIR}/sbin/configgen -env ${CONFIG_DIR}/${ENV_XML_FILE} -machines)
+        t_IP=$(@INSTALL_DIR@/sbin/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -machines)
         rc=$?
         if [[ $rc -ne 0 ]]; then
             log  "run_cluster(): failure in configgen call"
@@ -907,8 +907,8 @@ run_cluster() {
    _num_failed=0
    _num_processed=0
    _pregress=0
-   _log_file=${LOG_DIR}/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
-   [ ! -d ${LOG_DIR}/cluster ] && mkdir -p ${LOG_DIR}/cluster
+   _log_file=@LOG_PATH@/cluster/se_$(basename $_cmd)_$(date +%Y%m%d_%H%M%S).log
+   [ ! -d @LOG_PATH@/cluster ] && mkdir -p @LOG_PATH@/cluster
    [ -e $_log_file ] && rm -rf $_log_file
    if [ "$RUN_CLUSTER_DISPLAY_OUTPUT" != "TRUE" ]
    then
@@ -963,9 +963,9 @@ cluster_tools_init() {
    #[ "$(id -u)" != "0" ] && _cmd_prefix=sudo
 
    # Check and set log directory
-   CLUSTER_LOG_DIR=${LOG_DIR}/cluster
-   #[ ! -d $LOG_DIR ]  && ${_cmd_prefix} ${INIT_PATH}/hpcc-init status > /dev/null 2>&1
-   [ ! -d $LOG_DIR ]  && ${INIT_PATH}/hpcc-init status > /dev/null 2>&1
+   CLUSTER_LOG_DIR=@LOG_PATH@/cluster
+   #[ ! -d $LOG_DIR ]  && ${_cmd_prefix} @INIT_PATH@/hpcc-init status > /dev/null 2>&1
+   [ ! -d @LOG_PATH@ ]  && @INIT_PATH@/hpcc-init status > /dev/null 2>&1
 
    [ ! -d $CLUSTER_LOG_DIR ] && mkdir -p $CLUSTER_LOG_DIR
    # workaround inconsistency of stat command
