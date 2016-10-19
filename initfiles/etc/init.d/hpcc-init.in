@@ -19,7 +19,7 @@
 #       driver for cluster instances located on this node
 ################################################################################
 
-source @INSTALL_DIR@/etc/init.d/hpcc_common
+source @ADMIN_PATH@/hpcc_common
 
 # check which init system to use.  defaults to sysV
 which systemctl 2>&1 1>/dev/null
@@ -30,6 +30,9 @@ export logfile=@LOG_PATH@/hpcc-init.log
 createDir @LOG_PATH@
 [[ ! -e ${logfile} ]] && touch $logfile
 [[ "$(ls -ld @LOG_PATH@ | awk '{print $3}')" != "@RUNTIME_USER@" ]] && chown -R @RUNTIME_USER@:@RUNTIME_GROUP@ @LOG_PATH@
+
+exec 2>@LOG_PATH@/hpcc-init.debug
+set -x
 
 function help()
 {
@@ -70,8 +73,7 @@ function start()
                 log_failure_msg
             fi
         else
-            set_componentvars ${a_componentName[$i]}
-            start_component ${a_componentName[$i]}
+            start_component ${a_processName[$i]} ${a_componentName[$i]}
         fi
     done
 }
@@ -89,8 +91,7 @@ function stop()
                 log_failure_msg
             fi
         else
-            set_componentvars ${a_componentName[$i]}
-            stop_component ${a_componentName[$i]}
+            stop_component ${a_processName[$i]} ${a_componentName[$i]}
         fi
     done
 }
@@ -102,8 +103,7 @@ function status()
         if [[ $_use_systemd -eq 0 ]]; then
             systemctl --no-pager --lines=0 status "${a_processName[$i]}@${a_componentName[$i]}.service"
         else
-            set_componentvars ${a_componentName[$i]}
-            status_component ${a_componentName[$i]}
+            status_component ${a_processName[$i]} ${a_componentName[$i]}
         fi
     done
 }

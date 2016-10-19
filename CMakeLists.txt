@@ -369,7 +369,7 @@ if(TOP_LEVEL_PROJECT)
 "${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postinst;${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/prerm; ${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postrm")
             endif(CLIENTTOOLS_ONLY)
             if(PLATFORM)
-                set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postinst;${CMAKE_CURRENT_BINARY_DIR}/initfiles/sbin/prerm;${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postrm")
+                set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/postinst;${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/prerm;${CMAKE_CURRENT_BINARY_DIR}/initfiles/packaging/postrm")
             endif(PLATFORM)
 
             # Standard sections values:

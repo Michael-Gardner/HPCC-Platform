@@ -42,6 +42,7 @@ if ( PLATFORM AND UNIX )
     ADD_SUBDIRECTORY(etc)
     ADD_SUBDIRECTORY(bin)
     ADD_SUBDIRECTORY(sbin)
+    ADD_SUBDIRECTORY(packaging)
     ADD_SUBDIRECTORY(componentfiles)
 endif ()
 

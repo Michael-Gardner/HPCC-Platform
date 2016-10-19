@@ -1,0 +1,457 @@
+## hpcc_common.lib
+################################################################################
+#    HPCC SYSTEMS software Copyright (C) 2016 HPCC Systems®.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+################################################################################
+#
+# A series of functions that are common to all hpcc-init processes
+#
+
+START_STOP_DAEMON=@EXEC_PATH@/start-stop-daemon
+
+source  @INSTALL_DIR@/sbin/init-functions
+source  @INSTALL_DIR@/sbin/export-path
+
+# general logging message for init scripts
+# expects $logfile to exist within the context of where it's called
+log() {
+  if [[ -z ${logfile+x} ]]; then
+    # logfile isn't set within the context of this function call
+    return 1
+  fi
+
+  local msg=$@
+  local header=$( date +%Y_%m_%d_%H_%M_%S )
+  local header="${header}: "
+  printf "%s%s\n" "$header" "$msg" >> $logfile
+
+  return 0
+}
+
+cfg.parser () {
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_begin_msg "Parsing $1 config file..."
+    if [ ! -e $1 ] || [ $# -lt 1 ]; then
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_end_msg 1 && return 1 || return 1
+    fi
+    IFS=$'\n' && ini=( $(cat $1 | sed -e 's/[[:blank:]]*=[[:blank:]]*/=/') )              # convert to line-array
+    ini=( ${ini[*]//[;#]*/} )                   # remove comments
+    ini=( ${ini[*]/#[/\}$'\n'cfg.section.} ) # set section prefix
+    ini=( ${ini[*]/%]/ \(} )                 # convert text2function (1)
+    ini=( ${ini[*]/=/=\( } )                 # convert item to array
+    ini=( ${ini[*]/%/ \)} )                  # close array parenthesis
+    ini=( ${ini[*]/%\( \)/\(\) \{} )         # convert text2function (2)
+    ini=( ${ini[*]/%\} \)/\}} )              # remove extra parenthesis
+    ini[0]=''                                # remove first element
+    ini[${#ini[*]} + 1]='}'                  # add the last brace
+    #echo "${ini[*]}"               # echoing the result
+    eval "$(echo "${ini[*]}")"               # eval the result
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_end_msg 0
+}
+
+## dir.parser parses the return of configgen -listcommondirs and builds local scope
+## arrays for each return from the generator. It also builds an array of which
+## elements can be used in the local scope ($dirArray).
+##
+## $@="line1 . . lineN"
+##
+dir.parser() {
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_begin_msg "Parsing configgen data..."
+        if [ $# -lt 1 ]; then
+            [[ "${VERBOSE:-0}" -eq 1 ]] && log_end_msg 1 && return 1 || return 1
+        fi
+        OIFS=${IFS}
+        IFS=$'\n' && cmp=( $@ )
+        cmp=( ${cmp[*]/#/dir_} )
+        cmp=( ${cmp[*]/=/= dirItem=} )
+        cmp=( ${cmp[*]/=/=\(} )
+        cmp=( ${cmp[*]/%/ \)} )
+        eval "$(echo "${cmp[*]}")"
+        for i in ${!dir_*}; do
+            dirArray=( ${dirArray[@]} $i )
+        done
+        IFS=${OIFS}
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_end_msg 0
+}
+
+
+createDir ()
+{
+    _dirPath=$1
+    if [[ ! -d "${_dirPath}" ]]; then
+        log_begin_msg "Creating ${_dirPath} directory..."
+        if mkdir -p ${_dirPath} 2>/dev/null; then
+            log_end_msg 1
+            return 1
+        fi
+        if chown $user:$group ${_dirPath} 2>/dev/null; then
+            log_end_msg 1
+            return 1
+        fi
+        log_end_msg 0
+    fi
+    return 0
+}
+
+## removeDir allows the user to pass a directory to be removed.
+##
+## $1="/dir/to/be/removed/"
+##
+removeDir() {
+    dir=$1
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_begin_msg "Removing ${dir} directory..."
+    if [ -d $dir ]; then
+    rm -rf $dir
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_end_msg $? && return $? || return $?
+    fi
+    [[ "${VERBOSE:-0}" -eq 1 ]] && log_end_msg 1 && return 1 || return 1
+}
+
+
+# returns OK if $1 contains $2
+strstr() {
+  [[ "${1#*$2*}" = "$1" ]] && return 1
+  return 0
+}
+
+fetch_configuration_variables() {
+    HPCC_CONFIG=${HPCC_CONFIG:-@CONFIG_DIR@/@ENV_CONF_FILE@}
+
+    ## Retrieve the Section to use from environment variable and if not set
+    ## use default of "DEFAULT"
+    ##
+    SECTION=${SECTION:-DEFAULT}
+
+    cfg.parser ${HPCC_CONFIG}
+    cfg.section.${SECTION}
+
+    if [ -n "${umask}" ]; then
+        umask $umask
+    fi
+}
+
+
+validate_configuration() {
+    if ! validation_error=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -validateonly 2>&1); then
+        log  "validate_configuration(): validation failure @CONFIG_DIR@/@ENV_XML_FILE@"
+        log  "${validation_error}"
+        echo -e "\033[31merror\033[0m: configgen xml validation failure"
+        exit 1
+    fi
+}
+
+get_commondirs() {
+    componentFile="${path}/componentfiles/configxml"
+    DIRS=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -id ${componentFile} -listcommondirs)
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        log  "get_commondirs(): failure in configgen call"
+        echo -e "\033[31merror\033[0m: get_commondirs() -> failure in configgen call"
+        exit 1
+    fi
+    dir.parser ${DIRS}
+}
+
+configGenCmd() {
+    configcmd="@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -od @RUNTIME_PATH@ -id @COMPONENTFILES_PATH@/configxml -c ${compName}"
+    log "$configcmd"
+    if [ "$(whoami)" != "${user}" ]; then
+        su ${user} -c "$configcmd" 2>/dev/null
+    else
+        ${configcmd} 2>/dev/null
+    fi
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        log  "configGenCmd(): failure in configgen call"
+        echo -e "\033[31merror\033[0m: configGenCmd() -> failure in configgen call"
+        exit 1
+    fi
+}
+
+# Get pid value found in pid file
+# rc 0      success
+# rc 1      failure
+# __pidval  contents of file
+get_pid() {
+    local _pidfile=$1
+    if [[ -e "${_pidfile}" ]]; then
+        __pidval=$(cat ${_pidfile})
+        return 0
+    else
+        __pidval=0
+        return 1
+    fi
+}
+
+# Check status of component
+# Arg 1     string compType
+# Arg 2     string compName
+# Arg 2     0:1 sentinel file check
+# rc 0      up
+# rc 1      down
+# rc 2      spawning process
+check_status() {
+    local compType=$1
+    local compName=$2
+    local sentinelCheck=$3
+    local lh_pid=""
+
+    get_pid @PID_PATH@/init_${compName}.pid && lh_pid=$(ps -o pid= -p ${__pidval})
+    if [[ "${lh_pid}" != "" ]]; then
+        get_pid @PID_PATH@/${compName}.pid && lh_pid=$(ps -o pid= -p ${__pidval})
+        if [[ "${lh_pid}" != "" ]]; then
+            [[ "${sentinelCheck}" -eq 0 ]] && return 0
+            [[ -e "@RUNTIME_PATH@/${compName}/${compType}.sentinel" ]] && return 0
+            return 2
+        fi
+        return 2
+    else
+        return 1
+    fi
+}
+
+create_dropzone() {
+    OIFS=${IFS}
+    unset IFS
+    dropzones=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -listdirs)
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        log  "create_dropzone(): failure in configgen call"
+        echo -e "\033[31merror\033[0m: create_dropzone() -> failure in configgen call"
+        exit 1
+    fi
+    for D in ${dropzones} ; do
+        # Creating DropZone directory
+        if [ ! -d ${D} ]; then
+            mkdir -p $D > /dev/null 2>&1
+            chown -c $user:$group $D > /dev/null 2>&1
+            chmod 777 $D > /dev/null 2>&1
+        fi
+    done
+    IFS=${OIFS}
+}
+
+
+is_root(){
+    if [ "$(id -u)" != "0" ]; then
+        echo "This operation can be executed only by ROOT user"
+        exit
+    fi
+}
+
+is_user(){
+    USER=$1
+    if [ "$(id -u)" != "$(id -u ${USER})" ]; then
+        echo "This operation should be run as ${USER}"
+        exit
+    fi
+}
+
+# Usage: is_python_installed <verion>
+#    <version> (optional): format: <major>.<minor>
+#         when specified return 0 if python version is equal or higher
+#         than <version>. Otherwise return 1
+is_python_installed () {
+   _expected_version=$1
+
+   which python > /dev/null 2>&1
+   [ $? -ne 0 ] && return 1
+
+   if [ -n "$_expected_version" ]
+   then
+      _actual_version=$(python -V 2>&1 | cut -d' ' -f 2 | cut -d '.' -f -2)
+      echo $_actual_version | grep -q -e "^[0-9]\.[0-9]$"
+      [ $? -ne 0 ] && return 1
+
+      if [[ "$_actual_version" < "$_expected_version" ]]
+      then
+         return 1
+      fi
+   fi
+   return 0
+}
+
+#--------------------------------------------------------------------------------
+#                        Component Specific Functions
+#--------------------------------------------------------------------------------
+
+# Start component specified
+# Arg 1     string compType
+# Arg 2     string compName
+# rc 0      successful
+# rc 1      failed
+start_component() {
+    compType=$1
+    compName=$2
+    local sentinelCheck=1
+    local _rc=0
+    local _wait=120
+
+    fetch_configuration_variables
+
+    # Creating dirs for component if not present
+    createDir @LOG_PATH@/${compName}
+    createDir @RUNTIME_PATH@/${compName}
+
+    # Stepping into new working directory
+    cd @RUNTIME_PATH@/${compName} || return 1
+    
+    # check status and return if already up or spawning 
+    check_status ${compType} ${compName} ${sentinelCheck}
+    _rc=$?
+    [[ ${_rc} -eq 0 ]] && printf "Running ${compName}" && log_success_msg && return 0
+    [[ ${_rc} -eq 2 ]] && printf "Spawning ${compName}" && log_success_msg && return 2
+
+    printf "Starting %-21s" "$compName ..."
+    log "Starting $compName"
+
+    # setup limits for environment
+    limits=(
+      MIN_Hn_nofile="32768"
+      MIN_Hc_core="unlimited"
+      MIN_Hu_nproc="8192"
+      MIN_Hr_rtprio="4"
+      MIN_Hl_memlock="unlimited" )
+
+    local i=0
+    for element in "${limits[@]}"; do
+        flag="-${element:4:2}"
+        value=${element##*"="}
+
+        default_value=$( ulimit $flag )
+        if [[ "$value" != "unlimited" ]] && ([[ "$default_value" == "unlimited" ]] || [[ "$default_value" -gt "$value" ]]); then
+            _temp=${element%%"="*}
+            _temp="${_temp}=${default_value}"
+            limits[i]=$_temp
+        fi
+        flag="-${element:5:1}"
+        ulimit $flag ${limits[i]##*"="} 1>/dev/null 2>&1
+        i=$((i+1))
+    done
+
+    # setup umask
+    UMASK_ARG=""
+    if [[ -n "${umask}" ]]; then
+        UMASK_ARG="--umask ${umask}"
+    fi
+
+    # start the process in background
+    startcmd="${START_STOP_DAEMON} -S -p @PID_PATH@/init_${compName}.pid -c ${user}:${group} -d @RUNTIME_PATH@/${compName} ${UMASK_ARG} -m -x @EXEC_PATH@/init_${compType} -b"
+    log "${startcmd}"
+    eval $startcmd
+
+    # check for spawning health
+    while [[ ${_wait} -gt 0 ]]; do
+        _wait=`expr ${_wait} - 1`
+        check_status ${compType} ${compName} ${sentinelCheck} 
+        _rc=$?
+        [[ ${_rc} -eq 0 ]] && log_success_msg && return 0
+        [[ ${_rc} -eq 1 ]] && log_failure_msg && return 1
+        sleep 1
+    done
+
+    # timeout met and process still spawning
+    log_timeout_msg
+    log "${compName} has timed out, but may still be starting"
+    return 2
+}
+
+# Stop component specified
+# Arg 1     string compType
+# Arg 2     string compName
+# rc 0      successful
+# rc 1      failed
+stop_component() {
+    compType=$1
+    compName=$2
+    local sentinelCheck=1
+    local _rc=0
+    local _wait=30
+
+    fetch_configuration_variables
+
+    # Creating dirs for component if not present
+    printf "Stopping %-21s" "${compName}... "
+
+    check_status ${compType} ${compName} 0
+    _rc=$?
+    if [[ $_rc -eq 1 ]]; then
+        log_success_msg
+        return 0;
+    fi
+
+    stopcmd="${START_STOP_DAEMON} -K -p @PID_PATH@/init_${compName}.pid"
+    log "$stopcmd"
+    eval $stopcmd
+
+    [[ "${compType}" = "dali" ]] && _wait=720
+    while [[ $_rc -ne 1 && $_wait -gt 0 ]]; do
+        check_status ${compType} ${compName} ${sentinelCheck}    
+        _rc=$?
+        ((WAITTIME--))
+        if ! ((WAITTIME % 60)); then
+            echo "still stopping ..."
+        fi
+        [[ $_rc -ne 1 ]] && sleep 1
+    done
+
+    if [[ $RESULT -ne 1 ]]; then
+        log_failure_msg
+        return 1
+    fi
+
+    log_success_msg
+    rm -f @PID_PATH@/init_${compName}.pid
+    return 0
+}
+
+# status of component specified
+# Arg 1     string compType
+# Arg 2     string compName
+# rc 0      successful
+# rc 1      failed
+status_component() {
+    compType=$1
+    compName=$2
+    local sentinelCheck=1
+    local _rc=0
+
+    # getpid returns __pidval
+    get_pid @PID_PATH@/${compName}.pid
+    check_status ${compType} ${compName} ${sentinelCheck}
+    _rc=$?
+
+    if [[ $_rc -eq 1 ]]; then
+        log "${compName} ---> Stopped"
+        printf "%-15s is stopped" "$compName"
+    elif [[ $_rc -eq 2 ]]; then
+        log "${compName} ---> Spawning"
+        printf "%-15s is spawning" "$compName"
+    elif [[ "${compType}" == "thor" ]]; then
+        if [[ -e ${runtime}/${compName}/slaves && -e ${runtime}/${compName}/setvars ]]; then
+            source ${runtime}/${compName}/setvars
+            __slaves=$(cat ${runtime}/${compName}/slaves | wc -l)
+            __slaveprocesses=$((${__slaves} * ${slavespernode}))
+            log "${compName} ---> Running ( pid ${__pidval} ) with {__slaveprocesses} slave process(es)"
+            printf "%-15s ( pid %8s ) is running with %s slave process(es) ..." "${compName}" "${__pidval}" "${__slaveprocesses}"
+        else
+            log "${compName} missing file in ${runtime}/${compName} necessary for status_component"
+            printf "${compName} missing file in ${runtime}/${compName} necessary for status_component"
+        fi
+    else
+        log "${compName} ---> Running ( pid ${__pidval} )"
+        printf "%-15s ( pid %8s ) is running ..." "${compName}" "${__pidval}"
+    fi
+    echo ""
+    return $_rc
+}

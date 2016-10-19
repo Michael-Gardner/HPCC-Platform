@@ -20,7 +20,7 @@
 source ${INSTALL_DIR}/sbin/hpcc_setenv
 deploydir=$(dirname $(type -path $0))
 
-source  ${INSTALL_DIR}/etc/init.d/hpcc_common
+source  ${INSTALL_DIR}/sbin/hpcc_common
 component=$(basename $PWD)
 
 PID_NAME="${PID_DIR}/${component}.pid"

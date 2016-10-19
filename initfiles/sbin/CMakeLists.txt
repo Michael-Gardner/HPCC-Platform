@@ -27,20 +27,22 @@ GENERATE_BASH(processor ${bash-vars} "hpcc-run.sh.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "remote-install-engine.sh.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "deploy-java-files.sh.in" outFiles)
 
-SET(noInstall)
-GENERATE_BASH(processor ${bash-vars} "prerm.in" noInstall)
-
-
-ADD_CUSTOM_TARGET(ProcessFiles-initfiles-sbin ALL DEPENDS ${outFiles} ${noInstall})
+ADD_CUSTOM_TARGET(ProcessFiles-initfiles-sbin ALL DEPENDS ${outFiles})
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/regex.awk.in.cmake" "${CMAKE_CURRENT_BINARY_DIR}/regex.awk")
+
+
+configure_file(hpcc_common.in hpcc_common @ONLY)
 
 FOREACH( oFILES
     ${outFiles}
     ${CMAKE_CURRENT_BINARY_DIR}/regex.awk
+    ${CMAKE_CURRENT_BINARY_DIR}/hpcc_common
     ${CMAKE_CURRENT_SOURCE_DIR}/alter_confs.sh
     ${CMAKE_CURRENT_SOURCE_DIR}/cluster_script.py
     ${CMAKE_CURRENT_SOURCE_DIR}/deploy-java-files.exp
     ${CMAKE_CURRENT_SOURCE_DIR}/install-hpcc.exp
+    ${CMAKE_CURRENT_SOURCE_DIR}/init-functions
+    ${CMAKE_CURRENT_SOURCE_DIR}/export-path
 )
     install ( PROGRAMS ${oFILES} DESTINATION sbin COMPONENT Runtime )
 ENDFOREACH ( oFILES )

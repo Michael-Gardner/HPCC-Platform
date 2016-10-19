@@ -1,0 +1,98 @@
+#!/bin/sh
+################################################################################
+#    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+################################################################################
+
+. @INSTALL_DIR@/etc/init.d/init-functions
+
+removeSymlink ()
+{
+    toDelete=$1
+    
+    rm -f ${toDelete} 2> /dev/null
+
+    printf "Removing Symlink %-44s ..." "${toDelete}"
+    if [ -L ${toDelete} ]; then
+        log_failure_msg
+    elif [ -e ${toDelete} ] && [ ! -L ${toDelete} ] ; then
+        log_failure_msg
+    else
+        log_success_msg
+    fi
+}
+
+# Checking if configmgr is still running
+########################################
+configmgr_status=`ps -ef | grep 'configmgr' | grep -cE '(python|bash)'`
+if [ $configmgr_status -gt 0 ]; then
+    echo "ConfigMgr is still running can't uninstall the rpm. Please stop configmgr and retry. ERROR-101";
+    exit 1
+fi
+
+# Stop all services before cleaning up
+######################################
+service hpcc-init stop
+
+# Remove edits from /etc files
+# keep for legacy upgrades
+##############################
+@ADMIN_PATH@/rm_conf_settings.sh
+
+# Remove symlinks
+# TODO: eventually we want to remove all these symlinks and lay the files down directly so
+# that the package manager handles them itself
+#################
+removeSymlink "/usr/bin/dfuplus"
+removeSymlink "/usr/bin/ecl"
+removeSymlink "/usr/bin/eclcc"
+removeSymlink "/usr/bin/eclplus"
+removeSymlink "/usr/bin/soapplus"
+removeSymlink "/usr/bin/testsocket"
+removeSymlink "/usr/bin/wuget"
+
+if [ -d @INSTALL_DIR@/etc/bash_completion.d ] && [ -d /etc/bash_completion.d ]; then
+    for subInstall in `ls @INSTALL_DIR@/etc/bash_completion.d | grep -v dpkg-tmp`; do
+        removeSymlink /etc/bash_completion.d/$subInstall
+    done
+fi
+
+# locate sub uninstall files.
+if [ -d @INSTALL_DIR@/etc/init.d/uninstall ]; then
+    for subUnInstall in `ls @INSTALL_DIR@/etc/init.d/uninstall`; do
+        source @INSTALL_DIR@/etc/init.d/uninstall/${subUnInstall}
+    done
+fi
+
+# Reset systemd service if applicable
+which systemctl 1>/dev/null 2>&1 && systemctl reset-failed
+@INSTALL_DIR@/etc/init.d/uninstall-init
+
+# Remove installed flag
+#######################
+if [ -f @CONFIG_DIR@/installed ]; then
+    rm @CONFIG_DIR@/installed
+fi
+
+# Check if install dir is a link
+#######################
+if [ -n @INSTALL_DIR@ ]; then
+#  trim for readlink
+   ins_dir=`echo "@INSTALL_DIR@" | sed 's/\/*$//'`
+   if [ -h "${ins_dir}" ]; then
+       echo "`readlink "${ins_dir}"` @INSTALL_DIR@" > /tmp/.hpccinslink
+   fi
+fi
+
+exit 0
