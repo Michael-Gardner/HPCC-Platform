@@ -15,7 +15,7 @@
 #    limitations under the License.
 ################################################################################
 
-. @INSTALL_DIR@/etc/init.d/init-functions
+. @ADMIN_PATH@/init-functions
 
 removeSymlink ()
 {
