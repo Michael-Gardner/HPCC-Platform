@@ -25,28 +25,38 @@
 project(redis)
 
 if(REDIS)
-    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
+    if(APPLE)
+        set(HIREDIS_LIB libhiredis.dylib)
+        set(HIREDIS_LIB_REAL libhiredis.dylib)
+    else()
+        set(HIREDIS_LIB libhiredis.so)
+        set(HIREDIS_LIB_REAL libhiredis.so.0.13)
+    endif()
+
+    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/${HIREDIS_LIB_REAL}
         COMMAND make dynamic
-        COMMAND mv libhiredis.so ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
+        COMMAND mv ${HIREDIS_LIB} ${PROJECT_BINARY_DIR}/${HIREDIS_LIB_REAL}
         COMMAND make clean
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/hiredis
         COMMENT Building hiredis c library)
-    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/libhiredis.so
-        COMMAND ln -sf libhiredis.so.0.13 libhiredis.so
-        DEPENDS ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
-        WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+    if(UNIX AND NOT APPLE)
+        add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/${HIREDIS_LIB}
+            COMMAND ln -sf ${HIREDIS_LIB_REAL} ${HIREDIS_LIB}
+            DEPENDS ${PROJECT_BINARY_DIR}/${HIREDIS_LIB_REAL}
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+    endif()
     add_custom_target(hiredis-build ALL
-        DEPENDS ${PROJECT_BINARY_DIR}/libhiredis.so)
+        DEPENDS ${PROJECT_BINARY_DIR}/${HIREDIS_LIB})
 
     install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${PROJECT_BINARY_DIR}\")")
 
     add_library(hiredis SHARED IMPORTED)
-    set_property(TARGET hiredis PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/libhiredis.so)
+    set_property(TARGET hiredis PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/${HIREDIS_LIB})
     add_dependencies(hiredis hiredis-build)
-
+    
     install(FILES
-        ${PROJECT_BINARY_DIR}/libhiredis.so
-        ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
+        ${PROJECT_BINARY_DIR}/${HIREDIS_LIB}
+        ${PROJECT_BINARY_DIR}/${HIREDIS_LIB_REAL}
         DESTINATION ${LIB_DIR}
         PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
         COMPONENT Runtime)
