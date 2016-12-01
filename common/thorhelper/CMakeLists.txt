@@ -102,32 +102,30 @@ ADD_DEFINITIONS( -DTHORHELPER_EXPORTS -D_USRDLL )
 HPCC_ADD_LIBRARY( thorhelper SHARED ${SRCS} )
 install ( TARGETS thorhelper RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( thorhelper 
-         jlib 
-         nbcd 
-         eclrtl 
-         roxiemem
-         deftype 
-         dalibase 
+    PUBLIC jlib 
+    PUBLIC eclrtl 
+    PUBLIC roxiemem
+    PUBLIC deftype 
+    PUBLIC dalibase 
     )
 
 if (USE_NUMA)
- target_link_libraries ( thorhelper numa )
+    target_link_libraries ( thorhelper PRIVATE numa )
 endif ()
 
 if (${USE_TBB} )
-   target_link_libraries ( thorhelper ${TBB_LIBRARIES})
+    target_link_libraries ( thorhelper PRIVATE ${TBB_LIBRARIES})
 endif()
 
 
 IF (USE_OPENSSL)
     target_link_libraries ( thorhelper 
-    	securesocket
+        PRIVATE securesocket
     )
 ENDIF()
 
 IF (USE_ZLIB)
     target_link_libraries ( thorhelper
-        ${ZLIB_LIBRARIES}
-        zcrypt
+        PRIVATE zcrypt
     )
 ENDIF()

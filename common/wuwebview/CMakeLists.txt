@@ -45,9 +45,8 @@ set_target_properties(wuwebview PROPERTIES
     DEFINE_SYMBOL WUWEBVIEW_EXPORTS )
 install ( TARGETS wuwebview RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( wuwebview
-         jlib
-         workunit
-         fileview2
-         dllserver
-         xmllib
-    )
+    PUBLIC jlib
+    PRIVATE workunit
+    PRIVATE fileview2
+    PRIVATE dllserver
+    PRIVATE xmllib)

@@ -27,10 +27,8 @@ project( dllserver )
 set (    SRCS 
          dllserver.cpp 
          thorplugin.cpp 
-
          dllserver.hpp 
-         thorplugin.hpp 
-    )
+         thorplugin.hpp )
 
 include_directories ( 
          ./../../common/remote 
@@ -52,16 +50,13 @@ ADD_DEFINITIONS( -D_USRDLL -DDLLSERVER_EXPORTS )
 HPCC_ADD_LIBRARY( dllserver SHARED ${SRCS} )
 install ( TARGETS dllserver RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( dllserver
-         ${ZLIB_LIBRARIES}
-         jlib 
-         mp 
-         hrpc 
-         eclrtl 
-         remote 
-         dalibase 
-         environment 
+         PUBLIC jlib 
+         PRIVATE eclrtl 
+         PRIVATE remote 
+         PRIVATE dalibase 
+         PRIVATE environment 
     )
 if (NOT WIN32)
-  target_link_libraries ( dllserver ${BINUTILS_LIBRARIES})
+    target_link_libraries ( dllserver PRIVATE ${BINUTILS_LIBRARIES})
 endif()
 

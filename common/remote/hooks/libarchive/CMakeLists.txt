@@ -45,8 +45,8 @@ HPCC_ADD_LIBRARY( archivefile SHARED ${SRCS}  )
 install ( TARGETS archivefile RUNTIME DESTINATION filehooks LIBRARY DESTINATION filehooks )
 
 target_link_libraries ( archivefile
-    jlib
-    ${LIBARCHIVE_LIBRARIES}
+    PUBLIC jlib
+    PRIVATE ${LIBARCHIVE_LIBRARIES}
     )
 
 if (WIN32)

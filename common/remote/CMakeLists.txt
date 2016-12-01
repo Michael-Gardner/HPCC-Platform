@@ -64,13 +64,13 @@ HPCC_ADD_LIBRARY( remote SHARED ${SRCS}  )
 install ( TARGETS remote RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 
 target_link_libraries ( remote 
-    jlib 
-    mp
-    ${URIPARSER_LIBRARIES}
+    PUBLIC jlib 
+    PRIVATE mp
+    PUBLIC ${URIPARSER_LIBRARIES}
     )
 
 IF (USE_OPENSSL)
     target_link_libraries ( remote 
-    	securesocket
+        PRIVATE securesocket
     )
 ENDIF()

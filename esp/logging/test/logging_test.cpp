@@ -16,6 +16,7 @@
 ############################################################################## */
 
 #include "jlib.hpp"
+#include "jutil.hpp"
 #include "jfile.hpp"
 #include "jprop.hpp"
 #include "loggingmanager.h"

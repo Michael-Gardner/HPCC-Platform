@@ -70,7 +70,7 @@
 project(hpccsystems-platform)
 
 if(UNIX AND NOT APPLE)
-    cmake_minimum_required(VERSION 3.3.2)
+    cmake_minimum_required(VERSION 3.2.0)
 else()
     cmake_minimum_required(VERSION 2.8.11)
 endif()
@@ -490,5 +490,23 @@ configure_file(
     IMMEDIATE @ONLY)
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+cmake_policy(PUSH)
+cmake_policy(SET CMP0045 OLD)
+function(get_target_link_interfaces target)
+    get_target_property(LINK_PROP_OUTPUT ${target} INTERFACE_LINK_LIBRARIES)
+    if(LINK_PROP_OUTPUT)
+        foreach(item ${LINK_PROP_OUTPUT})
+            get_target_link_interfaces(${item})
+            set(gtli_output ${gtli_output} ${item} PARENT_SCOPE)
+            list(REMOVE_DUPLICATES gtli_output)
+        endforeach()
+    endif()
+endfunction()
+cmake_policy(POP)
+
+set(gtli_output "")
+get_target_link_interfaces(ecl)
+message(STATUS "output :: ${gtli_output}")
 
 include(CPack)

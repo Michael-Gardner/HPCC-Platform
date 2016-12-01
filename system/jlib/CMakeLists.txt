@@ -189,23 +189,22 @@ ADD_DEFINITIONS( -DLOGMSGCOMPONENT=1 -D_USRDLL -DJLIB_EXPORTS )
 HPCC_ADD_LIBRARY( jlib SHARED ${SRCS} ${INCLUDES} )
 
 target_link_libraries ( jlib
-        lzma
-        lz4
-       )
+    PRIVATE lzma
+    PRIVATE lz4)
 
 if ( ${HAVE_LIBDL} )
-target_link_libraries ( jlib dl)
+    target_link_libraries ( jlib PUBLIC dl)
 endif ( ${HAVE_LIBDL} )
 
 if ( ${HAVE_LIBCRYPT} )
-target_link_libraries ( jlib crypt)
+    target_link_libraries ( jlib PRIVATE crypt)
 endif ( ${HAVE_LIBCRYPT} )
 
 if (WIN32)
- target_link_libraries ( jlib ws2_32 mpr.lib Winmm.lib psapi.lib )
+    target_link_libraries ( jlib PUBLIC ws2_32 PUBLIC mpr.lib PUBLIC Winmm.lib PUBLIC psapi.lib )
 elseif (("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin" ))
 else ()
- target_link_libraries ( jlib rt )
+    target_link_libraries ( jlib PUBLIC rt )
 endif ()
 
 if (NOT PLUGIN)

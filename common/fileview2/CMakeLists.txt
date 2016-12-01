@@ -86,21 +86,17 @@ set_target_properties(fileview2 PROPERTIES
     DEFINE_SYMBOL FILEVIEW2_EXPORTS )
 install ( TARGETS fileview2 RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( fileview2 
-         jlib 
-         mp 
-         hrpc 
-         remote 
-         nbcd 
-         eclrtl 
-         jhtree 
-         dalibase 
-         environment 
-         dllserver 
-         deftype 
-         workunit 
-         thorhelper
-         hql 
-    )
+    PRIVATE jlib 
+    PRIVATE mp 
+    PRIVATE eclrtl 
+    INTERFACE jhtree 
+    PRIVATE dalibase 
+    PRIVATE environment 
+    PRIVATE dllserver 
+    PUBLIC deftype 
+    PUBLIC workunit 
+    PRIVATE thorhelper
+    PRIVATE hql)
 
 set (    SRCS 
          fvserver.cpp 
@@ -116,20 +112,17 @@ if( PLATFORM )
     #install ( TARGETS fvserver RUNTIME DESTINATION ${EXEC_DIR} ) #not used at present
 
     target_link_libraries ( fvserver
-         jlib 
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-         dllserver 
-         jhtree 
-         nbcd 
-         eclrtl 
-         deftype 
-         workunit 
-         hql 
-         fileview2 
+        jlib 
+        mp 
+        dalibase 
+        environment 
+        dllserver 
+        jhtree 
+        eclrtl 
+        deftype 
+        workunit 
+        hql 
+        fileview2 
     )
 endif()
 

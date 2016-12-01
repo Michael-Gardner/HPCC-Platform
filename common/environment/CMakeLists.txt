@@ -47,9 +47,9 @@ ADD_DEFINITIONS( -D_USRDLL -DENVIRONMENT_EXPORTS )
 HPCC_ADD_LIBRARY( environment SHARED ${SRCS} ${INCLUDES} )
 install ( TARGETS environment RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( environment 
-         jlib 
-         mp 
-         remote 
-         dalibase 
+    PUBLIC jlib 
+    PRIVATE mp 
+    PRIVATE remote 
+    PUBLIC dalibase 
     )
 

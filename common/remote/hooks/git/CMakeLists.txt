@@ -40,5 +40,5 @@ HPCC_ADD_LIBRARY( gitfile SHARED ${SRCS}  )
 install ( TARGETS gitfile DESTINATION filehooks )
 
 target_link_libraries ( gitfile
-    jlib
+    PUBLIC jlib
     )

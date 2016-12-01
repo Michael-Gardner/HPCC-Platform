@@ -51,7 +51,8 @@ install ( TARGETS eclccserver RUNTIME DESTINATION ${EXEC_DIR} )
 target_link_libraries ( eclccserver 
          jlib
          workunit
-    )
+         dllserver
+         )
 
 HPCC_ADD_SUBDIRECTORY (vchooks "PLATFORM")
 

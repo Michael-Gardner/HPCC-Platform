@@ -62,18 +62,17 @@ HPCC_ADD_LIBRARY( workunit SHARED ${SRCS} )
 set_target_properties(workunit PROPERTIES 
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL WORKUNIT_EXPORTS )
+target_link_libraries(workunit 
+    PUBLIC jlib 
+    PUBLIC dalibase 
+    PRIVATE dllserver 
+    PRIVATE nbcd 
+    PRIVATE eclrtl 
+    PRIVATE deftype
+    PRIVATE environment)
 if(NOT PLUGIN)
     install(
         TARGETS workunit
         RUNTIME DESTINATION ${EXEC_DIR}
         LIBRARY DESTINATION ${LIB_DIR})
-    target_link_libraries(
-        workunit 
-        jlib 
-        dalibase 
-        dllserver 
-        nbcd 
-        eclrtl 
-        deftype
-        environment)
 endif()
