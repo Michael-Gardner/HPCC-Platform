@@ -32,18 +32,18 @@ set(componentList
     thorslave)
 
 set(dafilesrv "dafilesrv" "-L ${LOG_PATH} -I %i -D" "" "Facilitate file transfers across a hpcc cluster.")
-set(dali "daserver" "--daemon %i" "" "Stores metadata on queries, workunits, data.")
-set(dfuserver "dfuserver" "--daemon %i" "" "data file information store.")
-set(eclagent "agentexec" "--daemon %i" "" "ecl workunit controller.")
-set(eclccserver "eclccserver" "--daemon %i" "" "compilation server for ecl to c++ to machine code.")
-set(eclscheduler "eclscheduler" "--daemon %i" "" "scheduler for ecl workunits.")
+set(dali "daserver" "--daemon %i" "dafilesrv.service" "Stores metadata on queries, workunits, data.")
+set(dfuserver "dfuserver" "--daemon %i" "dafilesrv.service" "data file information store.")
+set(eclagent "agentexec" "--daemon %i" "dafilesrv.service" "ecl workunit controller.")
+set(eclccserver "eclccserver" "--daemon %i" "dafilesrv.service" "compilation server for ecl to c++ to machine code.")
+set(eclscheduler "eclscheduler" "--daemon %i" "dafilesrv.service" "scheduler for ecl workunits.")
 #TODO: look into snmpid=$$ for esp processArgs
-set(esp "esp" "--daemon %i" "" "Handles remote calls to the hpccsystems-platform.")
-set(roxie "roxie" "--topology=RoxieTopology.xml --logfile --restarts=2 --stdlog=0 --daemon %i" "" "Allows for queries of structured data.")
-set(sasha "saserver" "--daemon %i" "" "Metadata in-memory store.")
+set(esp "esp" "--daemon %i" "dafilesrv.service" "Handles remote calls to the hpccsystems-platform.")
+set(roxie "roxie" "--topology=RoxieTopology.xml --logfile --restarts=2 --stdlog=0 --daemon %i" "dafilesrv.service" "Allows for queries of structured data.")
+set(sasha "saserver" "--daemon %i" "dafilesrv.service" "Metadata in-memory store.")
 #TODO: thor environment variables
-set(thor "thormaster_lcr" "--daemon %i MASTER=\${THORMASTER}:\${THORMASTERPORT}" "" "Coalesces raw data into structured data that can be effectiently served up by roxie.")
-set(thorslave "thorslave_lcr" "--daemon %i master=\${THORMASTER}:\${THORMASTERPORT} slave=.:\${SLAVEPORT} slavenum=\${SLAVENUM} logDir=${LOG_PATH}/\${THORNAME}" "" "Slave for thor processing")
+set(thor "thormaster_lcr" "--daemon %i MASTER=\${THORMASTER}:\${THORMASTERPORT}" "dafilesrv.service" "Coalesces raw data into structured data that can be effectiently served up by roxie.")
+set(thorslave "thorslave_lcr" "--daemon %i master=\${THORMASTER}:\${THORMASTERPORT} slave=.:\${SLAVEPORT} slavenum=\${SLAVENUM} logDir=${LOG_PATH}/\${THORNAME}" "dafilesrv.service" "Slave for thor processing")
 
 foreach(component ${componentList})
     list(GET "${component}" 0 processName)
@@ -64,6 +64,9 @@ endforeach()
 
 ## Generate and setup standalone service files
 set(standaloneList
+	hpcc-init
+	dafilesrv
+	dafilesrv-conf
     configmgr
     configmgr-conf)
 

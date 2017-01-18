@@ -1,0 +1,19 @@
+[Unit]
+Description=Finds and starts the appropriate instance of dafilesrv
+After=fetch-dafilesrv-instance.service
+
+[Service]
+Type=forking
+User=@RUNTIME_USER@
+Group=@RUNTIME_GROUP@
+PermissionsStartOnly=false
+WorkingDirectory=@RUNTIME_PATH@/%i
+EnvironmentFile=@RUNTIME_PATH@/dafilesrv-instance.cfg
+PIDFile=@PID_PATH@/${DAFILESRV_INSTANCE}.pid
+ExecStart=@EXEC_PATH@/dafilesrv -L @LOG_PATH@ -I ${DAFILESRV_INSTANCE} -D
+Restart=on-failure
+RestartSec=5
+TimeoutSec=30
+
+[Install]
+RequiredBy=hpccsystems-platform.target

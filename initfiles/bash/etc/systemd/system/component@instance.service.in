@@ -1,7 +1,7 @@
 [Unit]
 Description=@description@
 After=network.target remote-fs.target hpcc-conf@%i.service @dependencies@
-Requires=hpcc-conf@%i.service
+Requires=hpcc-conf@%i.service @dependencies@
 
 [Service]
 Type=forking
@@ -17,5 +17,6 @@ RestartSec=5
 TimeoutSec=30
 
 [Install]
-WantedBy=default.target
+WantedBy=hpccsystems-platform.target
+Requires=hpcc-conf@%i.service @dependencies@
 DefaultInstance=my@component@
