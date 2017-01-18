@@ -39,8 +39,8 @@ if the supplied pointer was not from the roxiemem heap. Usually an OwnedRoxieStr
 
 //Should be incremented whenever the virtuals in the context or a helper are changed, so
 //that a work unit can't be rerun.  Try as hard as possible to retain compatibility.
-#define ACTIVITY_INTERFACE_VERSION      162
-#define MIN_ACTIVITY_INTERFACE_VERSION  162             //minimum value that is compatible with current interface - without using selectInterface
+#define ACTIVITY_INTERFACE_VERSION      163
+#define MIN_ACTIVITY_INTERFACE_VERSION  163             //minimum value that is compatible with current interface - without using selectInterface
 
 typedef unsigned char byte;
 
@@ -344,6 +344,7 @@ interface IRtlFieldTypeDeserializer;
 //Interface used to get field information.  Separate from RtlTypeInfo for clarity and to ensure the vmt comes first.
 interface RtlITypeInfo
 {
+    virtual ~RtlITypeInfo() {}
     virtual size32_t size(const byte * self, const byte * selfrow) const = 0;
     virtual size32_t process(const byte * self, const byte * selfrow, const RtlFieldInfo * field, IFieldProcessor & target) const = 0;  // returns the size
     virtual size32_t toXML(const byte * self, const byte * selfrow, const RtlFieldInfo * field, IXmlWriter & out) const = 0;
@@ -353,6 +354,9 @@ interface RtlITypeInfo
     virtual const RtlTypeInfo * queryChildType() const = 0;
 
     virtual size32_t build(ARowBuilder &builder, size32_t offset, const RtlFieldInfo *field, IFieldSource &source) const = 0;
+
+    virtual void getUtf8(size32_t & resultLen, char * & result, const void * ptr) const = 0;
+    virtual __int64 getInt(const void * ptr) const = 0;
 };
 
 
@@ -381,13 +385,13 @@ public:
                                     // if RFTMunknownsize then maxlength (records) [maxcount(datasets)]
 };
 
-//Core struct used for representing meta for a field.
+//Core struct used for representing meta for a field.  Effectively used as an interface.
 struct RtlFieldInfo
 {
-    inline RtlFieldInfo(IAtom * _name, const char * _xpath, const RtlTypeInfo * _type, const char *_initializer = NULL)
+    inline RtlFieldInfo(const char * _name, const char * _xpath, const RtlTypeInfo * _type, const char *_initializer = NULL)
     : name(_name), xpath(_xpath), type(_type), initializer((const byte *) _initializer) {}
 
-    IAtom * name;
+    const char * name;
     const char * xpath;
     const RtlTypeInfo * type;
     const byte *initializer;

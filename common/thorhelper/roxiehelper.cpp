@@ -81,11 +81,9 @@ void CRHRollingCacheElem::set(const void *_row)
 //CRHRollingCache copied/modified from THOR CRollingCache
 CRHRollingCache::~CRHRollingCache()
 {
-    loop 
+    while (cache.ordinality())
     {  
         CRHRollingCacheElem *e = cache.dequeue();  
-        if (!e)  
-            break;  
         delete e;  
     }  
 }
@@ -527,7 +525,10 @@ public:
     {
         sorter->reset();
     }
-
+    ~SortedInputReader()
+    {
+        sorter->reset();
+    }
     virtual const void *nextRow()
     {
         if (!firstRead)
@@ -612,6 +613,11 @@ class CSortAlgorithm : implements CInterfaceOf<ISortAlgorithm>
 {
 public:
     CSortAlgorithm() { elapsedCycles = 0; }
+
+    virtual void beforeDispose() override
+    {
+        reset();
+    }
 
     virtual void getSortedGroup(ConstPointerArray & result)
     {

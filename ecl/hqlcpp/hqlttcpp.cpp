@@ -394,10 +394,33 @@ void NewThorStoredReplacer::doAnalyse(IHqlExpression * expr)
         {
             //assume there won't be many of these... otherwise we should use a hash table
             OwnedHqlExpr lowerName = lowerCaseHqlExpr(expr->queryChild(1));
+            IHqlExpression * searchExpr = lowerName->queryBody();
+            IHqlExpression * newValue = expr->queryChild(2);
             //Use lowerName->queryBody() to remove named symbols/location annotations etc.
-            storedNames.append(*LINK(lowerName->queryBody()));
-            storedValues.append(*LINK(expr->queryChild(2)));
-            storedIsConstant.append(kind == constAtom);
+            unsigned match = storedNames.find(*searchExpr);
+            if (match != NotFound)
+            {
+                IHqlExpression * oldValue = &storedValues.item(match);
+                if (oldValue->queryBody() != newValue->queryBody())
+                {
+                    if (queryLocationIndependent(oldValue) != queryLocationIndependent(newValue))
+                    {
+                        StringBuffer labelText;
+                        getExprECL(searchExpr, labelText);
+                        StringBuffer oldText;
+                        StringBuffer newText;
+                        const char * oldType = storedIsConstant.item(match) ? "CONSTANT" : "STORED";
+                        const char * newType = (kind == constAtom) ? "CONSTANT" : "STORED";
+                        translator.reportWarning(CategoryMistake, SeverityError, queryLocation(expr), ECODETEXT(HQLERR_HashStoredDuplication), oldType, labelText.str(), getExprECL(oldValue, oldText).str(), newType, labelText.str(), getExprECL(newValue, newText).str());
+                    }
+                }
+            }
+            else
+            {
+                storedNames.append(*LINK(searchExpr));
+                storedValues.append(*LINK(newValue));
+                storedIsConstant.append(kind == constAtom);
+            }
         }
         else if (kind == onWarningAtom)
             translator.addGlobalOnWarning(expr);
@@ -855,6 +878,7 @@ YesNoOption HqlThorBoundaryTransformer::calcNormalizeThor(IHqlExpression * expr)
     case no_all:
     case no_self:
     case no_activerow:
+    case no_param:
         return OptionMaybe;
     case no_evaluate:
         throwUnexpected();
@@ -869,6 +893,7 @@ YesNoOption HqlThorBoundaryTransformer::calcNormalizeThor(IHqlExpression * expr)
             case no_externalcall:
                 return normalizeThor(ds);
             case no_self:
+            case no_param:
                 return OptionMaybe;
             }
             return isNew ? OptionYes : OptionMaybe;
@@ -4764,6 +4789,23 @@ void OptimizeActivityTransformer::analyseExpr(IHqlExpression * expr)
     NewHqlTransformer::analyseExpr(expr);
 }
 
+static bool isWorthLimitingDataset(IHqlExpression * ds)
+{
+    node_operator dsOp = ds->getOperator();
+    switch (dsOp)
+    {
+    //Any dataset expression which is evaluated in a single go, rather than iterated is likely to be better
+    //especially if it is evaluated as an inline operation.
+    case no_select:
+    case no_choosen:
+    case no_rows:
+    case no_temptable:
+    case no_getresult:
+        return false;
+    }
+    return true;
+}
+
 //either a simple count, or isCountAggregate is guaranteed to be true - so structure is well defined
 IHqlExpression * OptimizeActivityTransformer::insertChoosen(IHqlExpression * lhs, IHqlExpression * limit, __int64 limitDelta)
 {
@@ -4779,9 +4821,7 @@ IHqlExpression * OptimizeActivityTransformer::insertChoosen(IHqlExpression * lhs
     case no_count:
     case no_newaggregate:
         {
-            //count on a child dataset is better if not limited...
-            node_operator dsOp = ds->getOperator();
-            if ((dsOp == no_select) || (dsOp == no_choosen) || (dsOp == no_rows))
+            if (!isWorthLimitingDataset(ds))
                 return NULL;
             args.append(*createDataset(no_choosen, LINK(ds), adjustValue(limit, limitDelta)));
             break;
@@ -9732,6 +9772,28 @@ IHqlExpression * HqlScopeTagger::transformAmbiguousChildren(IHqlExpression * exp
 }
 
 
+IHqlExpression * HqlScopeTagger::transformCall(IHqlExpression * expr)
+{
+    unsigned max = expr->numChildren();
+    bool same = true;
+    HqlExprArray args;
+    args.ensure(max);
+    for(unsigned i=0; i < max; i++)
+    {
+        IHqlExpression * cur = expr->queryChild(i);
+        IHqlExpression * tr = transformAmbiguous(cur, false);
+        args.append(*tr);
+        if (cur != tr)
+            same = false;
+    }
+    IHqlExpression * funcdef = expr->queryFunctionDefinition();
+    OwnedHqlExpr newFuncDef = transform(funcdef);
+    if (same && funcdef == newFuncDef)
+        return LINK(expr);
+    return createReboundFunction(newFuncDef, args);
+}
+
+
 IHqlExpression * HqlScopeTagger::transformSizeof(IHqlExpression * expr)
 {
     IHqlExpression * arg = expr->queryChild(0)->queryNormalizedSelector();
@@ -9851,12 +9913,13 @@ IHqlExpression * HqlScopeTagger::createTransformed(IHqlExpression * expr)
         break;
     case no_select:
         return transformSelect(expr);
-    case no_call:
     case no_externalcall:
     case no_rowvalue:
 //  case no_addfiles:
 //  case no_libraryscopeinstance:??
         return transformAmbiguousChildren(expr);
+    case no_call:
+        return transformCall(expr);
     case no_offsetof:
     case no_sizeof:
         return transformSizeof(expr);
@@ -10683,6 +10746,8 @@ bool containsCompound(IHqlExpression * expr)
     spotter.analyse(expr);
     return spotter.containsCompound;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
 
 static HqlTransformerInfo nestedCompoundTransformerInfo("NestedCompoundTransformer");
 NestedCompoundTransformer::NestedCompoundTransformer(HqlCppTranslator & _translator)

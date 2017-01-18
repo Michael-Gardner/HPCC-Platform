@@ -1333,7 +1333,8 @@ BITFIELD{digit}+    {
                          size = 1;
                       }
 
-                      ITypeInfo * type = makeBitfieldType(size);
+                      Owned<ITypeInfo> int64 = makeIntType(8, false);
+                      ITypeInfo * type = makeBitfieldType(size, int64);
                       assert(type!=NULL);
 
                       returnToken.setType(type); 
@@ -1358,7 +1359,7 @@ BITFIELD{digit}+_{digit}+ {
                       case 1: case 2: case 4: case 8:
                          break;
                       default:
-                         lexer->reportError(returnToken, ERR_ILLSIZE_BITFIELD, "Invalid size for BITFIELD type: valid size 1..64");
+                         lexer->reportError(returnToken, ERR_ILLSIZE_BITFIELD, "Invalid size for BITFIELD base type: valid size 1,2,4,8");
                          baseSize = 8;
                       }
                       if (size > baseSize*8)
@@ -1436,8 +1437,6 @@ ENCRYPTED           {
                     }
 FUNCTIONMACRO|MACRO { 
                         setupdatepos; 
-                        if (!lookup)
-                            return lookupIdentifierToken(returnToken, lexer, lookup, activeState, CUR_TOKEN_TEXT);
 
                         int tok;
                         ECLlocation startLocation;
@@ -1467,8 +1466,10 @@ FUNCTIONMACRO|MACRO {
                         if(complex || isFunctionMacro)
                             endpos -= 8; // remove the ENDMACRO token
                         
-                        // keep the orginal format info (like blanks, newlines) for macro
+                        if (!lookup)
+                            return MACRO;
                         
+                        // keep the orginal format info (like blanks, newlines) for macro
                         int len = endpos-startpos;
                         Owned<IFileContents> macroContents;
                         if (!isFunctionMacro)

@@ -25,7 +25,7 @@
 #include "eclrtl.hpp"
 #include "eclrtl_imp.hpp"
 #include "rtlds_imp.hpp"
-#include "rtlfield_imp.hpp"
+#include "rtlfield.hpp"
 #include "rtlembed.hpp"
 #include "roxiemem.hpp"
 #include "nbcd.hpp"
@@ -3612,9 +3612,9 @@ public:
             }
             agentSessionStopped = false; // reset for state changes such as WUStateWait then WUStateRunning again
             unsigned waited = msTick() - start;
-            if (timeout==-1)
+            if (timeout==-1 || waited + 20000 < timeout)
             {
-                waiter->wait(20000);  // recheck state every 20 seconds even if no timeout, in case eclagent has crashed.
+                waiter->wait(20000);  // recheck state every 20 seconds, in case eclagent has crashed.
                 if (waiter->aborted)
                     return WUStateUnknown;  // MORE - throw an exception?
             }

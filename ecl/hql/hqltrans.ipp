@@ -33,13 +33,14 @@
 
 typedef MapOwnedToOwned<IHqlExpression, IHqlExpression> MapOwnedHqlToOwnedHql;
 
+//NOTE: eclcc needs to be run with the -m option for the summary to be output
 //#define TRANSFORM_STATS
 //#define TRANSFORM_STATS_OPS
 //#define TRANSFORM_STATS_TIME
 //#define TRANSFORM_STATS_MEMORY
 //#define ALLOW_TRANSFORM_TRACING
 
-class HqlTransformStats
+class HQL_API HqlTransformStats
 {
 public:
     HqlTransformStats();
@@ -1176,6 +1177,24 @@ protected:
     virtual ANewTransformInfo * createTransformInfo(IHqlExpression * expr) { return CREATE_NEWTRANSFORMINFO(SplitterVerifierInfo, expr); }
     inline SplitterVerifierInfo * queryExtra(IHqlExpression * expr)     { return static_cast<SplitterVerifierInfo *>(queryTransformExtra(expr)); }
 };
+
+//---------------------------------------------------------------------------
+
+class ContainsExternalParamSpotter : public QuickHqlTransformer
+{
+public:
+    ContainsExternalParamSpotter(IHqlExpression * params);
+
+    bool containsExternal() const { return seenExternal; }
+
+protected:
+    virtual void doAnalyseBody(IHqlExpression * expr);
+
+private:
+    bool seenExternal = false;
+    HqlExprCopyArray internal;
+};
+bool containsExternalParameter(IHqlExpression * expr, IHqlExpression * params);
 
 /*
 
