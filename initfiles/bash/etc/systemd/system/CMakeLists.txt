@@ -64,9 +64,6 @@ endforeach()
 
 ## Generate and setup standalone service files
 set(standaloneList
-	hpcc-init
-	dafilesrv
-	dafilesrv-conf
     configmgr
     configmgr-conf)
 
@@ -79,7 +76,22 @@ foreach(component ${standaloneList})
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${component}-standalone-service.uninstall DESTINATION etc/init.d/uninstall COMPONENT Systemd)
 endforeach()
 
+configure_file(hpcc-environment-monitor.service.in hpcc-environment-monitor.service @ONLY)
+configure_file(hpcc-environment-monitor.path.in hpcc-environment-monitor.path @ONLY)
+configure_file(hpcc-environment-monitor.install.in hpcc-environment-monitor.install @ONLY)
+configure_file(hpcc-environment-monitor.uninstall.in hpcc-environment-monitor.uninstall @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcc-environment-monitor.service ${CMAKE_CURRENT_BINARY_DIR}/hpcc-environment-monitor.path
+	DESTINATION etc/systemd/system
+	COMPONENT Systemd)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcc-environment-monitor.install DESTINATION etc/init.d/install COMPONENT Systemd)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/hpcc-environment-monitor.uninstall DESTINATION etc/init.d/uninstall COMPONENT Systemd)
+
 ## Install helper scripts for thorslaves
 configure_file(thorslaves-launch.sh.in thorslaves-launch.sh @ONLY)
 configure_file(thorslaves-exec.sh.in thorslaves-exec.sh @ONLY)
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/thorslaves-launch.sh ${CMAKE_CURRENT_BINARY_DIR}/thorslaves-exec.sh DESTINATION ${ADMIN_PATH} COMPONENT Systemd)
+configure_file(generate-hpccsystems-target.in generate-hpccsystems-target.sh @ONLY)
+install(PROGRAMS
+	${CMAKE_CURRENT_BINARY_DIR}/thorslaves-launch.sh
+	${CMAKE_CURRENT_BINARY_DIR}/thorslaves-exec.sh
+	${CMAKE_CURRENT_BINARY_DIR}/generate-hpccsystems-target.sh
+	DESTINATION ${ADMIN_PATH} COMPONENT Systemd)

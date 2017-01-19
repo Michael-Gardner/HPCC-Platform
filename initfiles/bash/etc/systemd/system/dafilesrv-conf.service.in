@@ -1,9 +1,0 @@
-[Unit]
-Description=takes component type as instance and outputs instance
-
-[Service]
-Type=oneshot
-User=@RUNTIME_USER@
-Group=@RUNTIME_GROUP@
-WorkingDirectory=@RUNTIME_PATH@
-ExecStart=/bin/bash -c '/bin/echo "DAFILESRV_INSTANCE=$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -list -t dafilesrv | awk 'BEGIN {FS="=";} {print $1;}')' > dafilesrv-instance.cfg
