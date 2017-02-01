@@ -97,6 +97,9 @@ endif(NOT BUILD_LEVEL)
 if ("${BUILD_LEVEL}" STREQUAL "COMMUNITY")
     set ( HPCC_PROJECT_ABBR  "CC")
 endif()
+if (NOT DEFINED HPCC_PROJECT_ABBR)
+	message(FATAL_ERROR "BUILD_LEVEL does not appear to be valid: ${BUILD_LEVEL}")
+endif()
 
 ###
 ## Config Block
