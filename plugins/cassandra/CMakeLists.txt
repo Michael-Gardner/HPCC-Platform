@@ -39,11 +39,21 @@ if(USE_CASSANDRA)
       DEPENDS ${PROJECT_BINARY_DIR}/libuv.dylib)
     set(LIBUV_LIBRARY ${PROJECT_BINARY_DIR}/libuv.dylib)
   else()
+    set(_custom_command_string "make builddir_name=${PROJECT_BINARY_DIR} && mv ${PROJECT_BINARY_DIR}/libuv.so ${PROJECT_BINARY_DIR}/libuv.so.0.10 && ln -s ${PROJECT_BINARY_DIR}/libuv.so.0.10 ${PROJECT_BINARY_DIR}/libuv.so")
+    message(STATUS "_custom_command_string ${_custom_command_string}")
+    add_custom_command(
+      OUTPUT ${PROJECT_BINARY_DIR}/libuv.a
+      COMMAND make builddir_name=${PROJECT_BINARY_DIR}
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/libuv)
+    add_custom_command(
+      OUTPUT ${PROJECT_BINARY_DIR}/libuv.so.0.10
+      COMMAND mv ${PROJECT_BINARY_DIR}/libuv.so ${PROJECT_BINARY_DIR}/libuv.so.0.10
+      DEPENDS ${PROJECT_BINARY_DIR}/libuv.a
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/libuv)
     add_custom_command(
       OUTPUT ${PROJECT_BINARY_DIR}/libuv.so
-      COMMAND make builddir_name=${PROJECT_BINARY_DIR}
-      COMMAND mv ${PROJECT_BINARY_DIR}/libuv.so ${PROJECT_BINARY_DIR}/libuv.so.0.10
       COMMAND ln -s ${PROJECT_BINARY_DIR}/libuv.so.0.10 ${PROJECT_BINARY_DIR}/libuv.so
+      DEPENDS ${PROJECT_BINARY_DIR}/libuv.so.0.10
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/libuv)
     add_custom_target(
       libuv ALL
