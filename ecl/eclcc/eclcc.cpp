@@ -24,7 +24,7 @@
 
 #include "build-config.h"
 #include "workunit.hpp"
-
+#include "thorplugin.hpp"
 #ifndef _WIN32
 #include <pwd.h>
 #endif
@@ -591,6 +591,7 @@ void EclCC::loadOptions()
             libraryPath.append(ENVSEPCHAR).append(syspath).append("plugins");
         extractOption(cppIncludePath, globals, "ECLCC_INCLUDE_PATH", "includePath", syspath, "componentfiles" PATHSEPSTR "cl" PATHSEPSTR "include");
         extractOption(pluginsPath, globals, "ECLCC_PLUGIN_PATH", "plugins", syspath, "plugins");
+        getAdditionalPluginsPath(pluginsPath, syspath);
         extractOption(hooksPath, globals, "HPCC_FILEHOOKS_PATH", "filehooks", syspath, "filehooks");
         extractOption(templatePath, globals, "ECLCC_TPL_PATH", "templatePath", syspath, "componentfiles");
         extractOption(eclLibraryPath, globals, "ECLCC_ECLLIBRARY_PATH", "eclLibrariesPath", syspath, "share" PATHSEPSTR "ecllibrary" PATHSEPSTR);

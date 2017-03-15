@@ -2300,37 +2300,35 @@ StringBuffer & fillConfigurationDirectoryEntry(const char *dir,const char *name,
     return dirout;
 }
 
-IPropertyTree *getHPCCEnvironment(const char *configFileName)
+IPropertyTree *getHPCCEnvironment()
 {
-    StringBuffer configFileSpec(configFileName);
-    if (!configFileSpec.length())
-#ifdef _WIN32 
-        return NULL;
-#else
-        configFileSpec.set(CONFIG_DIR).append(PATHSEPSTR).append("environment.conf");
-#endif  
-    Owned<IProperties> props = createProperties(configFileSpec.str());
-    if (props)
+    StringBuffer envfile;
+    if (queryEnvironmentConf().getProp("environment",envfile) && envfile.length())
     {
-        StringBuffer envfile;
-        if (props->getProp("environment",envfile)&&envfile.length())
+        if (!isAbsolutePath(envfile.str()))
         {
-            if (!isAbsolutePath(envfile.str()))
-            {
-                StringBuffer tail(envfile);
-                splitDirTail(configFileSpec.str(),envfile.clear());
-                addPathSepChar(envfile).append(tail);
-            }
-            Owned<IFile> file = createIFile(envfile.str());
-            if (file)
-            {
-                Owned<IFileIO> fileio = file->open(IFOread);
-                if (fileio)
-                    return createPTree(*fileio);
-            }
+            envfile.insert(0, CONFIG_DIR PATHSEPSTR);
+        }
+        Owned<IFile> file = createIFile(envfile.str());
+        if (file)
+        {
+            Owned<IFileIO> fileio = file->open(IFOread);
+            if (fileio)
+                return createPTree(*fileio);
         }
     }
     return NULL;
+}
+
+static Owned<IProperties> envConfFile;
+static CriticalSection envConfCrit;
+
+jlib_decl const IProperties &queryEnvironmentConf()
+{
+    CriticalBlock b(envConfCrit);
+    if (!envConfFile)
+        envConfFile.setown(createProperties(CONFIG_DIR PATHSEPSTR ENV_CONF_FILE, true));
+    return *envConfFile;
 }
 
 static CriticalSection securitySettingsCrit;
