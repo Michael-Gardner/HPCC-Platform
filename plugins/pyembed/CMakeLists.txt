@@ -28,7 +28,7 @@ set(DEBUG_PYTHON_LIBRARY "/usr/lib/libpython2.7_d.so")
 
 project(py2embed)
 
-if(PYEMBED)
+if(PY2EMBED)
     unset(PYTHONLIBS_FOUND CACHE)
     unset(PYTHON_LIBRARY CACHE)
     unset(PYTHON_LIBRARIES CACHE)
@@ -45,7 +45,7 @@ if(PYEMBED)
     set(PYTHON2_DEBUG_LIBRARIES ${PYTHON_DEBUG_LIBRARIES})
     set(PYTHON2LIBS_VERSION_STRING ${PYTHONLIBS_VERSION_STRING})
     message("Python2 library is ${PYTHON2_LIBRARY}")
-    if(MAKE_PYEMBED)
+    if(MAKE_PY2EMBED)
         set(
             SRCS
             pyembed.cpp)
