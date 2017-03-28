@@ -307,15 +307,25 @@ public:
     virtual void processString(unsigned len, const char *value, const RtlFieldInfo * field) override
     {
         std::string s(value, len);
-        unsigned r;
-        Rcpp::List l = stack.tos().cell(r);
-        l[r] = s;
+        if (inSet)
+            theStringSet[setIndex++] = s;
+        else
+        {
+            unsigned r;
+            Rcpp::List l = stack.tos().cell(r);
+            l[r] = s;
+        }
     }
     virtual void processBool(bool value, const RtlFieldInfo * field) override
     {
-        unsigned r;
-        Rcpp::List l = stack.tos().cell(r);
-        l[r] = value;
+        if (inSet)
+            theBoolSet[setIndex++] = value;
+        else
+        {
+            unsigned r;
+            Rcpp::List l = stack.tos().cell(r);
+            l[r] = value;
+        }
     }
     virtual void processData(unsigned len, const void *value, const RtlFieldInfo * field) override
     {
@@ -328,37 +338,62 @@ public:
     }
     virtual void processInt(__int64 value, const RtlFieldInfo * field) override
     {
-        unsigned r;
-        Rcpp::List l = stack.tos().cell(r);
-        l[r] = (long int) value;  // Rcpp does not support int64
+        if (inSet)
+            theIntSet[setIndex++] = (long int) value;
+        else
+        {
+            unsigned r;
+            Rcpp::List l = stack.tos().cell(r);
+            l[r] = (long int) value;  // Rcpp does not support int64
+        }
     }
     virtual void processUInt(unsigned __int64 value, const RtlFieldInfo * field) override
     {
-        unsigned r;
-        Rcpp::List l = stack.tos().cell(r);
-        l[r] = (unsigned long int) value;  // Rcpp does not support int64
+        if (inSet)
+            theIntSet[setIndex++] = (unsigned long int) value;
+        else
+        {
+            unsigned r;
+            Rcpp::List l = stack.tos().cell(r);
+            l[r] = (unsigned long int) value;  // Rcpp does not support int64
+        }
     }
     virtual void processReal(double value, const RtlFieldInfo * field) override
     {
-        unsigned r;
-        Rcpp::List l = stack.tos().cell(r);
-        l[r] = value;
+        if (inSet)
+            theRealSet[setIndex++] = value;
+        else
+        {
+            unsigned r;
+            Rcpp::List l = stack.tos().cell(r);
+            l[r] = value;
+        }
     }
     virtual void processDecimal(const void *value, unsigned digits, unsigned precision, const RtlFieldInfo * field) override
     {
         Decimal val;
         val.setDecimal(digits, precision, value);
-        unsigned r;
-        Rcpp::List l = stack.tos().cell(r);
-        l[r] = val.getReal();
+        if (inSet)
+            theRealSet[setIndex++] = (unsigned long int) value;
+        else
+        {
+            unsigned r;
+            Rcpp::List l = stack.tos().cell(r);
+            l[r] = val.getReal();
+        }
     }
     virtual void processUDecimal(const void *value, unsigned digits, unsigned precision, const RtlFieldInfo * field) override
     {
         Decimal val;
         val.setUDecimal(digits, precision, value);
-        unsigned r;
-        Rcpp::List l = stack.tos().cell(r);
-        l[r] = val.getReal();
+        if (inSet)
+            theRealSet[setIndex++] = val.getReal();
+        else
+        {
+            unsigned r;
+            Rcpp::List l = stack.tos().cell(r);
+            l[r] = val.getReal();
+        }
     }
     virtual void processUnicode(unsigned len, const UChar *value, const RtlFieldInfo * field) override
     {
@@ -378,7 +413,37 @@ public:
 
     virtual bool processBeginSet(const RtlFieldInfo * field, unsigned elements, bool isAll, const byte *data) override
     {
-        UNSUPPORTED("SET fields");
+        if (isAll)
+            UNSUPPORTED("ALL sets are not supported");
+        unsigned r;
+        Rcpp::List l = stack.tos().cell(r);
+        switch (field->type->queryChildType()->fieldType & RFTMkind)
+        {
+        case type_boolean:
+            theBoolSet = Rcpp::LogicalVector(elements);
+            l[r] = theBoolSet;
+            break;
+        case type_unsigned:
+        case type_int:
+            theIntSet = Rcpp::IntegerVector(elements);
+            l[r] = theIntSet;
+            break;
+        case type_decimal:
+        case type_real:
+            theRealSet = Rcpp::NumericVector(elements);
+            l[r] = theRealSet;
+            break;
+        case type_string:
+        case type_varstring:
+            theStringSet = Rcpp::StringVector(elements);
+            l[r] = theStringSet;
+            break;
+        default:
+            UNSUPPORTED("SET types other than BOOLEAN, STRING, INTEGER and REAL");
+        }
+        setIndex = 0;
+        inSet = true;
+        return true;
     }
     virtual bool processBeginDataset(const RtlFieldInfo * field, unsigned rows) override
     {
@@ -409,7 +474,7 @@ public:
     }
     virtual void processEndSet(const RtlFieldInfo * field) override
     {
-        UNSUPPORTED("SET fields");
+        inSet = false;
     }
     virtual void processEndDataset(const RtlFieldInfo * field) override
     {
@@ -487,7 +552,13 @@ protected:
         stack.pop();
     }
     IArrayOf<IDataListPosition> stack;
+    Rcpp::IntegerVector theIntSet;
+    Rcpp::StringVector theStringSet;
+    Rcpp::NumericVector theRealSet;
+    Rcpp::LogicalVector theBoolSet;
     bool firstField = true;
+    bool inSet = false;
+    unsigned setIndex = 0;
 };
 
 // A RRowBuilder object is used to construct ECL rows from R dataframes or lists
@@ -551,14 +622,16 @@ public:
         double ret = ::Rcpp::as<double>(elem);
         value.setReal(ret);
     }
-
     virtual void processBeginSet(const RtlFieldInfo * field, bool &isAll)
     {
-        UNSUPPORTED("SET fields");
+        nextField(field);
+        isAll = false;  // No concept of an 'all' set in Python
+        Rcpp::List childrec = ::Rcpp::as<Rcpp::List>(elem);  // MORE - is converting it to a list inefficient? Keeps the code simpler!
+        stack.append(*new ListState(childrec, field));
     }
     virtual bool processNextSet(const RtlFieldInfo * field)
     {
-        UNSUPPORTED("SET fields");
+        return stack.tos().moreFields();
     }
     virtual void processBeginDataset(const RtlFieldInfo * field)
     {
@@ -586,7 +659,7 @@ public:
     }
     virtual void processEndSet(const RtlFieldInfo * field)
     {
-        UNSUPPORTED("SET fields");
+        pop();
     }
     virtual void processEndDataset(const RtlFieldInfo * field)
     {
@@ -603,6 +676,7 @@ protected:
         virtual Rcpp::RObject nextField() = 0;
         virtual bool processNextRow() = 0;
         virtual bool isNestedRow(const RtlFieldInfo *_field) const = 0;
+        virtual bool moreFields() const = 0;
     };
     class RowState : public CInterfaceOf<IRowState>
     {
@@ -611,6 +685,10 @@ protected:
         {
             numRows = frame.nrow();
             numCols = frame.ncol();
+        }
+        bool moreFields() const override
+        {
+            return colIdx < numCols;
         }
         Rcpp::RObject nextField() override
         {
@@ -651,10 +729,14 @@ protected:
         }
         Rcpp::RObject nextField() override
         {
-            assertex(colIdx < numCols);
+            assertex (colIdx < numCols);
             Rcpp::RObject elem = list[colIdx];
             colIdx++;
             return elem;
+        }
+        bool moreFields() const override
+        {
+            return colIdx < numCols;
         }
         bool processNextRow() override
         {

@@ -28,19 +28,19 @@ END;
 // Test a nested record, a field of type record, and some nested datasets
 
 r_rec := RECORD
-   integer a , record integer aa end, recStruct rs ,DATASET(recStruct) B, DATASET(recStruct) C
+   integer a , record integer aa end, set of integer s, recStruct rs ,DATASET(recStruct) B, DATASET(recStruct) C
 END;
 
 // Return them from R
 
 r_rec fred() := EMBED( R )
-   indata <- list(a = 2, aa = 3, rs=list(B=12, C=34), B = data.frame(10:20,100:110), C = data.frame(20:30,200:210), D=list(B=12,C=34))
-   # print(str(indata)) - handy for debugging if things go wrong
+   indata <- list(a = 2, aa = 3, s = c(1,2,3), rs=list(B=12, C=34), B = data.frame(10:20,100:110), C = data.frame(20:30,200:210), D=list(B=12,C=34))
+   # print(str(indata)) # handy for debugging if things go wrong
    indata
 ENDEMBED;
 
 r_rec george(r_rec indata) := EMBED( R )
-   # print(str(indata))  - should look similar to previous
+   # print(str(indata)) # should look similar to previous
    indata
 ENDEMBED;
   
