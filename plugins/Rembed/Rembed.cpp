@@ -374,7 +374,7 @@ public:
         Decimal val;
         val.setDecimal(digits, precision, value);
         if (inSet)
-            theRealSet[setIndex++] = (unsigned long int) value;
+            theRealSet[setIndex++] = val.getReal();
         else
         {
             unsigned r;
@@ -805,7 +805,6 @@ public:
             return NULL;
         try
         {
-            RtlFieldStrInfo dummyField("<row>", NULL, typeInfo);
             if (!myRRowBuilder.processNextRow(&dummyField))
             {
                 stop();
