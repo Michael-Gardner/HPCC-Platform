@@ -683,8 +683,9 @@ protected:
     public:
         RowState(Rcpp::DataFrame _frame) : frame(_frame)
         {
-            numRows = frame.nrow();
-            numCols = frame.ncol();
+            /* these functions have been renamed in Rcpp 0.2.10, but the old names still work... */
+            numRows = frame.nrows();
+            numCols = frame.length();
         }
         bool moreFields() const override
         {
