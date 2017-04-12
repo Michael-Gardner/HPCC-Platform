@@ -40,6 +40,6 @@ include_directories (
 
 ADD_DEFINITIONS( -D_LIB )
 
-HPCC_ADD_LIBRARY( hrpc STATIC ${SRCS} )
+ADD_LIBRARY( hrpc STATIC ${SRCS} )
 add_dependencies (hrpc jlib)    # to make sure headers generated
 

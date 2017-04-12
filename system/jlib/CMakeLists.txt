@@ -30,14 +30,7 @@ CHECK_LIBRARY_EXISTS(dl dlopen "" HAVE_LIBDL)
 CHECK_LIBRARY_EXISTS(crypt crypt "" HAVE_LIBCRYPT) 
 endif ()
 
-if(NOT TARGET lzma)
-  add_subdirectory(../lzma ${CMAKE_BINARY_DIR}/system/lzma)
-endif(NOT TARGET lzma)
-
-if(NOT TARGET lz4)
-  add_subdirectory(../lz4_sm ${CMAKE_BINARY_DIR}/system/lz4_sm)
-endif(NOT TARGET lz4)
-
+find_package(LibLZMA REQUIRED)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-switch -Wno-unused-parameter -Werror -Wno-error=delete-non-virtual-dtor")
@@ -90,7 +83,10 @@ set (    SRCS
          junicode.cpp 
          jutil.cpp 
          sourcedoc.xml
-    )
+         ./../lzma/LzmaEnc.cpp
+         ./../lzma/LzmaDec.cpp
+         ./../lzma/LzFind.cpp
+         )
 
 set (    INCLUDES
         jaio.hpp
@@ -170,26 +166,31 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
 endif ()
 if (CMAKE_COMPILER_IS_GNUCC)
     set_property (SOURCE jlzw.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-array-bounds")   # Compiler erroneously reports array bounds errors in some cases
+    set_property (SOURCE ./../lzma/LzmaEnc.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-but-set-variable")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0.0)
         set_property (SOURCE jencrypt.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-array-bounds")   # Compiler erroneously reports array bounds errors in some cases
     endif ()
 endif ()
 
+message(STATUS "lzma inc dir = ${LIBLZMA_INCLUDE_DIRS}")
 include_directories ( 
-         ../../system/win32 
-         ../../system/include 
-         ../../system/lzma
-         ../../system/lz4_sm/lz4/lib
+         ./../../system/win32 
+         ./../../system/include 
+         ./../../system/lzma
+         ./../../system/lz4_sm/lz4/lib
          ${CMAKE_CURRENT_BINARY_DIR}  # for generated jelog.h file 
          ${CMAKE_BINARY_DIR}
          ${CMAKE_BINARY_DIR}/oss
     )
 
-ADD_DEFINITIONS( -DLOGMSGCOMPONENT=1 -D_USRDLL -DJLIB_EXPORTS )
-HPCC_ADD_LIBRARY( jlib SHARED ${SRCS} ${INCLUDES} )
+ADD_DEFINITIONS( -DLOGMSGCOMPONENT=1 -D_USRDLL -DJLIB_EXPORTS -DCONFIG_DIR="/etc/HPCCSystems" -DENV_CONF_FILE="environment.conf")
+ADD_LIBRARY( jlib SHARED ${SRCS} ${INCLUDES} )
+set_target_properties(jlib PROPERTIES
+    CXX_STANDARD_REQUIRED ON
+    CXX_STANDARD 11)
 
 target_link_libraries ( jlib
-        lzma
+    ${LIBLZMA_LIBRARIES}
         lz4
        )
 

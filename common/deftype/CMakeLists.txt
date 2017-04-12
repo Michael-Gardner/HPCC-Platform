@@ -45,8 +45,11 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL -DDEFTYPE_EXPORTS )
 
-HPCC_ADD_LIBRARY( deftype SHARED ${SRCS} )
-install ( TARGETS deftype RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+add_library( deftype SHARED ${SRCS} )
+set_target_properties(deftype PROPERTIES
+    CXX_STANDARD_REQUIRED ON
+    CXX_STANDARD 11)
+install ( TARGETS deftype RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT common-library)
 target_link_libraries ( deftype 
          jlib 
          nbcd

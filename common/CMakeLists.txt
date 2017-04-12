@@ -13,17 +13,14 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-HPCC_ADD_SUBDIRECTORY (deftype)
-HPCC_ADD_SUBDIRECTORY (dllserver)
-HPCC_ADD_SUBDIRECTORY (environment)
-if ("${BUILD_LEVEL}" STREQUAL "INTERNAL")
-    HPCC_ADD_SUBDIRECTORY (fileview2)
-else ()
-    HPCC_ADD_SUBDIRECTORY (fileview2 "PLATFORM")
-endif ()
-HPCC_ADD_SUBDIRECTORY (monitoring "PLATFORM")
-HPCC_ADD_SUBDIRECTORY (remote)
-HPCC_ADD_SUBDIRECTORY (roxiecommlib)
-HPCC_ADD_SUBDIRECTORY (thorhelper)
-HPCC_ADD_SUBDIRECTORY (workunit)
-HPCC_ADD_SUBDIRECTORY (wuwebview "PLATFORM")
+
+add_subdirectory(deftype)
+add_subdirectory(dllserver)
+add_subdirectory(environment)
+add_subdirectory(fileview2)
+add_subdirectory(monitoring)
+add_subdirectory(remote)
+add_subdirectory(roxiecommlib)
+add_subdirectory(thorhelper)
+add_subdirectory(workunit)
+add_subdirectory(wuwebview)

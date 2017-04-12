@@ -25,7 +25,7 @@
 
 project( esdlcmd )
 
-include(${HPCC_SOURCE_DIR}/esp/scm/smcscm.cmake)
+include(./../../esp/scm/smcscm.cmake)
 
 set ( SRCS
          ${ESPSCM_GENERATED_DIR}/common_esp.cpp
@@ -42,38 +42,38 @@ set ( SRCS
 include_directories (
          ${CMAKE_BINARY_DIR}
          ${CMAKE_BINARY_DIR}/oss
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/esp/clients
-         ${HPCC_SOURCE_DIR}/system/security/shared
-         ${HPCC_SOURCE_DIR}/system/mp
-         ${HPCC_SOURCE_DIR}/common/dllserver
-         ${HPCC_SOURCE_DIR}/common/fileview2
-         ${HPCC_SOURCE_DIR}/common/environment
-         ${HPCC_SOURCE_DIR}/esp/bindings
-         ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
-         ${HPCC_SOURCE_DIR}/esp/platform
-         ${HPCC_SOURCE_DIR}/system/xmllib
-         ${HPCC_SOURCE_DIR}/system/scm
-         ${HPCC_SOURCE_DIR}/system/security/scm
-         ${HPCC_SOURCE_DIR}/esp/platform
-         ${HPCC_SOURCE_DIR}/tools/esdlcomp
-         ${HPCC_SOURCE_DIR}/tools/esdlcmd-xml
-         ${HPCC_SOURCE_DIR}/esp/esdllib
+         ./../../system/include
+         ./../../system/jlib
+         ./../../esp/clients
+         ./../../system/security/shared
+         ./../../system/mp
+         ./../../common/dllserver
+         ./../../common/fileview2
+         ./../../common/environment
+         ./../../esp/bindings
+         ./../../esp/bindings/SOAP/xpp
+         ./../../esp/platform
+         ./../../system/xmllib
+         ./../../system/scm
+         ./../../system/security/scm
+         ./../../esp/platform
+         ./../../tools/esdlcomp
+         ./../../tools/esdlcmd-xml
+         ./../../esp/esdllib
     )
 
-ADD_DEFINITIONS( -D_CONSOLE )
+ADD_DEFINITIONS( -D_CONSOLE -DCOMPONENTFILES_DIR="${COMPONENTFILES_PATH}")
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     ADD_DEFINITIONS( -O0 )
 endif ()
 
-HPCC_ADD_EXECUTABLE ( esdl ${SRCS} )
+ADD_EXECUTABLE ( esdl ${SRCS} )
 
 add_dependencies ( esdl
                    espscm
                  )
 
-install ( TARGETS esdl RUNTIME DESTINATION ${EXEC_DIR} )
+             install ( TARGETS esdl RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 target_link_libraries ( esdl
         jlib
         esphttp

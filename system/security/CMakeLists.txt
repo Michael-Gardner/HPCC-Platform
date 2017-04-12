@@ -13,17 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-IF (USE_OPENLDAP)
-HPCC_ADD_SUBDIRECTORY (LdapSecurity)
-ENDIF(USE_OPENLDAP)
-IF (USE_OPENSSL)
-  HPCC_ADD_SUBDIRECTORY (securesocket)
-ENDIF()
-HPCC_ADD_SUBDIRECTORY (test "PLATFORM")
-if (USE_ZLIB)
-  HPCC_ADD_SUBDIRECTORY (zcrypt)
-endif()
+ADD_SUBDIRECTORY (LdapSecurity)
+ADD_SUBDIRECTORY (securesocket)
+ADD_SUBDIRECTORY (zcrypt)
 
-IF (USE_APR)
-  HPCC_ADD_SUBDIRECTORY (plugins/htpasswdSecurity)
-ENDIF(USE_APR)
+ADD_SUBDIRECTORY (plugins/htpasswdSecurity)

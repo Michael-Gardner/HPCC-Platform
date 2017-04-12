@@ -7,8 +7,7 @@
 #
 #       http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS,
+#    Unless required by applicable law or agreed to in writing, software #    distributed under the License is distributed on an "AS IS" BASIS,
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
@@ -24,6 +23,10 @@
 #####################################################
 
 project( thorhelper ) 
+
+
+find_package(TBB)
+find_package(ZLIB)
 
 set (    SRCS 
 
@@ -99,8 +102,8 @@ include_directories (
 
 ADD_DEFINITIONS( -DTHORHELPER_EXPORTS -D_USRDLL )
 
-HPCC_ADD_LIBRARY( thorhelper SHARED ${SRCS} )
-install ( TARGETS thorhelper RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+ADD_LIBRARY( thorhelper SHARED ${SRCS} )
+install ( TARGETS thorhelper RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT common-library)
 target_link_libraries ( thorhelper 
          jlib 
          nbcd 
@@ -125,7 +128,7 @@ IF (USE_OPENSSL)
     )
 ENDIF()
 
-IF (USE_ZLIB)
+IF (ZLIB_FOUND)
     target_link_libraries ( thorhelper
         ${ZLIB_LIBRARIES}
         zcrypt

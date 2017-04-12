@@ -20,7 +20,7 @@
 #    Cmake include file additional scm file generation
 #####################################################
 
-set ( ESPSCM_SOURCE_DIR ${HPCC_SOURCE_DIR}/esp/scm )
+set ( ESPSCM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 set ( ESPSCM_GENERATED_DIR ${CMAKE_BINARY_DIR}/generated )
 
 set ( ESPSCM_SRCS

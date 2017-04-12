@@ -39,11 +39,11 @@ include_directories (
          ./../../system/xmllib
     )
 
-HPCC_ADD_LIBRARY( wuwebview SHARED ${SRCS} )
+ADD_LIBRARY( wuwebview SHARED ${SRCS} )
 set_target_properties(wuwebview PROPERTIES
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL WUWEBVIEW_EXPORTS )
-install ( TARGETS wuwebview RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS wuwebview RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT common-library)
 target_link_libraries ( wuwebview
          jlib
          workunit

@@ -24,28 +24,32 @@
 
 project( htpasswdSecurity )
 
-HPCC_ADD_SUBDIRECTORY (initfiles)
+find_package(APR REQUIRED)
+add_definitions (-D_USE_APR)
+
+
+ADD_SUBDIRECTORY (initfiles)
 
 set (    SRCS
-         ${HPCC_SOURCE_DIR}/system/security/shared/authmap.cpp
-         ${HPCC_SOURCE_DIR}/system/security/shared/caching.cpp
-         ${CMAKE_CURRENT_SOURCE_DIR}/htpasswdSecurity.cpp
+         ./../../shared/authmap.cpp
+         ./../../shared/caching.cpp
+         htpasswdSecurity.cpp
     )
 
 include_directories (
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/security/shared
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/esp/platform
-         ${HPCC_SOURCE_DIR}/dali/base
+         ./../../../../system/include
+         ./../../../../system/security/shared
+         ./../../../../system/jlib
+         ./../../../../esp/platform
+         ./../../../../dali/base
          ${APR_INCLUDE_DIR}
          ${APRUTIL_INCLUDE_DIR}
     )
 
 ADD_DEFINITIONS( -DHTPASSWDSECURITY_EXPORTS -D_USRDLL )
 
-HPCC_ADD_LIBRARY( htpasswdSecurity SHARED ${SRCS} )
-install ( TARGETS htpasswdSecurity RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+ADD_LIBRARY( htpasswdSecurity SHARED ${SRCS} )
+install ( TARGETS htpasswdSecurity RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT jlib)
 target_link_libraries ( htpasswdSecurity
          jlib
          dalibase

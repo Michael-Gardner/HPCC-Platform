@@ -25,6 +25,8 @@
 
 project( mptest ) 
 
+find_package(Threads REQUIRED)
+
 set (    SRCS 
          mptest.cpp 
     )
@@ -38,10 +40,12 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( mptest ${SRCS} )
+ADD_EXECUTABLE ( mptest ${SRCS} )
 target_link_libraries ( mptest 
          jlib
          mp 
-    )
+         lzma
+         ${CMAKE_THREAD_LIBS_INIT}
+         )
 
 

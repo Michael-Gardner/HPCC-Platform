@@ -25,6 +25,8 @@
 
 project( eclrtl ) 
 
+find_package(Boost COMPONENTS regex)
+
 set (    SRCS 
          eclrtl.cpp 
          eclregex.cpp
@@ -66,12 +68,12 @@ include_directories (
          ./../../system/jlib 
          ./../../roxie/roxiemem
          ./../../testing/unittests
-         ${BOOST_REGEX_INCLUDE_DIR}
+         ${Boost_INCLUDE_DIR}
     )
 
 ADD_DEFINITIONS( -D_USRDLL -DECLRTL_EXPORTS )
 
-if (USE_BOOST_REGEX)
+if (BOOST_REGEX_FOUND)
     if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
         set_source_files_properties(eclregex.cpp PROPERTIES COMPILE_FLAGS -std=c++98)
     endif ()
@@ -82,9 +84,9 @@ if (USE_BOOST_REGEX)
     endif ()
 endif ()
 
-HPCC_ADD_LIBRARY( eclrtl SHARED ${SRCS} )
+ADD_LIBRARY( eclrtl SHARED ${SRCS} )
 target_link_libraries ( eclrtl 
-      ${BOOST_REGEX_LIBRARIES}
+    ${Boost_REGEX_LIBRARY}
       jlib
       nbcd
       roxiemem
@@ -102,7 +104,7 @@ endif ()
 
 
 if (NOT PLUGIN)
-  install ( TARGETS eclrtl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib )
+    install ( TARGETS eclrtl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib COMPONENT eclrtl)
   FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/eclinclude4.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/eclrtl.hpp

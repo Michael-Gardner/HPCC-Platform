@@ -22,14 +22,16 @@
 
 project( esdlcomp )
 
-SET (REENTRANTBISONCMD "${bisoncmd} -d")
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
+
 add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/esdlgram.h
-    COMMAND ${bisoncmdprefix} ${bisoncmd} --defines=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/esdlgram.y
+    COMMAND ${BISON_EXECUTABLE} --defines=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/esdlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/esdlgram.y
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/esdlgram.y
 )
 
 add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp
-    COMMAND ${flexcmdprefix} ${flexcmd} --outfile=${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp --header-file=${CMAKE_CURRENT_BINARY_DIR}/esdllex.hpp ${CMAKE_CURRENT_SOURCE_DIR}/esdllex.l
+    COMMAND ${FLEX_EXECUTABLE} --outfile=${CMAKE_CURRENT_BINARY_DIR}/esdllex.cpp --header-file=${CMAKE_CURRENT_BINARY_DIR}/esdllex.hpp ${CMAKE_CURRENT_SOURCE_DIR}/esdllex.l
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/esdllex.l
 )
 
@@ -42,8 +44,8 @@ set ( SRCS
 
 include_directories (
          ${CMAKE_CURRENT_BINARY_DIR}   # for generated .h file
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
+         ./../../system/include
+         ./../../system/jlib
          ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
@@ -54,10 +56,10 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     set_source_files_properties(esdlcomp.cpp PROPERTIES COMPILE_FLAGS "-Wno-unused-function")
 endif ()
 
-HPCC_ADD_LIBRARY ( esdlcomp SHARED ${SRCS} )
+ADD_LIBRARY ( esdlcomp SHARED ${SRCS} )
 
 MESSAGE("----INSTALLING esdlcomp")
-install ( TARGETS esdlcomp RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+install ( TARGETS esdlcomp RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT tools)
 
 target_link_libraries ( esdlcomp
                    jlib )

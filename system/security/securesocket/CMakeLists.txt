@@ -37,8 +37,8 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL -DSECURESOCKET_EXPORTS )
 
-HPCC_ADD_LIBRARY( securesocket SHARED ${SRCS} )
-install ( TARGETS securesocket RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+ADD_LIBRARY( securesocket SHARED ${SRCS} )
+install ( TARGETS securesocket RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT jlib)
 target_link_libraries ( securesocket
          jlib
          ${OPENSSL_LIBRARIES} 

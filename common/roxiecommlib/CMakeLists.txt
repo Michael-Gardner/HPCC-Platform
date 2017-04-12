@@ -24,7 +24,7 @@
 
 project( roxiecommlib ) 
 
-include(${HPCC_SOURCE_DIR}/esp/scm/espscm.cmake)
+include(./../../esp/scm/espscm.cmake)
 
 set (    SRCS 
          roxiecommunicationclient.cpp 
@@ -53,9 +53,9 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL -DROXIECOMMLIB_EXPORTS )
 
-HPCC_ADD_LIBRARY( roxiecommlib SHARED ${SRCS} )
+ADD_LIBRARY( roxiecommlib SHARED ${SRCS} )
 add_dependencies( roxiecommlib espscm )
-install ( TARGETS roxiecommlib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS roxiecommlib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT common-library)
 target_link_libraries ( roxiecommlib
          jlib 
     )

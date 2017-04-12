@@ -23,13 +23,16 @@
 
 project( hidl ) 
 
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
+
 add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/hidlgram.h
-    COMMAND ${bisoncmdprefix} ${bisoncmd} --defines=${CMAKE_CURRENT_BINARY_DIR}/hidlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hidlgram.y
+    COMMAND ${BISON_EXECUTABLE} --defines=${CMAKE_CURRENT_BINARY_DIR}/hidlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hidlgram.y
     DEPENDS hidlgram.y
 )
 
 add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hidllex.cpp
-    COMMAND ${flexcmdprefix} ${flexcmd} --outfile=${CMAKE_CURRENT_BINARY_DIR}/hidllex.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hidllex.l
+    COMMAND ${FLEX_EXECUTABLE} --outfile=${CMAKE_CURRENT_BINARY_DIR}/hidllex.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hidllex.l
     DEPENDS hidllex.l
 )
 
@@ -44,12 +47,12 @@ set (    SRCS
 
 include_directories ( 
          ${CMAKE_CURRENT_BINARY_DIR}   # for generated .h file
-         ${HPCC_SOURCE_DIR}/system/include
+         ./../../system/include
          ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 set_source_files_properties (${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
 
 ADD_DEFINITIONS( -D_CONSOLE)
-HPCC_ADD_EXECUTABLE ( hidl ${SRCS} )
+ADD_EXECUTABLE ( hidl ${SRCS} )
 #install ( TARGETS hidl RUNTIME DESTINATION ${EXEC_DIR} )

@@ -30,18 +30,18 @@ set ( SRCS
 
 include_directories (
          ${CMAKE_CURRENT_BINARY_DIR}   # for generated .h file
-         ${HPCC_SOURCE_DIR}/system/include
-         ${HPCC_SOURCE_DIR}/system/jlib
-         ${HPCC_SOURCE_DIR}/tools/esdlcomp
+         ./../../system/include
+         ./../../system/jlib
+         ./../../tools/esdlcomp
          ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 ADD_DEFINITIONS( -D_CONSOLE -O0 )
 
-HPCC_ADD_EXECUTABLE ( esdl-xml ${SRCS} )
+ADD_EXECUTABLE ( esdl-xml ${SRCS} )
 
 MESSAGE("----INSTALLING ESDL-XML")
-install ( TARGETS esdl-xml RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS esdl-xml RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 if ( UNIX )
     install ( PROGRAMS esdl-xml.install DESTINATION etc/init.d/install COMPONENT Runtime )
     install ( PROGRAMS esdl-xml.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
@@ -49,4 +49,5 @@ endif ( UNIX )
 
 target_link_libraries ( esdl-xml
                         jlib
-                        esdlcomp)
+                        esdlcomp
+                        lzma)

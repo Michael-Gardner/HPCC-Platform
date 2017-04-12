@@ -58,15 +58,15 @@ include_directories (
          ./../../rtl/nbcd
     )
 
-HPCC_ADD_LIBRARY( workunit SHARED ${SRCS} )
+ADD_LIBRARY( workunit SHARED ${SRCS} )
 set_target_properties(workunit PROPERTIES 
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL WORKUNIT_EXPORTS )
-if(NOT PLUGIN)
     install(
         TARGETS workunit
         RUNTIME DESTINATION ${EXEC_DIR}
-        LIBRARY DESTINATION ${LIB_DIR})
+        LIBRARY DESTINATION ${LIB_DIR}
+        COMPONENT common-library)
     target_link_libraries(
         workunit 
         jlib 
@@ -76,4 +76,3 @@ if(NOT PLUGIN)
         eclrtl 
         deftype
         environment)
-endif()

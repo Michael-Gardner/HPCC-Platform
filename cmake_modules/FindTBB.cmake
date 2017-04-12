@@ -23,37 +23,35 @@
 #  TBB_LIBRARIES - The libraries needed to use TBB
 
 IF (NOT TBB_FOUND)
-  SET (tbb_lib "tbb")
+    SET (tbb_lib "tbb")
 
-  IF (NOT "${EXTERNALS_DIRECTORY}" STREQUAL "")
-    IF (WIN32)
-      IF (${ARCH64BIT} EQUAL 1)
-        SET (osdir "Win64")
-      ELSE()
-        SET (osdir "Win32")
-      ENDIF()
-      SET (tbbver "1.2.8")
-    ELSE()
-      SET (osdir "unknown")
-      SET (tbbver "unknown")
+    IF (NOT "${EXTERNALS_DIRECTORY}" STREQUAL "")
+        IF (WIN32)
+            IF (${ARCH64BIT} EQUAL 1)
+                SET (osdir "Win64")
+            ELSE()
+                SET (osdir "Win32")
+            ENDIF()
+            SET (tbbver "1.2.8")
+        ELSE()
+            SET (osdir "unknown")
+            SET (tbbver "unknown")
+        ENDIF()
+        IF (NOT ("${osdir}" STREQUAL "unknown"))
+            FIND_PATH (TBB_INCLUDE_DIR NAMES tbb/tbb.h PATHS "${EXTERNALS_DIRECTORY}/tbb/${tbbver}/include" NO_DEFAULT_PATH)
+            FIND_LIBRARY (TBB_LIBRARIES NAMES ${tbb_lib} PATHS "${EXTERNALS_DIRECTORY}/tbb/${tbbver}/lib/${osdir}" NO_DEFAULT_PATH)
+        ENDIF()
+    else()
+        # if we didn't find in externals, look in system include path
+        FIND_PATH (TBB_INCLUDE_DIR NAMES tbb/tbb.h)
+        FIND_LIBRARY (TBB_LIBRARIES NAMES ${tbb_lib})
     ENDIF()
-    IF (NOT ("${osdir}" STREQUAL "unknown"))
-      FIND_PATH (TBB_INCLUDE_DIR NAMES tbb/tbb.h PATHS "${EXTERNALS_DIRECTORY}/tbb/${tbbver}/include" NO_DEFAULT_PATH)
-      FIND_LIBRARY (TBB_LIBRARIES NAMES ${tbb_lib} PATHS "${EXTERNALS_DIRECTORY}/tbb/${tbbver}/lib/${osdir}" NO_DEFAULT_PATH)
-    ENDIF()
-  ENDIF()
 
-  if (USE_NATIVE_LIBRARIES)
-    # if we didn't find in externals, look in system include path
-    FIND_PATH (TBB_INCLUDE_DIR NAMES tbb/tbb.h)
-    FIND_LIBRARY (TBB_LIBRARIES NAMES ${tbb_lib})
-  endif()
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(TBB DEFAULT_MSG
+        TBB_LIBRARIES
+        TBB_INCLUDE_DIR
+        )
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(TBB DEFAULT_MSG
-    TBB_LIBRARIES
-    TBB_INCLUDE_DIR
-  )
-
-  MARK_AS_ADVANCED(TBB_INCLUDE_DIR TBB_LIBRARIES)
+    MARK_AS_ADVANCED(TBB_INCLUDE_DIR TBB_LIBRARIES)
 ENDIF()

@@ -47,7 +47,6 @@
 #include <paths.h>
 #include <cmath>
 #endif
-#include "build-config.h"
 
 #include "portlist.h"
 

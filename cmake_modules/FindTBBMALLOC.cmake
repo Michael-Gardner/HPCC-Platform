@@ -22,34 +22,32 @@
 #  TBBMALLOC_LIBRARIES - The libraries needed to use TBBMALLOC
 
 IF (NOT TBBMALLOC_FOUND)
-  SET (tbbmalloc_lib "tbbmalloc_proxy")
+    SET (tbbmalloc_lib "tbbmalloc_proxy")
 
-  IF (NOT "${EXTERNALS_DIRECTORY}" STREQUAL "")
-    IF (WIN32)
-      IF (${ARCH64BIT} EQUAL 1)
-        SET (osdir "Win64")
-      ELSE()
-        SET (osdir "Win32")
-      ENDIF()
-      SET (tbbver "1.2.8")
-    ELSE()
-      SET (osdir "unknown")
-      SET (tbbver "unknown")
+    IF (NOT "${EXTERNALS_DIRECTORY}" STREQUAL "")
+        IF (WIN32)
+            IF (${ARCH64BIT} EQUAL 1)
+                SET (osdir "Win64")
+            ELSE()
+                SET (osdir "Win32")
+            ENDIF()
+            SET (tbbver "1.2.8")
+        ELSE()
+            SET (osdir "unknown")
+            SET (tbbver "unknown")
+        ENDIF()
+        IF (NOT ("${osdir}" STREQUAL "unknown"))
+            FIND_LIBRARY (TBBMALLOC_LIBRARIES NAMES ${tbbmalloc_lib} PATHS "${EXTERNALS_DIRECTORY}/tbb/${tbbver}/lib/${osdir}" NO_DEFAULT_PATH)
+        ENDIF()
+    else()
+        # if we didn't find in externals, look in system include path
+        FIND_LIBRARY (TBBMALLOC_LIBRARIES NAMES ${tbbmalloc_lib})
     ENDIF()
-    IF (NOT ("${osdir}" STREQUAL "unknown"))
-      FIND_LIBRARY (TBBMALLOC_LIBRARIES NAMES ${tbbmalloc_lib} PATHS "${EXTERNALS_DIRECTORY}/tbb/${tbbver}/lib/${osdir}" NO_DEFAULT_PATH)
-    ENDIF()
-  ENDIF()
 
-  if (USE_NATIVE_LIBRARIES)
-    # if we didn't find in externals, look in system include path
-    FIND_LIBRARY (TBBMALLOC_LIBRARIES NAMES ${tbbmalloc_lib})
-  endif()
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(TBBMALLOC DEFAULT_MSG
+        TBBMALLOC_LIBRARIES
+        )
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(TBBMALLOC DEFAULT_MSG
-    TBBMALLOC_LIBRARIES
-  )
-
-  MARK_AS_ADVANCED(TBBMALLOC_LIBRARIES)
+    MARK_AS_ADVANCED(TBBMALLOC_LIBRARIES)
 ENDIF()

@@ -68,13 +68,14 @@ include_directories (
 
 ADD_DEFINITIONS( -DLOGMSGCOMPONENT=3 -D_USRDLL -DDALI_EXPORTS )
 
-HPCC_ADD_LIBRARY( dalibase SHARED ${SRCS} ${INCLUDES} )
+ADD_LIBRARY( dalibase SHARED ${SRCS} ${INCLUDES} )
 
 if(NOT PLUGIN)
     install(
         TARGETS dalibase
         RUNTIME DESTINATION ${EXEC_DIR}
-        LIBRARY DESTINATION ${LIB_DIR})
+        LIBRARY DESTINATION ${LIB_DIR}
+        COMPONENT dali)
     target_link_libraries(
         dalibase 
         jlib

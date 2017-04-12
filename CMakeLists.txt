@@ -1,5 +1,5 @@
 ###############################################################################
-#    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
+#    HPCC SYSTEMS software Copyright (C) 2017 HPCC Systems®.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -14,59 +14,6 @@
 #    limitations under the License.
 ################################################################################
 
-#
-#########################################################
-# Description:
-# ------------
-#           This file is the top level handling for
-#           cmake based compilation and build process.
-#
-#   To build for Linux:
-#   1. Check out sources (for example, to directory ~/hpcc)
-#   2. Create a build directory - either as a child of hpcc or elsewhere
-#   3. cd to the build directory
-#   4a.To create makefiles to build native release version for local machine, run
-#       cmake ~/hpcc
-#   4b.To create makefiles to build native debug version, run
-#       cmake -DCMAKE_BUILD_TYPE=Debug ~/hpcc
-#   4c.To create makefiles to build 32-bit version from 64-bit host, run
-#       cmake -DCMAKE_C_FLAGS:STRING="-m32 -march=i386" -DCMAKE_CXX_FLAGS:STRING="-m32 -march=i386" ~/hpcc
-#   5. To build the makefiles just created above, run
-#       make
-#   6. Executables will be created in ./<releasemode>/bin and ./<releasemode>/libs
-#
-#   To build for Windows:
-#   1. Check out sources (for example, to directory c:\hpcc)
-#   2. Create a build directory - either as a child of hpcc or elsewhere
-#   3. cd to the build directory
-#   4. To create a Visual Studio project, run
-#       cmake c:\hpcc -G "Visual Studio 9 2008"
-#      The sln file hpccsystems-platform.sln will be created in the current directory, and will support debug and release targets
-#   5. To build the project, load the solution into the visual studio IDE and build in the usual way.
-#   6. Executables will be created in .\hpcc\bin\<release_mode>
-#
-#   To create a development installation on Linux:
-#   1. Check out sources (for example, to directory ~/hpcc)
-#   2. Create a build directory alongside your source
-#   3. To create makefiles and have the ability to run the applications as non-superuser, execute
-#       cmake -DRUNTIME_USER=$USER -DRUNTIME_GROUP=groupname -DDESTDIR=$HOME/myruntime ~/hpcc
-#   4. To build the makefiles just created above, run
-#       make
-#   5. To install the project under DESTDIR, run
-#       make install
-#   6. To populate environment xml's and conf files necessary for running your development installation, run
-#       make configure
-#   7a.To start up the platform, execute all binaries and scripts under DESTDIR as a regular user, example
-#       $HOME/myruntime/etc/init.d/hpcc-init start
-#   7b.All runtime files will be under $HOME/myruntime/var/{log,lib,run,lock}
-#   8a.To patch your running installation, simply modify the source, and then from the build directory run
-#       make install
-#      Which will recompile any changes and only install files into the platform that have been modified
-#   8b.Restart the platform (or specific component that had modifications), example
-#       $HOME/myruntime/etc/init.d/hpcc-init restart
-#
-#########################################################
-
 project(hpccsystems-platform)
 
 if(UNIX AND NOT APPLE)
@@ -75,18 +22,12 @@ else()
     cmake_minimum_required(VERSION 2.8.11)
 endif()
 
-set(TOP_LEVEL_PROJECT ON)
-if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    set(TOP_LEVEL_PROJECT OFF)
-endif(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-
 include(CTest)
 enable_testing()
 
-set(HPCC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(CMAKE_MODULE_PATH "${HPCC_SOURCE_DIR}/cmake_modules/")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
-include(${HPCC_SOURCE_DIR}/version.cmake)
+include(version.cmake)
 
 ###
 ## Build Level
@@ -98,7 +39,6 @@ if ("${BUILD_LEVEL}" STREQUAL "COMMUNITY")
     set ( HPCC_PROJECT_ABBR  "CC")
 endif()
 
-###
 ## Config Block
 ###
 option(PREFIX "Set the install prefix")
@@ -123,373 +63,49 @@ option(ENV_CONF_FILE "Set the environment conf file name.")
 option(LICENSE_FILE "Set the license file to use.")
 option(DESTDIR "Set the alternate root installation path.")
 
-if(NOT LICENSE_FILE)
-    if(REMBED)
-        set(LICENSE_FILE "R-LICENSE.txt")
-    else ()
-        set(LICENSE_FILE "LICENSE.txt")
-    endif()
-endif()
+include(${CMAKE_MODULE_PATH}optionDefaults.cmake)
 
-include(${HPCC_SOURCE_DIR}/cmake_modules/optionDefaults.cmake)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if ( REMBED )
-  # various components that are not needed if only making the R plugin
-  SET(USE_LIBARCHIVE 0)
-  SET(USE_APR 0)
-endif()
+add_subdirectory(common)
+add_subdirectory(system)
+add_subdirectory(esp)
+add_subdirectory(tools)
+add_subdirectory(dali)
+add_subdirectory(rtl)
+add_subdirectory(roxie)
 
-include(${HPCC_SOURCE_DIR}/cmake_modules/commonSetup.cmake)
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -fPIC -fmessage-length=0 -Werror=format -Wformat-security -Wformat-nonliteral -pthread -Wuninitialized")
 
-if ( PLUGIN )
-    HPCC_ADD_SUBDIRECTORY (roxie/roxiemem)
-    HPCC_ADD_SUBDIRECTORY (rtl/nbcd)
-    HPCC_ADD_SUBDIRECTORY (rtl/eclrtl)
-    HPCC_ADD_SUBDIRECTORY (system/jlib)
-    HPCC_ADD_SUBDIRECTORY (dali/base)
-    HPCC_ADD_SUBDIRECTORY (plugins/Rembed "REMBED")
-    HPCC_ADD_SUBDIRECTORY (plugins/v8embed "V8EMBED")
-    HPCC_ADD_SUBDIRECTORY (plugins/memcached "MEMCACHED")
-    HPCC_ADD_SUBDIRECTORY (plugins/pyembed "PY2EMBED")
-    HPCC_ADD_SUBDIRECTORY (plugins/py3embed "PY3EMBED")
-    HPCC_ADD_SUBDIRECTORY (plugins/redis "REDIS")
-    HPCC_ADD_SUBDIRECTORY (plugins/javaembed "JAVAEMBED")
-    HPCC_ADD_SUBDIRECTORY (plugins/kafka "KAFKA")
-    HPCC_ADD_SUBDIRECTORY (plugins/sqlite3 "SQLITE3EMBED")
-    HPCC_ADD_SUBDIRECTORY (plugins/mysql "MYSQLEMBED")
-    HPCC_ADD_SUBDIRECTORY (plugins/exampleplugin "EXAMPLEPLUGIN")
-    HPCC_ADD_SUBDIRECTORY (plugins/couchbase "COUCHBASEEMBED")
-elseif ( NOT MAKE_DOCS_ONLY )
-    HPCC_ADD_SUBDIRECTORY (initfiles)
-    HPCC_ADD_SUBDIRECTORY (tools)
-    HPCC_ADD_SUBDIRECTORY (common)
-    HPCC_ADD_SUBDIRECTORY (dali)
-    HPCC_ADD_SUBDIRECTORY (deploy)
-    HPCC_ADD_SUBDIRECTORY (deployment)
-    HPCC_ADD_SUBDIRECTORY (ecl)
-    HPCC_ADD_SUBDIRECTORY (ecllibrary)
-    HPCC_ADD_SUBDIRECTORY (esp)
-    HPCC_ADD_SUBDIRECTORY (plugins)
-    HPCC_ADD_SUBDIRECTORY (roxie)
-    HPCC_ADD_SUBDIRECTORY (rtl)
-    HPCC_ADD_SUBDIRECTORY (services "PLATFORM")
-    HPCC_ADD_SUBDIRECTORY (system)
-    HPCC_ADD_SUBDIRECTORY (thorlcr "PLATFORM")
-    HPCC_ADD_SUBDIRECTORY (testing)
-    if ( MAKE_CONFIGURATOR )
-        MESSAGE(STATUS "Configurator app build ON")
-        HPCC_ADD_SUBDIRECTORY (configuration "PLATFORM")
-    endif()
-    if ( NOT WIN32 )
-        HPCC_ADD_SUBDIRECTORY (clienttools "CLIENTTOOLS_ONLY")
-    endif()
-endif()
 
-HPCC_ADD_SUBDIRECTORY(docs "PLATFORM")
-if(APPLE OR WIN32)
-    HPCC_ADD_SUBDIRECTORY(lib2)
-endif(APPLE OR WIN32)
 
-if(APPLE)
-    HPCC_ADD_SUBDIRECTORY(package)
-endif(APPLE)
 
-###
-## CPack install and packaging setup.
-###
-if ( WIN32 )
-    set ( CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE )
-    include(InstallRequiredSystemLibraries)
-    if (MSVC14)
-        find_file(MSVC14_REDIST "vcredist_${CMAKE_MSVC_ARCH}.exe" HINTS ${MSVC14_REDIST_DIR}/1033 )
-        if (EXISTS "${MSVC14_REDIST}")
-            install ( PROGRAMS ${MSVC14_REDIST} DESTINATION tmp )
-            get_filename_component(MSVC14_REDIST_NAME ${MSVC14_REDIST} NAME)
-            list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " 
-                ExecWait '$INSTDIR\\\\tmp\\\\${MSVC14_REDIST_NAME} /S'
-            ")
-        else ()
-            MESSAGE(WARNING "-- Unable to locate vcredist_x86.exe")
-        endif ()
-    else ()
-        MESSAGE(WARNING "-- Unknown compiler version")
-    endif ()
-endif ()
+
+
 
 set(VER_SEPARATOR "-")
 if("${stagever}" MATCHES "^rc[0-9]+$")
     set(VER_SEPARATOR "~")
 endif()
 
-if(TOP_LEVEL_PROJECT)
-    if(PLUGIN)
-        set(CPACK_PACKAGE_NAME "hpccsystems-plugin-${pluginname}")
-        set(PACKAGE_FILE_NAME_PREFIX "hpccsystems-plugin-${pluginname}")
-    elseif(PLATFORM)
-        set(CPACK_PACKAGE_NAME "hpccsystems-platform")
-        set(PACKAGE_FILE_NAME_PREFIX "hpccsystems-platform-${projname}")
-    else()
-        set(CPACK_PACKAGE_NAME "hpccsystems-clienttools-${majorver}.${minorver}")
-        set(PACKAGE_FILE_NAME_PREFIX  "hpccsystems-clienttools-${projname}")
-    endif()
+set(package_prefix "hpccsystems")
 
-    set(CPACK_PACKAGE_VERSION_MAJOR ${majorver})
-    set(CPACK_PACKAGE_VERSION_MINOR ${minorver})
-    set(CPACK_PACKAGE_VERSION_PATCH ${point}${VER_SEPARATOR}${stagever})
-    set(CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH})
-    set(CPACK_PACKAGE_CONTACT "HPCCSystems <ossdevelopment@lexisnexis.com>")
-    set(CPACK_SOURCE_GENERATOR TGZ)
+set(CPACK_DEB_PACKAGE_COMPONENT ON)
 
-    set(CPACK_RPM_PACKAGE_VERSION "${version}")
-    set(CPACK_RPM_PACKAGE_RELEASE "${stagever}")
-    set(CPACK_RPM_PACKAGE_VENDOR "HPCC Systems®")
-    set(CPACK_PACKAGE_VENDOR "HPCC Systems®")
-    set(CPACK_PACKAGE_VENDOR_WITHOUT_TRADEMARK "HPCC Systems")
+set(CPACK_PACKAGE_VERSION_MAJOR ${majorver})
+set(CPACK_PACKAGE_VERSION_MINOR ${minorver})
+set(CPACK_PACKAGE_VERSION_PATCH ${point}${VER_SEPARATOR}${stagever})
+set(CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH})
+set(CPACK_PACKAGE_CONTACT "HPCCSystems <ossdevelopment@lexisnexis.com>")
+set(CPACK_SOURCE_GENERATOR TGZ)
 
-    if(WIN32)
-        if(${ARCH64BIT} EQUAL 1)
-            set(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
-        else(${ARCH64BIT} EQUAL 1)
-            set(CPACK_RPM_PACKAGE_ARCHITECTURE "i386")
-        endif(${ARCH64BIT} EQUAL 1)
-    else(WIN32)
-        set(CPACK_RPM_PACKAGE_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
-        if("${CPACK_RPM_PACKAGE_ARCHITECTURE}" STREQUAL "i686")
-            set(CPACK_RPM_PACKAGE_ARCHITECTURE "i386")
-        endif()
-    endif(WIN32)
-
-    set(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CPACK_RPM_PACKAGE_ARCHITECTURE}")
-    if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-        set(CPACK_STRIP_FILES TRUE)
-    endif()
-
-    if(UNIX AND NOT APPLE)
-        execute_process(
-            COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/distrocheck.sh
-            OUTPUT_VARIABLE packageManagement
-            ERROR_VARIABLE  packageManagement
-            )
-        execute_process(
-            COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/getpackagerevisionarch.sh
-            OUTPUT_VARIABLE packageRevisionArch
-            ERROR_VARIABLE  packageRevisionArch
-            )
-        execute_process(
-            COMMAND ${HPCC_SOURCE_DIR}/cmake_modules/getpackagerevisionarch.sh --noarch
-            OUTPUT_VARIABLE packageRevision
-            ERROR_VARIABLE  packageRevision
-            )
-
-        message("-- Auto Detecting Packaging type")
-        message("-- distro uses ${packageManagement}, revision is ${packageRevisionArch}")
-
-        if("${packageManagement}" STREQUAL "RPM")
-            set(CPACK_RPM_SPEC_MORE_DEFINE
-"%define _use_internal_dependency_generator 0
-%define __getdeps() while read file; do /usr/lib/rpm/rpmdeps -%{1} ${file} | %{__grep} -v libRInside.so | %{__grep} -v libRcpp.so ; done | /bin/sort -u
-%define __find_provides /bin/sh -c '%{__getdeps P}'
-%define __find_requires /bin/sh -c '%{__getdeps R}'")
-        endif()
-
-        if("${packageManagement}" STREQUAL "DEB")
-            set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}${packageRevisionArch}")
-        elseif("${packageManagement}" STREQUAL "RPM")
-            set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}.${packageRevisionArch}")
-        else()
-            set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}_${stagever}${CPACK_SYSTEM_NAME}")
-        endif()
-    endif ()
-
-    message("-- Current release version is ${CPACK_PACKAGE_FILE_NAME}")
-    set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${CPACK_RPM_PACKAGE_VERSION}-${stagever}")
-    set(CPACK_SOURCE_GENERATOR TGZ)
-    set(CPACK_SOURCE_IGNORE_FILES
-        "~$"
-        "\\\\.cvsignore$"
-        "^${PROJECT_SOURCE_DIR}.*/CVS/"
-        "^${PROJECT_SOURCE_DIR}.*/.svn/"
-        "^${PROJECT_SOURCE_DIR}.*/.git/"
-        "^${PROJECT_SOURCE_DIR}/ln/"
-        "^${PROJECT_SOURCE_DIR}/externals/"
-        "^${PROJECT_SOURCE_DIR}.*/*.mk$"
-        "^${PROJECT_SOURCE_DIR}/makefile$"
-        "^${PROJECT_SOURCE_DIR}/make.common$"
-        "^${PROJECT_SOURCE_DIR}/make.post$"
-        "^${PROJECT_SOURCE_DIR}/build$"
-        "^${PROJECT_SOURCE_DIR}/buildall$"
-        "^${PROJECT_SOURCE_DIR}/lastbuilds$"
-        "^${PROJECT_SOURCE_DIR}/imerge$"
-        "^${PROJECT_SOURCE_DIR}/tmerge$"
-        "^${PROJECT_SOURCE_DIR}/tmerge.bat$"
-        "^${PROJECT_SOURCE_DIR}/tag$"
-        "^${PROJECT_SOURCE_DIR}/tag_build$"
-        "^${PROJECT_SOURCE_DIR}/old_tag$"
-        "^${PROJECT_SOURCE_DIR}/ecl/regress/"
-    "^${PROJECT_SOURCE_DIR}/testing/"
-        )
-endif(TOP_LEVEL_PROJECT)
-
-###
-## Run file configuration to set build tag along with install lines for generated
-## config files.
-###
-set(BUILD_TAG "${projname}_${version}-${stagever}")
-if(USE_GIT_DESCRIBE OR CHECK_GIT_TAG)
-    FETCH_GIT_TAG(${CMAKE_SOURCE_DIR} ${projname}_${version} GIT_BUILD_TAG)
-    message("-- Git tag is '${GIT_BUILD_TAG}'")
-    if(NOT "${GIT_BUILD_TAG}" STREQUAL "${BUILD_TAG}")
-        if(CHECK_GIT_TAG)
-            message(FATAL_ERROR "Git tag '${GIT_BUILD_TAG}' does not match source version '${BUILD_TAG}'")
-        else()
-            if(NOT "${GIT_BUILD_TAG}" STREQUAL "") # probably means being built from a tarball...
-                set(BUILD_TAG "${BUILD_TAG}[${GIT_BUILD_TAG}]")
-            endif()
-        endif()
-    endif()
-endif()
-message("-- Build tag is '${BUILD_TAG}'")
-if(NOT "${BASE_BUILD_TAG}" STREQUAL "")
-    set(BASE_BUILD_TAG "${BUILD_TAG}")
-endif()
-message("-- Base build tag is '${BASE_BUILD_TAG}'")
-configure_file(${HPCC_SOURCE_DIR}/build-config.h.cmake "build-config.h")
-
-if(USE_SHLIBDEPS)
-    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-else()
-    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS OFF)
-endif()
-#set( CPACK_DEB_PACKAGE_COMPONENT ON )
-
-if(TOP_LEVEL_PROJECT)
-    if(UNIX)
-        if("${packageManagement}" STREQUAL "DEB")
-            set(CPACK_GENERATOR "${packageManagement}")
-            message("-- Will build DEB package")
-            ###
-            ## CPack instruction required for Debian
-            ###
-            message("-- Packing BASH installation files")
-            if(CLIENTTOOLS_ONLY)
-                set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
-"${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postinst;${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/prerm; ${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postrm")
-            endif(CLIENTTOOLS_ONLY)
-            if(PLATFORM)
-                set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postinst;${CMAKE_CURRENT_BINARY_DIR}/initfiles/sbin/prerm;${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postrm")
-            endif(PLATFORM)
-
-            # Standard sections values:
-            # https://www.debian.org/doc/debian-policy/ch-archive.html/#s-subsections
-            set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
-
-        elseif("${packageManagement}" STREQUAL "RPM")
-            set(CPACK_GENERATOR "${packageManagement}")
-            ###
-            ## CPack instruction required for RPM
-            ###
-            message("-- Will build RPM package")
-            message("-- Packing BASH installation files")
-            if(CLIENTTOOLS_ONLY)
-                set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postinst")
-                set(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/prerm")
-                set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/clienttools/install/postrm")
-                set(CPACK_RPM_PACKAGE_GROUP "development/libraries")
-                set(CPACK_RPM_PACKAGE_SUMMARY "HPCC Systems® Client Tools.")
-            endif()
-            if(PLATFORM)
-                set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postinst")
-                set(CPACK_RPM_PRE_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/sbin/prerm")
-                set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/initfiles/bash/sbin/deb/postrm")
-                # Standard group names: http://fedoraroject.org/wiki/RPMGroups
-                set(CPACK_RPM_PACKAGE_GROUP "development/system")
-                set(CPACK_RPM_PACKAGE_SUMMARY "${PACKAGE_FILE_NAME_PREFIX}")
-            endif() 
-        else()
-            message("WARNING: Unsupported package ${packageManagement}.")
-        endif ()
-    endif(UNIX)
-
-    if(PLUGIN)
-        if("${packageManagement}" STREQUAL "RPM")
-            SET_DEPENDENCIES(CPACK_RPM_PACKAGE_REQUIRES "hpccsystems-platform = ${CPACK_RPM_PACKAGE_VERSION}")
-        elseif("${packageManagement}" STREQUAL "DEB")
-            SET_DEPENDENCIES(CPACK_DEBIAN_PACKAGE_DEPENDS "hpccsystems-platform (= ${CPACK_PACKAGE_VERSION})")
-        else()
-            message(WARNING "Plugin Static Dependencies not set")
-        endif()
-    else()
-        if(EXISTS ${HPCC_SOURCE_DIR}/cmake_modules/dependencies/${packageRevision}.cmake)
-            include(${HPCC_SOURCE_DIR}/cmake_modules/dependencies/${packageRevision}.cmake)
-        else()
-            message("-- WARNING: DEPENDENCY FILE FOR ${packageRevision} NOT FOUND, Using deps template.")
-            include(${HPCC_SOURCE_DIR}/cmake_modules/dependencies/template.cmake)
-        endif()
-    endif()
-
-    if(UNIX)
-        set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
-    endif(UNIX)
-
-    if(PLATFORM OR PLUGIN)
-        set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PACKAGE_FILE_NAME_PREFIX}")
-    else()
-        if(APPLE OR WIN32)
-            set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_FILE_NAME_PREFIX}_${version}-${stagever}${CPACK_SYSTEM_NAME}")
-        endif()
-        set(CPACK_MONOLITHIC_INSTALL TRUE)
-        file(WRITE "${PROJECT_BINARY_DIR}/welcome.txt"
-            "HPCC Systems® - Client Tools\r"
-            "===========================\r\r"
-            "This installer will install the HPCC Systems® Client Tools.")
-        set(CPACK_RESOURCE_FILE_README "${PROJECT_BINARY_DIR}/welcome.txt")
-        set(CPACK_RESOURCE_FILE_LICENSE "${HPCC_SOURCE_DIR}/${LICENSE_FILE}")
-        set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "HPCC Systems® Client Tools.")
-        if(WIN32)
-            if("${SIGN_DIRECTORY}" STREQUAL "")
-                set(SIGN_DIRECTORY "${HPCC_SOURCE_DIR}/../sign")
-            endif()
-
-            set(CPACK_NSIS_DISPLAY_NAME "Client Tools")
-            set(CPACK_PACKAGE_INSTALL_DIRECTORY "${DIR_NAME}\\\\${version}\\\\clienttools")
-            set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "clienttools_${version}")
-            set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
-            set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\hpccsystems.com")
-            set(CPACK_NSIS_CONTACT ${CPACK_PACKAGE_CONTACT})
-            set(CPACK_NSIS_DEFINES "
-                !define MUI_STARTMENUPAGE_DEFAULTFOLDER \\\"${CPACK_PACKAGE_VENDOR_WITHOUT_TRADEMARK}\\\\${version}\\\\${CPACK_NSIS_DISPLAY_NAME}\\\"
-                !define MUI_FINISHPAGE_NOAUTOCLOSE
-            ")
-
-            file(STRINGS "${SIGN_DIRECTORY}/passphrase.txt" PFX_PASSWORD LIMIT_COUNT 1)
-
-            add_custom_target(SIGN
-                COMMAND signtool sign /f "${SIGN_DIRECTORY}/hpcc_code_signing.pfx"
-/p "${PFX_PASSWORD}" /t "http://timestamp.verisign.com/scripts/timstamp.dll"
-"${CMAKE_BINARY_DIR}/${PACKAGE_FILE_NAME_PREFIX}*.exe"
-                COMMENT "Digital Signature"
-            )
-            add_dependencies(SIGN PACKAGE)
-            set_property(TARGET SIGN PROPERTY FOLDER "CMakePredefinedTargets")
-        endif()
-    endif(PLATFORM OR PLUGIN)
-endif(TOP_LEVEL_PROJECT)
-
-
-###
-## Below are the non-compile based install scripts required for
-## the hpcc platform.
-###
-if(PLATFORM OR CLIENTTOOLS OR REMBED)
-    install(FILES ${HPCC_SOURCE_DIR}/${LICENSE_FILE} DESTINATION "." COMPONENT Runtime)
-endif()
-
-#uninstall target
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
-add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+set(CPACK_RPM_PACKAGE_VERSION "${version}")
+set(CPACK_RPM_PACKAGE_RELEASE "${stagever}")
+set(CPACK_RPM_PACKAGE_VENDOR "HPCC Systems®")
+set(CPACK_PACKAGE_VENDOR "HPCC Systems®")
+set(CPACK_PACKAGE_VENDOR_WITHOUT_TRADEMARK "HPCC Systems")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
 include(CPack)
+

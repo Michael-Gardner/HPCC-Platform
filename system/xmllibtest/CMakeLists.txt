@@ -25,7 +25,7 @@
 
 project( xmllibtest )
 
-include(${HPCC_SOURCE_DIR}/esp/scm/smcscm.cmake)
+include(./../../esp/scm/smcscm.cmake)
 
 set (    SRCS
          xmllibtest.cpp
@@ -41,10 +41,10 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( xmllibtest ${SRCS} )
+ADD_EXECUTABLE ( xmllibtest ${SRCS} )
 add_dependencies ( xmllibtest xmllib )
-install ( TARGETS xmllibtest RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS xmllibtest RUNTIME DESTINATION ${EXEC_DIR} COMPONENT common-util)
 target_link_libraries ( xmllibtest
         jlib
         xmllib
-    )
+        )
