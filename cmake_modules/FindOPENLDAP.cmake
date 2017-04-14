@@ -58,11 +58,8 @@ IF (NOT OPENLDAP_FOUND)
     ENDIF()
   ENDIF()
 
-  # if we didn't find in externals, look in system include path
-  if (USE_NATIVE_LIBRARIES)
     FIND_PATH (OPENLDAP_INCLUDE_DIR NAMES ${ldap_inc})
     FIND_LIBRARY (OPENLDAP_LIBRARIES NAMES ${ldap_dll})
-  endif()
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(OpenLDAP DEFAULT_MSG

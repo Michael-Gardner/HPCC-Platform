@@ -54,11 +54,9 @@ IF (NOT ZLIB_FOUND)
     ENDIF()
   ENDIF()
 
-  if (USE_NATIVE_LIBRARIES)
     # if we didn't find in externals, look in system include path
     FIND_PATH (ZLIB_INCLUDE_DIR NAMES zlib.h)
     FIND_LIBRARY (ZLIB_LIBRARIES NAMES ${zlib_lib})
-  endif()
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(ZLib DEFAULT_MSG

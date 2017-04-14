@@ -15,7 +15,7 @@
 ################################################################################
 # Component: esdllib
 
-project( esdllib )
+project(esdllib)
 
 include_directories (
     ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
@@ -29,29 +29,27 @@ include_directories (
     ${HPCC_SOURCE_DIR}/rtl/eclrtl
     ${HPCC_SOURCE_DIR}/rtl/include #IXMLWriter
     ${HPCC_SOURCE_DIR}/common/thorhelper #JSONWRITER
-)
+    )
 
-ADD_DEFINITIONS ( -D_USRDLL -DESDLLIB_EXPORTS )
+add_definitions(-D_USRDLL -DESDLLIB_EXPORTS)
 
-set ( SRCS
+set(SRCS
     esdl_def.cpp
     esdl_def_helper.cpp
     esdl_transformer2.cpp
     params2xml.cpp
     ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp/xpp/xpputils.cpp
     ${HPCC_SOURCE_DIR}/esp/services/common/wsexcept.cpp
-)
+    )
 
-HPCC_ADD_LIBRARY( esdllib SHARED ${SRCS}
-    ${HEADERS}
-)
+add_library(esdllib SHARED ${SRCS} ${HEADERS})
 
-install ( TARGETS esdllib RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+install(TARGETS esdllib RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT esdllib)
 
-add_dependencies ( esdllib jlib espscm)
+add_dependencies(esdllib jlib espscm)
 
-target_link_libraries ( esdllib
+target_link_libraries(esdllib
     jlib
     xmllib
     thorhelper
-)
+    )

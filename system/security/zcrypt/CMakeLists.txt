@@ -26,6 +26,7 @@
 project( zcrypt ) 
 
 find_package(ZLIB REQUIRED)
+find_package(OPENSSL REQUIRED)
 
 set ( SRCS
       aes.cpp

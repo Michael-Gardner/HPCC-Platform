@@ -52,11 +52,8 @@ IF (NOT OPENSSL_FOUND)
     ENDIF()
   ENDIF()
 
-  if (USE_NATIVE_LIBRARIES)
-    # if we didn't find in externals, look in system include path
     FIND_PATH (OPENSSL_INCLUDE_DIR NAMES openssl/ssl.h)
     FIND_LIBRARY (OPENSSL_LIBRARIES NAMES ${ssl_lib})
-  endif()
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(OPENSSL DEFAULT_MSG

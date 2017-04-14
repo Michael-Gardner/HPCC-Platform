@@ -19,8 +19,6 @@
 #include "jfile.hpp"
 #include "jargv.hpp"
 
-#include "build-config.h"
-
 #include "esdlcmd.hpp"
 #include "esdlcmd_common.hpp"
 #include "esdlcmd_core.hpp"

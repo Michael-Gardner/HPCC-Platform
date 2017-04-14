@@ -25,7 +25,9 @@ endif()
 include(CTest)
 enable_testing()
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
+set(HPCC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${HPCC_SOURCE_DIR}/cmake_modules)
+set(SCM_GENERATED_DIR ${CMAKE_BINARY_DIR}/generated)
 
 include(version.cmake)
 
@@ -39,8 +41,8 @@ if ("${BUILD_LEVEL}" STREQUAL "COMMUNITY")
     set ( HPCC_PROJECT_ABBR  "CC")
 endif()
 
-## Config Block
-###
+###############################################################################
+## Option Configuration
 option(PREFIX "Set the install prefix")
 option(EXEC_PREFIX "Set the execution prefix")
 option(CONFIG_PREFIX "Set the configuration prefix")
@@ -63,10 +65,33 @@ option(ENV_CONF_FILE "Set the environment conf file name.")
 option(LICENSE_FILE "Set the license file to use.")
 option(DESTDIR "Set the alternate root installation path.")
 
-include(${CMAKE_MODULE_PATH}optionDefaults.cmake)
+
+include(${CMAKE_MODULE_PATH}/optionDefaults.cmake)
+
+###############################################################################
+## Build tag generation
+include(${CMAKE_CURRENT_SOURCE_DIR}/version.cmake)
+set(projname ${HPCC_PROJECT})
+set(majorver ${HPCC_MAJOR})
+set(minorver ${HPCC_MINOR})
+set(point ${HPCC_POINT})
+if ( "${HPCC_MATURITY}" STREQUAL "release" )
+    set(stagever "${HPCC_SEQUENCE}")
+else()
+    set(stagever "${HPCC_MATURITY}${HPCC_SEQUENCE}")
+endif()
+set(version ${majorver}.${minorver}.${point})
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    set( stagever "${stagever}Debug" )
+endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+
+set(BUILD_TAG "${projname}_${version}-${stagever}")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -fPIC -fmessage-length=0 -Werror=format -Wformat-security -Wformat-nonliteral -pthread -Wuninitialized")
+###############################################################################
+
 
 add_subdirectory(common)
 add_subdirectory(system)
@@ -75,15 +100,10 @@ add_subdirectory(tools)
 add_subdirectory(dali)
 add_subdirectory(rtl)
 add_subdirectory(roxie)
+add_subdirectory(ecl)
 
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti -fPIC -fmessage-length=0 -Werror=format -Wformat-security -Wformat-nonliteral -pthread -Wuninitialized")
-
-
-
-
-
-
-
+###############################################################################
+## Packaging Configuration
 set(VER_SEPARATOR "-")
 if("${stagever}" MATCHES "^rc[0-9]+$")
     set(VER_SEPARATOR "~")

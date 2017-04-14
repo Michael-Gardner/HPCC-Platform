@@ -20,7 +20,6 @@
 #include "jfile.hpp"
 #include "jargv.hpp"
 #include "junicode.hpp"
-#include "build-config.h"
 
 #include "esdlcmd_common.hpp"
 

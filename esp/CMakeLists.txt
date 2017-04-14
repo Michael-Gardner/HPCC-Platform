@@ -13,9 +13,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-include_directories (${SCM_GENERATED_DIR})
+
+include_directories(${SCM_GENERATED_DIR})
 
 add_subdirectory(scm)
+add_subdirectory(esdllib)
+add_subdirectory(protocols)
 
 #HPCC_ADD_SUBDIRECTORY (bindings)
 #HPCC_ADD_SUBDIRECTORY (clients "PLATFORM")

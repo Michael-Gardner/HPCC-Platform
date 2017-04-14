@@ -26,6 +26,10 @@
 
 project( hql ) 
 
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+set(bisonopt -Werror -Wno-other)
+
 set (   SRCS 
         hqlatoms.cpp
         hqlattr.cpp
@@ -114,7 +118,7 @@ include_directories (
 if (WIN32)
     add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/hqlgram.h
         #${bisonopt} is used to force s/r and r/r errors to abort compiling
-        COMMAND ${bisoncmdprefix} ${bisoncmd} ${bisonopt} --report=state --defines=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hqlgram.y 2>&1
+        COMMAND ${BISON_EXECUTABLE} ${bisonopt} --report=state --defines=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hqlgram.y 2>&1
         DEPENDS hqlgram.y
     )
 else()
@@ -122,13 +126,13 @@ else()
         #delete output files before building to force rebuilds with errors to fail rather than continue unnoticed, using the existing output files.
         COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/hqlgram.h ${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp
         #${bisonopt} is used to force s/r and r/r errors to abort compiling
-        COMMAND ${bisoncmdprefix} ${bisoncmd} ${bisonopt} --report=state --defines=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hqlgram.y 2>&1
+        COMMAND ${BISON_EXECUTABLE} ${bisonopt} --report=state --defines=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hqlgram.y 2>&1
         DEPENDS hqlgram.y
     )
 endif()
 
 add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hqllex.cpp 
-    COMMAND ${flexcmdprefix} ${flexcmd} --outfile=${CMAKE_CURRENT_BINARY_DIR}/hqllex.cpp --header-file=${CMAKE_CURRENT_BINARY_DIR}/hqllex.hpp ${CMAKE_CURRENT_SOURCE_DIR}/hqllex.l
+    COMMAND ${FLEX_EXECUTABLE} --outfile=${CMAKE_CURRENT_BINARY_DIR}/hqllex.cpp --header-file=${CMAKE_CURRENT_BINARY_DIR}/hqllex.hpp ${CMAKE_CURRENT_SOURCE_DIR}/hqllex.l
     DEPENDS hqllex.l
 )
 
@@ -136,9 +140,15 @@ if (WIN32)
     set_source_files_properties (hqlgram.cpp PROPERTIES COMPILE_FLAGS "/Od")
 endif()
 
-ADD_DEFINITIONS( -D_USRDLL -DHQL_EXPORTS -DHQLFOLD_EXPORTS -DHQLTRANS_EXPORTS )
+add_definitions(
+    -D_USRDLL
+    -DHQL_EXPORTS
+    -DHQLFOLD_EXPORTS
+    -DHQLTRANS_EXPORTS
+    -D
+    )
 
-HPCC_ADD_LIBRARY( hql SHARED ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/hqllex.cpp  )
+ADD_LIBRARY( hql SHARED ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/hqlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/hqllex.cpp  )
 install ( TARGETS hql RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
 target_link_libraries ( hql
          jlib
@@ -148,7 +158,8 @@ target_link_libraries ( hql
          ${CPPUNIT_LIBRARIES}
     )
 
-IF (USE_ZLIB)
+find_package(ZLIB)
+IF (ZLIB_FOUND)
     target_link_libraries ( hql
         ${ZLIB_LIBRARIES}
         zcrypt

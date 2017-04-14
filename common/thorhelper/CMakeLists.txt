@@ -13,7 +13,6 @@
 #    limitations under the License.
 ################################################################################
 
-
 # Component: thorhelper 
 
 #####################################################
@@ -26,7 +25,6 @@ project( thorhelper )
 
 
 find_package(TBB)
-find_package(ZLIB)
 
 set (    SRCS 
 
@@ -100,7 +98,7 @@ include_directories (
          ./../../system/security/shared
     )
 
-ADD_DEFINITIONS( -DTHORHELPER_EXPORTS -D_USRDLL )
+add_definitions(-DTHORHELPER_EXPORTS -D_USRDLL -D_USE_ZLIB)
 
 ADD_LIBRARY( thorhelper SHARED ${SRCS} )
 install ( TARGETS thorhelper RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT common-library)
@@ -111,7 +109,8 @@ target_link_libraries ( thorhelper
          roxiemem
          deftype 
          dalibase 
-    )
+         zcrypt
+         )
 
 if (USE_NUMA)
  target_link_libraries ( thorhelper numa )

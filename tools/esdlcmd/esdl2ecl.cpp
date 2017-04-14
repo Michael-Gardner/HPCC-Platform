@@ -19,7 +19,6 @@
 #include "xslprocessor.hpp"
 
 #include "esdlcmd_core.hpp"
-#include "build-config.h"
 
 typedef IPropertyTree * IPTreePtr;
 

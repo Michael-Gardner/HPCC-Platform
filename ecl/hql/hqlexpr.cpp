@@ -15,7 +15,6 @@
     limitations under the License.
 ############################################################################## */
 #include "platform.h"
-#include "build-config.h"
 
 #if defined(_DEBUG) && defined(_WIN32) && !defined(USING_MPATROL)
  #undef new

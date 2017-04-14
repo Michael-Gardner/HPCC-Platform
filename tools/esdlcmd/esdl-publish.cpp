@@ -20,8 +20,6 @@
 #include "esdlcmd_common.hpp"
 
 #include "esdlcmd_core.hpp"
-#include "build-config.h"
-
 
 class EsdlPublishCmdCommon : public EsdlCmdCommon
 {

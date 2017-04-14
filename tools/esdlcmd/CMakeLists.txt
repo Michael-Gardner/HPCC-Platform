@@ -62,7 +62,11 @@ include_directories (
          ./../../esp/esdllib
     )
 
-ADD_DEFINITIONS( -D_CONSOLE -DCOMPONENTFILES_DIR="${COMPONENTFILES_PATH}")
+add_definitions(
+    -D_CONSOLE
+    -DCOMPONENTFILES_DIR="${COMPONENTFILES_PATH}"
+    -DBUILD_TAG="${BUILD_TAG}"
+    )
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     ADD_DEFINITIONS( -O0 )
 endif ()
