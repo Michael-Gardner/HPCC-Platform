@@ -1,0 +1,111 @@
+#!/bin/bash
+################################################################################
+#    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+################################################################################
+
+source @INSTALL_DIR@/etc/init.d/hpcc_common
+set_environmentvars
+source @ADMIN_PATH@/hpcc_setenv ""
+component=$(basename ${PWD})
+logpthtail="$(date +%Y_%m_%d_%H_%M_%S)"
+export logfile="@LOG_PATH@/${component}/${component}_${logpthtail}.log"
+
+[[ ! -e "@RUNTIME_PATH@/${component}/backupnode.conf" ]] && exit 1
+cfg.parser @RUNTIME_PATH@/${component}/backupnode.conf
+cfg.section.default
+
+exec 2>@LOG_PATH@/${component}/${component}.debug
+set -x
+
+OFS=${IFS}
+IFS=','
+read -a thorlist <<< "${thorlist}"
+IFS=${OFS}
+
+log "Writing out pid file"
+echo "$$" > @PID_PATH@/${component}.pid
+
+log "Backup will occur every ${interval} hours"
+log "Starting Backupnode for the following targets:"
+for i in ${thorlist[@]}; do
+    log "-- ${i}"
+done
+
+which_pidof
+
+while true; do
+    sleep ${interval}h
+    log "------------------------------"
+    log "starting backupnode job..."
+
+
+    for target in ${thorlist[@]}; do
+        log "performing backup on target cluster : ${target}"
+        cfg.section.${target}
+        backupnode_data=$(@EXEC_PATH@/updtdalienv @CONFIG_DIR@/@ENV_XML_FILE@ -d data backupnode ${target})
+        if [[ -z "$backupnode_data" ]]; then
+            log "cannot determine backupnode directory for ${target}"
+            break
+        fi
+
+        // fetch thorgroup slave machines from dali
+        @EXEC_PATH@/daliadmin server=$daliserver dfsgroup ${target} @RUNTIME_PATH@/${target}/backupnode.slaves
+        if [[ $? != 0 ]]; then
+            log "failed to lookup dali group for $target"
+            break
+        fi
+
+        backupnode_data=$backupnode_data/${target}/last_backup
+        if [[ "$localthor" == "true" ]]; then
+            backupnode_remotedata=$backupnode_data
+        else
+            backupnode_remotedata=//${thormaster}$backupnode_data
+        fi
+
+        mkdir -p $backupnode_data
+        rm -f $backupnode_data/*.ERR
+        rm -f $backupnode_data/*.DAT
+
+        log "Using backupnode directory $backupnode_data"
+        log "Reading slaves file @RUNTIME_PATH@/${target}/backupnode.slaves"
+        log "Scanning files from dali ..."
+
+        nodegroup=$thorprimary
+        if [[ -z "$thorprimary" ]]; then
+            nodegroup=$thorname
+        fi
+
+        @EXEC_PATH@/backupnode -O $daliserver $nodegroup $backupnode_data >> $logfile 2>&1
+        if [[ $? -ne 0 ]]; then
+            log "Backupnode of ${target} failed - see ${logfile}"
+            break
+        fi
+
+        # maximum number of threads frunssh will be permitted to use (capped by # slaves)
+        MAXTHREADS=1000
+
+        frunssh @RUNTIME_PATH@/${target}/backupnode.slaves "killall backupnode 1>/dev/null 2>&1" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1
+        log "frunssh @RUNTIME_PATH@/${target}/backupnode.slaves \"/bin/sh -c 'mkdir -p @LOG_PATH@; mkdir -p @RUNTIME_PATH@; @EXEC_PATH@/backupnode -T -X $backupnode_remotedata %n %c %a %x $2 > @LOG_PATH@/backup_node_%n_${logpthtail}.log 2>&1'\" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1"
+        frunssh @RUNTIME_PATH@/${target}/backupnode.slaves "/bin/sh -c 'mkdir -p @LOG_PATH@; mkdir -p @RUNTIME_PATH@; @EXEC_PATH@/backupnode -T -X $backupnode_remotedata %n %c %a %x $2 > @LOG_PATH@/backup_node_%n_${logpthtail}.log 2>&1'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1
+
+        log "------------------------------"
+        log "Waiting for backup to complete"
+
+        log "nohup backupnode -W @RUNTIME_PATH@/${target}/backupnode.slaves $backupnode_data >> $logfile 2>&1 &"
+        nohup backupnode -W @RUNTIME_PATH@/${target}/backupnode.slaves $backupnode_data >> $logfile 2>&1
+        pid=`${PIDOF} backupnode`
+        log "backupnode process $pid still continuing"
+    done
+done

@@ -411,6 +411,15 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="enableBackupNode" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:appinfo>
+            <tooltip>If files at primary location are missing, copy into place from backup location</tooltip>
+            <autogenforwizard>1</autogenforwizard>
+            <autogendefaultvalue>true</autogendefaultvalue>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="heapUseHugePages" type="xs:boolean" default="false">
         <xs:annotation>
           <xs:appinfo>
