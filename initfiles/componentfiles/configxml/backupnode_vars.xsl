@@ -30,9 +30,6 @@
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>[default]</xsl:text>
             <xsl:text>&#xa;</xsl:text>
-            <xsl:text>interval=</xsl:text>
-            <xsl:value-of select="@interval"/>
-            <xsl:text>&#xa;</xsl:text>
             <xsl:text>thorlist=</xsl:text>
             <xsl:call-template name="getThorClusterList"/>
             <xsl:call-template name="getThorClusterDetails"/>
@@ -41,7 +38,7 @@
 
     <!--getThorClusterList-->
     <xsl:template name="getThorClusterList">
-        <xsl:for-each select="/Environment/Software/ThorCluster[@enableBackupNode = 'true']">
+        <xsl:for-each select="/Environment/Software/BackupNodeProcess/NodeGroup">
             <xsl:value-of select="@name"/>
             <xsl:if test="position() != last()">
                 <xsl:text>,</xsl:text>
@@ -52,32 +49,37 @@
 
     <!--getThorClusterDetails-->
     <xsl:template name="getThorClusterDetails">
-        <xsl:for-each select="/Environment/Software/ThorCluster[@enableBackupNode = 'true']">
+        <xsl:for-each select="/Environment/Software/BackupNodeProcess/NodeGroup">
+            <xsl:variable name="name" select="@name"/>
             <!--header-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>[</xsl:text>
             <xsl:value-of select="@name"/>
             <xsl:text>]</xsl:text>
+            <!--interval-->
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:text>interval=</xsl:text>
+            <xsl:value-of select="@interval"/>
             <!--daliserver-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>daliserver=</xsl:text>
             <xsl:call-template name="getDaliServers">
-                <xsl:with-param name="daliServer" select="@daliServers"/>
+                <xsl:with-param name="daliServer" select="/Environment/Software/ThorCluster[@name=$name]/@daliServers"/>
             </xsl:call-template>
             <!--localthor-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>localthor=</xsl:text>
-            <xsl:value-of select="@localThor"/>
+            <xsl:value-of select="/Environment/Software/ThorCluster[@name=$name]/@localThor"/>
             <!--thormaster-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>thormaster=</xsl:text>
             <xsl:call-template name="getNetAddress">
-                <xsl:with-param name="computer" select="ThorMasterProcess/@computer"/>
+                <xsl:with-param name="computer" select="/Environment/Software/ThorCluster[@name=$name]/ThorMasterProcess/@computer"/>
             </xsl:call-template>
             <!--thorprimary-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>thorprimary=</xsl:text>
-            <xsl:value-of select="@nodeGroup"/>
+            <xsl:value-of select="/Environment/Software/ThorCluster[@name=$name]/@nodeGroup"/>
             <!--thorname-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>thorname=</xsl:text>
@@ -85,23 +87,23 @@
             <!--SSHidentityfile-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>SSHidentityfile=</xsl:text>
-            <xsl:value-of select="SSH/@SSHidentityfile"/>
+            <xsl:value-of select="/Environment/Software/ThorCluster[@name=$name]/SSH/@SSHidentityfile"/>
             <!--SSHusername-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>SSHusername=</xsl:text>
-            <xsl:value-of select="SSH/@SSHusername"/>
+            <xsl:value-of select="/Environment/Software/ThorCluster[@name=$name]/SSH/@SSHusername"/>
             <!--SSHpassword-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>SSHpassword=</xsl:text>
-            <xsl:value-of select="SSH/@SSHpassword"/>
+            <xsl:value-of select="/Environment/Software/ThorCluster[@name=$name]/SSH/@SSHpassword"/>
             <!--SSHtimeout-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>SSHtimeout=</xsl:text>
-            <xsl:value-of select="SSH/@SSHtimeout"/>
+            <xsl:value-of select="/Environment/Software/ThorCluster[@name=$name]/SSH/@SSHtimeout"/>
             <!--SSHretries-->
             <xsl:text>&#xa;</xsl:text>
             <xsl:text>SSHretries=</xsl:text>
-            <xsl:value-of select="SSH/@SSHretries"/>
+            <xsl:value-of select="/Environment/Software/ThorCluster[@name=$name]/SSH/@SSHretries"/>
         </xsl:for-each>
     </xsl:template>
     <!--getThorClusterDetails-->
