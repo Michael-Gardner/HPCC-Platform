@@ -45,7 +45,7 @@ nodegroup=${thorprimary}
 if [[ -z "$thorprimary" ]]; then
     nodegroup=${thorname}
 elif [[ "${nodegroup}" != "${target}" ]]; then
-    log "${header} This target is not the primary in the nodeGroup.  Skipping as backup target"
+    log "${header} This target is not the primary in the nodeGroup ${nodegroup}.  Skipping as backup target"
     exit 0
 fi
 
