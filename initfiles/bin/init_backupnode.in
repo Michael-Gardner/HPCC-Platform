@@ -37,81 +37,17 @@ IFS=${OFS}
 log "Writing out pid file"
 echo "$$" > @PID_PATH@/${component}.pid
 
-log "Backup will occur every ${interval} hours"
 log "Starting Backupnode for the following targets:"
 for i in ${thorlist[@]}; do
     log "-- ${i}"
 done
 
-which_pidof
 
-# backup function
-# parameters:
-#1 target
-function backup()
-{
-    exec 2>@LOG_PATH@/${component}/${target}.debug
-    set -x
-    local target=${1}
-    #safe as background job in subshell
-    cfg.section.${target}
-
-    while true; do
-        sleep ${interval}m
-        log "${header} Starting backup of cluster"
-        local backupnode_data=$(@EXEC_PATH@/updtdalienv @CONFIG_DIR@/@ENV_XML_FILE@ -d data backupnode ${target})
-        if [[ -z "${backupnode_data}" ]]; then
-            log "${header} Cannot determine backupnode directory"  
-            break
-        fi
-        # Fetch thorgroup slave machines from dali
-        @EXEC_PATH@/daliadmin server=$daliserver dfsgroup ${target} @RUNTIME_PATH@/${component}/${target}.slaves
-        if [[ $? != 0 ]]; then
-            log "${header} Failed to lookup dfsgroup"
-            break
-        fi
-        backupnode_data=${backupnode_data}/${target}/last_backup
-        local backupnode_remotedata=//${thormaster}$backupnode_data
-
-        mkdir -p ${backupnode_data}
-        rm -f ${backupnode_data}/*.ERR
-        rm -f ${backupnode_data}/*.DAT
-
-        log "${header} Using backupnode directory $backupnode_data"
-        log "${header} Reading slaves file @RUNTIME_PATH@/${component}/${target}.slaves"
-        log "${header} Scanning files from dali ..."
-
-        local nodegroup=${thorprimary}
-        if [[ -z "$thorprimary" ]]; then
-            nodegroup=${thorname}
-        fi
-
-        @EXEC_PATH@/backupnode -O ${daliserver} ${nodegroup} ${backupnode_data} >> ${logfile} 2>&1
-        if [[ $? -ne 0 ]]; then
-            log "${header} Backupnode failed"
-            break
-        fi
-        # maximum number of threads frunssh will be permitted to use (capped by # slaves)
-        MAXTHREADS=1000
-
-        local fout=$(frunssh @RUNTIME_PATH@/${component}/${target}.slaves "killall backupnode 1>/dev/null 2>&1" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b 2>&1)
-        log "${header} ${fout}"
-        log "${header} frunssh @RUNTIME_PATH@/${component}/${target}.slaves \"/bin/sh -c 'mkdir -p @LOG_PATH@/${component}; mkdir -p @RUNTIME_PATH@; @EXEC_PATH@/backupnode -T -X $backupnode_remotedata %n %c %a %x $2 > @LOG_PATH@/${component}/${target}_backup_node_%n_${logpthtail}.log 2>&1'\" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b >> $logfile 2>&1"
-        local fout=$(frunssh @RUNTIME_PATH@/${component}/${target}.slaves "/bin/sh -c 'mkdir -p @LOG_PATH@/${component}; mkdir -p @RUNTIME_PATH@; @EXEC_PATH@/backupnode -T -X $backupnode_remotedata %n %c %a %x $2 > @LOG_PATH@/${component}/${target}_backup_node_%n_${logpthtail}.log 2>&1'" -i:$SSHidentityfile -u:$SSHusername -pe:$SSHpassword -t:$SSHtimeout -a:$SSHretries -n:$MAXTHREADS -b 2>&1)
-        log "${header} ${fout}"
-        log "${header} Waiting for backup to complete"
-        log "${header} nohup backupnode -W @RUNTIME_PATH@/${component}/${target}.slaves $backupnode_data >> $logfile 2>&1 &"
-        nohup backupnode -W @RUNTIME_PATH@/${component}/${target}.slaves $backupnode_data >> $logfile 2>&1
-        pid=`${PIDOF} backupnode`
-        log "${header} Backupnode process $pid still continuing"
-    done
-}
-
-
-trap "pkill -P $$" SIGINT SIGTERM
+_pid=$$
+trap "pkill -P ${_pid};exit 0" SIGINT SIGTERM
 
 for target in ${thorlist[@]}; do
-    nohup backup ${target} &
+    @ADMIN_PATH@/backup.sh ${target} ${logfile} &
 done
 
 wait
