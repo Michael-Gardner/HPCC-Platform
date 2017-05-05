@@ -52,7 +52,8 @@ if(USE_TBB OR USE_TBBMALLOC)
                ${CMAKE_CURRENT_BINARY_DIR}/${TBB_BUILD_NAME}/libtbbmalloc.so
                ${CMAKE_CURRENT_BINARY_DIR}/${TBB_BUILD_NAME}/libtbb.so.${SONAME_VER}
                ${CMAKE_CURRENT_BINARY_DIR}/${TBB_BUILD_NAME}/libtbb.so
-        COMMAND ${CMAKE_MAKE_PROGRAM} tbb_build_dir=${CMAKE_CURRENT_BINARY_DIR} cfg=release
+        COMMAND ${MAKE} tbb_build_dir=${CMAKE_CURRENT_BINARY_DIR} cfg=release
+        VERBATIM
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tbb
         )
 

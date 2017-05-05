@@ -35,15 +35,17 @@ IF ( COUCHBASEEMBED )
         set(LIBCOUCHBASE_LIB_SONAME ${CMAKE_CURRENT_BINARY_DIR}/libcouchbase-build/lib/libcouchbase.so.2)
         set(LIBCOUCHBASE_LIB_REAL ${CMAKE_CURRENT_BINARY_DIR}/libcouchbase-build/lib/libcouchbase.so.2.0.38)
     endif()
-    add_custom_command(
-        OUTPUT ${LIBCOUCHBASE_LIB}
-        COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/libcouchbase-build
-        COMMAND cd ${CMAKE_CURRENT_BINARY_DIR}/libcouchbase-build && ${CMAKE_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/libcouchbase && ${CMAKE_MAKE_PROGRAM}
-        COMMENT Building libcouchbase for import)
-    add_custom_target(libcouchbase-build ALL DEPENDS ${LIBCOUCHBASE_LIB})
+
+    include(ExternalProject)
+    ExternalProject_Add(
+        generate-libcouchbase
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libcouchbase
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/libcouchbase-build
+        BUILD_COMMAND ${MAKE}
+        INSTALL_COMMAND "")
     add_library(libcouchbase SHARED IMPORTED)
     set_property(TARGET libcouchbase PROPERTY IMPORTED_LOCATION ${LIBCOUCHBASE_LIB})
-    add_dependencies(libcouchbase libcouchbase-build)
+    add_dependencies(libcouchbase generate-libcouchbase)
 
     set(
         SRCS

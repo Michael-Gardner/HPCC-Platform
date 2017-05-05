@@ -33,99 +33,122 @@ if(KAFKA)
 
         if(NOT EXISTS "${PROJECT_SOURCE_DIR}/librdkafka/configure")
             message(FATAL_ERROR
-"   The librdkafka submodule is not available.
-   This normally indicates that the git submodule has not been fetched.
-   Please run git submodule update --init --recursive")
+                "   The librdkafka submodule is not available.
+                This normally indicates that the git submodule has not been fetched.
+                Please run git submodule update --init --recursive")
+            endif()
+
+            if(APPLE)
+                set(LIBRDKAFKA_LIB ${PROJECT_BINARY_DIR}/lib/librdkafka.dylib)
+                set(LIBRDKAFKA_LIB_REAL ${PROJECT_BINARY_DIR}/lib/librdkafka.1.dylib)
+                set(LIBRDKAFKACPP_LIB ${PROJECT_BINARY_DIR}/lib/librdkafka++.dylib)
+                set(LIBRDKAFKACPP_LIB_REAL ${PROJECT_BINARY_DIR}/lib/librdkafka++.1.dylib)
+            else()
+                set(LIBRDKAFKA_LIB librdkafka.so)
+                set(LIBRDKAFKA_LIB_REAL librdkafka.so.1)
+                set(LIBRDKAFKACPP_LIB librdkafka++.so)
+                set(LIBRDKAFKACPP_LIB_REAL librdkafka++.so.1)
+            endif()
+
+            # librdkafka does not support out-of-source builds, so let's copy all
+            # of its source code to our binary directory and build there; further,
+            # we need to pull some working directory shenanigans for each command
+            # in order to make the built scripts function correctly
+
+            add_custom_command(
+                OUTPUT ${PROJECT_BINARY_DIR}/librdkafka
+                COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/librdkafka ${PROJECT_BINARY_DIR}/librdkafka
+                DEPENDS ${PROJECT_SOURCE_DIR}/librdkafka)
+            add_custom_target(librdkafka-copy
+                DEPENDS ${PROJECT_BINARY_DIR}/librdkafka)
+            add_custom_command(
+                OUTPUT ${PROJECT_BINARY_DIR}/librdkafka/config.h
+                COMMAND ./configure --prefix=${PROJECT_BINARY_DIR}
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/librdkafka)
+            add_custom_target(librdkafka-configure
+                DEPENDS librdkafka-copy ${PROJECT_BINARY_DIR}/librdkafka/config.h)
+            add_custom_command(
+                OUTPUT  ${PROJECT_BINARY_DIR}/librdkafka/src/${LIBRDKAFKA_LIB_REAL} ${PROJECT_BINARY_DIR}/librdkafka/src-cpp/${LIBRDKAFKACPP_LIB_REAL}
+                COMMAND ${MAKE}
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/librdkafka)
+            add_custom_target(librdkafka-make
+                DEPENDS librdkafka-configure ${PROJECT_BINARY_DIR}/librdkafka/src/${LIBRDKAFKA_LIB_REAL} ${PROJECT_BINARY_DIR}/librdkafka/src-cpp/${LIBRDKAFKACPP_LIB_REAL})
+            add_custom_command(
+                OUTPUT  ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKA_LIB}
+                        ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKA_LIB_REAL}
+                        ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKACPP_LIB}
+                        ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKACPP_LIB_REAL}
+                COMMAND ${MAKE} install
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/librdkafka)
+            add_custom_target(librdkafka-make-install
+                DEPENDS librdkafka-make
+                        ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKA_LIB}
+                        ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKA_LIB_REAL}
+                        ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKACPP_LIB}
+                        ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKACPP_LIB_REAL})
+
+            install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${PROJECT_BINARY_DIR}/lib\")")
+
+            add_library(librdkafka SHARED IMPORTED)
+            set_property(TARGET librdkafka PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKA_LIB})
+            add_dependencies(librdkafka librdkafka-make-install)
+
+            add_library(librdkafkacpp SHARED IMPORTED)
+            set_property(TARGET librdkafkacpp PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKACPP_LIB})
+            add_dependencies(librdkafkacpp librdkafka-make-install)
+
+            set(
+                SRCS
+                kafka.hpp
+                kafka.cpp)
+
+            include_directories(
+                ./../../system/include
+                ./../../rtl/eclrtl
+                ./../../rtl/include
+                ./../../common/deftype
+                ./../../system/jlib
+                ${PROJECT_BINARY_DIR}/include
+                ${CMAKE_BINARY_DIR}
+                ${CMAKE_BINARY_DIR}/oss)
+
+            add_definitions(-D_USRDLL -DECL_KAFKA_EXPORTS)
+            HPCC_ADD_LIBRARY(kafka SHARED ${SRCS})
+
+            if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
+                message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
+            elseif(NOT APPLE)
+                set_target_properties(kafka PROPERTIES NO_SONAME 1)
+            endif()
+
+            install(
+                TARGETS kafka
+                DESTINATION plugins)
+
+            install(
+                FILES ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKA_LIB_REAL} ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKACPP_LIB_REAL}
+                DESTINATION ${LIB_DIR}
+                PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+                COMPONENT Runtime)
+
+            install(
+                FILES ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKA_LIB} ${PROJECT_BINARY_DIR}/lib/${LIBRDKAFKACPP_LIB}
+                DESTINATION ${LIB_DIR}
+                COMPONENT Runtime)
+
+            target_link_libraries(
+                kafka
+                librdkafka
+                librdkafkacpp
+                eclrtl
+                jlib
+                ${ZLIB_LIBRARIES}) 
         endif()
-
-        if(APPLE)
-            set(LIBRDKAFKA_LIB ${PROJECT_BINARY_DIR}/lib/librdkafka.dylib)
-            set(LIBRDKAFKA_LIB_REAL ${PROJECT_BINARY_DIR}/lib/librdkafka.1.dylib)
-            set(LIBRDKAFKACPP_LIB ${PROJECT_BINARY_DIR}/lib/librdkafka++.dylib)
-            set(LIBRDKAFKACPP_LIB_REAL ${PROJECT_BINARY_DIR}/lib/librdkafka++.1.dylib)
-        else()
-            set(LIBRDKAFKA_LIB ${PROJECT_BINARY_DIR}/lib/librdkafka.so)
-            set(LIBRDKAFKA_LIB_REAL ${PROJECT_BINARY_DIR}/lib/librdkafka.so.1)
-            set(LIBRDKAFKACPP_LIB ${PROJECT_BINARY_DIR}/lib/librdkafka++.so)
-            set(LIBRDKAFKACPP_LIB_REAL ${PROJECT_BINARY_DIR}/lib/librdkafka++.so.1)
-        endif()
-
-        # librdkafka does not support out-of-source builds, so let's copy all
-        # of its source code to our binary directory and build there; further,
-        # we need to pull some working directory shenanigans for each command
-        # in order to make the built scripts function correctly
-
-        add_custom_command(
-		OUTPUT ${LIBRDKAFKA_LIB}
-		COMMAND cp -r ${PROJECT_SOURCE_DIR}/librdkafka ${PROJECT_BINARY_DIR}/src
-		COMMAND cd ${PROJECT_BINARY_DIR}/src && ./configure --prefix=${PROJECT_BINARY_DIR}
-		COMMAND cd ${PROJECT_BINARY_DIR}/src && make && make install
-		COMMENT Copying and building librdkafka)
-
-	add_custom_target(librdkafka-build ALL DEPENDS ${LIBRDKAFKA_LIB})
-
-        install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${PROJECT_BINARY_DIR}/lib\")")
-	
-        add_library(librdkafka SHARED IMPORTED)
-	set_property(TARGET librdkafka PROPERTY IMPORTED_LOCATION ${LIBRDKAFKA_LIB})
-	add_dependencies(librdkafka librdkafka-build)
-
-	add_library(librdkafkacpp SHARED IMPORTED)
-	set_property(TARGET librdkafkacpp PROPERTY IMPORTED_LOCATION ${LIBRDKAFKACPP_LIB})
-	add_dependencies(librdkafkacpp librdkafka-build)
-
-        set(
-            SRCS
-            kafka.hpp
-            kafka.cpp)
-
-        include_directories(
-            ./../../system/include
-            ./../../rtl/eclrtl
-            ./../../rtl/include
-            ./../../common/deftype
-            ./../../system/jlib
-            ${PROJECT_BINARY_DIR}/include
-            ${CMAKE_BINARY_DIR}
-            ${CMAKE_BINARY_DIR}/oss)
-
-        add_definitions(-D_USRDLL -DECL_KAFKA_EXPORTS)
-        HPCC_ADD_LIBRARY(kafka SHARED ${SRCS})
-
-        if(${CMAKE_VERSION} VERSION_LESS "2.8.9")
-            message(WARNING "Cannot set NO_SONAME. shlibdeps will give warnings when package is installed")
-        elseif(NOT APPLE)
-            set_target_properties(kafka PROPERTIES NO_SONAME 1)
-        endif()
-
-        install(
-            TARGETS kafka
-            DESTINATION plugins)
-
-        install(
-            FILES ${LIBRDKAFKA_LIB_REAL} ${LIBRDKAFKACPP_LIB_REAL}
-            DESTINATION ${LIB_DIR}
-            PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-            COMPONENT Runtime)
-
-        install(
-            FILES ${LIBRDKAFKA_LIB} ${LIBRDKAFKACPP_LIB}
-            DESTINATION ${LIB_DIR}
-            COMPONENT Runtime)
-
-        target_link_libraries(
-            kafka
-            librdkafka
-            librdkafkacpp
-            eclrtl
-            jlib
-            ${ZLIB_LIBRARIES}) 
     endif()
-endif()
 
-if(PLATFORM OR CLIENTTOOLS_ONLY)
-    install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/kafka.ecllib
-        DESTINATION plugins
-        COMPONENT Runtime)
-endif()
+    if(PLATFORM OR CLIENTTOOLS_ONLY)
+        install(
+            FILES ${CMAKE_CURRENT_SOURCE_DIR}/kafka.ecllib
+            DESTINATION plugins
+            COMPONENT Runtime)
+    endif()

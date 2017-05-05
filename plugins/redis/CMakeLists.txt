@@ -25,18 +25,30 @@
 project(redis)
 
 if(REDIS)
-    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
-        COMMAND make dynamic
-        COMMAND mv libhiredis.so ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
-        COMMAND make clean
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/hiredis
-        COMMENT Building hiredis c library)
-    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/libhiredis.so
-        COMMAND ln -sf libhiredis.so.0.13 libhiredis.so
-        DEPENDS ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
+    add_custom_command(
+        OUTPUT ${PROJECT_SOURCE_DIR}/hiredis/libhiredis.a
+        COMMAND ${MAKE} dynamic
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/hiredis)
+    add_custom_target(hiredis-make
+        DEPENDS ${PROJECT_SOURCE_DIR}/hiredis/libhiredis.a)
+    add_custom_command(
+        OUTPUT ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
+        COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/hiredis/libhiredis.so ${PROJECT_BINARY_DIR}/libhiredis.so.0.13
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/hiredis)
+    add_custom_target(hiredis-copy
+        DEPENDS hiredis-make ${PROJECT_BINARY_DIR}/libhiredis.so.0.13)
+    add_custom_command(
+        OUTPUT ${PROJECT_BINARY_DIR}/libhiredis.so
+        COMMAND ${CMAKE_COMMAND} -E create_symlink libhiredis.so.0.13 libhiredis.so
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
-    add_custom_target(hiredis-build ALL
-        DEPENDS ${PROJECT_BINARY_DIR}/libhiredis.so)
+    add_custom_target(hiredis-link
+        DEPENDS hiredis-copy ${PROJECT_BINARY_DIR}/libhiredis.so)
+    add_custom_target(hiredis-clean
+        COMMAND ${MAKE} clean
+        DEPENDS hiredis-link
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/hiredis)
+    add_custom_target(hiredis-build
+        DEPENDS hiredis-clean hiredis-link)
 
     install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${PROJECT_BINARY_DIR}\")")
 
@@ -89,7 +101,6 @@ if(REDIS)
         jlib
         hiredis)
 endif()
-
 if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib_redis.ecllib

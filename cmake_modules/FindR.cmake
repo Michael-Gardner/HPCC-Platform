@@ -46,18 +46,21 @@ IF (NOT R_FOUND)
 
   #Rcpp/config.h
   #define RCPP_VERSION Rcpp_Version(0,12,3)
-  FILE(STRINGS "${RCPP_INCLUDE_DIR}/Rcpp/config.h" version_string REGEX "#define RCPP_VERSION Rcpp_Version\\(")
-  #major
-  STRING(REGEX REPLACE "#define RCPP_VERSION Rcpp_Version\\(" "" major "${version_string}")
-  STRING(REGEX REPLACE ",[0-9]+,[0-9]+\\)" "" major "${major}")
-  #minor
-  STRING(REGEX REPLACE "#define RCPP_VERSION Rcpp_Version\\([0-9]+," "" minor "${version_string}")
-  STRING(REGEX REPLACE ",[0-9]+\\)" "" minor "${minor}")
-  #patch
-  STRING(REGEX REPLACE "#define RCPP_VERSION Rcpp_Version\\([0-9]+,[0-9]+," "" patch "${version_string}")
-  STRING(REGEX REPLACE "\\)" "" patch "${patch}")
-  SET(RCPP_VERSION_STRING "${major}.${minor}.${patch}")
-
+  IF(NOT RCPP_INCLUDE_DIR STREQUAL "RCPP_INCLUDE_DIR-NOTFOUND")
+    FILE(STRINGS "${RCPP_INCLUDE_DIR}/Rcpp/config.h" version_string REGEX "#define RCPP_VERSION Rcpp_Version\\(")
+    #major
+    STRING(REGEX REPLACE "#define RCPP_VERSION Rcpp_Version\\(" "" major "${version_string}")
+    STRING(REGEX REPLACE ",[0-9]+,[0-9]+\\)" "" major "${major}")
+    #minor
+    STRING(REGEX REPLACE "#define RCPP_VERSION Rcpp_Version\\([0-9]+," "" minor "${version_string}")
+    STRING(REGEX REPLACE ",[0-9]+\\)" "" minor "${minor}")
+    #patch
+    STRING(REGEX REPLACE "#define RCPP_VERSION Rcpp_Version\\([0-9]+,[0-9]+," "" patch "${version_string}")
+    STRING(REGEX REPLACE "\\)" "" patch "${patch}")
+    SET(RCPP_VERSION_STRING "${major}.${minor}.${patch}")
+  ELSE()
+    SET(RCPP_VERSION_STRING "0.0.0")
+  ENDIF()
   SET (R_INCLUDE_DIRS ${R_INCLUDE_DIR} ${RINSIDE_INCLUDE_DIR} ${RCPP_INCLUDE_DIR})
   SET (R_LIBRARIES ${R_LIBRARY} ${RINSIDE_LIBRARY} ${RCPP_LIBRARY})
 
