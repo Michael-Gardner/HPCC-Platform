@@ -213,6 +213,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
       endif()
   endif()
 
+  set(ESPSCM_GENERATED_DIR ${CMAKE_BINARY_DIR}/generated)
   if ( USE_XALAN AND USE_LIBXSLT )
       set(USE_LIBXSLT OFF)
   endif()
@@ -269,6 +270,11 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
     install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION etc/init.d/install COMPONENT Runtime)
   endif()
 
+  if(CMAKE_GENERATOR MATCHES "Make")
+      set(MAKE "$(MAKE)")
+  else()
+      set(MAKE make)
+  endif()
 
   ##########################################################
 

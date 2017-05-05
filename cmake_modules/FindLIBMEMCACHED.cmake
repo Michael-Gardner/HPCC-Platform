@@ -79,7 +79,7 @@ if(NOT LIBMEMCACHED_FOUND)
             TIMEOUT 15
             PREFIX "ext"
             CONFIGURE_COMMAND "${CMAKE_CURRENT_BINARY_DIR}/ext/src/generate-libmemcached/configure" --prefix=${INSTALL_DIR} LDFLAGS=-L${LIB_PATH}
-            BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} LDFLAGS=-Wl,-rpath-link,${LIB_PATH}
+            BUILD_COMMAND ${MAKE} LDFLAGS=-Wl,-rpath-link,${LIB_PATH}
             BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}
             INSTALL_COMMAND "")
         add_library(libmemcached SHARED IMPORTED)
