@@ -34,7 +34,7 @@ if(USE_TBB OR USE_TBBMALLOC)
         )
     
     execute_process(
-        COMMAND /bin/bash -c "${CMAKE_MAKE_PROGRAM} info | awk 'BEGIN{FS=\"=\";} /^tbb_build_prefix/{print $2;}'"
+        COMMAND /bin/bash -c "make info | awk 'BEGIN{FS=\"=\";} /^tbb_build_prefix/{print $2;}'"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tbb
         OUTPUT_VARIABLE TBB_BUILD_NAME
         OUTPUT_STRIP_TRAILING_WHITESPACE

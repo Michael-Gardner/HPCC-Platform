@@ -75,18 +75,20 @@ if(USE_CASSANDRA)
         DEPENDS     libuv
         SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/cpp-driver
         BINARY_DIR  ${CMAKE_CURRENT_BINARY_DIR}/cassandra
-        CMAKE_ARGS  -DCASS_INSTALL_HEADER=OFF
+        CMAKE_ARGS  ${EP_GENERATE_TYPE}
+        -DCASS_INSTALL_HEADER=OFF
         -DCASS_BUILD_STATIC=OFF
         -DCASS_BUILD_EXAMPLES=OFF
         -DCASS_INSTALL_PKG_CONFIG=OFF
         -DCMAKE_CXX_FLAGS:string=-Wno-format-nonliteral
         -DLIBUV_LIBRARY=${LIBUV_LIBRARY}
         -DLIBUV_INCLUDE_DIR=${LIBUV_INCLUDE_DIR}
-        BUILD_COMMAND ${MAKE}
+        BUILD_COMMAND ${EP_MAKE}
+        BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/cassandra/libcassandra.so
         INSTALL_COMMAND "")
     add_library(cassandra SHARED IMPORTED)
     set_property(TARGET cassandra
-        PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/libuv.so)
+        PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/cassandra/libcassandra.so)
     add_dependencies(cassandra generate-cassandra)
 
     install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${PROJECT_BINARY_DIR}:${PROJECT_BINARY_DIR}/cassandra\")")

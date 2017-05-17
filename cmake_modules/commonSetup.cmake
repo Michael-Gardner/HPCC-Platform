@@ -270,10 +270,15 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
     install(PROGRAMS ${CMAKE_MODULE_PATH}publickey.install DESTINATION etc/init.d/install COMPONENT Runtime)
   endif()
 
-  if(CMAKE_GENERATOR MATCHES "Make")
-      set(MAKE "$(MAKE)")
-  else()
+  message(STATUS "CMAKE_GENERATOR: ${CMAKE_GENERATOR}")
+  if(CMAKE_GENERATOR MATCHES "Ninja")
       set(MAKE make)
+      set(EP_MAKE ninja)
+      set(EP_GENERATE_TYPE -G Ninja)
+  else()
+      set(MAKE "$(MAKE)")
+      set(EP_MAKE "$(MAKE)")
+      set(EP_GENERATE_TYPE -G Unix\ Makefiles)
   endif()
 
   ##########################################################

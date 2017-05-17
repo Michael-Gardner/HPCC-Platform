@@ -41,7 +41,9 @@ IF ( COUCHBASEEMBED )
         generate-libcouchbase
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libcouchbase
         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/libcouchbase-build
-        BUILD_COMMAND ${MAKE}
+        CMAKE_ARGS ${EP_GENERATE_TYPE}
+        BUILD_COMMAND ${EP_MAKE}
+        BUILD_BYPRODUCTS ${LIBCOUCHBASE_LIB}
         INSTALL_COMMAND "")
     add_library(libcouchbase SHARED IMPORTED)
     set_property(TARGET libcouchbase PROPERTY IMPORTED_LOCATION ${LIBCOUCHBASE_LIB})
@@ -68,6 +70,13 @@ IF ( COUCHBASEEMBED )
 
     ADD_DEFINITIONS(-D_USRDLL -DCOUCHBASEEMBED_EXPORTS)
     HPCC_ADD_LIBRARY(couchbaseembed SHARED ${SRCS})
+    add_dependencies(couchbaseembed generate-libcouchbase)
+    target_link_libraries(
+        couchbaseembed
+        libcouchbase
+        eclrtl
+        jlib)
+
     install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${PROJECT_BINARY_DIR}:${PROJECT_BINARY_DIR}/libcouchbase-build/lib\")")
     install(
         TARGETS couchbaseembed
@@ -84,11 +93,6 @@ IF ( COUCHBASEEMBED )
         DESTINATION ${LIB_DIR}
         COMPONENT Runtime)
 
-    target_link_libraries(
-        couchbaseembed
-        libcouchbase
-        eclrtl
-        jlib)
 endif()
 
 if(PLATFORM OR CLIENTTOOLS_ONLY)
