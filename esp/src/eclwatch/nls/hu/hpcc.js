@@ -1,4 +1,4 @@
-define(
+define
 ({
     Abort: "Megszakít",
     AbortedBy: "Megszakította",
@@ -769,5 +769,4 @@ define(
     Zoom100Pct: "Nagyítás 100%-ra",
     ZoomAll: "Teljes gráf ablakba méretezése",
     ZoomWidth: "Gráf nagyítása az ablak szélességére"
-})
-);
+});

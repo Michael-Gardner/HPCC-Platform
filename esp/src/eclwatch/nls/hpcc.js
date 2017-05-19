@@ -1,5 +1,5 @@
-define({root:
-({
+define({
+    root: {
     Abort: "Abort",
     AbortedBy: "Aborted by",
     AbortedTime: "Aborted time",
@@ -795,7 +795,8 @@ define({root:
     Zoom100Pct: "Zoom 100%",
     ZoomAll: "Zoom All",
     ZoomWidth: "Zoom Width"
-}),
+    }
+
 "bs": true,
 "es": true,
 "hu": true,

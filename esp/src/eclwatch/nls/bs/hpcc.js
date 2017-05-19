@@ -1,4 +1,4 @@
-﻿define(
+﻿define
 ({
     Abort: "Prekinite",
     AbortedBy: "Prekinuto od strane",
@@ -771,5 +771,4 @@
     Zoom: "Zum",
     ZoomAll: "Zumirajte Sve",
     ZoomWidth: "Zumirajte Širinu"
-})
-);
+});

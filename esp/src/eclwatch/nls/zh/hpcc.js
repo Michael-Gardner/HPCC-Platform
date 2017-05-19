@@ -1,4 +1,4 @@
-﻿define(
+﻿define
 ({
     Abort: "终止",
     AbortedBy: "终止者",
@@ -771,5 +771,4 @@
     Zoom: "缩放",
     ZoomAll: "整体缩放",
     ZoomWidth: "宽度缩放"
-})
-);
+});

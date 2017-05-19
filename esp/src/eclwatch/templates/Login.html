@@ -77,28 +77,28 @@
 	</style>
 	<script src="../../dojo/dojo.js"></script>
 	<script type="text/javascript">
-		require(["dojo", "dojo/i18n", "dojo/i18n!../nls/hpcc.js", "dojo/query", "dojo/cookie"], function (dojo, i18n, nlsHPCC, query, cookie) {
+		require(["dojo", "dojo/i18n", "dojo/i18n!eclwatch/nls/hpcc.js", "dojo/query", "dojo/cookie"], function (dojo, i18n, hpcc, query, cookie) {
 			if (dojo.cookie.isSupported()){
 				dojo.replaceClass("container", "container", "container  visible");
 				query(".loginStr").forEach(function (node, index, arr) {
 					switch (index) {
 						case 0:
 						case 1:
-							node.innerHTML = nlsHPCC.PleaseLogin
+							node.innerHTML = hpcc.PleaseLogin
 							break;
 						case 2:
-							node.placeholder = nlsHPCC.Username
+							node.placeholder = hpcc.Username
 							break;
 						case 3:
-							node.placeholder = nlsHPCC.Password
+							node.placeholder = hpcc.Password
 							break;
 						case 4:
-							node.innerHTML = nlsHPCC.Login
+							node.innerHTML = hpcc.Login
 							break;
 					}
 				});
 			} else {
-				alert(nlsHPCC.PleaseEnableCookies);
+				alert(hpcc.PleaseEnableCookies);
 			}
 		});
 	</script>

@@ -1,4 +1,4 @@
-﻿define(
+﻿define
 ({
     Abort: "Abortar",
     AbortedBy: "Abortado pelo",
@@ -774,5 +774,4 @@
     Zoom: "Zoom",
     ZoomAll: "Zoom Completo",
     ZoomWidth: "comprimento do Zoom"
-})
-);
+});

@@ -1,4 +1,4 @@
-define(
+define
 ({
     Abort: "Aborte",
     AbortedBy: "Abortado por",
@@ -783,5 +783,4 @@ define(
     Zoom: "Zoom",
     ZoomAll: "Aumentar todo",
     ZoomWidth: "Aumentar al ancho"
-})
-);
+});
