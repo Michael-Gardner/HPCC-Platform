@@ -58,9 +58,9 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL -DSMCLIB_EXPORTS )
 
-HPCC_ADD_LIBRARY( SMCLib SHARED ${SRCS} )
+ADD_LIBRARY( SMCLib SHARED ${SRCS} )
 add_dependencies(SMCLib espscm)
-install ( TARGETS SMCLib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS SMCLib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
 target_link_libraries ( SMCLib
          jlib
          remote 

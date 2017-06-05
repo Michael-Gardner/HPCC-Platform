@@ -55,9 +55,9 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL )
 
-HPCC_ADD_LIBRARY( ws_ecl SHARED ${SRCS} )
+ADD_LIBRARY( ws_ecl SHARED ${SRCS} )
 add_dependencies( ws_ecl espscm )
-install ( TARGETS ws_ecl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_ecl RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
 target_link_libraries ( ws_ecl  
          jlib
          xmllib 

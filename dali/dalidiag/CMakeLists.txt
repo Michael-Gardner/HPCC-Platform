@@ -40,8 +40,8 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( dalidiag ${SRCS} )
-install ( TARGETS dalidiag RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( dalidiag ${SRCS} )
+install ( TARGETS dalidiag RUNTIME DESTINATION ${EXEC_DIR} COMPONENT dali)
 target_link_libraries ( dalidiag 
          jlib
          mp 

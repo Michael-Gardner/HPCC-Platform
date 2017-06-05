@@ -42,8 +42,8 @@ include_directories (
 ADD_DEFINITIONS( -D_CONSOLE )
 
 
-HPCC_ADD_EXECUTABLE ( addScopes ${SRCS} )
-install ( TARGETS addScopes RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( addScopes ${SRCS} )
+install ( TARGETS addScopes RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 
 
 

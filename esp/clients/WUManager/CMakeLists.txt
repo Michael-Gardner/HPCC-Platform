@@ -45,7 +45,7 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( wumanager ${SRCS} )
+ADD_EXECUTABLE ( wumanager ${SRCS} )
 add_dependencies ( wumanager espscm )
 #install ( TARGETS wumanager RUNTIME DESTINATION ${EXEC_DIR} ) # do not install - this is an example program
 

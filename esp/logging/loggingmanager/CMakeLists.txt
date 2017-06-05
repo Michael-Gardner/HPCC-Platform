@@ -57,11 +57,11 @@ if (RELEASE_BUILD EQUAL 1)
     ADD_DEFINITIONS( -DISC_NO_MAIN)
 endif (RELEASE_BUILD EQUAL 1)
 
-HPCC_ADD_LIBRARY( loggingmanager SHARED ${SRCS} )
+ADD_LIBRARY( loggingmanager SHARED ${SRCS} )
 
 add_dependencies( loggingmanager espscm )
 
-install ( TARGETS loggingmanager RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS loggingmanager RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
 
 target_link_libraries ( loggingmanager
     ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}

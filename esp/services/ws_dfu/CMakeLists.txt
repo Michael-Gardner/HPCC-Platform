@@ -75,9 +75,9 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL -DWS_DFU_EXPORTS )
 
-HPCC_ADD_LIBRARY( ws_dfu SHARED ${SRCS} )
+ADD_LIBRARY( ws_dfu SHARED ${SRCS} )
 add_dependencies ( ws_dfu espscm )
-install ( TARGETS ws_dfu RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_dfu RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
 target_link_libraries ( ws_dfu
          jlib
          mp 

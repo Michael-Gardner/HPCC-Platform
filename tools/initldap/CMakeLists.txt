@@ -45,8 +45,8 @@ include_directories (
 ADD_DEFINITIONS( -D_CONSOLE )
 
 
-HPCC_ADD_EXECUTABLE ( initldap ${SRCS} )
-install ( TARGETS initldap RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( initldap ${SRCS} )
+install ( TARGETS initldap RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 
 
 

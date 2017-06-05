@@ -13,35 +13,36 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
+#
 # Component: securesocket 
-
-#####################################################
+#
 # Description:
 # ------------
 #    Cmake Input File for securesocket
-#####################################################
+################################################################################
 
+project(securesocket)
 
-project( securesocket ) 
+find_package(OpenSSL REQUIRED)
 
-set (    SRCS 
-         securesocket.cpp 
+set(SRCS
+    securesocket.cpp
     )
 
-include_directories ( 
-         ./../../include 
-         ./../../jlib 
-         ${OPENSSL_INCLUDE_DIR}
+include_directories(
+    ./../../include
+    ./../../jlib
+    ${OPENSSL_INCLUDE_DIR}
     )
 
-ADD_DEFINITIONS( -D_USRDLL -DSECURESOCKET_EXPORTS )
+add_definitions(-D_USRDLL -DSECURESOCKET_EXPORTS)
 
-HPCC_ADD_LIBRARY( securesocket SHARED ${SRCS} )
-install ( TARGETS securesocket RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
-target_link_libraries ( securesocket
-         jlib
-         ${OPENSSL_LIBRARIES} 
+add_library(securesocket SHARED ${SRCS})
+install(TARGETS securesocket RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT Runtime)
+target_link_libraries(
+    securesocket
+    jlib
+    ${OPENSSL_LIBRARIES}
     )
 
 

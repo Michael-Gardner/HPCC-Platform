@@ -25,55 +25,54 @@
 project( workunit ) 
 
 set (    SRCS 
-         workunit.cpp 
-         wujobq.cpp
-         package.cpp
-         workflow.cpp
-         referencedfilelist.cpp
-                 
-         workunit.hpp 
-         wuerror.hpp
-         wujobq.hpp
-         package.h
-         workflow.hpp
-         pkgimpl.hpp
-         referencedfilelist.hpp
+    workunit.cpp 
+    wujobq.cpp
+    package.cpp
+    workflow.cpp
+    referencedfilelist.cpp
+
+    workunit.hpp 
+    wuerror.hpp
+    wujobq.hpp
+    package.h
+    workflow.hpp
+    pkgimpl.hpp
+    referencedfilelist.hpp
     )
 
 include_directories ( 
-         ./../../common/environment
-         ./../../common/workunit
-         ./../../system/mp 
-         ./../../dali/ft 
-         ./../../common/deftype 
-         ./../../system/include 
-         ./../../dali/base 
-         ./../../dali/dfu
-         ./../../rtl/include 
-         ./../../common/dllserver 
-         ./../../system/jlib
-         ./../../system/security/shared 
-         ./../../common/thorhelper 
-         ./../../rtl/eclrtl 
-         ./../../rtl/nbcd
+    ./../../common/environment
+    ./../../common/workunit
+    ./../../system/mp 
+    ./../../dali/ft 
+    ./../../common/deftype 
+    ./../../system/include 
+    ./../../dali/base 
+    ./../../dali/dfu
+    ./../../rtl/include 
+    ./../../common/dllserver 
+    ./../../system/jlib
+    ./../../system/security/shared 
+    ./../../common/thorhelper 
+    ./../../rtl/eclrtl 
+    ./../../rtl/nbcd
     )
 
-HPCC_ADD_LIBRARY( workunit SHARED ${SRCS} )
+ADD_LIBRARY( workunit SHARED ${SRCS} )
 set_target_properties(workunit PROPERTIES 
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL WORKUNIT_EXPORTS )
-if(NOT PLUGIN)
-    install(
-        TARGETS workunit
-        RUNTIME DESTINATION ${EXEC_DIR}
-        LIBRARY DESTINATION ${LIB_DIR})
-    target_link_libraries(
-        workunit 
-        jlib 
-        dalibase 
-        dllserver 
-        nbcd 
-        eclrtl 
-        deftype
-        environment)
-endif()
+install(
+    TARGETS workunit
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    COMPONENT dali)
+target_link_libraries(
+    workunit 
+    jlib 
+    dalibase 
+    dllserver 
+    nbcd 
+    eclrtl 
+    deftype
+    environment)

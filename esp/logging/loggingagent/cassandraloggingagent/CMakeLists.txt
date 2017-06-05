@@ -46,9 +46,9 @@ if(USE_CASSANDRA)
     cassandralogagent.cpp
   )
 
-  HPCC_ADD_LIBRARY( cassandralogagent SHARED ${SRCS} )
+  ADD_LIBRARY( cassandralogagent SHARED ${SRCS} )
 
-  install ( TARGETS cassandralogagent RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+  install ( TARGETS cassandralogagent RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
   add_dependencies (cassandralogagent espscm)
   target_link_libraries ( cassandralogagent
     cassandraembed

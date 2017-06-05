@@ -26,22 +26,20 @@
 project( parselib ) 
 
 set (    SRCS 
-         parselib.cpp 
+    parselib.cpp 
     )
 
 include_directories ( 
-         ./../../common/thorhelper 
-         ./../../rtl/eclrtl 
-         ./../../system/include 
-         ./../../system/jlib 
+    ./../../common/thorhelper 
+    ./../../rtl/eclrtl 
+    ./../../system/include 
+    ./../../system/jlib 
     )
 
 ADD_DEFINITIONS( -D_USRDLL -DPARSELIB_EXPORTS )
 
-HPCC_ADD_LIBRARY( parselib SHARED ${SRCS} )
-install ( TARGETS parselib DESTINATION plugins )
-target_link_libraries ( parselib 
-         jlib
+ADD_LIBRARY( parselib SHARED ${SRCS} )
+install ( TARGETS parselib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT roxie)
+target_link_libraries ( parselib
+    jlib
     )
-
-

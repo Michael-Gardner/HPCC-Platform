@@ -38,8 +38,8 @@ include_directories (
 
 ADD_DEFINITIONS ( -DNO_SYBASE -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( keydiff ${SRCS} )
-install ( TARGETS keydiff RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( keydiff ${SRCS} )
+install ( TARGETS keydiff RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 target_link_libraries ( keydiff 
          jlib
          jhtree 

@@ -29,6 +29,7 @@ include_directories (
     ${HPCC_SOURCE_DIR}/rtl/eclrtl
     ${HPCC_SOURCE_DIR}/rtl/include #IXMLWriter
     ${HPCC_SOURCE_DIR}/common/thorhelper #JSONWRITER
+    ${CMAKE_BINARY_DIR}/generated
 )
 
 ADD_DEFINITIONS ( -D_USRDLL -DESDLLIB_EXPORTS )
@@ -40,13 +41,13 @@ set ( SRCS
     params2xml.cpp
     ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp/xpp/xpputils.cpp
     ${HPCC_SOURCE_DIR}/esp/services/common/wsexcept.cpp
-)
+    )
 
-HPCC_ADD_LIBRARY( esdllib SHARED ${SRCS}
+ADD_LIBRARY( esdllib SHARED ${SRCS}
     ${HEADERS}
 )
 
-install ( TARGETS esdllib RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+install ( TARGETS esdllib RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT esp)
 
 add_dependencies ( esdllib jlib espscm)
 

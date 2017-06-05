@@ -24,28 +24,26 @@
 project( testsocket ) 
 
 include_directories (            
-         ./../../system/jlib
-         ./../../system/include 
-         ./../../system/security/securesocket
+    ./../../system/jlib
+    ./../../system/include 
+    ./../../system/security/securesocket
     )
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
 set ( SRCS testsocket.cpp )
-HPCC_ADD_EXECUTABLE ( testsocket ${SRCS} )
+ADD_EXECUTABLE ( testsocket ${SRCS} )
 target_link_libraries ( testsocket
-         jlib
-         )
+    jlib
+    )
 
 IF (USE_OPENSSL)
     target_link_libraries ( testsocket
-         securesocket
-         )
+        securesocket
+        )
 ENDIF()
 
-install ( TARGETS testsocket RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS testsocket RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 
-if ( PLATFORM )
-    install ( PROGRAMS testsocket.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS testsocket.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
-endif()
+install ( PROGRAMS testsocket.install DESTINATION etc/init.d/install COMPONENT tools)
+install ( PROGRAMS testsocket.uninstall DESTINATION etc/init.d/uninstall COMPONENT tools)

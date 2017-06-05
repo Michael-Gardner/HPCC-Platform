@@ -55,31 +55,30 @@ set(SRCS
     plugin.cpp
     )
 
-include_directories(
-    ./../../../system/include
+include_directories ( 
+    ./../../../system/include 
     ./../../../system/security/shared
-    ./../../../system/security/securesocket
-    ./../../bindings
-    ./../../bindings/SOAP/xpp
-    ./../../../system/xmllib
-    ./../../../system/jlib
-    ./../../platform
+    ./../../../system/security/securesocket 
+    ./../../bindings 
+    ./../../bindings/SOAP/xpp 
+    ./../../../system/xmllib 
+    ./../../../system/jlib 
+    ./../../platform 
     ./../../services/common
-    ./../../../system/security/shared
+    ./../../../system/security/shared 
     ./../../../system/security/LdapSecurity
+    ${CMAKE_BINARY_DIR}/generated
     )
 
 add_definitions(-DESPHTTP_EXPORTS -DESP_TIMING -D_USRDLL -DESP_PLUGIN)
 
-HPCC_ADD_LIBRARY(esphttp SHARED ${SRCS})
-add_dependencies(esphttp  espscm)
-install(TARGETS esphttp RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR})
-target_link_libraries(
-    esphttp
-    ${XALAN_LIBRARIES}
-    ${XERCES_LIBRARIES}
+ADD_LIBRARY( esphttp SHARED ${SRCS} )
+add_dependencies (esphttp  espscm )
+install ( TARGETS esphttp RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
+target_link_libraries ( esphttp 
+    ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
     jlib
-    xmllib
+    xmllib 
     )
 
 if(LIBMEMCACHED_FOUND)

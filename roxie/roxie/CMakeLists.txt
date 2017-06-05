@@ -53,8 +53,8 @@ if (WIN32)
     set (CMAKE_EXE_LINKER_FLAGS "/STACK:65536 ${CMAKE_EXE_LINKER_FLAGS}")
 endif()
 
-HPCC_ADD_EXECUTABLE ( roxie ${SRCS} )
-install ( TARGETS roxie RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( roxie ${SRCS} )
+install ( TARGETS roxie RUNTIME DESTINATION ${EXEC_DIR} COMPONENT roxie)
 
 target_link_libraries ( roxie
          ccd

@@ -42,8 +42,8 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( updtdalienv ${SRCS} )
-install ( TARGETS updtdalienv RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( updtdalienv ${SRCS} )
+install ( TARGETS updtdalienv RUNTIME DESTINATION ${EXEC_DIR} COMPONENT dali)
 target_link_libraries ( updtdalienv  
          jlib
          mp 

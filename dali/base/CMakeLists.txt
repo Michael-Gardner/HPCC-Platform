@@ -13,72 +13,69 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
+#
 # Component: dalibase 
-
-#####################################################
+#
 # Description:
 # ------------
 #    Cmake Input File for dalibase
-#####################################################
+################################################################################
 
 
 project( dalibase ) 
 
-set (    SRCS 
-         daaudit.cpp 
-         daclient.cpp 
-         dacoven.cpp 
-         dacsds.cpp 
-         dadfs.cpp 
-         dadiags.cpp 
-         dafdesc.cpp 
-         danqs.cpp 
-         dasds.cpp 
-         dasess.cpp 
-         dasubs.cpp 
-         dautils.cpp 
+set(SRCS 
+    daaudit.cpp 
+    daclient.cpp 
+    dacoven.cpp 
+    dacsds.cpp 
+    dadfs.cpp 
+    dadiags.cpp 
+    dafdesc.cpp 
+    danqs.cpp 
+    dasds.cpp 
+    dasess.cpp 
+    dasubs.cpp 
+    dautils.cpp 
     )
-    
-set (    INCLUDES
-         daaudit.hpp
-         daclient.hpp
-         dacoven.hpp
-         dadfs.hpp
-         dadiags.hpp
-         dafdesc.hpp
-         danqs.hpp
-         dasds.hpp
-         dasess.hpp
-         dasubs.hpp
-         dautils.hpp
+
+set(INCLUDES
+    daaudit.hpp
+    daclient.hpp
+    dacoven.hpp
+    dadfs.hpp
+    dadiags.hpp
+    dafdesc.hpp
+    danqs.hpp
+    dasds.hpp
+    dasess.hpp
+    dasubs.hpp
+    dautils.hpp
     )   
 
 include_directories ( 
-         ./../../common/deftype 
-         ./../../common/remote 
-         ./../server 
-         ./../../system/mp 
-         ./../../system/include 
-         ./../../system/jlib 
-         ./../../rtl/include 
-         ./../../system/security/shared
+    ./../../common/deftype 
+    ./../../common/remote 
+    ./../server 
+    ./../../system/mp 
+    ./../../system/include 
+    ./../../system/jlib 
+    ./../../rtl/include 
+    ./../../system/security/shared
     )
 
 ADD_DEFINITIONS( -DLOGMSGCOMPONENT=3 -D_USRDLL -DDALI_EXPORTS )
 
-HPCC_ADD_LIBRARY( dalibase SHARED ${SRCS} ${INCLUDES} )
+ADD_LIBRARY( dalibase SHARED ${SRCS} ${INCLUDES} )
 
-if(NOT PLUGIN)
-    install(
-        TARGETS dalibase
-        RUNTIME DESTINATION ${EXEC_DIR}
-        LIBRARY DESTINATION ${LIB_DIR})
-    target_link_libraries(
-        dalibase 
-        jlib
-        mp 
-        hrpc 
-        remote)
-endif()
+install(
+    TARGETS dalibase
+    RUNTIME DESTINATION ${EXEC_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    COMPONENT dali)
+target_link_libraries(
+    dalibase 
+    jlib
+    mp 
+    hrpc 
+    remote)

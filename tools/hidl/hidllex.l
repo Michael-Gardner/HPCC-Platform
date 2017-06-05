@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hidlcomp.h"           
-#include "hidlgram.h"
+#include "hidlgram.hpp"
 
 extern YYSTYPE yylval;
 extern unsigned linenum;

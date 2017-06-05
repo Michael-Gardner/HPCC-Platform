@@ -30,10 +30,13 @@ set (    SRCS
 include_directories ( 
          ./../../system/hrpc 
          ./../../common/remote 
+         ./../../common/environment
          ./../../system/include 
          ./../../system/jhtree
          ./../../system/jlib 
          ./../../rtl/eclrtl
+         ./../../system/mp
+         ./../../dali/base
          ${CMAKE_BINARY_DIR}
          ${CMAKE_BINARY_DIR}/oss
          ./../../system/security/shared
@@ -43,9 +46,9 @@ if (WIN32)
     set (CMAKE_EXE_LINKER_FLAGS "/STACK:65536 ${CMAKE_EXE_LINKER_FLAGS}")
 endif()
 
-HPCC_ADD_EXECUTABLE ( dafilesrv ${SRCS} )
+ADD_EXECUTABLE ( dafilesrv ${SRCS} )
 set_target_properties (dafilesrv PROPERTIES COMPILE_FLAGS -D_CONSOLE)
-install ( TARGETS dafilesrv RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS dafilesrv RUNTIME DESTINATION ${EXEC_DIR} COMPONENT dafilesrv)
 target_link_libraries ( dafilesrv
          jlib
          remote

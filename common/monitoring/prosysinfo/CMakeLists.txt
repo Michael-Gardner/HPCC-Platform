@@ -28,5 +28,5 @@ set (    SRCS
          main.cpp 
     )
 
-HPCC_ADD_EXECUTABLE ( prosysinfo ${SRCS} )
-install ( TARGETS prosysinfo RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( prosysinfo ${SRCS} )
+install ( TARGETS prosysinfo RUNTIME DESTINATION bin COMPONENT platform)

@@ -67,13 +67,13 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     ADD_DEFINITIONS( -O0 )
 endif ()
 
-HPCC_ADD_EXECUTABLE ( esdl ${SRCS} )
+ADD_EXECUTABLE ( esdl ${SRCS} )
 
 add_dependencies ( esdl
                    espscm
                  )
 
-install ( TARGETS esdl RUNTIME DESTINATION ${EXEC_DIR} )
+             install ( TARGETS esdl RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 target_link_libraries ( esdl
         jlib
         esphttp
@@ -83,6 +83,6 @@ target_link_libraries ( esdl
     )
 
 if ( UNIX )
-    install ( PROGRAMS esdl.install DESTINATION etc/init.d/install COMPONENT Runtime )
-    install ( PROGRAMS esdl.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
+    install ( PROGRAMS esdl.install DESTINATION etc/init.d/install COMPONENT tools )
+    install ( PROGRAMS esdl.uninstall DESTINATION etc/init.d/uninstall COMPONENT tools )
 endif ( UNIX )

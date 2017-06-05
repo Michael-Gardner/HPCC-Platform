@@ -14,16 +14,16 @@
 #    limitations under the License.
 ################################################################################
 IF (USE_OPENLDAP)
-HPCC_ADD_SUBDIRECTORY (LdapSecurity)
+ADD_SUBDIRECTORY (LdapSecurity)
 ENDIF(USE_OPENLDAP)
-IF (USE_OPENSSL)
-  HPCC_ADD_SUBDIRECTORY (securesocket)
-ENDIF()
-HPCC_ADD_SUBDIRECTORY (test "PLATFORM")
+
+
+ADD_SUBDIRECTORY (securesocket)
+ADD_SUBDIRECTORY (test)
 if (USE_ZLIB)
-  HPCC_ADD_SUBDIRECTORY (zcrypt)
+  ADD_SUBDIRECTORY (zcrypt)
 endif()
 
 IF (USE_APR)
-  HPCC_ADD_SUBDIRECTORY (plugins/htpasswdSecurity)
+  ADD_SUBDIRECTORY (plugins/htpasswdSecurity)
 ENDIF(USE_APR)

@@ -40,7 +40,7 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( httptest ${SRCS} )
+ADD_EXECUTABLE ( httptest ${SRCS} )
 
 target_link_libraries ( httptest 
          jlib

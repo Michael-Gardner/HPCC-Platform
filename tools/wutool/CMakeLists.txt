@@ -50,7 +50,7 @@ endif()
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( wutool ${SRCS} )
+ADD_EXECUTABLE ( wutool ${SRCS} )
 target_link_libraries ( wutool 
          jlib
          remote 
@@ -68,4 +68,4 @@ if ( USE_CPPUNIT )
   target_link_libraries ( wutool workunitservices )
 endif()
 
-install ( TARGETS wutool RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS wutool RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)

@@ -80,11 +80,11 @@ include_directories (
          ./../../common/thorhelper
     )
 
-HPCC_ADD_LIBRARY( fileview2 SHARED ${SRCS} )
+ADD_LIBRARY( fileview2 SHARED ${SRCS} )
 set_target_properties(fileview2 PROPERTIES 
     COMPILE_FLAGS -D_USRDLL
     DEFINE_SYMBOL FILEVIEW2_EXPORTS )
-install ( TARGETS fileview2 RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS fileview2 RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT Runtime)
 target_link_libraries ( fileview2 
          jlib 
          mp 
@@ -108,12 +108,11 @@ set (    SRCS
 
 ADD_DEFINITIONS ( -D_CONSOLE )
 
-if( PLATFORM )
-    HPCC_ADD_EXECUTABLE ( fvserver ${SRCS} )
+    ADD_EXECUTABLE ( fvserver ${SRCS} )
     set_target_properties(fvserver PROPERTIES 
         COMPILE_FLAGS -D_CONSOLE
     )
-    #install ( TARGETS fvserver RUNTIME DESTINATION ${EXEC_DIR} ) #not used at present
+install ( TARGETS fvserver RUNTIME DESTINATION bin COMPONENT platform ) #not used at present
 
     target_link_libraries ( fvserver
          jlib 
@@ -131,6 +130,3 @@ if( PLATFORM )
          hql 
          fileview2 
     )
-endif()
-
-

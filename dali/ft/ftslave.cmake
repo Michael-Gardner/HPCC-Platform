@@ -37,9 +37,9 @@ include_directories (
          ./../../system/security/shared
     )
 
-HPCC_ADD_EXECUTABLE ( ftslave ${SRCS} )
+ADD_EXECUTABLE ( ftslave ${SRCS} )
 set_target_properties (ftslave PROPERTIES COMPILE_FLAGS -D_CONSOLE)
-install ( TARGETS ftslave RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS ftslave RUNTIME DESTINATION ${EXEC_DIR} COMPONENT ftslave)
 target_link_libraries ( ftslave
          jlib
          mp 

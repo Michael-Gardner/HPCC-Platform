@@ -24,7 +24,7 @@
 
 project( remote ) 
 
-HPCC_ADD_SUBDIRECTORY(hooks)
+ADD_SUBDIRECTORY(hooks)
 
 set (    SRCS 
          rmtfile.cpp 
@@ -63,8 +63,8 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL -DREMOTE_EXPORTS )
 
-HPCC_ADD_LIBRARY( remote SHARED ${SRCS}  )
-install ( TARGETS remote RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+ADD_LIBRARY( remote SHARED ${SRCS}  )
+install ( TARGETS remote RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT Runtime )
 
 target_link_libraries ( remote 
     jlib

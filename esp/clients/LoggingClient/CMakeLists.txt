@@ -15,74 +15,54 @@
 ################################################################################
 
 
-# Component: EclDirect 
+# Component: loggingclient 
 #####################################################
 # Description:
 # ------------
-#    Cmake Input File for EclDirect
+#    Cmake Input File for loggingclient
 #####################################################
 
-project( EclDirect ) 
+project( loggingclient ) 
 
 include(${HPCC_SOURCE_DIR}/esp/scm/espscm.cmake)
 
 set (    SRCS 
-         ${ESPSCM_GENERATED_DIR}/ecldirect_esp.cpp 
-         EclDirectPlugin.cpp 
-         EclDirectService.cpp 
+         ../edwin.cpp 
+         ${ESPSCM_GENERATED_DIR}/esploggingservice_esp.cpp 
+         LocalDataLogger.cpp 
+         LogFailSafe.cpp 
+         loggingserviceclient.cpp 
+         LogSerializer.cpp 
+         LogThread.cpp 
     )
 
 include_directories ( 
-         ./../.. 
-         ./../../../system/mp 
-         ./../../../system/jlib 
-         ./../../services 
          ./../../platform 
+         ./../../../system/jlib 
+         ./../../../system/security/shared
+         ./../../bindings/SOAP/client 
+         ./../../bindings/SOAP/Platform 
          ./../../../system/xmllib 
-         ./../../../system/security/shared 
-         ./../../../system/security/securesocket 
          ./../../../system/include 
-         ./../../../common/environment 
-         ./../../../common/workunit 
-         ./../../../common/wuwebview
          ./../../clients 
-         ./../../../common/fileview2 
-         ./../../../dali/base 
+         ./../../clients/LoggingClient 
          ./../../bindings 
          ./../../bindings/SOAP/xpp 
     )
 
-ADD_DEFINITIONS( -D_USRDLL )
+ADD_DEFINITIONS( -D_USRDLL -DLOGGINGCLIENT_EXPORTS )
 
-ADD_LIBRARY( EclDirect SHARED ${SRCS} )
-add_dependencies( EclDirect espscm )
-install ( TARGETS EclDirect RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
-target_link_libraries ( EclDirect  
+if (RELEASE_BUILD EQUAL 1)
+    ADD_DEFINITIONS( -DISC_NO_MAIN -DLOGGING_EXPORTS )
+endif (RELEASE_BUILD EQUAL 1)
+
+ADD_LIBRARY( loggingclient SHARED ${SRCS} )
+add_dependencies( loggingclient espscm )
+install ( TARGETS loggingclient RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT esp)
+target_link_libraries ( loggingclient
+         ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
          jlib
          xmllib 
          esphttp 
-         mp 
-         hrpc 
-         remote 
-         dalibase 
-         environment 
-         dllserver 
-         nbcd 
-         eclrtl 
-         deftype 
-         workunit 
-         wuwebview
-         jhtree 
-         hql 
-         fileview2 
     )
-
-IF (USE_OPENSSL)
-    target_link_libraries ( EclDirect
-    	securesocket
-    )
-ENDIF()
-IF (USE_OPENLDAP)
-  target_link_libraries ( EclDirect LdapSecurity )
-ENDIF(USE_OPENLDAP)
 

@@ -55,8 +55,8 @@ endif ()
 
 ADD_DEFINITIONS( -D_USRDLL )
 
-HPCC_ADD_LIBRARY( ws_account SHARED ${SRCS} )
-install ( TARGETS ws_account RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT Runtime )
+ADD_LIBRARY( ws_account SHARED ${SRCS} )
+install ( TARGETS ws_account RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp )
 add_dependencies (ws_account espscm)
 target_link_libraries ( ws_account 
          jlib

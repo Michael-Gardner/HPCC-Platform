@@ -47,7 +47,7 @@ FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/esdl2java_srvdummy.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/roxie_page.xsl
 )
-    Install ( FILES ${iFILES} DESTINATION componentfiles/xslt COMPONENT Runtime )
+    Install ( FILES ${iFILES} DESTINATION componentfiles/xslt COMPONENT esp )
 ENDFOREACH ( iFILES )
 
 FOREACH ( iFILES
@@ -55,5 +55,5 @@ FOREACH ( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/wsecl_tabview.xsl
     ${CMAKE_CURRENT_SOURCE_DIR}/wsecl_tree.xsl
 )
-    Install ( FILES ${iFILES} DESTINATION componentfiles/files COMPONENT Runtime )
+    Install ( FILES ${iFILES} DESTINATION componentfiles/files COMPONENT esp )
 ENDFOREACH ( iFILES )

@@ -64,8 +64,8 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL )
 
-HPCC_ADD_LIBRARY( esdl_svc_engine SHARED ${SRCS} )
-install ( TARGETS esdl_svc_engine RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
+ADD_LIBRARY( esdl_svc_engine SHARED ${SRCS} )
+install ( TARGETS esdl_svc_engine RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT esp)
 add_dependencies (esdl_svc_engine espscm)
 target_link_libraries ( esdl_svc_engine
          jlib

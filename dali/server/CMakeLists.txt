@@ -52,8 +52,8 @@ if (WIN32)
     endif ()
 endif()
 
-HPCC_ADD_EXECUTABLE ( daserver ${SRCS} )
-install ( TARGETS daserver RUNTIME DESTINATION ${EXEC_DIR})
+ADD_EXECUTABLE ( daserver ${SRCS} )
+install ( TARGETS daserver RUNTIME DESTINATION ${EXEC_DIR} COMPONENT dali)
 target_link_libraries ( daserver 
          jlib
          mp 

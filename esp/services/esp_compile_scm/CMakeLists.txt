@@ -150,7 +150,7 @@ set (    SRCS
     )
 
 # OBJS = 
-HPCC_ADD_EXECUTABLE ( esp_compile_scm ${SRCS} )
-install ( TARGETS esp_compile_scm RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( esp_compile_scm ${SRCS} )
+install ( TARGETS esp_compile_scm RUNTIME DESTINATION ${EXEC_DIR} COMPONENT esp)
 
 

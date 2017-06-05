@@ -65,20 +65,25 @@ include_directories(
     ./../../../../system/xmllib
     ./..
     ./../../../bindings/SOAP/xpp
+    ${CMAKE_BINARY_DIR}/generated
     )
 
 add_definitions(-DESPHTTP_EXPORTS)
 
-if(WIN32)
-    add_definitions(-D_LIB)
-    HPCC_ADD_LIBRARY(soaplib STATIC ${SRCS})
-else(WIN32)
-    HPCC_ADD_LIBRARY(soaplib SHARED ${SRCS})
-    install(TARGETS soaplib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR})
-    target_link_libraries(soaplib jlib)
-endif(WIN32)
-
-add_dependencies(soaplib jlib espscm)
+if (WIN32)
+    ADD_DEFINITIONS( -D_LIB )
+    ADD_LIBRARY( soaplib STATIC ${SRCS} )
+else (WIN32)
+    ADD_LIBRARY( soaplib SHARED ${SRCS} )
+    install ( TARGETS soaplib RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT esp )
+    target_link_libraries (soaplib 
+        jlib
+        )
+endif (WIN32)
+add_dependencies (soaplib 
+    jlib
+    espscm
+    )
 
 if(LIBMEMCACHED_FOUND)
     if(MEMCACHED_USE_EXTERNAL_LIBRARY)

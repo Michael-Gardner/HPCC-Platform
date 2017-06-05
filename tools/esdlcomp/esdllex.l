@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "esdlcomp.h"
-#include "esdlgram.h"
+#include "esdlgram.hpp"
 
 #define register
 

@@ -54,7 +54,7 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( logging_test ${SRCS} )
+ADD_EXECUTABLE ( logging_test ${SRCS} )
 
 target_link_libraries ( logging_test
          jlib

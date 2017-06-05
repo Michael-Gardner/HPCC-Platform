@@ -176,7 +176,7 @@ FOREACH ( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/account_input.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/account_myaccount.xslt
 )
-    Install ( FILES ${iFILES} DESTINATION componentfiles/smc_xslt COMPONENT Runtime )
+    Install ( FILES ${iFILES} DESTINATION share/componentfiles/smc_xslt COMPONENT esp )
 ENDFOREACH ( iFILES )
 
 FOREACH ( iFILES
@@ -184,7 +184,7 @@ FOREACH ( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/result_lib.xslt
     ${CMAKE_CURRENT_SOURCE_DIR}/lib.xslt
 )
-    Install ( FILES ${iFILES} DESTINATION componentfiles/wsecl/wsecl COMPONENT Runtime )
+    Install ( FILES ${iFILES} DESTINATION share/componentfiles/wsecl/wsecl COMPONENT esp )
 ENDFOREACH ( iFILES )
 
 Install ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/nls DESTINATION componentfiles/smc_xslt COMPONENT Runtime USE_SOURCE_PERMISSIONS PATTERN ".svn" EXCLUDE )

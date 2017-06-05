@@ -44,12 +44,14 @@ include_directories (
          ./../../platform 
          ./../../bindings/SOAP/Platform 
          ./../../bindings/SOAP/ws_ecl_client 
-    )
+         ${CMAKE_BINARY_DIR}/generated
+         )
 
 ADD_DEFINITIONS( -D_USRDLL -DWS_ECL_CLIENT_EXPORTS )
 
-HPCC_ADD_LIBRARY( ws_ecl_client SHARED ${SRCS} )
-install ( TARGETS ws_ecl_client RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+ADD_LIBRARY( ws_ecl_client SHARED ${SRCS} )
+add_dependencies(ws_ecl_client espscm)
+install ( TARGETS ws_ecl_client RUNTIME DESTINATION bin LIBRARY DESTINATION lib COMPONENT esp)
 target_link_libraries (  ws_ecl_client 
          ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}
          jlib

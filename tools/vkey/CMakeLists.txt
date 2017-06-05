@@ -24,19 +24,19 @@
 project( vkey ) 
 
 include_directories (            
-         ./../../system/jlib
-         ./../../system/jhtree 
-         ./../../system/include 
-         ./../../rtl/include 
-         ./../../rtl/eclrtl 
+    ./../../system/jlib
+    ./../../system/jhtree 
+    ./../../system/include 
+    ./../../rtl/include 
+    ./../../rtl/eclrtl 
     )
 
 ADD_DEFINITIONS( -DMODULE_PRIORITY=1 -D_CONSOLE )
 
 set ( SRCS vkey.cpp )
-HPCC_ADD_EXECUTABLE ( vkey ${SRCS} )
+ADD_EXECUTABLE ( vkey ${SRCS} )
 target_link_libraries ( vkey 
-         jlib
-         )
-install ( TARGETS vkey RUNTIME DESTINATION ${EXEC_DIR} )
+    jlib
+    )
+install ( TARGETS vkey RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 

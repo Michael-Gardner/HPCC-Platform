@@ -41,8 +41,8 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( backupnode ${SRCS} )
-install ( TARGETS backupnode RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( backupnode ${SRCS} )
+install ( TARGETS backupnode RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)
 
 target_link_libraries (  backupnode 
          jlib

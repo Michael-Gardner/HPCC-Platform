@@ -56,9 +56,9 @@ set_source_files_properties (dfuplus.cpp PROPERTIES COMPILE_FLAGS -DDAFILESRV_LO
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( dfuplus ${SRCS} )
+ADD_EXECUTABLE ( dfuplus ${SRCS} )
 add_dependencies ( dfuplus espscm )
-install ( TARGETS dfuplus RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS dfuplus RUNTIME DESTINATION ${EXEC_DIR} COMPONENT dali)
 target_link_libraries ( dfuplus
          jlib
          remote

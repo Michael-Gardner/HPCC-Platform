@@ -13,8 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-HPCC_ADD_SUBDIRECTORY (ccd)
-HPCC_ADD_SUBDIRECTORY (roxie "PLATFORM")
-HPCC_ADD_SUBDIRECTORY (roxiemem)
-HPCC_ADD_SUBDIRECTORY (roxiepipe "PLATFORM")
-HPCC_ADD_SUBDIRECTORY (udplib)
+ADD_SUBDIRECTORY (ccd)
+ADD_SUBDIRECTORY (roxie)
+ADD_SUBDIRECTORY (roxiemem)
+ADD_SUBDIRECTORY (roxiepipe)
+ADD_SUBDIRECTORY (udplib)

@@ -44,12 +44,14 @@ include_directories (
          ./../../system/mp 
          ${CMAKE_BINARY_DIR}
          ${CMAKE_BINARY_DIR}/oss
-    )
+         ${CMAKE_BINARY_DIR}/generated
+         )
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( esp ${SRCS} )
-install ( TARGETS esp RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( esp ${SRCS} )
+install ( TARGETS esp RUNTIME DESTINATION ${EXEC_DIR} COMPONENT esp)
+add_dependencies(esp espscm)
 target_link_libraries ( esp 
          jlib
          mp 
@@ -61,3 +63,4 @@ target_link_libraries ( esp
          dalibase 
          environment 
     ) 
+

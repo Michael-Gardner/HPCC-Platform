@@ -13,33 +13,27 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
 # Component: hidl 
-#####################################################
 # Description:
 # ------------
 #    Cmake Input File for hidl
-#####################################################
+################################################################################
 
-project( hidl ) 
+project(hidl) 
 
-add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp ${CMAKE_CURRENT_BINARY_DIR}/hidlgram.h
-    COMMAND ${bisoncmdprefix} ${bisoncmd} --defines=${CMAKE_CURRENT_BINARY_DIR}/hidlgram.h --output=${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hidlgram.y
-    DEPENDS hidlgram.y
-)
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+BISON_TARGET(hidl-parser hidlgram.y ${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp)
+FLEX_TARGET(hidl-lexer hidllex.l ${CMAKE_CURRENT_BINARY_DIR}/hidllex.cpp)
+ADD_FLEX_BISON_DEPENDENCY(hidl-lexer hidl-parser)
 
-add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hidllex.cpp
-    COMMAND ${flexcmdprefix} ${flexcmd} --outfile=${CMAKE_CURRENT_BINARY_DIR}/hidllex.cpp ${CMAKE_CURRENT_SOURCE_DIR}/hidllex.l
-    DEPENDS hidllex.l
-)
-
-set (    SRCS 
-         ${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp
-         ${CMAKE_CURRENT_BINARY_DIR}/hidllex.cpp
-         hidl_esp_ng.cpp 
-         hidl_utils.cpp 
-         hidlcomp.cpp 
-         main.cpp 
+set(SRCS 
+    ${BISON_hidl-parser_OUTPUTS}
+    ${FLEX_hidl-lexer_OUTPUTS}
+    hidl_esp_ng.cpp 
+    hidl_utils.cpp 
+    hidlcomp.cpp 
+    main.cpp 
     )
 
 include_directories ( 
@@ -48,8 +42,9 @@ include_directories (
          ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
-set_source_files_properties (${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/hidlgram.cpp
+    PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
 
-ADD_DEFINITIONS( -D_CONSOLE)
-HPCC_ADD_EXECUTABLE ( hidl ${SRCS} )
-#install ( TARGETS hidl RUNTIME DESTINATION ${EXEC_DIR} )
+add_definitions(-D_CONSOLE)
+add_executable(hidl ${SRCS})
+#install(TARGETS hidl RUNTIME DESTINATION ${EXEC_DIR} COMPONENT tools)

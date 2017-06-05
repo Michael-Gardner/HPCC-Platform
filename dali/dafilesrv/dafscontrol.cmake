@@ -39,9 +39,9 @@ include_directories (
          ./../../common/environment 
     )
 
-HPCC_ADD_EXECUTABLE ( dafscontrol ${SRCS} )
+ADD_EXECUTABLE ( dafscontrol ${SRCS} )
 set_target_properties (dafscontrol PROPERTIES COMPILE_FLAGS -D_CONSOLE)
-install ( TARGETS dafscontrol RUNTIME DESTINATION ${EXEC_DIR} )
+install ( TARGETS dafscontrol RUNTIME DESTINATION ${EXEC_DIR} COMPONENT dafilesrv)
 target_link_libraries ( dafscontrol  
          jlib
          mp 

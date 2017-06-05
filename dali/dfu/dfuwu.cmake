@@ -39,12 +39,12 @@ include_directories (
          ./../../common/workunit 
     )
 
-HPCC_ADD_LIBRARY( dfuwu SHARED ${SRCS} )
+ADD_LIBRARY( dfuwu SHARED ${SRCS} )
 set_target_properties ( dfuwu PROPERTIES 
         COMPILE_FLAGS "-DLOGMSGCOMPONENT=3 -D_USRDLL"
         DEFINE_SYMBOL DALI_EXPORTS 
         )
-install ( TARGETS dfuwu RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+    install ( TARGETS dfuwu RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT dali)
 target_link_libraries ( dfuwu 
          workunit
          jlib

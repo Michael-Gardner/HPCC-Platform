@@ -67,9 +67,9 @@ endif ()
 
 ADD_DEFINITIONS( -D_USRDLL -DWS_SMC_EXPORTS )
 
-HPCC_ADD_LIBRARY( ws_smc SHARED ${SRCS}  )
+ADD_LIBRARY( ws_smc SHARED ${SRCS}  )
 add_dependencies ( ws_smc espscm )
-install ( TARGETS ws_smc RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_smc RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
 target_link_libraries ( ws_smc 
          jlib
          xmllib 

@@ -41,8 +41,8 @@ if ( WIN32 )
   ADD_DEFINITIONS( -DLIBARCHIVE_STATIC )
 endif ( WIN32 )
 
-HPCC_ADD_LIBRARY( archivefile SHARED ${SRCS}  )
-install ( TARGETS archivefile RUNTIME DESTINATION filehooks LIBRARY DESTINATION filehooks )
+ADD_LIBRARY( archivefile SHARED ${SRCS}  )
+install ( TARGETS archivefile LIBRARY DESTINATION lib/filehooks COMPONENT Runtime )
 
 target_link_libraries ( archivefile
     jlib

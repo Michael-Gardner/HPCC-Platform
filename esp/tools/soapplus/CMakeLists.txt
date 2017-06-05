@@ -44,8 +44,8 @@ include_directories (
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( soapplus ${SRCS} )
-install ( TARGETS soapplus RUNTIME DESTINATION ${EXEC_DIR} COMPONENT Runtime)
+ADD_EXECUTABLE ( soapplus ${SRCS} )
+install ( TARGETS soapplus RUNTIME DESTINATION ${EXEC_DIR} COMPONENT esp)
 
 target_link_libraries ( soapplus 
          jlib

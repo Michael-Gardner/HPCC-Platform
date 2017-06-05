@@ -186,7 +186,7 @@ include_directories (
     )
 
 ADD_DEFINITIONS( -DLOGMSGCOMPONENT=1 -D_USRDLL -DJLIB_EXPORTS )
-HPCC_ADD_LIBRARY( jlib SHARED ${SRCS} ${INCLUDES} )
+ADD_LIBRARY( jlib SHARED ${SRCS} ${INCLUDES} )
 
 target_link_libraries ( jlib
         lzma
@@ -223,8 +223,8 @@ if (NOT PLUGIN)
                         )
         add_custom_target ( jelog ALL DEPENDS ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/jelog.dll )
         add_dependencies( jlib jelog )
-        install ( PROGRAMS ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/jelog.dll DESTINATION ${EXEC_DIR} )
+        install ( PROGRAMS ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/jelog.dll DESTINATION bin )
     endif ()
-    install ( TARGETS jlib RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+    install ( TARGETS jlib RUNTIME DESTINATION bin LIBRARY DESTINATION lib )
     install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/jscm.hpp DESTINATION componentfiles/cl/include COMPONENT Runtime )
 endif()

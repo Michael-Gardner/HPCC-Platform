@@ -13,15 +13,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
+#
 # Component: ccd 
-
-#####################################################
+#
 # Description:
 # ------------
 #    Cmake Input File for ccd
-#####################################################
+################################################################################
 
 
 project( ccd ) 
@@ -97,8 +95,8 @@ ADD_DEFINITIONS( -D_USRDLL -DCCD_EXPORTS -DSTARTQUERY_EXPORTS )
       SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-switch-enum -Wno-format-security")
     endif()
 
-HPCC_ADD_LIBRARY( ccd SHARED ${SRCS} )
-install ( TARGETS ccd RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib )
+ADD_LIBRARY( ccd SHARED ${SRCS} )
+install ( TARGETS ccd RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib COMPONENT roxie)
 
 target_link_libraries ( ccd 
          jlib

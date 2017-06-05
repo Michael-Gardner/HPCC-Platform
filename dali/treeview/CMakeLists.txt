@@ -44,8 +44,8 @@ if (WIN32)
         )
 
     add_definitions("-D_AFXDLL")
-    HPCC_ADD_EXECUTABLE ( treeview WIN32 ${SRCS} )
-    install ( TARGETS treeview RUNTIME DESTINATION ${EXEC_DIR} )
+    ADD_EXECUTABLE ( treeview WIN32 ${SRCS} )
+    install ( TARGETS treeview RUNTIME DESTINATION ${EXEC_DIR} COMPONENT dali)
     target_link_libraries ( treeview
              jlib
              mp 

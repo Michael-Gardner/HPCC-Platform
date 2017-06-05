@@ -45,12 +45,12 @@ include_directories (
          ./../../system/security/shared
     )
 
-HPCC_ADD_LIBRARY( dalift SHARED ${SRCS} )
+ADD_LIBRARY( dalift SHARED ${SRCS} )
 set_target_properties (dalift PROPERTIES 
     COMPILE_FLAGS -D_CONSOLE
     DEFINE_SYMBOL DALIFT_EXPORTS
     )
-install ( TARGETS dalift RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS dalift RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT dali)
 target_link_libraries ( dalift 
          jlib
          mp 

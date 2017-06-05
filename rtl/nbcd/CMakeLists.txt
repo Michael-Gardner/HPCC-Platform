@@ -40,9 +40,9 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL -DNBCD_EXPORTS )
 
-HPCC_ADD_LIBRARY( nbcd SHARED ${SRCS} )
+ADD_LIBRARY( nbcd SHARED ${SRCS} )
 if (NOT PLUGIN)
-  install ( TARGETS nbcd RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib )
+    install ( TARGETS nbcd RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} ARCHIVE DESTINATION componentfiles/cl/lib COMPONENT Runtime)
 endif()
 target_link_libraries ( nbcd 
       jlib

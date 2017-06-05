@@ -13,31 +13,26 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-
-
+#
 # Component: auditlib 
-#####################################################
+#
 # Description:
 # ------------
 #    Cmake Input File for auditlib
-#####################################################
+################################################################################
 
-project( auditlib ) 
+project(auditlib) 
 
-set (    SRCS 
-         auditlib.cpp 
+set(SRCS 
+    auditlib.cpp 
     )
 
-include_directories ( 
+include_directories( 
          ./../../system/include 
          ./../../system/jlib 
     )
 
-ADD_DEFINITIONS( -D_USRDLL -DAUDITLIB_EXPORTS )
+add_definitions(-D_USRDLL -DAUDITLIB_EXPORTS)
 
-HPCC_ADD_LIBRARY( auditlib SHARED ${SRCS} )
-install ( TARGETS auditlib DESTINATION plugins )
-target_link_libraries ( auditlib  
-         jlib 
-    )
-
+add_library(auditlib ${SRCS})
+target_link_libraries(auditlib jlib)

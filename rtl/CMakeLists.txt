@@ -13,7 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 ################################################################################
-HPCC_ADD_SUBDIRECTORY (eclrtl)
-HPCC_ADD_SUBDIRECTORY (ecltpl)
-HPCC_ADD_SUBDIRECTORY (include)
-HPCC_ADD_SUBDIRECTORY (nbcd)
+ADD_SUBDIRECTORY (eclrtl)
+ADD_SUBDIRECTORY (ecltpl)
+ADD_SUBDIRECTORY (include)
+ADD_SUBDIRECTORY (nbcd)

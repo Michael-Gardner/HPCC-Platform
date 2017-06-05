@@ -43,8 +43,8 @@ ENDIF()
 
 ADD_DEFINITIONS( -D_CONSOLE )
 
-HPCC_ADD_EXECUTABLE ( roxiepipe ${SRCS} )
-install ( TARGETS roxiepipe RUNTIME DESTINATION ${EXEC_DIR} )
+ADD_EXECUTABLE ( roxiepipe ${SRCS} )
+install ( TARGETS roxiepipe RUNTIME DESTINATION ${EXEC_DIR} COMPONENT roxie)
 target_link_libraries ( roxiepipe
          jlib
     )

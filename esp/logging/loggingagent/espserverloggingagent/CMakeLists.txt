@@ -55,11 +55,11 @@ if (RELEASE_BUILD EQUAL 1)
     ADD_DEFINITIONS( -DISC_NO_MAIN)
 endif (RELEASE_BUILD EQUAL 1)
 
-HPCC_ADD_LIBRARY( espserverloggingagent SHARED ${SRCS} )
+ADD_LIBRARY( espserverloggingagent SHARED ${SRCS} )
 
 add_dependencies( espserverloggingagent espscm )
 
-install ( TARGETS espserverloggingagent RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS espserverloggingagent RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
 
 target_link_libraries ( espserverloggingagent
     ${XALAN_LIBRARIES} ${XERCES_LIBRARIES}

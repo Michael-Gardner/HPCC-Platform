@@ -63,9 +63,9 @@ include_directories (
 
 ADD_DEFINITIONS( -D_USRDLL )
 
-HPCC_ADD_LIBRARY( ws_fs SHARED ${SRCS} )
+ADD_LIBRARY( ws_fs SHARED ${SRCS} )
 add_dependencies ( ws_fs espscm )
-install ( TARGETS ws_fs RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} )
+install ( TARGETS ws_fs RUNTIME DESTINATION ${EXEC_DIR} LIBRARY DESTINATION ${LIB_DIR} COMPONENT esp)
 target_link_libraries ( ws_fs
          jlib
          esphttp 
