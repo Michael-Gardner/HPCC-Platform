@@ -27,11 +27,10 @@ set ( ESPSCM_SRCS
       ws_config.ecm
       ws_fileio.ecm
       ws_account.ecm
+      ws_sql.ecm
       ##### LIST FOR ESPECL
       WsDeploy.ecm
     )
-
-foreach ( loop_var ${ESPSCM_SRCS} )
     string(  REGEX REPLACE "[.]ecm" "" result ${loop_var} )
     if (SCM_BUILD)
       add_custom_command ( DEPENDS hidl ${ESPSCM_SOURCE_DIR}/${loop_var}
