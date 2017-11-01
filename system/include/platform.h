@@ -77,6 +77,14 @@
 #define _GNU_SOURCE
 #endif
 #include <endian.h>
+
+#ifdef _POSIX_C_SOURCE
+  #undef _POSIX_C_SOURCE
+#endif
+#ifdef _XOPEN_SOURCE
+  #undef _XOPEN_SOURCE
+#endif
+
 #endif
 #ifndef __LITTLE_ENDIAN
 #define __LITTLE_ENDIAN 1
