@@ -23,13 +23,13 @@
 project(ws_sql)
 
 if(WSSQL_SERVICE)
-    find_package(Java REQUIRED)
-    find_package(ANTLR REQUIRED)
+    set(CMAKE_HOME_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    add_subdirectory(antlr4/runtime/Cpp)
 
     include(${HPCC_SOURCE_DIR}/esp/scm/additional.cmake)
     include(${HPCC_SOURCE_DIR}/esp/scm/smcscm.cmake)
 
-    include(antlr4cpp.cmake)
+    find_package(Java REQUIRED)
     find_package(ANTLR4 REQUIRED)
     antlr4_target(hpccsql
         GRAMMAR_PREFIX HPCCSQL
@@ -105,7 +105,7 @@ if(WSSQL_SERVICE)
 
     add_definitions(-D_USRDLL)
     add_library(ws_sql SHARED ${SRCS})
-    add_dependencies(ws_sql espscm sql2ecl)
+    add_dependencies(ws_sql espscm hpccsql)
     set_target_properties(ws_sql PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED ON

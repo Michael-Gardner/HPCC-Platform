@@ -22,14 +22,17 @@
 # ANTLR_BUILDTIME_JAR - The jar needed to build/generate ANTLR Lexers and Parsers
 
 find_package(Java REQUIRED)
-find_package(ANTLR4-RUNTIME REQUIRED)
-find_package(ANTLR3-RUNTIME REQUIRED)
-find_package(STRINGTEMPLATE4 REQUIRED)
+
+file(DOWNLOAD http://www.antlr.org/download/antlr-4.7.1-complete.jar ${CMAKE_BINARY_DIR}/antlr-4.7.1-complete.jar)
+
+add_custom_target(antlr4-complete
+    DEPENDS ${CMAKE_BINARY_DIR}/antlr-4.7.1-complete.jar
+    COMMENT "Fetch antlr-4.7.1-complete.jar")
 
 include(UseJava)
 find_jar(ANTLR4_JAR
-    NAMES antlr4 antlr4-4.6-complete antlr4-4.7-complete antlr4-4.8-complete
-    PATHS /usr/share/java
+    NAMES antlr-4.7.1-complete
+    PATHS ${CMAKE_BINARY_DIR}
     )
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
@@ -91,9 +94,9 @@ function(ANTLR4_TARGET)
         )
 
     add_custom_command(OUTPUT ${generated_sources} ${generated_headers} ${generated_misc}
-        COMMAND ${Java_JAVA_EXECUTABLE} -classpath ${STRINGTEMPLATE4_JAR}:${ANTLR4_JAR}:${ANTLR4_RUNTIME_JAR}:${ANTLR3_RUNTIME_JAR} org.antlr.v4.Tool ${antlr_options} ${antlr_GRAMMAR_FILES}
+        COMMAND ${Java_JAVA_EXECUTABLE} -classpath ${ANTLR4_JAR} org.antlr.v4.Tool ${antlr_options} ${antlr_GRAMMAR_FILES}
         COMMENT "Generating ANTLR4 Lexer, Parser, and Listeners from grammars"
-        DEPENDS ${antlr_GRAMMAR_FILES}
+        DEPENDS antlr4-complete ${antlr_GRAMMAR_FILES}
         VERBATIM
         )
     add_custom_target("${target_name}"

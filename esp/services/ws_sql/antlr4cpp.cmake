@@ -16,8 +16,8 @@
 
 # generate third party library for inclusion in wssql project
 
-include(antlr4/runtime/Cpp)
-
 set(CMAKE_HOME_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+add_subdirectory(antlr4/runtime/Cpp)
+
 
 
