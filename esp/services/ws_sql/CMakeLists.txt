@@ -29,13 +29,17 @@ if(WSSQL_SERVICE)
     include(${HPCC_SOURCE_DIR}/esp/scm/additional.cmake)
     include(${HPCC_SOURCE_DIR}/esp/scm/smcscm.cmake)
 
-    include(antlr3c.cmake)
-
-    antlr_target(sql2ecl
+    include(antlr4cpp.cmake)
+    find_package(ANTLR4 REQUIRED)
+    antlr4_target(hpccsql
         GRAMMAR_PREFIX HPCCSQL
-        DESTINATION "${CMAKE_CURRENT_BINARY_DIR}"
-        GRAMMAR_FILES "${CMAKE_CURRENT_SOURCE_DIR}/SQL2ECL/ANTLR3c/HPCCSQL.g"
-        )
+        LANGUAGE Cpp
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+        GRAMMAR_FILES
+            ${CMAKE_CURRENT_SOURCE_DIR}/SQL2ECL/grammars/HPCCSQLLexer.g4
+            ${CMAKE_CURRENT_SOURCE_DIR}/SQL2ECL/grammars/HPCCSQLParser.g4
+        GENERATE_VISITOR
+    )
 
     set(SRCS
         ${CMAKE_CURRENT_SOURCE_DIR}/ws_sqlPlugin.cpp
@@ -55,15 +59,13 @@ if(WSSQL_SERVICE)
         SQL2ECL/SQLExpression.cpp
         SQL2ECL/SQLJoin.cpp
         SQL2ECL/HPCCSQLTreeWalker.cpp
-        ${ANTLR_sql2ecl_SOURCES}
+        ${ANTLR4_hpccsql_SOURCES}
         )
 
     include_directories(
-        ##added for build-config.h
         ${CMAKE_BINARY_DIR}
-        ##added for build-config.h
         ${CMAKE_BINARY_DIR}/oss
-        ${HPCC_WSSQL_SOURCE_DIR}/esp/services/ws_sql/SQL2ECL
+        ${ESPSCM_GENERATED_DIR}
         ${HPCC_SOURCE_DIR}/esp/bindings
         ${HPCC_SOURCE_DIR}/esp/bindings/SOAP/xpp
         ${HPCC_SOURCE_DIR}/esp/smc/SMCLib
@@ -90,14 +92,25 @@ if(WSSQL_SERVICE)
         ${HPCC_SOURCE_DIR}/common/dllserver
         ${HPCC_SOURCE_DIR}/common/deftype
         ${HPCC_SOURCE_DIR}/ecl/hql
-        ${CMAKE_CURRENT_BINARY_DIR}/antlr3c/include
-        ${ESPSCM_GENERATED_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/SQL2ECL
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/atn
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/dfa
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/misc
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/support
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree/pattern
+        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree/xpath
         )
 
     add_definitions(-D_USRDLL)
-    HPCC_ADD_LIBRARY(ws_sql SHARED ${SRCS})
+    add_library(ws_sql SHARED ${SRCS})
     add_dependencies(ws_sql espscm sql2ecl)
+    set_target_properties(ws_sql PROPERTIES
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+        )
     target_link_libraries(
         ws_sql
         ws_dfu
@@ -113,5 +126,9 @@ if(WSSQL_SERVICE)
         RUNTIME DESTINATION ${EXEC_DIR}
         LIBRARY DESTINATION ${LIB_DIR}
         COMPONENT Runtime
+        )
+    install(FILES ${CMAKE_SOURCE_DIR}/antlr4/LICENSE.txt
+        DESTINATION .
+        RENAME antlr4cpp-license.txt
         )
 endif()
