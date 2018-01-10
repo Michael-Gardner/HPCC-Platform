@@ -46,12 +46,14 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
   endif()
   option(CLIENTTOOLS "Enable the building/inclusion of a Client Tools component." ON)
   option(PLATFORM "Enable the building/inclusion of a Platform component." ON)
+  option(ECLWATCH "Enable the building/inclusion of the EclWatch component." ON)
   option(DEVEL "Enable the building/inclusion of a Development component." OFF)
   option(CLIENTTOOLS_ONLY "Enable the building of Client Tools only." OFF)
   option(INCLUDE_PLUGINS "Enable the building of platform and all plugins for testing purposes" OFF)
   option(USE_CASSANDRA "Include the Cassandra plugin in the base package" ON)
   option(PLUGIN "Enable building of a plugin" OFF)
   option(USE_SHLIBDEPS "Enable the use of dpkg-shlibdeps on ubuntu packaging" OFF)
+  set(ECLWATCH_BUILD_STRATEGY "" CACHE STRING "Override ECL Watch Build Strategy ('SKIP', 'IF_MISSING', 'NO_COMPRESS')" )
 
   option(SIGN_MODULES "Enable signing of ecl standard library modules" OFF)
   option(USE_CPPUNIT "Enable unit tests (requires cppunit)" OFF)
@@ -132,6 +134,7 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
         set(PLUGIN ON)
         set(CLIENTTOOLS OFF)
         set(PLATFORM OFF)
+        set(ECLWATCH OFF)
         set(INCLUDE_PLUGINS OFF)
         set(SIGN_MODULES OFF)
         set(USE_OPTIONAL OFF) # Force failure if we can't find the plugin dependencies
@@ -168,6 +171,11 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
     #"cmake -DEXAMPLEPLUGIN=ON <path-to/HPCC-Platform/>" will configure the plugin makefiles to be built with "make".
 
   set(CMAKE_MODULE_PATH "${HPCC_SOURCE_DIR}/cmake_modules/")
+  if("${ECLWATCH_BUILD_STRATEGY}" STREQUAL "SKIP")
+      set(ECLWATCH OFF CACHE BOOL
+          "Override ECL Watch Build Strategy ('SKIP', 'IF_MISSING', 'NO_COMPRESS')"
+          FORCE)
+  endif()
 
   set(LIBMEMCACHED_MINVERSION "1.0.10")
   if(USE_LIBMEMCACHED)
