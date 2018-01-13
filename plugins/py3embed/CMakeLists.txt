@@ -24,7 +24,6 @@
 #####################################################
 
 project(py3embed)
-if(PY3EMBED)
     unset(PYTHONLIBS_FOUND CACHE)
     unset(PYTHON_LIBRARY CACHE)
     unset(PYTHON_LIBRARIES CACHE)
@@ -81,10 +80,7 @@ if(PY3EMBED)
             roxiemem
             jlib)
     endif()
-endif()
-if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/python3.ecllib
         DESTINATION plugins
         COMPONENT Runtime)
-endif()

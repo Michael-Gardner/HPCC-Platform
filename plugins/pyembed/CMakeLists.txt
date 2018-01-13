@@ -28,7 +28,6 @@ set(DEBUG_PYTHON_LIBRARY "/usr/lib/libpython2.7_d.so")
 
 project(py2embed)
 
-if(PY2EMBED)
     unset(PYTHONLIBS_FOUND CACHE)
     unset(PYTHON_LIBRARY CACHE)
     unset(PYTHON_LIBRARIES CACHE)
@@ -94,10 +93,7 @@ if(PY2EMBED)
         install ( PROGRAMS pyembed.install DESTINATION etc/init.d/install COMPONENT Runtime )
         install ( PROGRAMS pyembed.uninstall DESTINATION etc/init.d/uninstall COMPONENT Runtime )
     endif()
-endif()
-if(PLATFORM OR CLIENTTOOLS_ONLY)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/python.ecllib
         DESTINATION plugins
         COMPONENT Runtime)
-endif()
