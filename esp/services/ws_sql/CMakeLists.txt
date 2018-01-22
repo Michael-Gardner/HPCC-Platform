@@ -60,6 +60,8 @@ if(WSSQL_SERVICE)
         SQL2ECL/SQLJoin.cpp
         SQL2ECL/HPCCSQLTreeWalker.cpp
         ${ANTLR4_hpccsql_SOURCES}
+        ${ANTLR4_hpccsql_MISC}
+        ${ANTLR4_hpccsql_HEADERS}
         )
 
     include_directories(
@@ -93,14 +95,14 @@ if(WSSQL_SERVICE)
         ${HPCC_SOURCE_DIR}/common/deftype
         ${HPCC_SOURCE_DIR}/ecl/hql
         ${CMAKE_CURRENT_SOURCE_DIR}/SQL2ECL
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/atn
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/dfa
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/misc
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/support
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree/pattern
-        ${CMAKE_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree/xpath
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/atn
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/dfa
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/misc
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/support
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree/pattern
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr4/runtime/Cpp/runtime/src/tree/xpath
         )
 
     add_definitions(-D_USRDLL)

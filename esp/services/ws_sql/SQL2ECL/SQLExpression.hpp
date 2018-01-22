@@ -33,6 +33,8 @@ limitations under the License.
 #include "HPCCSQLLexer.h"
 /* undef SOCKET definitions to avoid collision in Antlrdefs.h*/
 
+using namespace antlr4;
+
 typedef enum _SQLExpressionType
 {
     Unary_ExpressionType,
@@ -628,23 +630,23 @@ public:
     {
         switch (op)
         {
-            case AND_SYM:
-            case OR_SYM:
+            case HPCCSQLLexer::AND_SYM:
+            case HPCCSQLLexer::OR_SYM:
                 return Bool_LogicType;
-            case DIVIDE:
-            case GTH:
-            case GET:
-            case LTH:
-            case LET:
-            case MINUS:
-            case MOD:
-            case ASTERISK:
-            case PLUS:
+            case HPCCSQLLexer::DIVIDE:
+            case HPCCSQLLexer::GTH:
+            case HPCCSQLLexer::GET:
+            case HPCCSQLLexer::LTH:
+            case HPCCSQLLexer::LET:
+            case HPCCSQLLexer::MINUS:
+            case HPCCSQLLexer::MOD:
+            case HPCCSQLLexer::ASTERISK:
+            case HPCCSQLLexer::PLUS:
                 return Numeric_LogicType;
-            case EQ_SYM:
-            case NOT_EQ:
-            case IN_SYM:
-            case NOT_IN:
+            case HPCCSQLLexer::EQ_SYM:
+            case HPCCSQLLexer::NOT_EQ:
+            case HPCCSQLLexer::IN_SYM:
+            case HPCCSQLLexer::NOT_IN:
             {
                 SQLLogicType op1type =operand1->getLogicType();
                 SQLLogicType op2type =operand2->getLogicType();
@@ -738,24 +740,24 @@ public:
         StringBuffer defaulteclvalue;
         switch (op)
         {
-            case AND_SYM:
-            case OR_SYM:
+            case HPCCSQLLexer::AND_SYM:
+            case HPCCSQLLexer::OR_SYM:
                 eclstr.append( "BOOLEAN ");
                 defaulteclvalue.set(" FALSE ");
                 break;
-            case DIVIDE:
-            case MINUS:
-            case MOD:
-            case ASTERISK:
-            case GTH:
-            case GET:
-            case LTH:
-            case LET:
-            case PLUS:
-            case EQ_SYM:
-            case NOT_EQ:
-            case IN_SYM:
-            case NOT_IN:
+            case HPCCSQLLexer::DIVIDE:
+            case HPCCSQLLexer::MINUS:
+            case HPCCSQLLexer::MOD:
+            case HPCCSQLLexer::ASTERISK:
+            case HPCCSQLLexer::GTH:
+            case HPCCSQLLexer::GET:
+            case HPCCSQLLexer::LTH:
+            case HPCCSQLLexer::LET:
+            case HPCCSQLLexer::PLUS:
+            case HPCCSQLLexer::EQ_SYM:
+            case HPCCSQLLexer::NOT_EQ:
+            case HPCCSQLLexer::IN_SYM:
+            case HPCCSQLLexer::NOT_IN:
             {
                 switch (sibtype)
                 {

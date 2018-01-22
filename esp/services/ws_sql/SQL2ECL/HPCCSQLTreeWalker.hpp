@@ -33,8 +33,9 @@ limitations under the License.
 
 #include "HPCCSQLLexer.h"
 #include "HPCCSQLParser.h"
+#include "HPCCSQLParserBaseVisitor.h"
 
-
+#include "antlr4-runtime.h"
 #include "SQLColumn.hpp"
 #include "SQLTable.hpp"
 #include "SQLExpression.hpp"
@@ -42,6 +43,9 @@ limitations under the License.
 #include "HPCCFileCache.hpp"
 #include "ECLFunction.hpp"
 #include "SQLJoin.hpp"
+
+using namespace antlr4;
+using namespace antlr4::tree;
 
 typedef enum _SQLQueryType
 {
@@ -51,21 +55,26 @@ typedef enum _SQLQueryType
     SQLTypeCreateAndLoad
 } SQLQueryType;
 
-class HPCCSQLTreeWalker: public CInterface, public IInterface
+class jlib_decl HPCCSQLTreeWalker: 	public HPCCSQLParserBaseVisitor,
+									public CInterface,
+									public IInterface
 {
 public:
     IMPLEMENT_IINTERFACE;
 
 private:
+    HPCCSQLParser::Root_statementContext * rootTree;
     SQLQueryType sqlType;
     IArrayOf<ISQLExpression> selectList;
     IArrayOf<ISQLExpression> groupbyList;
     IArrayOf<ISQLExpression> orderbyList;
     IArrayOf<SQLTable>       tableList;
 
+    int parameterizedCount;
     int limit;
     int offset;
-    string indexhint;
+
+    StringBuffer indexhint;
     Owned<ISQLExpression> whereClause;
     Owned<ISQLExpression> havingClause;
     Owned<HPCCFileCache>  tmpHPCCFileCache;
@@ -84,24 +93,40 @@ private:
     StringBuffer landingZoneIP;
     StringBuffer landingZonePath;
     StringBuffer recordDefinition;
+    StringBuffer normalizedSQL;
 
-    void sqlTreeWalker(pANTLR3_BASE_TREE sqlAST);
-    void selectStatementTreeWalker(pANTLR3_BASE_TREE selectsqlAST);
-    void callStatementTreeWalker(pANTLR3_BASE_TREE callsqlAST);
-    void createAndLoadStatementTreeWalker(pANTLR3_BASE_TREE clsqlAST);
-    void columnListTreeWalker(pANTLR3_BASE_TREE columnsAST, IArrayOf<SQLColumn>& collist);
-    ISQLExpression* expressionTreeWalker(pANTLR3_BASE_TREE exprAST, pANTLR3_BASE_TREE parent);
-    void fromTreeWalker(pANTLR3_BASE_TREE fromsqlAST);
-    void limitTreeWalker(pANTLR3_BASE_TREE limitAST);
+    void sqlTreeWalker();
+    void selectStatementTreeWalker(HPCCSQLParser::Select_statementContext * ctx);
+    void callStatementTreeWalker(HPCCSQLParser::Call_statementContext * ctx);
+    void createAndLoadStatementTreeWalker(HPCCSQLParser::Create_load_table_statementContext * ctx);
+    void columnListTreeWalker(HPCCSQLParser::Column_listContext * ctx, IArrayOf<SQLColumn>& collist);
+    ISQLExpression* expressionTreeWalker(HPCCSQLParser::ExpressionContext * ectx, ParseTree * pctx);
+    void fromTreeWalker(HPCCSQLParser::From_portionContext * ctx);
+    void limitTreeWalker(HPCCSQLParser::Limit_clauseContext * ctx);
     void processAllColumns(HpccFiles *  availableFiles);
     void verifyColumn(SQLFieldValueExpression * col );
     void verifyColAndDisambiguateName();
     void verifyAndDisambiguateNameFromList(IArrayOf<ISQLExpression> * explist);
     void assignParameterIndexes();
-    int parameterizedCount;
 
-    StringBuffer normalizedSQL;
-    bool parameterizeStaticValues;
+    //override visitor elements
+	antlrcpp::Any visitSelect_statement(HPCCSQLParser::Select_statementContext * ctx);
+	antlrcpp::Any visitTable_reference(HPCCSQLParser::Table_referenceContext * ctx);
+	antlrcpp::Any visitSelect_item(HPCCSQLParser::Select_itemContext * ctx);
+	antlrcpp::Any visitExpressionList(HPCCSQLParser::ExpressionListContext * ctx);
+	antlrcpp::Any visitBinaryExpression(HPCCSQLParser::BinaryExpressionContext * ctx);
+	antlrcpp::Any visitUnaryExpression(HPCCSQLParser::UnaryExpressionContext * ctx);
+	antlrcpp::Any visitRelational_op(HPCCSQLParser::Relational_opContext * ctx);
+	antlrcpp::Any visitLiteralValueExpression(HPCCSQLParser::LiteralValueExpressionContext * ctx);
+	antlrcpp::Any visitLiteral_value(HPCCSQLParser::Literal_valueContext * ctx);
+	antlrcpp::Any visitString_literal(HPCCSQLParser::String_literalContext * ctx);
+	antlrcpp::Any visitBoolean_literal(HPCCSQLParser::Boolean_literalContext * ctx);
+	antlrcpp::Any visitNumber_literal(HPCCSQLParser::Number_literalContext * ctx);
+	antlrcpp::Any visitHex_literal(HPCCSQLParser::Hex_literalContext * ctx);
+	antlrcpp::Any visitExpression(HPCCSQLParser::ExpressionContext * ctx);
+	antlrcpp::Any visitColumnSpecExpression(HPCCSQLParser::ColumnSpecExpressionContext * ctx);
+	antlrcpp::Any visitColumn_spec(HPCCSQLParser::Column_specContext * ctx);
+	antlrcpp::Any visitOrderby_item(HPCCSQLParser::Orderby_itemContext * ctx);
 
 public:
 
@@ -137,8 +162,7 @@ public:
 
     void expandWildCardColumn();
     HPCCSQLTreeWalker();
-    HPCCSQLTreeWalker(pANTLR3_BASE_TREE t, IEspContext &context, bool attemptParameterization = true);
-
+    HPCCSQLTreeWalker(HPCCSQLParser::Root_statementContext * tree, IEspContext &context);
     virtual ~HPCCSQLTreeWalker();
 
     int getParameterizedCount() const
@@ -169,6 +193,11 @@ public:
     void setLimit(int limit)
     {
         this->limit = limit;
+    }
+
+    void setRootTree(HPCCSQLParser::Root_statementContext * tree)
+    {
+    	this->rootTree = tree;
     }
 
     int getOffset() const

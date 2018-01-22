@@ -220,14 +220,14 @@ void SQLUnaryExpression::getExpressionFromColumnName(const char * colname, Strin
 {
         switch (op)
         {
-            case ISNOTNULL:
+            case HPCCSQLLexer::ISNOTNULL:
                 str.append(" TRUE ");
                 break;
-            case ISNULL:
+            case HPCCSQLLexer::ISNULL:
                 str.append(" FALSE ");
                 break;
-            case NOT_SYM:
-            case NEGATION:
+            case HPCCSQLLexer::NOT_SYM:
+            case HPCCSQLLexer::NEGATION:
                 str.append(" NOT ");
                 operand1->getExpressionFromColumnName(colname, str);
                 break;
@@ -256,14 +256,14 @@ void SQLUnaryExpression::toString(StringBuffer & targetstr, bool fullOutput)
 {
     switch (op)
     {
-        case ISNOTNULL:
+        case HPCCSQLLexer::ISNOTNULL:
             targetstr.append(" TRUE ");
             break;
-        case ISNULL:
+        case HPCCSQLLexer::ISNULL:
             targetstr.append(" FALSE ");
             break;
-        case NOT_SYM:
-        case NEGATION:
+        case HPCCSQLLexer::NOT_SYM:
+        case HPCCSQLLexer::NEGATION:
             targetstr.append(" NOT ");
             operand1->toString(targetstr, fullOutput);
             break;
@@ -283,14 +283,14 @@ void SQLUnaryExpression::toECLStringTranslateSource(
      {
         switch (op)
         {
-            case ISNOTNULL:
+            case HPCCSQLLexer::ISNOTNULL:
                 eclStr.append(" TRUE ");
                 break;
-            case ISNULL:
+            case HPCCSQLLexer::ISNULL:
                 eclStr.append(" FALSE ");
                 break;
-            case NOT_SYM:
-            case NEGATION:
+            case HPCCSQLLexer::NOT_SYM:
+            case HPCCSQLLexer::NEGATION:
                 eclStr.append(" NOT ");
                 operand1->toECLStringTranslateSource(eclStr, map, ignoreMisTranslations, forHaving, funcParam, countFuncParam);
                 break;
@@ -386,7 +386,7 @@ SQLValueExpression::SQLValueExpression(int type, const char * value)
 
 void SQLValueExpression::trimTextQuotes()
 {
-    if (this->type == TEXT_STRING)
+    if (this->type == HPCCSQLLexer::TEXT_STRING)
     {
         if (this->value.charAt(0) == '\'' && this->value.charAt(value.length()-1) == '\'')
         {
@@ -483,7 +483,7 @@ bool SQLBinaryExpression::containsEqualityCondition(IProperties * map, const cha
         bool operand1Hasequality = containsEqualityCondition(operand1, map, first, second);
         bool operand2Hasequality = containsEqualityCondition(operand2, map, first, second);
 
-        if (op == OR_SYM)
+        if (op == HPCCSQLLexer::OR_SYM)
             return (operand1Hasequality && operand2Hasequality);
         else
             return (operand1Hasequality || operand2Hasequality);
@@ -535,7 +535,7 @@ void SQLBinaryExpression::toECLStringTranslateSource(
 
     if (translation1.length()>0 && translation2.length()>0)
     {
-        if ( op == LIKE_SYM || op == NOT_LIKE)
+        if ( op == HPCCSQLLexer::LIKE_SYM || op == HPCCSQLLexer::NOT_LIKE)
         {
             eclStr.append(getOpStr());
             eclStr.append("( ");
@@ -552,7 +552,7 @@ void SQLBinaryExpression::toECLStringTranslateSource(
         }
 
     }
-    else if (translation1.length() == 0 && translation2.length() == 0)
+    else if (translation1.length()<0 && translation2.length()<0)
     {
         return;
     }
@@ -570,9 +570,9 @@ void SQLBinaryExpression::toECLStringTranslateSource(
         * are joined, therefore not all portions of the SQL logic clause might be relevant.
         *
         */
-        if (op == OR_SYM || op == AND_SYM)
+        if (op == HPCCSQLLexer::OR_SYM || op == HPCCSQLLexer::AND_SYM)
         {
-            StringBuffer convert( op == OR_SYM ? "FALSE" : "TRUE");
+            StringBuffer convert( op == HPCCSQLLexer::OR_SYM ? "FALSE" : "TRUE");
 
             if (translation1.length()>0)
             {
@@ -627,7 +627,7 @@ bool SQLBinaryExpression::containsKey(const char * colname)
 
 void SQLBinaryExpression::toString(StringBuffer & targetstr, bool fullOutput)
 {
-    if ( op == LIKE_SYM || op == NOT_LIKE)
+    if ( op == HPCCSQLLexer::LIKE_SYM || op == HPCCSQLLexer::NOT_LIKE)
     {
         targetstr.append(getOpStr());
         targetstr.append("( ");
@@ -648,39 +648,39 @@ const char * SQLBinaryExpression::getOpStr()
 {
     switch (op)
     {
-        case AND_SYM:
+        case HPCCSQLLexer::AND_SYM:
             return " AND ";
-        case DIVIDE:
+        case HPCCSQLLexer::DIVIDE:
             return " / ";
-        case EQ_SYM:
+        case HPCCSQLLexer::EQ_SYM:
             return " = ";
-        case GTH:
+        case HPCCSQLLexer::GTH:
             return " > ";
-        case GET:
+        case HPCCSQLLexer::GET:
             return " >= ";
-        case LTH:
+        case HPCCSQLLexer::LTH:
             return " < ";
-        case LET:
+        case HPCCSQLLexer::LET:
             return " <= ";
-        case MINUS:
+        case HPCCSQLLexer::MINUS:
             return " - ";
-        case MOD:
+        case HPCCSQLLexer::MOD:
             return " % ";
-        case ASTERISK:
+        case HPCCSQLLexer::ASTERISK:
             return " * ";
-        case NOT_EQ:
+        case HPCCSQLLexer::NOT_EQ:
             return " != ";
-        case OR_SYM:
+        case HPCCSQLLexer::OR_SYM:
             return " OR ";
-        case PLUS:
+        case HPCCSQLLexer::PLUS:
             return " + ";
-        case IN_SYM:
+        case HPCCSQLLexer::IN_SYM:
             return " IN ";
-        case NOT_IN:
+        case HPCCSQLLexer::NOT_IN:
             return " NOT IN ";
-        case NOT_LIKE:
+        case HPCCSQLLexer::NOT_LIKE:
             return " NOT STD.Str.WildMatch";
-        case LIKE_SYM:
+        case HPCCSQLLexer::LIKE_SYM:
             return " STD.Str.WildMatch";
         default:
             return " ";
