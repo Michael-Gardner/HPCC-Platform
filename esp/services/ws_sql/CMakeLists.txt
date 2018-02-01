@@ -121,8 +121,8 @@ if(WSSQL_SERVICE)
         esphttp
         securesocket
         dalibase
-        libantlr3c
         wuwebview
+        antlr4_shared
         )
     install(TARGETS ws_sql
         RUNTIME DESTINATION ${EXEC_DIR}

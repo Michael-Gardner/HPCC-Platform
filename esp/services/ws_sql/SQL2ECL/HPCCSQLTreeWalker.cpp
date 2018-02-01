@@ -37,7 +37,6 @@ extern jlib_decl void trimSingleQuotes(StringBuffer & quotedString)
 HPCCSQLTreeWalker::HPCCSQLTreeWalker()
 {
     sqlType = SQLTypeUnknown;
-    parameterizeStaticValues = true;
 }
 
 void HPCCSQLTreeWalker::limitTreeWalker(HPCCSQLParser::Limit_clauseContext * ctx)
@@ -59,40 +58,7 @@ extern jlib_decl void HPCCSQLTreeWalker::fromTreeWalker(HPCCSQLParser::From_port
             SQLTable * temptable = visit(element);
             tableList.append(*temptable);
         }
-        /*          if (tokenType == TOKEN_OUTTER_JOIN || tokenType == TOKEN_INNER_JOIN)
-                    {
-                    if (tokenType == TOKEN_OUTTER_JOIN)
-                    jointype = SQLJoinTypeOuter;
-                    else if (tokenType == TOKEN_INNER_JOIN)
-                    jointype = SQLJoinTypeInner;
-
-                    int joinNodeChildcount = ithchild->getChildCount(ithchild);
-                    if (joinNodeChildcount < 2 )
-                    throw MakeStringException(-1, "Join statement appears to be incomplete");
-
-                    onclausenode = (ParseTree) ithchild->getFirstChildWithType(ithchild, ON);
-
-                    ithchild = (ParseTree)(ithchild->getChild(ithchild, 0));
-                    tokenType = ithchild->getType(ithchild);
-                    }
-                    else if ( childType == TOKEN_INDEX_HINT)
-                    {
-                        pANTLR3_BASE_TREE indexhint = (pANTLR3_BASE_TREE)tablechild->getChild(tablechild, 0);
-                        tablealias = (char *)indexhint->toString(indexhint)->chars;
-
-                    temptable->setJoin(join.getLink());
-                    }
-                    else if ( childType == TOKEN_AVOID_INDEX)
-                    {
-                        temptable->setIndexhint("0");
-                    }
-                    else if ( childType == TOKEN_TABLE_SCHEMA && tablechild->getChildCount(tablechild) == 1)
-                    {
-                        pANTLR3_BASE_TREE schema = (pANTLR3_BASE_TREE)tablechild->getChild(tablechild, 0);
-                        WARNLOG("Table schema detected but ignored: %s\n", (char *)schema->toString(schema)->chars);
-                    }
-                    }*/
-}
+    }
 }
 
 ISQLExpression * HPCCSQLTreeWalker::expressionTreeWalker(HPCCSQLParser::ExpressionContext * ectx, ParseTree * pctx)
@@ -101,9 +67,9 @@ ISQLExpression * HPCCSQLTreeWalker::expressionTreeWalker(HPCCSQLParser::Expressi
     Owned<ISQLExpression> lexp;
     Owned<ISQLExpression> rexp;
 
-                tableList.append(*temptable.getLink());
+    /*            tableList.append(*temptable.getLink());
 
-    /*    ANTLR3_UINT32 exptype = exprAST->getType(exprAST);
+        ANTLR3_UINT32 exptype = exprAST->getType(exprAST);
 
           if ( exprAST != NULL )
           {
@@ -902,7 +868,6 @@ extern jlib_decl void HPCCSQLTreeWalker::selectStatementTreeWalker(HPCCSQLParser
         } else
             throw MakeStringException(-1, "Error in Where clause");
     }
-}
 
     if(ctx->groupby_clause()) {
         for(auto gbcs : ctx->groupby_clause()->column_spec())
@@ -1667,7 +1632,6 @@ extern jlib_decl antlrcpp::Any HPCCSQLTreeWalker::visitSelect_statement(
         HPCCSQLParser::Select_statementContext* ctx) {
     return true;
 }
-*/
 
 extern jlib_decl antlrcpp::Any HPCCSQLTreeWalker::visitTable_reference(
         HPCCSQLParser::Table_referenceContext* ctx) {

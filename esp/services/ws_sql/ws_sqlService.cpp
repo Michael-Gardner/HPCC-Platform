@@ -1055,7 +1055,7 @@ bool CwssqlEx::onPrepareSQL(IEspContext &context, IEspPrepareSQLRequest &req, IE
             throw MakeStringException(1,"Empty SQL request.");
 
         Owned<HPCCSQLTreeWalker> parsedSQL;
-        parsedSQL.setown(parseSQL(context, sqltext, false));
+        parsedSQL.setown(parseSQL(context, sqltext));
 
         if (parsedSQL->getSqlType() == SQLTypeCall)
         {
