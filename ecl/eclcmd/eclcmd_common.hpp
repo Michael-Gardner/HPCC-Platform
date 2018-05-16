@@ -51,8 +51,8 @@ typedef IEclCommand *(*EclCommandFactory)(const char *cmdname);
 #define ECLOPT_SERVER_INI "eclWatchIP"
 #define ECLOPT_SERVER_ENV "ECL_WATCH_IP"
 #define ECLOPT_SERVER_DEFAULT "."
-#define ECLOPT_SSL "--ssl"
-#define ECLOPT_SSL_S "-ssl"
+#define ECLOPT_SSL "--nossl"
+#define ECLOPT_SSL_S "-nossl"
 
 #define ECLOPT_PORT "--port"
 #define ECLOPT_PORT_INI "eclWatchPort"
@@ -256,7 +256,7 @@ public:
         if (usesESP)
             fprintf(stdout,
                 "   -s, --server=<ip>      IP of server running ecl services (eclwatch)\n"
-                "   -ssl, --ssl            Use SSL to secure the connection to the server\n"
+                "   -nossl, --nossl        Use an unsecure connection to the server\n"
                 "   --port=<port>          ECL services port\n"
                 "   -u, --username=<name>  Username for accessing ecl services\n"
                 "   -pw, --password=<pw>   Password for accessing ecl services\n"
@@ -374,10 +374,10 @@ bool outputQueryFileCopyErrors(IArrayOf<IConstLogicalFileError> &errors);
 class EclCmdURL : public StringBuffer
 {
 public:
-    EclCmdURL(const char *service, const char *ip, const char *port, bool ssl, const char *tail=NULL)
+    EclCmdURL(const char *service, const char *ip, const char *port, bool nossl, const char *tail=NULL)
     {
         set("http");
-        if (ssl)
+        if (! nossl) // default to https
             append('s');
         append("://").append(ip).append(':').append(port).append('/').append(service);
         if (tail)
