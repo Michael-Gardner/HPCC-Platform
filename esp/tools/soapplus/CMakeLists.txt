@@ -59,7 +59,6 @@ ENDIF()
 
 FOREACH( iFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/EspMethods.txt
-    ${CMAKE_CURRENT_SOURCE_DIR}/README.txt
 )
     Install ( FILES ${iFILES} DESTINATION componentfiles COMPONENT Runtime )
 ENDFOREACH ( iFILES )
