@@ -71,33 +71,31 @@ if(USE_SPARK)
      set( SHA512STRING "DC3A97F3D99791D363E4F70A622B84D6E313BD852F6FDBC777D31EAB44CBC112CEEAA20F7BF835492FB654F48AE57E9969F93D3B0E6EC92076D1C5E1B40B4696" )
   endif(SHA512)
 
-  if (SHA512STRING)
-    install(CODE "file(
-      DOWNLOAD ${SPARK_URL}
-      ${CMAKE_BINARY_DIR}/downloads/${SPARK_PACKAGE_NAME}.tgz
-      EXPECTED_HASH SHA512=${SHA512STRING}
-      TIMEOUT 300
-      INACTIVITY_TIMEOUT 120)"
-    )
-  else (SHA512STRING)
-    install(CODE "file(
-      DOWNLOAD ${SPARK_URL}
-      ${CMAKE_BINARY_DIR}/downloads/${SPARK_PACKAGE_NAME}.tgz
-      TIMEOUT 300
-      INACTIVITY_TIMEOUT 120)"
-    )
-  endif (SHA512STRING)
+  string(TOLOWER "${SHA512STRING}" SHA512STRING)
+  set(URL_HASHSTRING "SHA512=${SHA512STRING}")
+
+  message("${URL_HASHSTRING}")
+
+  include(ExternalProject)
+  ExternalProject_Add(
+    fetch-spark-source
+    URL ${SPARK_URL}
+    URL_HASH ${URL_HASHSTRING}
+    TIMEOUT 300
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/downloads/spark-hadoop
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND "")
+
+  add_custom_target(
+    spark-source ALL
+    DEPENDS fetch-spark-source
+    COMMAND ${CMAKE_COMMAND} -E remove -f ${SPARK_PACKAGE_NAME}.tgz
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/downloads)
 
   install(
-     CODE "
-     execute_process( WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/downloads\" COMMAND \"${CMAKE_COMMAND}\" -E tar -zxf \"${SPARK_PACKAGE_NAME}.tgz\" )
-     execute_process( WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/downloads\" COMMAND \"${CMAKE_COMMAND}\" -E rename \"${SPARK_PACKAGE_NAME}\" \"spark-hadoop\" )
-     execute_process( WORKING_DIRECTORY \"${CMAKE_BINARY_DIR}/downloads\" COMMAND \"${CMAKE_COMMAND}\" -E remove -f  \"${SPARK_PACKAGE_NAME}.tgz\" )
-    "
-  )
-
-  install(
-    DIRECTORY "${CMAKE_BINARY_DIR}/downloads/${SPARK_PACKAGE_NAME}"
+    DIRECTORY "${CMAKE_BINARY_DIR}/downloads/spark-hadoop"
     COMPONENT runtime
     DESTINATION "externals"
   )
