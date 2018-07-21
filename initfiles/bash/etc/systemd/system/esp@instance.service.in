@@ -1,6 +1,6 @@
 [Unit]
 Description=%i
-After=network.target remote-fs.target hpcc-conf@%i.service @dependencies@
+After=network.target remote-fs.target hpcc-conf@%i.service dafilesrv.service
 Requires=hpcc-conf@%i.service
 
 [Service]
@@ -11,10 +11,12 @@ PermissionsStartOnly=false
 WorkingDirectory=@RUNTIME_PATH@/%i
 EnvironmentFile=@RUNTIME_PATH@/%i/%i.cfg
 PIDFile=@PID_PATH@/%i.pid
-ExecStart=@EXEC_PATH@/@processName@ @processArgs@
+@spark_master_start@
+ExecStart=@EXEC_PATH@/esp --daemon %i
 Restart=on-failure
 RestartSec=5
 TimeoutSec=30
+@spark_master_stop@
 LimitCORE=infinity
 LimitNPROC=4096:8192
 LimitNOFILE=8192:32768
@@ -22,4 +24,4 @@ LimitRTPRIO=0:4
 LimitMEMLOCK=infinity
 
 [Install]
-DefaultInstance=my@component@
+DefaultInstance=myesp

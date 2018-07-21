@@ -37,6 +37,11 @@ ADD_CUSTOM_TARGET(ProcessFiles-initfiles-sbin ALL DEPENDS ${outFiles} ${noInstal
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/regex.awk.in.cmake" "${CMAKE_CURRENT_BINARY_DIR}/regex.awk")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/backup.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/backup.sh" @ONLY)
 
+if(USE_SPARK)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/spark-slave.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/spark-slave.sh" @ONLY)
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/spark-slave.sh DESTINATION sbin COMPONENT Runtime)
+endif(USE_SPARK)
+
 FOREACH( oFILES
     ${outFiles}
     ${CMAKE_CURRENT_BINARY_DIR}/backup.sh

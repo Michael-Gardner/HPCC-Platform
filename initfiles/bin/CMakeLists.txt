@@ -23,19 +23,28 @@ GENERATE_BASH(processor ${bash-vars} "init_configesp.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "init_dfuserver.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "init_eclccserver.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "init_eclscheduler.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_esp.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "init_roxie.in" outFiles)
 GENERATE_BASH(processor ${bash-vars} "init_sasha.in" outFiles)
-GENERATE_BASH(processor ${bash-vars} "init_thorslave.in" outFiles)
 ADD_CUSTOM_TARGET(ProcessFiles-initfiles-bin ALL DEPENDS ${outFiles})
 
+if(USE_SPARK)
+    set(spark_start_master "${INSTALL_DIR}/externals/spark-hadoop/sbin/start-master.sh")
+    set(spark_stop_master  "${INSTALL_DIR}/externals/spark-hadoop/sbin/stop-master.sh")
+    set(spark_start_slave  "${ADMIN_PATH}/spark-slave.sh")
+    set(spark_stop_slave   "${INSTALL_DIR}/externals/spark-hadoop/sbin/stop-slave.sh")
+endif(USE_SPARK)
+
 configure_file(init_backupnode.in init_backupnode @ONLY)
+configure_file(init_esp.in init_esp @ONLY)
+configure_file(init_thorslave.in init_thorslave @ONLY)
 
 FOREACH( iFILES
     ${outFiles}
     ${CMAKE_CURRENT_SOURCE_DIR}/init_ftslave
     ${CMAKE_CURRENT_SOURCE_DIR}/init_roxie_cluster
-	${CMAKE_CURRENT_BINARY_DIR}/init_backupnode
+    ${CMAKE_CURRENT_BINARY_DIR}/init_esp
+    ${CMAKE_CURRENT_BINARY_DIR}/init_backupnode
+    ${CMAKE_CURRENT_BINARY_DIR}/init_thorslave
 )
     install ( PROGRAMS ${iFILES} DESTINATION ${EXEC_DIR} COMPONENT Runtime )
 ENDFOREACH ( iFILES )

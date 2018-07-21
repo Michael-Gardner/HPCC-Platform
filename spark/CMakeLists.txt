@@ -94,16 +94,31 @@ if(USE_SPARK)
     COMMAND ${CMAKE_COMMAND} -E remove -f ${SPARK_PACKAGE_NAME}.tgz
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/downloads)
 
+  configure_file(spark-env.sh.in spark-env.sh @ONLY)
+
   install(
     DIRECTORY "${CMAKE_BINARY_DIR}/downloads/spark-hadoop"
-    COMPONENT runtime
+    FILE_PERMISSIONS OWNER_READ
+                     OWNER_WRITE
+                     OWNER_EXECUTE
+                     GROUP_READ
+                     GROUP_EXECUTE
+                     WORLD_EXECUTE
+                     WORLD_READ
+    COMPONENT Runtime
     DESTINATION "externals"
   )
 
   install(
     FILES "${CMAKE_BINARY_DIR}/${SPARK_HPCC}"
-    COMPONENT runtime
+    COMPONENT Runtime
     DESTINATION "jars/spark/"
+  )
+
+  install(
+    PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/spark-env.sh
+    COMPONENT Runtime
+    DESTINATION "externals/spark-hadoop/conf"
   )
 
 endif(USE_SPARK)
