@@ -15,14 +15,14 @@
 #    limitations under the License.
 ################################################################################
 
-source @INSTALL_DIR@/sbin/hpcc_setenv
-PID_NAME="@PID_DIR@/$(basename $PWD).pid"
+source @ADMIN_PATH@/hpcc_setenv
+PID_NAME="@PID_PATH@/$(basename $PWD).pid"
 source @INSTALL_DIR@/etc/init.d/hpcc_common
 
 component=$(basename $PWD)
 dir.getByName lock
 lock="$dir_return"
-export logfile="@LOG_DIR@/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
+export logfile="@LOG_PATH@/${component}/init_${component}_$(date +%Y_%m_%d_%H_%M_%S).log"
 
 export SENTINEL="esp.sentinel"
 log "Removing $SENTINEL"
@@ -38,7 +38,7 @@ killed()
         log "could not kill $component"
     else
         log "$component Stopped"
-        unlock @LOCK_DIR@/$component/${component}.lock
+        unlock @LOCK_PATH@/$component/${component}.lock
     fi
     exit 255
 }

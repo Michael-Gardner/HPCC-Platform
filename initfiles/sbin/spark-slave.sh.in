@@ -17,5 +17,5 @@
 
 MASTER="$(@ADMIN_PATH@/configgen -env @CONFIG_DIR@/@ENV_XML_FILE@ -listall -t esp | awk -F "," '{print $3};')"
 
-@INSTALL_DIR@/externals/spark-hadhoop/start-slave.sh ${MASTER}
+@INSTALL_DIR@/externals/spark-hadoop/sbin/start-slave.sh ${MASTER}
 
