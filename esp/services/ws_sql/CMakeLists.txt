@@ -27,7 +27,7 @@ if(WSSQL_SERVICE)
 
     include(${HPCC_SOURCE_DIR}/esp/scm/additional.cmake)
     include(${HPCC_SOURCE_DIR}/esp/scm/smcscm.cmake)
-    include(${HPCC_CURRENT_SOURCE_DIR}/antlr-jars/antlr-target.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/antlr-jars/antlr-target.cmake)
     add_subdirectory(antlr3c)
 
     antlr_target(sql2ecl
@@ -89,9 +89,10 @@ if(WSSQL_SERVICE)
         ${HPCC_SOURCE_DIR}/common/dllserver
         ${HPCC_SOURCE_DIR}/common/deftype
         ${HPCC_SOURCE_DIR}/ecl/hql
-        ${CMAKE_CURRENT_SOURCE_DIR}/libantlr3c/include
         ${ESPSCM_GENERATED_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/SQL2ECL
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr3c
+        ${CMAKE_CURRENT_SOURCE_DIR}/antlr3c/include
         )
 
     add_definitions(-D_USRDLL)
