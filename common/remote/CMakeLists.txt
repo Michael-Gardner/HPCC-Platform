@@ -68,7 +68,8 @@ include_directories (
          ${HPCC_SOURCE_DIR}/common/deftype
          ${HPCC_SOURCE_DIR}/dali/base
          ${CMAKE_BINARY_DIR}
-    )
+         ${CMAKE_BINARY_DIR}/oss
+         )
 
 ADD_DEFINITIONS( -D_USRDLL -DREMOTE_EXPORTS )
 
