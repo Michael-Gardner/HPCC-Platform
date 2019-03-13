@@ -29,31 +29,11 @@ project(spark-integration)
 if(SPARK)
     ADD_PLUGIN(spark PACKAGES Java MINVERSION 1.8.0)
 
-    if(SPARK_URL)
-        string( REPLACE "\/" ";" SPARK_URL_LIST ${SPARK_URL} )
-        list( GET SPARK_URL_LIST "-1"  spark_file_name_w_ext )
-        string( REPLACE "\.tgz" "" spark_file_name_only ${spark_file_name_w_ext} )
-        string( REPLACE "-" ";" spark_file_name_parts ${spark_file_name_only} )
-        list( GET spark_file_name_parts 1 SPARK_VERSION )
-        list( GET spark_file_name_parts 3 hadoop_version_w_head )
-        string( REPLACE "hadoop" "" HADOOP_VERSION ${hadoop_version_w_head} )
-
-    else(SPARK_URL)
-        if (NOT HADOOP_VERSION)
-            set(HADOOP_VERSION 2.7)
-        endif (NOT HADOOP_VERSION)
-
-        if (NOT SPARK_VERSION)
-            set(SPARK_VERSION 2.3.2)
-        endif (NOT SPARK_VERSION)
-
-        if (NOT SPARK_URL_BASE)
-            set(SPARK_URL_BASE  "http://apache.mirrors.pair.com")
-        endif (NOT SPARK_URL_BASE)
-
-        set(SPARK_PACKAGE_NAME "spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}")
-        set(SPARK_URL  "${SPARK_URL_BASE}/spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE_NAME}.tgz")
-    endif(SPARK_URL)
+    file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/spark-hadoop/RELEASE SPARK_RELEASE_FULL)
+    list(GET SPARK_RELEASE_FULL 0 SPARK_RELEASE)
+    list(GET SPARK_RELEASE_FULL 1 SPARK_BUILD_FLAGS)
+    message(STATUS "${SPARK_RELEASE}")
+    message(STATUS "${SPARK_BUILD_FLAGS}")
 
     set(CENTRAL_REPO "https://repo1.maven.org/maven2")
 
@@ -81,44 +61,8 @@ if(SPARK)
         set(WSCLIENT_JAR ${CMAKE_CURRENT_BINARY_DIR}/wsclient-${WSCLIENT_VERSION}-jar-with-dependencies.jar)
     endif(NOT WSCLIENT_JAR)
 
-
-    message("")
-    message("SPARK VERSION: ${SPARK_VERSION}")
-    message("HADOOP VERSION: ${HADOOP_VERSION}")
-    message("SPARK Package URI: ${SPARK_URL}")
-    message("")
-
-    if(SHA512)
-        set( SHA512STRING "${SHA512}" )
-    else(SHA512)
-        set( SHA512STRING "e61d9330125746a24d7784166a15b41514546cad874357c98dca0a2c39fa7303d8fa7c049ba6cdf5a24c172d4f47a2e5b6e1f658a57a9b2a30d46d9858cdb531" )
-    endif(SHA512)
-
-    string(TOLOWER "${SHA512STRING}" SHA512STRING)
-    set(URL_HASHSTRING "SHA512=${SHA512STRING}")
-
-    message("${URL_HASHSTRING}")
-
-    include(ExternalProject)
-    ExternalProject_Add(
-        fetch-spark-source
-        URL ${SPARK_URL}
-        URL_HASH ${URL_HASHSTRING}
-        TIMEOUT 300
-        DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/downloads/spark-hadoop
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND "")
-
-    add_custom_target(
-        spark-source ALL
-        DEPENDS fetch-spark-source
-        COMMAND ${CMAKE_COMMAND} -E remove -f ${SPARK_PACKAGE_NAME}.tgz
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/downloads)
-
     install(
-        DIRECTORY "${CMAKE_BINARY_DIR}/downloads/spark-hadoop"
+        DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/spark-hadoop"
         USE_SOURCE_PERMISSIONS
         COMPONENT runtime
         DESTINATION "externals"
