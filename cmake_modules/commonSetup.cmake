@@ -705,12 +705,26 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
         MESSAGE(FATAL_ERROR "You need flex version 2.5.35 or later to build this project (version ${FLEX_VERSION} detected)")
       ENDIF()
 
+
       IF (CMAKE_COMPILER_IS_GNUCXX)
+        FIND_PROGRAM(LSB_RELEASE lsb_release)
+        IF(NOT LSB_RELEASE-NOTFOUND)
+          EXECUTE_PROCESS(COMMAND ${LSB_RELEASE} -is
+            OUTPUT_VARIABLE LSB_OS_NAME
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+          IF (${LSB_OS_NAME} STREQUAL "CentOS")
+            IF (NOT "${CMAKE_CXX_COMPILER_VERSION}" VERSION_EQUAL "7.3.1")
+              MESSAGE(FATAL_ERROR "You need Gnu c++ version 7.3.1 to build this project \nPlease enable scl devtoolset-7 to build")
+            ENDIF()
+          ENDIF()
+        ENDIF()
+
         IF ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS "4.7.3")
           MESSAGE(FATAL_ERROR "You need Gnu c++ version 4.7.3 or later to build this project (version ${CMAKE_CXX_COMPILER_VERSION} detected)")
         ENDIF()
       ENDIF()
-    ENDIF()
+
+  ENDIF()
   ###########################################################################
 
   # External library setup - some can be optionally selected based on USE_xxx flags, some are required
@@ -1062,4 +1076,27 @@ IF ("${COMMONSETUP_DONE}" STREQUAL "")
       add_dependencies(${module_without_extension}-ecl export-stdlib-pubkey)
     endif()
   ENDMACRO()
+      
+  function(FIND_LINUX_OS)
+    find_program(LSB_RELEASE lsb_release)
+    # output will default to unset if lsb not found
+    if(NOT LSB_RELEASE-NOTFOUND)
+      execute_process(COMMAND ${LSB_RELEASE} -is
+        OUTPUT_VARIABLE LSB_OS_NAME
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+      set(LINUX_OS "${LSB_OS_NAME}" PARENT_SCOPE)
+    endif()
+  endfunction()
+
+  function(FIND_LINUX_OS_VERSION)
+    find_program(LSB_RELEASE lsb_release)
+    # output will default to unset if lsb not found
+    if(NOT LSB_RELEASE-NOTFOUND)
+      execute_process(COMMAND ${LSB_RELEASE} -rs
+        OUTPUT_VARIABLE LSB_OS_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+      set(LINUX_OS_VERSION "${LSB_OS_VERSION}" PARENT_SCOPE)
+    endif()
+  endfunction()
+
 endif ("${COMMONSETUP_DONE}" STREQUAL "")
