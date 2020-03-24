@@ -66,6 +66,7 @@ include_directories (
          ${HPCC_SOURCE_DIR}/rtl/include 
          ${HPCC_SOURCE_DIR}/system/security/shared
          ${HPCC_SOURCE_DIR}/system/security/cryptohelper
+         ${HPCC_SOURCE_DIR}/system/yaml/libyaml/include
     )
 
 ADD_DEFINITIONS( -DLOGMSGCOMPONENT=3 -D_USRDLL -DDALI_EXPORTS )
@@ -84,5 +85,6 @@ if(NOT PLUGIN)
         mp 
         hrpc 
         dafsclient
+        yaml
     )
 endif()
