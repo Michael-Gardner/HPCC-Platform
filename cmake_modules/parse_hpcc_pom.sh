@@ -8,9 +8,12 @@
 
 set -e
 
+_has_mvn=0
+
 if ! `which mvn 1>/dev/null 2>&1` ; then
   echo "Maven dependency not located"
-  exit 2
+  echo "-- Using gnu utils instead"
+  _has_mvn=1
 fi
 
 # overwrite versionfile to pom.xml
@@ -26,8 +29,13 @@ fi
 # Major.Minor.Point- Sequence if gold, Maturity if rc
 function parse_cmake()
 {
-  HPCC_PROJECT=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-  HPCC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+  if [ $_has_mvn ]; then
+    HPCC_PROJECT=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+    HPCC_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+  else
+    HPCC_PROJECT=$(grep -m1 '<artifactId>' $VERSIONFILE | sed "s/^[ \t]*//" | awk 'BEGIN {FS="[<>]";} {print $3;}')
+    HPCC_VERSION=$(grep -m1 '<version>' $VERSIONFILE | sed "s/^[ \t]*//" | awk 'BEGIN {FS="[<>]";} {print $3;}')
+  fi
   HPCC_MAJOR=$(echo $HPCC_VERSION | awk 'BEGIN {FS="[.-]"}; {print $1};')
   HPCC_MINOR=$(echo $HPCC_VERSION | awk 'BEGIN {FS="[.-]"}; {print $2};')
   HPCC_POINT=$(echo $HPCC_VERSION | awk 'BEGIN {FS="[.-]"}; {print $3};')
@@ -85,7 +93,11 @@ function update_version_file()
       _new_maturity=
     fi
     local _v="${HPCC_MAJOR}.${_new_minor}.${_new_point}-${_new_sequence}${_new_maturity}"
-    local mvn_version_update_cmd="mvn versions:set -DnewVersion=$_v"
+    if [ $_has_mvn ]; then
+        local mvn_version_update_cmd="mvn versions:set -DnewVersion=$_v"
+    else
+        local mvn_version_update_cmd="sed 's/${HPCC_VERSION}/${_v}/"
+    fi
     if [ -n "$VERBOSE" ] ; then
       echo  "$mvn_version_update_cmd"
     fi
