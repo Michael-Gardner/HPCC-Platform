@@ -49,3 +49,12 @@
 [submodule "system/libyaml"]
 	path = system/yaml/libyaml
 	url = https://github.com/hpcc-systems/libyaml.git
+[submodule "aws-c-common"]
+	path = system/aws/aws-c-common
+	url = https://github.com/Michael-Gardner/aws-c-common.git
+[submodule "aws-checksums"]
+	path = system/aws/aws-checksums
+	url = https://github.com/Michael-Gardner/aws-checksums.git
+[submodule "aws-c-event-stream"]
+	path = system/aws/aws-c-event-stream
+	url = https://github.com/Michael-Gardner/aws-c-event-stream.git
