@@ -22,11 +22,11 @@ import sys
 import os
 import os.path
 import getopt
-import Queue
+import queue
 import time
 import datetime
 import logging
-import ConfigParser
+import configparser
 import signal
 
 def signal_handler(signal, frame):
@@ -73,7 +73,7 @@ class ScriptExecution(object):
 
     def get_config(self, key):
         if not self.hpcc_config:
-            self.hpcc_config = ConfigParser.ConfigParser()
+            self.hpcc_config = configparser.ConfigParser()
             self.hpcc_config.read(self.env_conf)
 
         return self.hpcc_config.get(self.section, key)
@@ -98,7 +98,7 @@ class ScriptExecution(object):
     def setup(self):
 
 
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
 
         # Get hosts information
         if self.host_list_file:
@@ -112,7 +112,7 @@ class ScriptExecution(object):
         if len(self.hosts) == 0:
             print("Could not get any host. At least one host is required.")
             print("Refer to the following log file for more information: ")
-            print(self.log_file)
+            print((self.log_file))
             exit(0)
 
         self.addTasks(self.number_of_threads * 2)
@@ -153,7 +153,7 @@ class ScriptExecution(object):
             thread.start()
             thread_id += 1
 
-        print("\nTotal hosts to process: %d\n" % (len(self.hosts)))
+        print(("\nTotal hosts to process: %d\n" % (len(self.hosts))))
 
         while (True):
             if self.is_done():
@@ -215,13 +215,13 @@ class ScriptExecution(object):
                 no_error_found = False
         script_name = os.path.basename(self.script_file)
         if not no_error_found:
-            print("\n\n\033[91mError found during " + script_name + " execution.\033[0m")
+            print(("\n\n\033[91mError found during " + script_name + " execution.\033[0m"))
             print("Refer to the following log file for more information: ")
-            print(self.log_file)
+            print((self.log_file))
         else:
-            print("\n\n" + script_name + " run successfully on all hosts in the cluster")
+            print(("\n\n" + script_name + " run successfully on all hosts in the cluster"))
             print("Refer to the following log file for more information: ")
-            print(self.log_file)
+            print((self.log_file))
         print("\n")
 
         return no_error_found
@@ -252,7 +252,7 @@ class ScriptExecution(object):
                  "section", "log_file", "log_level", "exclude_local"])
 
         except getopt.GetoptError as err:
-            print(str(err))
+            print((str(err)))
             self.usage()
             exit(0)
 
@@ -280,7 +280,7 @@ class ScriptExecution(object):
             elif arg in ("-x", "--exclude_local"):
                 self.exclude_local = True
             else:
-                print("\nUnknown option: " + arg)
+                print(("\nUnknown option: " + arg))
                 self.usage()
                 exit(0)
 
@@ -293,7 +293,7 @@ class ScriptExecution(object):
             exit(0)
 
         if not os.path.isfile(self.script_file):
-            print("\nFile " + self.script_file + " does not exist.\n")
+            print(("\nFile " + self.script_file + " does not exist.\n"))
             exit(0)
 
 

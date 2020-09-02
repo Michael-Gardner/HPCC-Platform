@@ -18,7 +18,7 @@
 '''
 
 import threading
-import Queue
+import queue
 
 class ThreadWithQueue(threading.Thread):
     '''
@@ -49,4 +49,4 @@ class ThreadWithQueue(threading.Thread):
                 func(*args)
 
                 self.queue.task_done()
-            except Queue.Empty: pass
+            except queue.Empty: pass
