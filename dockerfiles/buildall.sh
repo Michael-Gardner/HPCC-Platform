@@ -26,6 +26,7 @@ BUILD_LABEL=${BUILD_TAG}                        # The docker hub label for all o
 BUILD_USER=hpcc-systems                         # The github repo owner
 BUILD_TYPE=                                     # Set to Debug for a debug build, leave blank for default (RelWithDebInfo)
 USE_CPPUNIT=1
+DAILY=1                                         # For daily test builds
 
 #BUILD_ML=all #ml,gnn,gnn-gpu
 ml_features=(
@@ -39,6 +40,7 @@ ml_features=(
 [[ -n ${INPUT_BUILD_USER} ]] && BUILD_USER=${INPUT_BUILD_USER}
 [[ -n ${INPUT_BUILD_VER} ]] && BUILD_TAG=${INPUT_BUILD_VER}
 [[ -n ${GITHUB_REPOSITORY} ]] && BUILD_USER=${GITHUB_REPOSITORY%/*}
+[[ -n ${INPUT_DAILY} ]] && DAILY=${INPUT_DAILY}
 
 if [[ -n ${INPUT_USERNAME} ]] ; then
   echo ${INPUT_PASSWORD} | docker login -u ${INPUT_USERNAME} --password-stdin ${INPUT_REGISTRY}
@@ -49,10 +51,12 @@ if [[ -n ${INPUT_BUILD_THREADS} ]] ; then
   BUILD_THREADS=$INPUT_BUILD_THREADS
 fi
 
-if [[ -z ${BUILD_TAG} ]] ; then
+if [[ -z ${BUILD_TAG} ]] && [[ "$DAILY" = "0" ]]; then
   echo Current tag could not be located
   echo Perhaps you meant to run incr.sh ?
   exit 2
+else
+  echo Performing daily build on master
 fi
 
 set -e
@@ -71,6 +75,10 @@ else
   BUILD_LABEL=${HPCC_SHORT_TAG}
   BUILD_TYPE=RelWithDebInfo
   USE_CPPUNIT=0
+fi
+
+if [[ "$DAILY" = "1" ]] ; then
+  BASE_VER=${HPCC_MAJOR}.${HPCC_MINOR}
 fi
 
 if [[ "$HPCC_MATURITY" = "release" ]] && [[ "$INPUT_LATEST" = "1" ]] ; then
@@ -100,11 +108,17 @@ build_image() {
 push_image() {
   local name=$1
   local label=$2
+
   if [ "$LATEST" = "1" ] ; then
     docker tag hpccsystems/${name}:${label} hpccsystems/${name}:latest
     if [ "$PUSH" = "1" ] ; then
       docker push hpccsystems/${name}:${label}
       docker push hpccsystems/${name}:latest
+    fi
+  elif [ "$DAILY" = "1" ] ; then
+    docker tag hpccsystems/${name}:${label} hpccsystems/${name}:daily
+    if [ "$PUSH" = "1" ] ; then
+      docker push hpccsystems/${name}:daily
     fi
   else
     if [ "$PUSH" = "1" ] ; then
