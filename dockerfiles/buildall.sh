@@ -77,10 +77,6 @@ else
   USE_CPPUNIT=0
 fi
 
-if [[ "$DAILY" = "1" ]] ; then
-  BASE_VER=${HPCC_MAJOR}.${HPCC_MINOR}
-fi
-
 if [[ "$HPCC_MATURITY" = "release" ]] && [[ "$INPUT_LATEST" = "1" ]] ; then
   LATEST=1
 fi
