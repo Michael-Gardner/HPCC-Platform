@@ -34,6 +34,7 @@
 #include "jdebug.hpp"
 #include "jptree.hpp"
 #include "jsocket.hpp"
+#include "jtime.hpp"
 
 typedef enum
 {
@@ -794,6 +795,7 @@ extern jlib_decl ILogMsgFilter * queryLocalLogMsgFilter();
 extern jlib_decl ILogMsgFilter * queryPassNoneLogMsgFilter();
 extern jlib_decl ILogMsgFilter * getCategoryLogMsgFilter(unsigned audiences = MSGAUD_all, unsigned classes = MSGCLS_all, LogMsgDetail maxDetail = TopDetail, bool local = false);
 extern jlib_decl ILogMsgFilter * getPIDLogMsgFilter(unsigned pid, bool local = false);
+extern jlib_decl ILogMsgFilter * getWUIDLogMsgFilter(const char * wuid);
 extern jlib_decl ILogMsgFilter * getTIDLogMsgFilter(unsigned tid, bool local = false);
 extern jlib_decl ILogMsgFilter * getNodeLogMsgFilter(const char * name, unsigned port = 0, bool local = false);
 extern jlib_decl ILogMsgFilter * getNodeLogMsgFilter(const IpAddress & ip, unsigned port = 0, bool local = false);
@@ -1343,4 +1345,287 @@ interface IComponentLogFileCreator : extends IInterface
 extern jlib_decl IComponentLogFileCreator * createComponentLogFileCreator(IPropertyTree * _properties, const char *_component);
 extern jlib_decl IComponentLogFileCreator * createComponentLogFileCreator(const char *_logDir, const char *_component);
 extern jlib_decl IComponentLogFileCreator * createComponentLogFileCreator(const char *_component);
+
+struct LogAccessTimeRange
+{
+    //%Y-%m-dT%H:%M:%S.%z%z
+    CDateTime startt;
+    CDateTime endt;
+    void setStart(const CDateTime start)
+    {
+        startt = start;
+    }
+
+    void setEnd(const CDateTime  end)
+    {
+        endt = end;
+    }
+
+    void setStart(const char * start, bool local = true)
+    {
+        startt.setString(start,nullptr,local);
+    }
+
+    void setEnd(const char * end, bool local = true)
+    {
+        endt.setString(end,nullptr,local);
+    }
+};
+
+typedef enum
+{
+    LOGACCESS_FILTER_jobid,
+    LOGACCESS_FILTER_class,
+    LOGACCESS_FILTER_audience,
+    LOGACCESS_FILTER_component,
+    LOGACCESS_FILTER_or,
+    LOGACCESS_FILTER_and,
+    LOGACCESS_FILTER_wildcard,
+    LOGACCESS_FILTER_unknown
+} LogAccessFilterType;
+
+inline const char * LogAccessFilterTypeToString(LogAccessFilterType field)
+{
+    switch(field)
+    {
+    case LOGACCESS_FILTER_jobid:
+        return("jobid");
+    case LOGACCESS_FILTER_class:
+        return("class");
+    case LOGACCESS_FILTER_audience:
+        return("audience");
+    case LOGACCESS_FILTER_component:
+        return("component");
+    case LOGACCESS_FILTER_or:
+        return("or");
+    case LOGACCESS_FILTER_and:
+        return("and");
+    case LOGACCESS_FILTER_wildcard:
+         return("*");
+    default:
+        return("UNKNOWN");
+    }
+}
+
+inline unsigned LogAccessFilterTypeFromName(char const * name)
+{
+    if (!name || !*name)
+        return LOGACCESS_FILTER_unknown;
+
+    if(strnicmp(name, "jobid", 5)==0)
+        return LOGACCESS_FILTER_jobid;
+    if(strnicmp(name, "class", 5)==0)
+        return LOGACCESS_FILTER_class;
+    if(strnicmp(name, "audience", 8)==0)
+        return LOGACCESS_FILTER_audience;
+    if(strnicmp(name, "component", 9)==0)
+        return LOGACCESS_FILTER_component;
+    if(strnicmp(name, "or", 2)==0)
+        return LOGACCESS_FILTER_or;
+    if(strnicmp(name, "and", 3)==0)
+        return LOGACCESS_FILTER_and;
+    return LOGACCESS_FILTER_unknown;
+}
+
+interface jlib_decl ILogAccessFilter : public IInterface
+{
+ public:
+    virtual void addToPTree(IPropertyTree * tree) const = 0;
+    virtual void toString(StringBuffer & out) const = 0;
+    virtual LogAccessFilterType filterType() const = 0;
+};
+
+class CLogAccessFilter : implements ILogAccessFilter, public CInterface
+{
+public:
+    IMPLEMENT_IINTERFACE;
+};
+
+extern jlib_decl ILogAccessFilter * getLogAccessFilterFromPTree(IPropertyTree * tree);
+extern jlib_decl ILogAccessFilter * getWUIDLogAccessFilter(const char * wuid);
+extern jlib_decl ILogAccessFilter * getComponentLogAccessFilter(const char * component);
+extern jlib_decl ILogAccessFilter * getAudienceLogAccessFilter(MessageAudience audience);
+extern jlib_decl ILogAccessFilter * getClassLogAccessFilter(LogMsgClass logclass);
+extern jlib_decl ILogAccessFilter * getBinaryLogAccessFilter(ILogAccessFilter * arg1, ILogAccessFilter * arg2, LogAccessFilterType type);
+extern jlib_decl ILogAccessFilter * getBinaryLogAccessFilterOwn(ILogAccessFilter * arg1, ILogAccessFilter * arg2, LogAccessFilterType type);
+extern jlib_decl ILogAccessFilter * getWildCardLogAccessFilter();
+
+struct LogAccessConditions
+{
+    ILogAccessFilter * filter;
+    LogAccessTimeRange timeRange;
+    int limit = -1;
+    long offset = 0;
+
+    StringArray logFieldNames;
+
+    LogAccessConditions & operator = (const LogAccessConditions & l)
+    {
+        copyLogFieldNames(&l.logFieldNames);
+        limit = l.limit;
+        timeRange = l.timeRange;
+        filter = l.filter;
+        offset = l.offset;
+
+        return *this;
+    }
+
+    ~LogAccessConditions() {}
+
+    void appendLogFieldName(const char * fieldname)
+    {
+        logFieldNames.append(fieldname);
+    }
+
+    void copyLogFieldNames(const StringArray * fields)
+    {
+        if (*fields)
+        {
+            ForEachItemIn(fieldsindex,*fields)
+            {
+                logFieldNames.append(fields->item(fieldsindex));
+            }
+        }
+    }
+    inline const StringArray &queryLogFieldNames() { return logFieldNames; }
+};
+
+typedef enum
+{
+    LOGACCESS_LOGFORMAT_xml,
+    LOGACCESS_LOGFORMAT_json,
+    LOGACCESS_LOGFORMAT_csv
+} LogAccessLogFormat;
+
+inline LogAccessLogFormat LogAccessFormatFromName(char const * name)
+{
+    if (!name || !*name)
+        throw makeStringException(-1, "Encountered empty Log Access Format name");
+
+    if(strnicmp(name, "xml", 3)==0)
+        return LOGACCESS_LOGFORMAT_xml;
+    else if(strnicmp(name, "json", 4)==0)
+        return LOGACCESS_LOGFORMAT_json;
+    else if(strnicmp(name, "csv", 3)==0)
+        return LOGACCESS_LOGFORMAT_csv;
+    else
+        throw makeStringExceptionV(-1, "Encountered unknown Log Access Format name: '%s'", name);
+}
+
+interface IRemoteLogAccess : extends IInterface
+{
+    virtual bool fetchLog(LogAccessConditions & options, StringBuffer & returnbuf, LogAccessLogFormat format) = 0;
+
+    virtual const char * getRemoteLogAccessType() = 0;
+    virtual IPropertyTree * fetchLogMap() = 0;
+    virtual const char * fetchConnectionStr() = 0;
+};
+
+inline bool fetchLog(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, ILogAccessFilter * filter, LogAccessTimeRange timeRange, StringArray & cols, LogAccessLogFormat format)
+{
+    LogAccessConditions logFetchoptions;
+    logFetchoptions.timeRange = timeRange;
+    logFetchoptions.filter = filter;
+    logFetchoptions.copyLogFieldNames(&cols); //ensure these fields are declared in m_logMapping->queryProp("WorkUnits/@contentcolumn")? or in LogMap/Fields?"
+
+    return logAccess.fetchLog(logFetchoptions, returnbuf, format);
+}
+
+inline bool fetchJobIDLog(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, const char *jobid, LogAccessTimeRange timeRange, StringArray & cols, LogAccessLogFormat format = LOGACCESS_LOGFORMAT_json)
+{
+    return fetchLog(returnbuf, logAccess, getWUIDLogAccessFilter(jobid), timeRange, cols, format);
+}
+
+inline bool fetchComponentLog(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, const char * component, LogAccessTimeRange timeRange, StringArray & cols, LogAccessLogFormat format = LOGACCESS_LOGFORMAT_json)
+{
+    return fetchLog(returnbuf, logAccess, getComponentLogAccessFilter(component), timeRange, cols, format);
+}
+
+inline bool fetchLogByAudience(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, MessageAudience audience, LogAccessTimeRange timeRange, StringArray & cols, LogAccessLogFormat format = LOGACCESS_LOGFORMAT_json)
+{
+    return fetchLog(returnbuf, logAccess, getAudienceLogAccessFilter(audience), timeRange, cols, format);
+}
+
+inline bool fetchLogByClass(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, LogMsgClass logclass, LogAccessTimeRange timeRange, StringArray & cols, LogAccessLogFormat format = LOGACCESS_LOGFORMAT_json)
+{
+    return fetchLog(returnbuf, logAccess, getClassLogAccessFilter(logclass), timeRange, cols, format);
+}
+
+//logAccessPluginConfig expected to contain connectivity and log mapping information
+typedef IRemoteLogAccess * (*newLogAccessPluginMethod_t_)(IPropertyTree & logAccessPluginConfig);
+
+class jlib_decl RemoteLogAccessLoader
+{
+public:
+    RemoteLogAccessLoader() = default;
+    ~RemoteLogAccessLoader();
+
+    template <class RemoteLogAccessPlugin>
+    static RemoteLogAccessPlugin * queryRemoteLogAccessor()
+    {
+        Owned<IPropertyTree> compConfig = getComponentConfigSP();
+        Owned<IPropertyTree> logAccessPluginConfig = compConfig->getPropTree("logaccess");
+#ifdef _DEBUG
+        if (!logAccessPluginConfig)
+        {
+            const char *simulatedGlobalYaml = R"!!(global:
+              logaccess:
+                name: "localES"
+                type: "elasticstack"
+                connection:
+                  protocol: "http"
+                  host: "localhost"
+                  port: 9200
+                logmaps:
+                - type: "global"
+                  storename: "filebeat-7.9.3-*"
+                  searchcolumn: "message"
+                  timestampcolumn: "created_ts"
+                - type: "workunits"
+                  storename: "filebeat-7.9.3-*"
+                  searchcolumn: "hpcc.log.jobid"
+                - type: "components"
+                  searchcolumn: "kubernetes.container.name"
+                - type: "audience"
+                  searchcolumn: "hpcc.log.audience"
+                - type: "class"
+                  searchcolumn: "hpcc.log.class"
+            )!!";
+            Owned<IPropertyTree> testTree = createPTreeFromYAMLString(simulatedGlobalYaml, ipt_none, ptr_ignoreWhiteSpace, nullptr);
+            logAccessPluginConfig.set(testTree->getPropTree("global/logaccess"));
+        }
+#endif
+        if (!logAccessPluginConfig)
+            throw makeStringException(-1, "RemoteLogAccessLoader: logaccess configuration not available!");
+
+        static constexpr const char * methodName = "loadLogAccessPlugin";
+        static constexpr const char * instFactoryName = "createInstance";
+
+        StringBuffer libName; //lib<type>logaccess.so
+        StringBuffer type;
+        logAccessPluginConfig->getProp("@type", type);
+        if (type.isEmpty())
+            throw makeStringExceptionV(-1, "%s RemoteLogAccess plugin kind not specified.", methodName);
+        libName.append("lib").append(type.str()).append("logaccess");
+
+        //Load the DLL/SO
+        HINSTANCE logAccessPluginLib = LoadSharedObject(libName.str(), true, false);
+        if(logAccessPluginLib == nullptr)
+            throw makeStringExceptionV(-1, "%s cannot load library '%s'", methodName, libName.str());
+
+        newLogAccessPluginMethod_t_ xproc = nullptr;
+        xproc = (newLogAccessPluginMethod_t_)GetSharedProcedure(logAccessPluginLib, instFactoryName);
+        if (xproc == nullptr)
+            throw makeStringExceptionV(-1, "%s cannot locate procedure %s in library '%s'", methodName, instFactoryName, libName.str());
+
+        //Call logaccessplugin instance factory and return the new instance
+        DBGLOG("Calling '%s' in log access plugin '%s'", instFactoryName, libName.str());
+        RemoteLogAccessPlugin * pLogAccessPlugin = dynamic_cast<RemoteLogAccessPlugin*>(xproc(*logAccessPluginConfig));
+
+        if (pLogAccessPlugin == nullptr)
+            throw makeStringExceptionV(-1, "%s Log Access Plugin '%s' failed to instantiate in call to %s", methodName, libName.str(), instFactoryName);
+
+        return pLogAccessPlugin;
+    }
+};
 #endif

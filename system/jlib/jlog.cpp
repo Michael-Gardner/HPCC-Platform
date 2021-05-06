@@ -917,6 +917,7 @@ void ComponentLogMsgFilter::addToPTree(IPropertyTree * tree) const
     tree->addPropTree("filter", filterTree);
 }
 
+
 bool RegexLogMsgFilter::includeMessage(const LogMsg & msg) const 
 { 
     if(localFlag && msg.queryRemoteFlag()) return false; 
@@ -3328,4 +3329,55 @@ IComponentLogFileCreator * createComponentLogFileCreator(const char *_logDir, co
 IComponentLogFileCreator * createComponentLogFileCreator(const char *_component)
 {
     return new CComponentLogFileCreator(_component);
+}
+
+ILogAccessFilter * getLogAccessFilterFromPTree(IPropertyTree * xml)
+{
+	StringBuffer type;
+	if(strcmp(type.str(), "jobid")==0) return new FieldLogAccessFilter(xml, LOGACCESS_FILTER_jobid);
+	else if(strcmp(type.str(), "audience")==0) return new FieldLogAccessFilter(xml, LOGACCESS_FILTER_audience);
+	else if(strcmp(type.str(), "class")==0) return new FieldLogAccessFilter(xml, LOGACCESS_FILTER_class);
+	else if(strcmp(type.str(), "component")==0) return new FieldLogAccessFilter(xml, LOGACCESS_FILTER_component);
+	else if(strcmp(type.str(), "and")==0) return new BinaryLogAccessFilter(xml, LOGACCESS_FILTER_and);
+	else if(strcmp(type.str(), "or")==0) return new BinaryLogAccessFilter(xml, LOGACCESS_FILTER_or);
+	else assertex(!"getLogAccessFilterFromPTree : unrecognized LogAccessFilter type");
+	return nullptr;
+}
+
+ILogAccessFilter * getWildCardLogAccessFilter()
+{
+	return new FieldLogAccessFilter("", LOGACCESS_FILTER_wildcard);
+}
+
+ILogAccessFilter * getWUIDLogAccessFilter(const char * wuid)
+{
+	return new FieldLogAccessFilter(wuid, LOGACCESS_FILTER_jobid);
+}
+
+ILogAccessFilter * getComponentLogAccessFilter(const char * component)
+{
+    return new FieldLogAccessFilter(component, LOGACCESS_FILTER_component);
+}
+
+ILogAccessFilter * getAudienceLogAccessFilter(MessageAudience audience)
+{
+    return new FieldLogAccessFilter(LogMsgAudienceToFixString(audience), LOGACCESS_FILTER_audience);
+}
+
+ILogAccessFilter * getClassLogAccessFilter(LogMsgClass logclass)
+{
+    return new FieldLogAccessFilter(LogMsgClassToFixString(logclass), LOGACCESS_FILTER_class);
+}
+
+ILogAccessFilter * getBinaryLogAccessFilter(ILogAccessFilter * arg1, ILogAccessFilter * arg2, LogAccessFilterType type)
+{
+    return new BinaryLogAccessFilter(arg1, arg2, type);
+}
+
+ILogAccessFilter * getBinaryLogAccessFilterOwn(ILogAccessFilter * arg1, ILogAccessFilter * arg2, LogAccessFilterType type)
+{
+	ILogAccessFilter * ret = new BinaryLogAccessFilter(arg1, arg2, type);
+    arg1->Release();
+    arg2->Release();
+    return ret;
 }
