@@ -46,6 +46,23 @@ set_property(TARGET cpr
   PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libcpr${CMAKE_SHARED_LIBRARY_SUFFIX})
 add_dependencies(cpr elasticlient-build)
 
+if(NOT PLUGIN)
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libelasticlient${CMAKE_SHARED_LIBRARY_SUFFIX}
+    DESTINATION ${LIB_DIR})
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticlient/LICENSE.txt
+    RENAME elasticlient-LICENSE.txt
+    DESTINATION ${LIB_DIR})
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libjsoncpp${CMAKE_SHARED_LIBRARY_SUFFIX}
+    DESTINATION ${LIB_DIR})
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticlient/external/jsoncpp/LICENSE
+    RENAME jsoncpp-LICENSE.txt
+    DESTINATION ${LIB_DIR})
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libcpr${CMAKE_SHARED_LIBRARY_SUFFIX}
+    DESTINATION ${LIB_DIR})
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticlient/external/cpr/LICENSE
+    RENAME cpr-LICENSE.txt
+    DESTINATION ${LIB_DIR})
+endif(NOT PLUGIN)
 
 # elastistacklogaccess library
 # update cxx_flags to be less restrictive when building against elasticlient header files
