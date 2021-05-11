@@ -46,20 +46,46 @@ set_property(TARGET cpr
   PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libcpr${CMAKE_SHARED_LIBRARY_SUFFIX})
 add_dependencies(cpr elasticlient-build)
 
+set(ELASTICLIENT_RPATH ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib)
+
 if(NOT PLUGIN)
+  #install(CODE "set(ENV{LD_LIBRARY_PATH} \"\$ENV{LD_LIBRARY_PATH}:${AWS_DEP_LIBDIR}:${PROJECT_BINARY_DIR}:${PROJECT_BINARY_DIR}/aws-sdk-cpp/aws-cpp-sdk-core:${PROJECT_BINARY_DIR}/aws-sdk-cpp/aws-cpp-sdk-sqs:${PROJECT_BINARY_DIR}/aws-sdk-cpp/aws-cpp-sdk-s3\")")
+
   install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libelasticlient${CMAKE_SHARED_LIBRARY_SUFFIX}
     DESTINATION ${LIB_DIR})
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticlient/LICENSE.txt
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libelasticlient${CMAKE_SHARED_LIBRARY_SUFFIX}.2
+    DESTINATION ${LIB_DIR})
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libelasticlient${CMAKE_SHARED_LIBRARY_SUFFIX}.2.1.0
+    DESTINATION ${LIB_DIR})
+  install(CODE "file(RPATH_CHANGE
+    FILE \"${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libelasticlient${CMAKE_SHARED_LIBRARY_SUFFIX}\"
+    OLD_RPATH \"${ELASTICLIENT_RPATH}:\"
+    NEW_RPATH \"${CMAKE_INSTALL_RPATH}\")")
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticclient/LICENSE.txt
     RENAME elasticlient-LICENSE.txt
     DESTINATION ${LIB_DIR})
+
   install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libjsoncpp${CMAKE_SHARED_LIBRARY_SUFFIX}
     DESTINATION ${LIB_DIR})
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticlient/external/jsoncpp/LICENSE
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libjsoncpp${CMAKE_SHARED_LIBRARY_SUFFIX}.19
+    DESTINATION ${LIB_DIR})
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libjsoncpp${CMAKE_SHARED_LIBRARY_SUFFIX}.1.8.4
+    DESTINATION ${LIB_DIR})
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticclient/external/jsoncpp/LICENSE
     RENAME jsoncpp-LICENSE.txt
     DESTINATION ${LIB_DIR})
+
   install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libcpr${CMAKE_SHARED_LIBRARY_SUFFIX}
     DESTINATION ${LIB_DIR})
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticlient/external/cpr/LICENSE
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libcpr${CMAKE_SHARED_LIBRARY_SUFFIX}.1
+    DESTINATION ${LIB_DIR})
+  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libcpr${CMAKE_SHARED_LIBRARY_SUFFIX}.1.5.1
+    DESTINATION ${LIB_DIR})
+  install(CODE "file(RPATH_CHANGE
+    FILE \"${CMAKE_CURRENT_BINARY_DIR}/elasticlient/lib/libcpr${CMAKE_SHARED_LIBRARY_SUFFIX}\"
+    OLD_RPATH \"${ELASTICLIENT_RPATH}:\"
+    NEW_RPATH \"${CMAKE_INSTALL_RPATH}\")")
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/elasticclient/external/cpr/LICENSE
     RENAME cpr-LICENSE.txt
     DESTINATION ${LIB_DIR})
 endif(NOT PLUGIN)
