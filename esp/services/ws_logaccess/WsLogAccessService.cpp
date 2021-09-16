@@ -19,8 +19,8 @@ bool Cws_logaccessEx::onGetLogAccessMeta(IEspContext &context, IEspGetLogAccessM
     bool success = true;
     if (m_remoteLogAccessor)
     {
-        resp.setType(m_remoteLogAccessor->getRemoteLogAccessType());
-        resp.setConnection(m_remoteLogAccessor->fetchConnectionStr());
+        resp.setRemoteLogManagerType(m_remoteLogAccessor->getRemoteLogAccessType());
+        resp.setRemoteLogManagerConnectionString(m_remoteLogAccessor->fetchConnectionStr());
     }
     else
         success = false;
@@ -28,7 +28,7 @@ bool Cws_logaccessEx::onGetLogAccessMeta(IEspContext &context, IEspGetLogAccessM
     return success;
 }
 
-void Cws_logaccessEx::init(IPropertyTree *cfg, const char *process, const char *service)
+void Cws_logaccessEx::init(const IPropertyTree *cfg, const char *process, const char *service)
 {
     LOG(MCdebugProgress,"WsLogAccessService loading remote log access plug-in...");
 
@@ -67,42 +67,42 @@ bool Cws_logaccessEx::onGetLogs(IEspContext &context, IEspGetLogsRequest &req, I
 
     if (m_remoteLogAccessor)
     {
-        CLogAccessType searchbycategory = req.getLogCategory();
-        const char * searchbyvalue = req.getValue();
-        if (searchbycategory != CLogAccessType_All && (!searchbyvalue || !*searchbyvalue))
+        CLogAccessType searchByCategory = req.getLogCategory();
+        const char * searchByValue = req.getSearchByValue();
+        if (searchByCategory != CLogAccessType_All && isEmptyString(searchByValue))
         {
             message = "WsLogAccess::onGetLogs: Must provide log category";
             success = false;
         }
         else
         {
-            ILogAccessFilter * filter = nullptr;
-            switch (searchbycategory)
+            LogAccessConditions logFetchOptions;
+            switch (searchByCategory)
             {
                 case CLogAccessType_All:
-                    filter = getWildCardLogAccessFilter();
+                    logFetchOptions.setFilter(getWildCardLogAccessFilter());
                     break;
                 case CLogAccessType_ByWUID:
-                    filter = getWUIDLogAccessFilter(searchbyvalue);
+                    logFetchOptions.setFilter(getJobIDLogAccessFilter(searchByValue));
                     break;
                 case CLogAccessType_ByComponent:
-                    filter = getComponentLogAccessFilter(searchbyvalue);
+                    logFetchOptions.setFilter(getComponentLogAccessFilter(searchByValue));
                     break;
                 case CLogAccessType_ByLogType:
                 {
-                    LogMsgClass logtype = LogMsgClass(LogMsgClassFromAbbrev(searchbyvalue));
-                    if (logtype == 0 )
-                        throw makeStringExceptionV(-1, "Invalid Log Type 3-letter code encountered: '%s' - Available values: 'DIS,ERR,WRN,INF,PRO,MET'", searchbyvalue);
-                    filter = getClassLogAccessFilter(logtype);
+                    LogMsgClass logType = LogMsgClass(LogMsgClassFromAbbrev(searchByValue));
+                    if (logType == 0 )
+                        throw makeStringExceptionV(-1, "Invalid Log Type 3-letter code encountered: '%s' - Available values: 'DIS,ERR,WRN,INF,PRO,MET'", searchByValue);
+                    logFetchOptions.setFilter(getClassLogAccessFilter(logType));
                     break;
                 }
                 case CLogAccessType_ByTargetAudience:
                 {
-                    MessageAudience targetaud = MessageAudience(LogMsgAudFromAbbrev(searchbyvalue));
-                    if (targetaud == 0 || targetaud == MSGAUD_all)
-                        throw makeStringExceptionV(-1, "Invalid Target Audience 3-letter code encountered: '%s' - Available values: 'OPR,USR,PRO,ADT'", searchbyvalue);
+                    MessageAudience targetAud = MessageAudience(LogMsgAudFromAbbrev(searchByValue));
+                    if (targetAud == 0 || targetAud == MSGAUD_all)
+                        throw makeStringExceptionV(-1, "Invalid Target Audience 3-letter code encountered: '%s' - Available values: 'OPR,USR,PRO,ADT'", searchByValue);
 
-                    filter = getAudienceLogAccessFilter(targetaud);
+                    logFetchOptions.setFilter(getAudienceLogAccessFilter(targetAud));
                     break;
                 }
                 case LogAccessType_Undefined:
@@ -114,26 +114,23 @@ bool Cws_logaccessEx::onGetLogs(IEspContext &context, IEspGetLogsRequest &req, I
             struct LogAccessTimeRange range = requestedRangeToLARange(req.getRange());
             StringArray & cols = req.getColumns();
 
-            int limit = req.getLimit();
+            unsigned limit = req.getLogLineLimit();
             if (limit < 1)
-                throw makeStringExceptionV(-1, "WsLogAccess: Encountered invalid limit value: '%d'", limit);
+                throw makeStringExceptionV(-1, "WsLogAccess: Encountered invalid LogLineLimit value: '%u'", limit);
 
-            long offset = req.getOffset();
+            long offset = req.getLogLineOffset();
             if (offset < 0)
-                throw makeStringExceptionV(-1, "WsLogAccess: Encountered invalid offset value: '%ld'", offset);
+                throw makeStringExceptionV(-1, "WsLogAccess: Encountered invalid LogLineOffset value: '%ld'", offset);
 
-            LogAccessConditions logFetchoptions;
-
-            logFetchoptions.timeRange = range;
-            logFetchoptions.filter = filter;
-            logFetchoptions.copyLogFieldNames(&cols);
-            logFetchoptions.limit = limit;
-            logFetchoptions.offset = offset;
+            logFetchOptions.timeRange = range;
+            logFetchOptions.copyLogFieldNames(&cols);
+            logFetchOptions.limit = limit;
+            logFetchOptions.offset = offset;
 
             StringBuffer logcontent;
-            m_remoteLogAccessor->fetchLog(logFetchoptions, logcontent, LogAccessFormatFromName(req.getFormat()));
+            m_remoteLogAccessor->fetchLog(logFetchOptions, logcontent, logAccessFormatFromName(req.getFormat()));
 
-            resp.setRemoteLog(logcontent.str());
+            resp.setLogLines(logcontent.str());
         }
     }
     else
@@ -143,7 +140,7 @@ bool Cws_logaccessEx::onGetLogs(IEspContext &context, IEspGetLogsRequest &req, I
     }
 
     resp.setSuccess(success);
-    if (message && *message)
+    if (!isEmptyString(message))
         resp.setMessage(message);
 
     return success;

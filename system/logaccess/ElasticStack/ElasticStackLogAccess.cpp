@@ -27,12 +27,6 @@ ElasticStackLogAccess::ElasticStackLogAccess(const std::vector<std::string> &hos
 
     m_pluginCfg.set(&logAccessPluginConfig);
 
-#ifdef _DEBUG
-    StringBuffer xml;
-    toXML(m_pluginCfg, xml);
-    fprintf(stdout, "RRRRR%s", xml.str());
-#endif
-
     m_globalIndexTimestampField.set(DEFAULT_TS_NAME);
     m_globalIndexSearchPattern.set(DEFAULT_INDEX_PATTERN);
 
@@ -40,119 +34,50 @@ ElasticStackLogAccess::ElasticStackLogAccess(const std::vector<std::string> &hos
     m_workunitSearchColName.set(DEFAULT_HPCC_LOG_JOBID_COL);
     m_componentsSearchColName.set(DEFAULT_HPCC_LOG_COMPONENT_COL);
 
-    Owned<IPropertyTreeIterator> logmapiter = m_pluginCfg->getElements("logmaps");
-    ForEach(*logmapiter)
+    Owned<IPropertyTreeIterator> logMapIter = m_pluginCfg->getElements("logMaps");
+    ForEach(*logMapIter)
     {
-        IPropertyTree & logmap = logmapiter->query();
-        const char * logmaptype = logmap.queryProp("@type");
-        if (stricmp(logmaptype, "global")==0)
+        IPropertyTree & logMap = logMapIter->query();
+        const char * logMapType = logMap.queryProp("@type");
+        if (streq(logMapType, "global"))
         {
-            if (logmap.hasProp("@storename"))
-                m_globalIndexSearchPattern = logmap.queryProp("@storename");
-            if (logmap.hasProp("@searchcolumn"))
-                m_globalSearchColName = logmap.queryProp("@searchcolumn");
-            if (logmap.hasProp("@timestampcolumn"))
-            m_globalIndexTimestampField = logmap.queryProp("@timestampcolumn");
+            if (logMap.hasProp("@storeName"))
+                m_globalIndexSearchPattern = logMap.queryProp("@storeName");
+            if (logMap.hasProp("@searchColumn"))
+                m_globalSearchColName = logMap.queryProp("@searchColumn");
+            if (logMap.hasProp("@timeStampColumn"))
+            m_globalIndexTimestampField = logMap.queryProp("@timeStampColumn");
         }
-        else if (stricmp(logmaptype, "workunits")==0)
+        else if (streq(logMapType, "workunits"))
         {
-            if (logmap.hasProp("@storename"))
-                m_workunitIndexSearchPattern = logmap.queryProp("@storename");
-            if (logmap.hasProp("@searchcolumn"))
-                m_workunitSearchColName = logmap.queryProp("@searchcolumn");
+            if (logMap.hasProp("@storeName"))
+                m_workunitIndexSearchPattern = logMap.queryProp("@storeName");
+            if (logMap.hasProp("@searchColumn"))
+                m_workunitSearchColName = logMap.queryProp("@searchColumn");
         }
-        else if (stricmp(logmaptype, "components")==0)
+        else if (streq(logMapType, "components"))
         {
-            if (logmap.hasProp("@storename"))
-                m_componentsIndexSearchPattern = logmap.queryProp("@storename");
-            if (logmap.hasProp("@searchcolumn"))
-                m_componentsSearchColName = logmap.queryProp("@searchcolumn");
+            if (logMap.hasProp("@storeName"))
+                m_componentsIndexSearchPattern = logMap.queryProp("@storeName");
+            if (logMap.hasProp("@searchColumn"))
+                m_componentsSearchColName = logMap.queryProp("@searchColumn");
         }
-        else if (stricmp(logmaptype, "class")==0)
+        else if (streq(logMapType, "class"))
         {
-            if (logmap.hasProp("@storename"))
-                m_classIndexSearchPattern = logmap.queryProp("@storename");
-            if (logmap.hasProp("@searchcolumn"))
-                m_classSearchColName = logmap.queryProp("@searchcolumn");
+            if (logMap.hasProp("@storeName"))
+                m_classIndexSearchPattern = logMap.queryProp("@storeName");
+            if (logMap.hasProp("@searchColumn"))
+                m_classSearchColName = logMap.queryProp("@searchColumn");
         }
     }
-
-#ifdef _DEBUG
-    std::string document {"{\"kubernetes.container.name\": \"eclwatch\", \"container.image.name\": \"hpccsystems\\\\core\", \"hpcc.log.message\": \"00000777 USR 2021-06-18 17:55:03.316 975333 975333 W20210513-220848 \\\"CSmartSocketFactory::CSmartSocketFactory(192.168.1.140:9876)\\\"\"}"};
-
-    std::string testindex = "filebeat-7.9.3-2021.06.18-000001";
-
-    try
-    {
-        // Index the document, index "testindex" must be created before
-        cpr::Response indexResponse = m_esClient.index(testindex, DEFAULT_ES_DOC_TYPE, "", document);
-        // 200
-        std::cout << indexResponse.status_code << std::endl;
-        // application/json; charset=UTF-8
-        std::cout << "Search results: "<< std::endl;
-        // Elasticsearch response (JSON text string)
-        std::cout << indexResponse.text << std::endl;
-    }
-    catch (std::runtime_error &e)
-    {
-        const char * wha = e.what();
-        fprintf(stdout, "Error creating index %s", wha);
-    }
-    catch (IException * e)
-    {
-        StringBuffer mess;
-        const char * message = e->errorMessage(mess);
-        fprintf(stdout, "Error creating index %s", mess.str());
-        e->Release();
-    }
-
-    try
-    {
-        // Retrieve the document
-        cpr::Response retrievedDocument = m_esClient.get(testindex, DEFAULT_ES_DOC_TYPE, "");
-        // 200
-        std::cout << retrievedDocument.status_code << std::endl;
-        // application/json; charset=UTF-8
-        std::cout << retrievedDocument.header["content-type"] << std::endl;
-        // Elasticsearch response (JSON text string) where key "_source" contain:
-        // {"message": "Hello world!"}
-        Owned<IPropertyTree> resptree = createPTreeFromJSONString(retrievedDocument.text.c_str());
-        std::cout << retrievedDocument.text << std::endl;
-
-        Json::Value root;
-        Json::CharReaderBuilder builder;
-        Json::CharReader * reader = builder.newCharReader();
-
-        std::string errors;
-
-        bool parsingSuccessful = reader->parse(retrievedDocument.text.c_str(), retrievedDocument.text.c_str() + retrievedDocument.text.size(), &root, &errors);
-        delete reader;
-
-        if (!parsingSuccessful)
-            return;
-
-        const Json::Value &items = root["items"];
-    }
-    catch (std::runtime_error &e)
-    {
-        const char * wha = e.what();
-        fprintf(stdout, "Error retrieving doc: %s", wha);
-    }
-    catch (IException * e)
-    {
-        StringBuffer mess;
-        const char * message = e->errorMessage(mess);
-        fprintf(stdout, "Error retrieving doc: %s", mess.str());
-    }
-#endif
 }
 
 IPropertyTree * ElasticStackLogAccess::getTimestampTypeFormat(const char * indexpattern, const char * fieldname)
 {
-    if (!indexpattern || !*indexpattern)
+    if (isEmptyString(indexpattern))
         throw makeStringException(-1, "ElasticStackLogAccess::getTimestampTypeFormat: indexpattern must be provided");
 
-    if (!fieldname || !*fieldname)
+    if (isEmptyString(fieldname))
             throw makeStringException(-1, "ElasticStackLogAccess::getTimestampTypeFormat: fieldname must be provided");
 
     try
@@ -234,11 +159,11 @@ void processESJsonResp(const cpr::Response & retrievedDocument, StringBuffer & r
     {
         DBGLOG("Retrieved ES JSON DOC: %s", retrievedDocument.text.c_str());
 
-        IPropertyTree * tree = createPTreeFromJSONString(retrievedDocument.text.c_str());
+        Owned<IPropertyTree> tree = createPTreeFromJSONString(retrievedDocument.text.c_str());
         if (!tree)
             throw makeStringExceptionV(-1, "%s: Could not parse ElasticSearch query response", COMPONENT_NAME);
 
-        if (tree->hasProp("timed_out") && tree->getPropBool("timed_out") == true)
+        if (tree->hasProp("timed_out") && tree->getPropBool("timed_out"))
             LOG(MCuserProgress,"ES Log Access: timeout reported");
         if (tree->hasProp("_shards/failed") && tree->getPropInt("_shards/failed") > 0)
             LOG(MCuserProgress,"ES Log Access: failed _shards reported");
@@ -320,18 +245,18 @@ void esTimestampQueryRangeString(std::string & range, const char * timestampfiel
 
         //We'll report the timestamps as epoch_millis
         range = "\"range\": { \"";
-            range += timestampfield;
-                range += "\": {";
-                    range += "\"gte\": \"";
-                    range += std::to_string(from*1000);
-                    range += "\"";
+        range += timestampfield;
+        range += "\": {";
+        range += "\"gte\": \"";
+        range += std::to_string(from*1000);
+        range += "\"";
 
-                    if (to != -1) //aka 'to' has been initialized
-                    {
-                        range += ",\"lte\": \"";
-                        range += std::to_string(to*1000);
-                        range += "\"";
-                    }
+        if (to != -1) //aka 'to' has been initialized
+        {
+            range += ",\"lte\": \"";
+            range += std::to_string(to*1000);
+            range += "\"";
+        }
         range += "} }";
     }
     else
@@ -383,7 +308,7 @@ void esMatchQueryString(std::string & search, const char *searchval, const char 
 /*
  * Construct Elasticsearch query directives string
  */
-void esSearchMetaData(std::string & search, StringArray & selectcols, int size = 10, int from = 0)
+void esSearchMetaData(std::string & search, StringArray & selectcols, unsigned size = 100, int from = 0)
 {
         //Query parameters:
         //https://www.elastic.co/guide/en/elasticsearch/reference/6.8/search-request-body.html
@@ -404,12 +329,12 @@ void esSearchMetaData(std::string & search, StringArray & selectcols, int size =
             if (!sourcecols.isEmpty())
                 search += sourcecols.str() ;
             else
-                search += "*";
+                search += "\"*\"";
                 //search += "!*.keyword"; //all fields ignoring the .keyword postfixed fields
         }
         else
             //search += "!*.keyword"; //all fields ignoring the .keyword postfixed fields
-            search += "*";
+            search += "\"*\"";
 
         search += "],";
         search += "\"from\": ";
@@ -432,8 +357,8 @@ cpr::Response ElasticStackLogAccess::performESQuery(LogAccessConditions & option
 
         bool fullTextSearch = true;
 
-        options.filter->toString(queryValue);
-        switch (options.filter->filterType())
+        options.queryFilter()->toString(queryValue);
+        switch (options.queryFilter()->filterType())
         {
         case LOGACCESS_FILTER_jobid:
         {
@@ -510,29 +435,29 @@ cpr::Response ElasticStackLogAccess::performESQuery(LogAccessConditions & option
         }
 
         std::string fullrequest = "{";
-        esSearchMetaData(fullrequest, options.logFieldNames, options.limit == -1 ? DEFAULT_ES_DOC_LIMIT : options.limit, options.offset == -1 ? DEFAULT_ES_DOC_LIMIT : options.offset);
+        esSearchMetaData(fullrequest, options.logFieldNames, options.limit, options.offset);
 
-            fullrequest += "\"query\": { \"bool\": { \"must\": { ";
+        fullrequest += "\"query\": { \"bool\": { \"must\": { ";
 
-            std::string criteria;
-            if (fullTextSearch) //are we performing a query on a blob, or exact term match?
-                esMatchQueryString(criteria, queryValue.str(), queryField.c_str());
-            else
-                esTermQueryString(criteria, queryValue.str(), queryField.c_str());
-            fullrequest += criteria.c_str();
+        std::string criteria;
+        if (fullTextSearch) //are we performing a query on a blob, or exact term match?
+            esMatchQueryString(criteria, queryValue.str(), queryField.c_str());
+        else
+            esTermQueryString(criteria, queryValue.str(), queryField.c_str());
+        fullrequest += criteria.c_str();
         fullrequest += "}"; //end must
 
-            std::string filter = ", \"filter\": {";
-                std::string range;
+        std::string filter = ", \"filter\": {";
+        std::string range;
 
-                //Bail out earlier?
-                if (options.timeRange.startt.isNull())
-                    throw makeStringExceptionV(-1, "%s: start time must be provided!", COMPONENT_NAME);
+        //Bail out earlier?
+        if (options.timeRange.startt.isNull())
+            throw makeStringExceptionV(-1, "%s: start time must be provided!", COMPONENT_NAME);
 
-                esTimestampQueryRangeString(range, m_globalIndexTimestampField.str(), options.timeRange.startt.getSimple(),options.timeRange.endt.isNull() ? -1 : options.timeRange.endt.getSimple());
+        esTimestampQueryRangeString(range, m_globalIndexTimestampField.str(), options.timeRange.startt.getSimple(),options.timeRange.endt.isNull() ? -1 : options.timeRange.endt.getSimple());
 
-                filter += range.c_str();
-            filter += "}"; //end filter
+        filter += range.c_str();
+        filter += "}"; //end filter
 
         fullrequest += filter.c_str();
         fullrequest += "}}}"; //end bool and query
@@ -574,7 +499,7 @@ extern "C" IRemoteLogAccess * createInstance(IPropertyTree & logAccessPluginConf
     std::string elasticSearchConnString;
     elasticSearchConnString = !protocol || !*protocol ? "http" : protocol;
     elasticSearchConnString.append("://");
-    elasticSearchConnString.append((!host || !*host) ? "localhost" : host);
+    elasticSearchConnString.append((!host || !*host) ? "elasticsearch-master" : host);
     elasticSearchConnString.append(":").append((!port || !*port) ? ElasticStackLogAccess::DEFAULT_ES_PORT : port);
     elasticSearchConnString.append("/"); // required!
 

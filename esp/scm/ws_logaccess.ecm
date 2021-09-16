@@ -43,25 +43,24 @@ ESPRequest GetLogAccessMetaRequest
 
 ESPResponse GetLogAccessMetaResponse
 {
-    string Type;
-    string Connection;
+    string RemoteLogManagerType;
+    string RemoteLogManagerConnectionString;
 };
 
 ESPRequest GetLogsRequest
 {
     ESPenum LogAccessType LogCategory;
-    string value;
+    string SearchByValue;
     ESPStruct TimeRange Range;
-    int limit(100);
-    int offset(0);
+    int LogLineLimit(100);
+    int LogLineOffset(0);
     ESParray<string> Columns;
     LogAccessLogFormat Format("JSON");
 };
 
 ESPResponse GetLogsResponse
 {
-    string RemoteLog;
-    ESPenum LogAccessType LogCategory;
+    string LogLines;
     boolean Success;
     string Message;
 };

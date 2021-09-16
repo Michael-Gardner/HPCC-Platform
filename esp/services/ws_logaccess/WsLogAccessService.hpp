@@ -30,7 +30,7 @@ public:
 
     Cws_logaccessEx();
     virtual ~Cws_logaccessEx();
-    virtual void init(IPropertyTree *cfg, const char *process, const char *service);
+    virtual void init(const IPropertyTree *cfg, const char *process, const char *service);
     virtual bool onGetLogAccessMeta(IEspContext &context, IEspGetLogAccessMetaRequest &req, IEspGetLogAccessMetaResponse &resp);
     virtual bool onGetLogs(IEspContext &context, IEspGetLogsRequest &req, IEspGetLogsResponse & resp);
 };

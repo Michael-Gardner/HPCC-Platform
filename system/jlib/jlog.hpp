@@ -795,7 +795,6 @@ extern jlib_decl ILogMsgFilter * queryLocalLogMsgFilter();
 extern jlib_decl ILogMsgFilter * queryPassNoneLogMsgFilter();
 extern jlib_decl ILogMsgFilter * getCategoryLogMsgFilter(unsigned audiences = MSGAUD_all, unsigned classes = MSGCLS_all, LogMsgDetail maxDetail = TopDetail, bool local = false);
 extern jlib_decl ILogMsgFilter * getPIDLogMsgFilter(unsigned pid, bool local = false);
-extern jlib_decl ILogMsgFilter * getWUIDLogMsgFilter(const char * wuid);
 extern jlib_decl ILogMsgFilter * getTIDLogMsgFilter(unsigned tid, bool local = false);
 extern jlib_decl ILogMsgFilter * getNodeLogMsgFilter(const char * name, unsigned port = 0, bool local = false);
 extern jlib_decl ILogMsgFilter * getNodeLogMsgFilter(const IpAddress & ip, unsigned port = 0, bool local = false);
@@ -1384,45 +1383,45 @@ typedef enum
     LOGACCESS_FILTER_unknown
 } LogAccessFilterType;
 
-inline const char * LogAccessFilterTypeToString(LogAccessFilterType field)
+inline const char * logAccessFilterTypeToString(LogAccessFilterType field)
 {
     switch(field)
     {
     case LOGACCESS_FILTER_jobid:
-        return("jobid");
+        return "jobid";
     case LOGACCESS_FILTER_class:
-        return("class");
+        return "class";
     case LOGACCESS_FILTER_audience:
-        return("audience");
+        return "audience";
     case LOGACCESS_FILTER_component:
-        return("component");
+        return "component";
     case LOGACCESS_FILTER_or:
-        return("or");
+        return "or";
     case LOGACCESS_FILTER_and:
-        return("and");
+        return "and";
     case LOGACCESS_FILTER_wildcard:
-         return("*");
+         return "*" ;
     default:
-        return("UNKNOWN");
+        return "UNKNOWN";
     }
 }
 
-inline unsigned LogAccessFilterTypeFromName(char const * name)
+inline unsigned logAccessFilterTypeFromName(char const * name)
 {
-    if (!name || !*name)
+    if (isEmptyString(name))
         return LOGACCESS_FILTER_unknown;
 
-    if(strnicmp(name, "jobid", 5)==0)
+    if(strieq(name, "jobid"))
         return LOGACCESS_FILTER_jobid;
-    if(strnicmp(name, "class", 5)==0)
+    if(strieq(name, "class"))
         return LOGACCESS_FILTER_class;
-    if(strnicmp(name, "audience", 8)==0)
+    if(strieq(name, "audience"))
         return LOGACCESS_FILTER_audience;
-    if(strnicmp(name, "component", 9)==0)
+    if(strieq(name, "component"))
         return LOGACCESS_FILTER_component;
-    if(strnicmp(name, "or", 2)==0)
+    if(strieq(name, "or"))
         return LOGACCESS_FILTER_or;
-    if(strnicmp(name, "and", 3)==0)
+    if(strieq(name, "and"))
         return LOGACCESS_FILTER_and;
     return LOGACCESS_FILTER_unknown;
 }
@@ -1435,14 +1434,10 @@ interface jlib_decl ILogAccessFilter : public IInterface
     virtual LogAccessFilterType filterType() const = 0;
 };
 
-class CLogAccessFilter : implements ILogAccessFilter, public CInterface
-{
-public:
-    IMPLEMENT_IINTERFACE;
-};
+class CLogAccessFilter : implements CInterfaceOf<ILogAccessFilter> {};
 
 extern jlib_decl ILogAccessFilter * getLogAccessFilterFromPTree(IPropertyTree * tree);
-extern jlib_decl ILogAccessFilter * getWUIDLogAccessFilter(const char * wuid);
+extern jlib_decl ILogAccessFilter * getJobIDLogAccessFilter(const char * wuid);
 extern jlib_decl ILogAccessFilter * getComponentLogAccessFilter(const char * component);
 extern jlib_decl ILogAccessFilter * getAudienceLogAccessFilter(MessageAudience audience);
 extern jlib_decl ILogAccessFilter * getClassLogAccessFilter(LogMsgClass logclass);
@@ -1452,9 +1447,11 @@ extern jlib_decl ILogAccessFilter * getWildCardLogAccessFilter();
 
 struct LogAccessConditions
 {
-    ILogAccessFilter * filter;
+private:
+    Owned<ILogAccessFilter> filter;
+public:
     LogAccessTimeRange timeRange;
-    int limit = -1;
+    unsigned limit = 100;
     long offset = 0;
 
     StringArray logFieldNames;
@@ -1472,9 +1469,19 @@ struct LogAccessConditions
 
     ~LogAccessConditions() {}
 
+    ILogAccessFilter * queryFilter()
+    {
+        return filter.get();
+    }
+    void setFilter(ILogAccessFilter * _filter)
+    {
+        filter.setown(_filter);
+    }
+
     void appendLogFieldName(const char * fieldname)
     {
-        logFieldNames.append(fieldname);
+        if (!logFieldNames.contains(fieldname))
+            logFieldNames.append(fieldname);
     }
 
     void copyLogFieldNames(const StringArray * fields)
@@ -1483,7 +1490,7 @@ struct LogAccessConditions
         {
             ForEachItemIn(fieldsindex,*fields)
             {
-                logFieldNames.append(fields->item(fieldsindex));
+                appendLogFieldName(fields->item(fieldsindex));
             }
         }
     }
@@ -1497,16 +1504,16 @@ typedef enum
     LOGACCESS_LOGFORMAT_csv
 } LogAccessLogFormat;
 
-inline LogAccessLogFormat LogAccessFormatFromName(char const * name)
+inline LogAccessLogFormat logAccessFormatFromName(char const * name)
 {
-    if (!name || !*name)
+    if (isEmptyString(name))
         throw makeStringException(-1, "Encountered empty Log Access Format name");
 
-    if(strnicmp(name, "xml", 3)==0)
+    if(strieq(name, "xml"))
         return LOGACCESS_LOGFORMAT_xml;
-    else if(strnicmp(name, "json", 4)==0)
+    else if(strieq(name, "json"))
         return LOGACCESS_LOGFORMAT_json;
-    else if(strnicmp(name, "csv", 3)==0)
+    else if(strieq(name, "csv"))
         return LOGACCESS_LOGFORMAT_csv;
     else
         throw makeStringExceptionV(-1, "Encountered unknown Log Access Format name: '%s'", name);
@@ -1525,7 +1532,7 @@ inline bool fetchLog(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, ILo
 {
     LogAccessConditions logFetchoptions;
     logFetchoptions.timeRange = timeRange;
-    logFetchoptions.filter = filter;
+    logFetchoptions.setFilter(filter);
     logFetchoptions.copyLogFieldNames(&cols); //ensure these fields are declared in m_logMapping->queryProp("WorkUnits/@contentcolumn")? or in LogMap/Fields?"
 
     return logAccess.fetchLog(logFetchoptions, returnbuf, format);
@@ -1533,7 +1540,7 @@ inline bool fetchLog(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, ILo
 
 inline bool fetchJobIDLog(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, const char *jobid, LogAccessTimeRange timeRange, StringArray & cols, LogAccessLogFormat format = LOGACCESS_LOGFORMAT_json)
 {
-    return fetchLog(returnbuf, logAccess, getWUIDLogAccessFilter(jobid), timeRange, cols, format);
+    return fetchLog(returnbuf, logAccess, getJobIDLogAccessFilter(jobid), timeRange, cols, format);
 }
 
 inline bool fetchComponentLog(StringBuffer & returnbuf, IRemoteLogAccess & logAccess, const char * component, LogAccessTimeRange timeRange, StringArray & cols, LogAccessLogFormat format = LOGACCESS_LOGFORMAT_json)
@@ -1564,19 +1571,19 @@ public:
     static RemoteLogAccessPlugin * queryRemoteLogAccessor()
     {
         Owned<IPropertyTree> compConfig = getComponentConfigSP();
-        Owned<IPropertyTree> logAccessPluginConfig = compConfig->getPropTree("logaccess");
-#ifdef _DEBUG
+        Owned<IPropertyTree> logAccessPluginConfig = compConfig->getPropTree("logAccess");
+#ifdef LOGACCESSDEBUG
         if (!logAccessPluginConfig)
         {
             const char *simulatedGlobalYaml = R"!!(global:
-              logaccess:
+              logAccess:
                 name: "localES"
                 type: "elasticstack"
                 connection:
                   protocol: "http"
                   host: "localhost"
                   port: 9200
-                logmaps:
+                logMaps:
                 - type: "global"
                   storename: "filebeat-7.9.3-*"
                   searchcolumn: "message"
@@ -1592,7 +1599,7 @@ public:
                   searchcolumn: "hpcc.log.class"
             )!!";
             Owned<IPropertyTree> testTree = createPTreeFromYAMLString(simulatedGlobalYaml, ipt_none, ptr_ignoreWhiteSpace, nullptr);
-            logAccessPluginConfig.set(testTree->getPropTree("global/logaccess"));
+            logAccessPluginConfig.set(testTree->getPropTree("global/logAccess"));
         }
 #endif
         if (!logAccessPluginConfig)
