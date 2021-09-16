@@ -38,7 +38,7 @@
 
 using namespace elasticlient;
 
-class ELASTICSTACKLOGACCESS_API ElasticStackLogAccess : public CInterface, implements IRemoteLogAccess
+class ELASTICSTACKLOGACCESS_API ElasticStackLogAccess : implements CInterfaceOf<IRemoteLogAccess>
 {
 private:
     const char * type = "elasticstack";
@@ -91,12 +91,11 @@ public:
     static constexpr const char * LOGMAP_INDEXPATTERN_PATH = "logmap/global/@storename";
     static constexpr const char * LOGMAP_COLUMNNAME_PATH = "logmap/global/@searchcolumn";
     static constexpr const char * LOGMAP_TIMESTAMPCOL_PATH = "logmap/global/@timestampcolumn";
-    IMPLEMENT_IINTERFACE
 
     ElasticStackLogAccess(const std::vector<std::string> &hostUrlList, IPropertyTree & logAccessPluginConfig);
     virtual ~ElasticStackLogAccess() override = default;
 
-    bool fetchLog(LogAccessConditions & options, StringBuffer & returnbuf, LogAccessLogFormat format);
+    bool fetchLog(LogAccessConditions & options, StringBuffer & returnbuf, LogAccessLogFormat format) override;
 
     cpr::Response performESQuery(LogAccessConditions & options);
 
@@ -104,8 +103,7 @@ public:
     IPropertyTree * getIndexSearchStatus(const char * indexpattern);
     IPropertyTree * getTimestampTypeFormat(const char * indexpattern, const char * fieldname);
 
-    IPropertyTree * getRemoteLogStoreStatus() { return getESStatus();};
-    const char * getRemoteLogAccessType() { return type; }
-    IPropertyTree * fetchLogMap() { return m_pluginCfg->queryPropTree("logmap");}
-    const char * fetchConnectionStr() { return m_esConnectionStr.str();}
+    const char * getRemoteLogAccessType() override { return type; }
+    IPropertyTree * fetchLogMap() override { return m_pluginCfg->queryPropTree("logmap");}
+    const char * fetchConnectionStr() override { return m_esConnectionStr.str();}
 };

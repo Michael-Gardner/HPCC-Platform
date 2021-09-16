@@ -843,14 +843,14 @@ public:
     FieldLogAccessFilter(IPropertyTree * tree, LogAccessFilterType _filterType)
     {
         type = _filterType;
-        VStringBuffer xpath("@%s", LogAccessFilterTypeToString(type));
+        VStringBuffer xpath("@%s", logAccessFilterTypeToString(type));
         value.set(tree->queryProp(xpath.str()));
     }
 
     void addToPTree(IPropertyTree * tree) const
     {
         IPropertyTree * filterTree = createPTree(ipt_caseInsensitive);
-        filterTree->setProp("@type", LogAccessFilterTypeToString(type));
+        filterTree->setProp("@type", logAccessFilterTypeToString(type));
         filterTree->setProp("@value", value);
         tree->addPropTree("filter", filterTree);
     }
@@ -878,7 +878,7 @@ public:
     {
         type = _type;
 
-        Owned <IPropertyTreeIterator> iter = tree->getElements("filter");
+        Owned<IPropertyTreeIterator> iter = tree->getElements("filter");
         ForEach(*iter)
         {
             ILogAccessFilter *filter = getLogAccessFilterFromPTree(&(iter->query()));
@@ -894,7 +894,7 @@ public:
     void addToPTree(IPropertyTree * tree) const
     {
         IPropertyTree * filterTree = createPTree(ipt_caseInsensitive);
-        filterTree->setProp("@type", LogAccessFilterTypeToString(type));
+        filterTree->setProp("@type", logAccessFilterTypeToString(type));
         arg1->addToPTree(filterTree);
         arg2->addToPTree(filterTree);
         tree->addPropTree("filter", filterTree);
@@ -905,7 +905,7 @@ public:
         StringBuffer tmp;
         out.set("( ");
         arg1->toString(tmp);
-        out.appendf(" %s %s ", tmp.str(), LogAccessFilterTypeToString(type));
+        out.appendf(" %s %s ", tmp.str(), logAccessFilterTypeToString(type));
         arg2->toString(tmp.clear());
         out.appendf(" %s )", tmp.str());
     }
