@@ -13,6 +13,8 @@ on:
       - "!candidate-7.0.*"
       - "!candidate-6.*"
 
+  workflow_dispatch:
+
 jobs:
   pre_job:
     # continue-on-error: true # Uncomment once integration is finished
@@ -57,6 +59,8 @@ jobs:
           vcpkg install zlib:x64-windows
           vcpkg install openssl:x64-windows
           vcpkg install libxslt:x64-windows
+          vcpkg install curl:x64-windows
+          vcpkg install curlpp:x64-windows
       - name: Check out source code
         uses: actions/checkout@v2
         with:
