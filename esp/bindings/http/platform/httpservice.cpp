@@ -184,6 +184,8 @@ void checkSetCORSAllowOrigin(CHttpRequest *req, CHttpResponse *resp)
 
 int CEspHttpServer::processRequest()
 {
+    DBGLOG("####Custom HPCC Docker Test Build (2021-10-18-001)");
+
     IEspContext* ctx = m_request->queryContext();
     StringBuffer errMessage;
     m_request->setPersistentEnabled(m_apport->queryProtocol()->persistentEnabled() && !shouldClose);
