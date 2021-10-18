@@ -9,7 +9,9 @@ esp:
      port: 8880
    enableSEHMapping: true
    httpConfigAccess: true
-   logLevel: 1
+   logLevel: 10
+   logRequests: true
+   logResponses: true
    maxBacklogQueueSize: 200
    portalurl: http://hpccsystems.com/download
    logDir: "-"
