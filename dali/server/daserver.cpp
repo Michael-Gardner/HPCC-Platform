@@ -422,11 +422,17 @@ int main(int argc, const char* argv[])
         Owned<IFile> sentinelFile = createSentinelTarget();
         removeSentinelFile(sentinelFile);
 #ifndef _CONTAINERIZED
-        if (!checkCreateDaemon(argc, argv))
-            return EXIT_FAILURE;
+        //if (!checkCreateDaemon(argc, argv))
+        //    return EXIT_FAILURE;
 
         for (unsigned i=1;i<(unsigned)argc;i++) {
             if (streq(argv[i],"--daemon") || streq(argv[i],"-d")) {
+                if(!strncmp(argv[++i],"-",1)) {
+                    perror("Expected <instanceName> after --daemon | -d");
+                    usage();
+                    return EXIT_FAILURE;
+                }
+                // i is incremented in strncmp check, instanceName consumed
             }
             else if (streq(argv[i],"--server") || streq(argv[i],"-s"))
                 server = argv[++i];
