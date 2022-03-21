@@ -15,30 +15,29 @@
 #    limitations under the License.
 ##############################################################################
 
-# This dockerfile is used to generate a ubuntu1804 build environment for
+# This dockerfile is used to generate a ubuntu1804 build environment for 
 # baremetal package generation
 
 FROM ubuntu:18.04
 
 RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y curl
 
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
-RUN sudo apt-get install cmake bison flex build-essential binutils-dev \
-    libldap2-dev libcppunit-dev libicu-dev libxslt1-dev zlib1g-dev \
-    libboost-regex-dev libarchive-dev python-dev libv8-dev default-jdk \
-    libapr1-dev libaprutil1-dev libiberty-dev libhiredis-dev libtbb-dev \
-    libxalan-c-dev libnuma-dev libevent-dev libatlas-base-dev libblas-dev \
-    python3-dev default-libmysqlclient-dev libsqlite3-dev r-base-dev \
-    r-cran-rcpp r-cran-rinside r-cran-inline libmemcached-dev \
-    libcurl4-openssl-dev pkg-config libtool autotools-dev automake libssl-dev \
-    git
-
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y bison flex \
+    build-essential binutils-dev libldap2-dev \
+    libcppunit-dev libicu-dev libxslt1-dev zlib1g-dev libboost-regex-dev \
+    libarchive-dev python-dev libv8-dev default-jdk libapr1-dev \
+    libaprutil1-dev libiberty-dev libhiredis-dev libtbb-dev libxalan-c-dev \
+    libnuma-dev libevent-dev libatlas-base-dev libblas-dev python3-dev \
+    default-libmysqlclient-dev libsqlite3-dev r-base-dev r-cran-rcpp \
+    r-cran-rinside r-cran-inline libmemcached-dev libcurl4-openssl-dev \
+    pkg-config libtool autotools-dev automake libssl-dev git cmake
 
 RUN useradd -ms /bin/bash hpccbuild
 USER hpccbuild
 WORKDIR /home/hpccbuild
 
 RUN mkdir -p build
-WORKDIR /home/hpccbuild/build

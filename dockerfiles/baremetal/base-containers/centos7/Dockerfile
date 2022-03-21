@@ -46,6 +46,5 @@ USER hpccbuild
 WORKDIR /home/hpccbuild
 
 RUN mkdir -p build
-WORKDIR /home/hpccbuild/build
 
 ENTRYPOINT [ "/usr/bin/entrypoint.sh" ]
