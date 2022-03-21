@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 ##############################################################################
 #
 #    HPCC SYSTEMS software Copyright (C) 2022 HPCC Systems®.
@@ -17,21 +15,30 @@
 #    limitations under the License.
 ##############################################################################
 
-import subprocess
+# This dockerfile is used to generate the CE platform for centos7
 
-target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004']
+FROM container-centos7:latest
 
-for target in target_platforms:
-    print(f"Launching docker build of container-{target} ...", end='',
-        flush=True)
-    try:
-        command = f"docker build -t container-{target} base-containers/{target}"
-        process = subprocess.run(command.split(), capture_output=True,
-        text=True, check=True, timeout=600)
-        print(" success")
-    except subprocess.CalledProcessError:
-        print(" failed")
-        print(process.stderr)
-    except subprocess.TimeoutExpired:
-        print(" timeout")
-        print(process.stdout)
+ARG branch="master"
+ARG repositry="hpcc-systems"
+
+ARG check_git_tag=0
+ARG cmake_build_type=Release
+ARG sign_modules=0
+ARG sign_modules_passphrase="tmp"
+ARG sign_modules_keyid="tmp"
+
+RUN git clone -b ${branch} https://github.com/${repositry}/HPCC-Platform.git \
+    --recursive
+
+WORKDIR /home/hpccbuild/build
+
+RUN source scl_source enable devtoolset-7 && cmake ../HPCC-Platform \
+    -G 'Unix Makefiles' \
+    -DCMAKE_BUILD_TYPE=${cmake_build_type} \
+    -DCHECK_GIT_TAG=${check_git_tag} \
+    -DUSE_SHLIBDEPS=ON \
+    -DUSE_LIBARCHIVE=false \
+    -DSIGN_MODULES=${sign_modules} \
+    -DSIGN_MODULES_KEYID=${sign_modules_keyid} \
+    -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase}}

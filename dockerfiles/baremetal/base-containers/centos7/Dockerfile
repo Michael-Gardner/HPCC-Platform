@@ -26,8 +26,8 @@ RUN yum install -y epel-release centos-release-scl
 RUN yum install -y gcc-c++ gcc make bison flex binutils-devel openldap-devel \
     libicu-devel libxslt-devel libarchive-devel boost-devel openssl-devel \
     apr-devel apr-util-devel hiredis-devel numactl-devel mariadb-devel \
-    libevent-devel tbb-devel atlas-devel python34 libmemcached-devel \
-    sqlite-devel python-devel python34-devel java-1.8.0-openjdk-devel \
+    libevent-devel tbb-devel atlas-devel libmemcached-devel \
+    sqlite-devel python3-devel java-1.8.0-openjdk-devel \
     R-core-devel R-Rcpp-devel R-inline R-RInside-devel cmake3 rpm-build \
     libcurl-devel git nodejs devtoolset-7
 

@@ -17,14 +17,19 @@
 #    limitations under the License.
 ##############################################################################
 
+import os
 import subprocess
 
 #targets = ["centos7", "centos8", "ubuntu1804", "ubuntu2004"]
-targets = ["ubuntu1804"]
+targets = ["centos7"]
 
 for target in targets:
     print(f"Launching platform build on {target} target ...", end='',
         flush=True)
+    print(" active")
+    working_directory = os.getcwd()
+    working_directory = f"{working_directory}/platform/{target}"
     command = f"docker build -t baremetal-platform-{target} \
-        --build-arg build-target={target} platform"
-    process = subprocess.run(command.split())
+        --build-arg branch=candidate-8.6.x ."
+    
+    process = subprocess.run(command.split(), cwd=working_directory)
