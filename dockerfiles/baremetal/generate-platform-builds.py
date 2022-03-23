@@ -21,15 +21,30 @@ import os
 import subprocess
 
 #targets = ["centos7", "centos8", "ubuntu1804", "ubuntu2004"]
-targets = ["centos7"]
+targets = ["ubuntu1804"]
 
 for target in targets:
-    print(f"Launching platform build on {target} target ...", end='',
-        flush=True)
-    print(" active")
+    print(f"Launching platform build on target {target}")
     working_directory = os.getcwd()
     working_directory = f"{working_directory}/platform/{target}"
     command = f"docker build -t baremetal-platform-{target} \
         --build-arg branch=candidate-8.6.x ."
     
     process = subprocess.run(command.split(), cwd=working_directory)
+
+    print(f"Creating temporary container -- tmp-platform-{target}")
+    create_container = f"docker run --name tmp-platform-{target} \
+        baremetal-platform-{target} /bin/true"
+    process = subprocess.run(create_container.split())
+
+    print(f"Copying artifacts for target {target} to local storage")
+    copy_artifact = f"docker cp tmp-platform-{target}:/home/hpccbuild/package ."
+    process = subprocess.run(copy_artifact.split())
+
+    print(f"Removing temporary container -- ", end='', flush=True)
+    cleanup_container = f"docker rm tmp-platform-{target}"
+    process = subprocess.run(cleanup_container.split())
+
+#    cleanup_image = f"docker rmi baremetal-platform-{target}"
+#    process = subprocess.run(cleanup_image.split())
+    

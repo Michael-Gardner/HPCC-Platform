@@ -33,7 +33,7 @@ RUN git clone -b ${branch} https://github.com/${repositry}/HPCC-Platform.git \
 
 WORKDIR /home/hpccbuild/build
 
-RUN source scl_source enable devtoolset-7 && cmake ../HPCC-Platform \
+RUN cmake ../HPCC-Platform \
     -G 'Unix Makefiles' \
     -DCMAKE_BUILD_TYPE=${cmake_build_type} \
     -DCHECK_GIT_TAG=${check_git_tag} \
@@ -43,4 +43,4 @@ RUN source scl_source enable devtoolset-7 && cmake ../HPCC-Platform \
     -DSIGN_MODULES_KEYID=${sign_modules_keyid} \
     -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase}
 
-RUN source scl_source enable devtoolset-7 && make -j$(nproc) package
+RUN make -j$(nproc) package

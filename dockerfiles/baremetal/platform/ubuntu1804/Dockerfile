@@ -15,25 +15,34 @@
 #    limitations under the License.
 ##############################################################################
 
-# This dockerfile is used to generate the CE platform in an os agnostic manner
-# using cmake
+# This dockerfile is used to generate the CE platform for ubuntu 18.04
 
-ARG build-target="ubuntu1804"
-ENV container-target="container-${build-target}"
+FROM container-ubuntu1804:latest
+
 ARG branch="master"
 ARG repositry="hpcc-systems"
-ARG cmake_args="-DCMAKE_BUILD_TYPE=Release"
 
-
-FROM ${container-target}
+ARG check_git_tag=0
+ARG cmake_build_type=Release
+ARG sign_modules=0
+ARG sign_modules_passphrase="tmp"
+ARG sign_modules_keyid="tmp"
 
 RUN git clone -b ${branch} https://github.com/${repositry}/HPCC-Platform.git \
     --recursive
 
-COPY ${build-target}-cmake-args cmake_args
-RUN source cmake_args
-RUN printenv cmake_args
-
 WORKDIR /home/hpccbuild/build
 
-RUN cmake ../HPCC-Platform ${cmake_args}
+RUN cmake ../HPCC-Platform \
+    -G 'Unix Makefiles' \
+    -DCMAKE_BUILD_TYPE=${cmake_build_type} \
+    -DCHECK_GIT_TAG=${check_git_tag} \
+    -DUSE_SHLIBDEPS=ON \
+    -DUSE_LIBARCHIVE=false \
+    -DSIGN_MODULES=${sign_modules} \
+    -DSIGN_MODULES_KEYID=${sign_modules_keyid} \
+    -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase}
+
+RUN make -j$(nproc) package
+
+RUN cp *.deb /home/hpccbuild/package

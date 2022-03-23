@@ -33,11 +33,27 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y bison flex \
     libaprutil1-dev libiberty-dev libhiredis-dev libtbb-dev libxalan-c-dev \
     libnuma-dev libevent-dev libatlas-base-dev libblas-dev python3-dev \
     default-libmysqlclient-dev libsqlite3-dev r-base-dev r-cran-rcpp \
-    r-cran-rinside r-cran-inline libmemcached-dev libcurl4-openssl-dev \
-    pkg-config libtool autotools-dev automake libssl-dev git cmake
+    r-cran-rinside r-cran-inline libmemcached-dev \
+    pkg-config libtool autotools-dev automake libssl-dev git
+
+RUN curl -O https://cmake.org/files/v3.16/cmake-3.16.3.tar.gz
+RUN tar xzf cmake-3.16.3.tar.gz
+WORKDIR cmake-3.16.3
+RUN ./bootstrap && make -j$(nproc) && make install
+
+WORKDIR /
+RUN curl -O https://curl.se/download/curl-7.81.0.tar.gz
+RUN tar -zxvf curl-7.81.0.tar.gz
+WORKDIR curl-7.81.0
+RUN ./configure --with-gnutls --with-ssl && \
+    make -j$(nproc) && \
+    make install
+
+WORKDIR /
+RUN rm -rf curl-7.81.0* cmake-3.16.3*
 
 RUN useradd -ms /bin/bash hpccbuild
 USER hpccbuild
 WORKDIR /home/hpccbuild
 
-RUN mkdir -p build
+RUN mkdir -p build package
