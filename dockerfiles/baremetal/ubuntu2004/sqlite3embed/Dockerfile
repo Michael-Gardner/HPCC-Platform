@@ -15,23 +15,23 @@
 #    limitations under the License.
 ##############################################################################
 
-# This dockerfile is used to generate the CE platform for ubuntu 18.04
+# This dockerfile is used to generate the sqlite3embed plugin for ubuntu 20.04
 
-FROM container-ubuntu1804:latest
+FROM container-ubuntu2004:latest
 
 ARG branch="master"
 ARG repositry="hpcc-systems"
+
+RUN git clone -b ${branch} https://github.com/${repositry}/HPCC-Platform.git \
+    --recursive
+
+WORKDIR /home/hpccbuild/build
 
 ARG check_git_tag=0
 ARG cmake_build_type=Release
 ARG sign_modules=0
 ARG sign_modules_passphrase="tmp"
 ARG sign_modules_keyid="tmp"
-
-RUN git clone -b ${branch} https://github.com/${repositry}/HPCC-Platform.git \
-    --recursive
-
-WORKDIR /home/hpccbuild/build
 
 RUN cmake ../HPCC-Platform \
     -G 'Unix Makefiles' \
@@ -41,7 +41,8 @@ RUN cmake ../HPCC-Platform \
     -DUSE_LIBARCHIVE=false \
     -DSIGN_MODULES=${sign_modules} \
     -DSIGN_MODULES_KEYID=${sign_modules_keyid} \
-    -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase}
+    -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase} \
+    -DSQLITE3EMBED=ON
 
 RUN make -j$(nproc) package
 

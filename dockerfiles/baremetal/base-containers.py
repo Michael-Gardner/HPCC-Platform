@@ -18,6 +18,7 @@
 ##############################################################################
 
 import subprocess
+import os
 
 target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004']
 
@@ -25,13 +26,15 @@ for target in target_platforms:
     print(f"Launching docker build of container-{target} ...", end='',
         flush=True)
     try:
-        command = f"docker build -t container-{target} base-containers/{target}"
+        cwd = f"{os.getcwd()}/{target}"
+        command = f"docker build -t container-{target} ."
         process = subprocess.run(command.split(), capture_output=True,
-        text=True, check=True, timeout=600)
+        text=True, check=True, timeout=600, cwd=cwd)
         print(" success")
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
         print(" failed")
-        print(process.stderr)
+        print(e.stderr)
     except subprocess.TimeoutExpired:
         print(" timeout")
         print(process.stdout)
+        print(process.stderr)

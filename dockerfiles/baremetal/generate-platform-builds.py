@@ -20,31 +20,52 @@
 import os
 import subprocess
 
-#targets = ["centos7", "centos8", "ubuntu1804", "ubuntu2004"]
-targets = ["ubuntu1804"]
+# full suite of builds
+targets = ["centos7", "centos8", "ubuntu1804", "ubuntu2004"]
+builds = ["platform",
+    "clienttools", "rembed", "memcached", "sqs", "redis", "mysqlembed",
+    "javaembed", "sqlite3embed", "kafka", "couchbaseembed"]
 
+# for individual tests uncomment
+#builds = ["couchbaseembed"]
+#targets = ["ubuntu1804"]
+
+branch = "community_8.6.10-1"
+check_git_tag = 1
+
+print(f"Building -- {branch} ...")
+
+working_directory = os.getcwd()
 for target in targets:
-    print(f"Launching platform build on target {target}")
-    working_directory = os.getcwd()
-    working_directory = f"{working_directory}/platform/{target}"
-    command = f"docker build -t baremetal-platform-{target} \
-        --build-arg branch=candidate-8.6.x ."
+    target_path = F"{working_directory}/{target}"
+    if not os.path.isdir(target_path):
+        print(f"this path did not exit {target_path}")
+        continue
+    print(f"this path existed {target_path}")
+    for build in builds:
+        path = f"{working_directory}/{target}/{build}/Dockerfile"
+        if not os.path.isfile(path):
+            print(f"this path did not exist {path}")
+            continue
+        print(f"this path existed {path}")
+        print(f"Launching {build} build on target {target}")
+        target_build_dockerfile_path = f"{working_directory}/{target}/{build}"
+        command = f"docker build -t baremetal-{target}-{build} \
+            --build-arg branch={branch} \
+            --build-arg check_git_tag={check_git_tag} ."
     
-    process = subprocess.run(command.split(), cwd=working_directory)
+        process = subprocess.run(command.split(),
+            cwd=target_build_dockerfile_path)
 
-    print(f"Creating temporary container -- tmp-platform-{target}")
-    create_container = f"docker run --name tmp-platform-{target} \
-        baremetal-platform-{target} /bin/true"
-    process = subprocess.run(create_container.split())
+        print(f"Creating temporary container -- tmp-{target}-{build}")
+        create_container = f"docker run --name tmp-{target}-{build} \
+            baremetal-{target}-{build} /bin/true"
+        process = subprocess.run(create_container.split())
 
-    print(f"Copying artifacts for target {target} to local storage")
-    copy_artifact = f"docker cp tmp-platform-{target}:/home/hpccbuild/package ."
-    process = subprocess.run(copy_artifact.split())
+        print(f"Copying artifacts for {target}-{build} to local storage")
+        copy_artifact = f"docker cp tmp-{target}-{build}:/home/hpccbuild/package ."
+        process = subprocess.run(copy_artifact.split())
 
-    print(f"Removing temporary container -- ", end='', flush=True)
-    cleanup_container = f"docker rm tmp-platform-{target}"
-    process = subprocess.run(cleanup_container.split())
-
-#    cleanup_image = f"docker rmi baremetal-platform-{target}"
-#    process = subprocess.run(cleanup_image.split())
-    
+        print(f"Removing temporary container -- ", end='', flush=True)
+        cleanup_container = f"docker rm tmp-{target}-{build}"
+        process = subprocess.run(cleanup_container.split())
