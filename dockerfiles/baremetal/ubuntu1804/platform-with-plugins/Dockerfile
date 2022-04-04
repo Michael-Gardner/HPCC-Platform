@@ -44,7 +44,9 @@ RUN cmake ../HPCC-Platform \
     -DSIGN_MODULES_KEYID=${sign_modules_keyid} \
     -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase} \
     -DINCLUDE_PLUGINS=ON \
-    -DSUPPRESS_SPARK=ON
+    -DSUPPRESS_SPARK=ON \
+    -DCUSTOM_PACKAGE_SUFFIX=with-plugins
+
 
 RUN make -j$(nproc) package
 

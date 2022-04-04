@@ -15,9 +15,9 @@
 #    limitations under the License.
 ##############################################################################
 
-# This dockerfile is used to generate the CE platform for centos7
+# This dockerfile is used to generate the CE platform for centos8
 
-FROM container-centos7:latest
+FROM container-centos8:latest
 
 ARG branch="master"
 ARG repositry="hpcc-systems"
@@ -44,3 +44,5 @@ RUN cmake ../HPCC-Platform \
     -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase}
 
 RUN make -j$(nproc) package
+
+RUN cp *.rpm /home/hpccbuild/package

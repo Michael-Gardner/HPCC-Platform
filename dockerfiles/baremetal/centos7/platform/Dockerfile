@@ -44,3 +44,5 @@ RUN source scl_source enable devtoolset-7 && cmake ../HPCC-Platform \
     -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase}
 
 RUN source scl_source enable devtoolset-7 && make -j$(nproc) package
+
+RUN cp *.rpm /home/hpccbuild/package

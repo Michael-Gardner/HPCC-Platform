@@ -43,4 +43,4 @@ RUN useradd -ms /bin/bash hpccbuild
 USER hpccbuild
 WORKDIR /home/hpccbuild
 
-RUN mkdir -p build
+RUN mkdir -p build package

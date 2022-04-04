@@ -14,3 +14,4 @@ eclcc.log
 ./helm/examples/azure/sa/env-sa
 ./dockerfiles/platform-build-incremental/hpcc.gitpatch
 dockerfiles/baremetal/package
+dockerfiles/baremetal/*.log

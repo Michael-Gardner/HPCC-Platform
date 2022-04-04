@@ -28,13 +28,11 @@ for target in target_platforms:
     try:
         cwd = f"{os.getcwd()}/{target}"
         command = f"docker build -t container-{target} ."
-        process = subprocess.run(command.split(), capture_output=True,
-        text=True, check=True, timeout=600, cwd=cwd)
+        process = subprocess.run(command.split(),
+        text=True, check=True, timeout=900, cwd=cwd)
         print(" success")
     except subprocess.CalledProcessError as e:
         print(" failed")
         print(e.stderr)
     except subprocess.TimeoutExpired:
         print(" timeout")
-        print(process.stdout)
-        print(process.stderr)

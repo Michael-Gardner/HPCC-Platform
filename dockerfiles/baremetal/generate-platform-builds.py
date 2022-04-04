@@ -21,14 +21,14 @@ import os
 import subprocess
 
 # full suite of builds
-targets = ["centos7", "centos8", "ubuntu1804", "ubuntu2004"]
-builds = ["platform",
+#targets = ["centos7", "centos8", "ubuntu1804", "ubuntu2004"]
+builds = ["platform", "platform-with-plugins"
     "clienttools", "rembed", "memcached", "sqs", "redis", "mysqlembed",
     "javaembed", "sqlite3embed", "kafka", "couchbaseembed"]
 
 # for individual tests uncomment
-#builds = ["couchbaseembed"]
-#targets = ["ubuntu1804"]
+#builds = ["platform-with-plugins"]
+targets = ["ubuntu2204"]
 
 branch = "community_8.6.10-1"
 check_git_tag = 1

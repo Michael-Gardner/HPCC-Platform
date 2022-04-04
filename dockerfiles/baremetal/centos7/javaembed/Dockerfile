@@ -33,7 +33,7 @@ ARG sign_modules=0
 ARG sign_modules_passphrase="tmp"
 ARG sign_modules_keyid="tmp"
 
-RUN cmake ../HPCC-Platform \
+RUN source scl_source enable devtoolset-7 && cmake ../HPCC-Platform \
     -G 'Unix Makefiles' \
     -DCMAKE_BUILD_TYPE=${cmake_build_type} \
     -DCHECK_GIT_TAG=${check_git_tag} \
@@ -44,6 +44,6 @@ RUN cmake ../HPCC-Platform \
     -DSIGN_MODULES_PASSPHRASE=${sign_modules_passphrase} \
     -DJAVAEMBED=ON
 
-RUN make -j$(nproc) package
+RUN source scl_source enable devtoolset-7 && make -j$(nproc) package
 
-RUN cp *.deb /home/hpccbuild/package
+RUN cp *.rpm /home/hpccbuild/package
