@@ -70,6 +70,8 @@ include_directories (
          ${HPCC_SOURCE_DIR}/system/security/cryptohelper
     )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=nonnull")
+
 ADD_DEFINITIONS( -DLOGMSGCOMPONENT=3 -D_USRDLL -DDALI_EXPORTS )
 
 HPCC_ADD_LIBRARY( dalibase SHARED ${SRCS} ${INCLUDES} )
