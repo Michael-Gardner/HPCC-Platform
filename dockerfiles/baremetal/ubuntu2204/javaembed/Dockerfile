@@ -20,9 +20,9 @@
 FROM container-ubuntu2204:latest
 
 ARG branch="master"
-ARG repositry="hpcc-systems"
+ARG repository="hpcc-systems"
 
-RUN git clone -b ${branch} https://github.com/${repositry}/HPCC-Platform.git \
+RUN git clone -b ${branch} https://github.com/${repository}/HPCC-Platform.git \
     --recursive
 
 WORKDIR /home/hpccbuild/build

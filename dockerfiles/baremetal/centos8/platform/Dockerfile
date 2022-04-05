@@ -20,7 +20,7 @@
 FROM container-centos8:latest
 
 ARG branch="master"
-ARG repositry="hpcc-systems"
+ARG repository="hpcc-systems"
 
 ARG check_git_tag=0
 ARG cmake_build_type=Release
@@ -28,7 +28,7 @@ ARG sign_modules=0
 ARG sign_modules_passphrase="tmp"
 ARG sign_modules_keyid="tmp"
 
-RUN git clone -b ${branch} https://github.com/${repositry}/HPCC-Platform.git \
+RUN git clone -b ${branch} https://github.com/${repository}/HPCC-Platform.git \
     --recursive
 
 WORKDIR /home/hpccbuild/build
