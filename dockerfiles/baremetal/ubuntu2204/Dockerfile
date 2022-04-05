@@ -31,7 +31,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y bison flex \
     python3-dev default-libmysqlclient-dev libsqlite3-dev r-base-dev \
     r-cran-rcpp r-cran-rinside r-cran-inline libmemcached-dev \
     pkg-config libtool autotools-dev automake libssl-dev \
-    git libcurl4-openssl-dev cmake
+    git libcurl4-openssl-dev cmake libbsd-dev
 
 RUN curl -O https://nodejs.org/dist/v16.14.2/node-v16.14.2.tar.gz
 RUN tar xzf node-v16.14.2.tar.gz
