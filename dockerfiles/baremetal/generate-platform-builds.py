@@ -22,16 +22,17 @@ import subprocess
 
 # full suite of builds
 #targets = ["centos7", "centos8", "ubuntu1804", "ubuntu2004"]
-builds = ["platform", "platform-with-plugins"
-    "clienttools", "rembed", "memcached", "sqs", "redis", "mysqlembed",
-    "javaembed", "sqlite3embed", "kafka", "couchbaseembed"]
+#builds = ["platform", "platform-with-plugins"
+#    "clienttools", "rembed", "memcached", "sqs", "redis", "mysqlembed",
+#    "javaembed", "sqlite3embed", "kafka", "couchbaseembed"]
 
 # for individual tests uncomment
-#builds = ["platform-with-plugins"]
+builds = ["platform-with-plugins"]
 targets = ["ubuntu2204"]
 
-branch = "community_8.6.10-1"
-check_git_tag = 1
+repository = "michael-gardner"
+branch = "fix-dali-nonnull-errors"
+check_git_tag = 0
 
 print(f"Building -- {branch} ...")
 
@@ -52,6 +53,7 @@ for target in targets:
         target_build_dockerfile_path = f"{working_directory}/{target}/{build}"
         command = f"docker build -t baremetal-{target}-{build} \
             --build-arg branch={branch} \
+            --build-arg repository={repository} \
             --build-arg check_git_tag={check_git_tag} ."
     
         process = subprocess.run(command.split(),

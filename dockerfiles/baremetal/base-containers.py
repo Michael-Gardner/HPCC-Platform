@@ -20,7 +20,7 @@
 import subprocess
 import os
 
-target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004']
+target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004', 'ubuntu2204']
 
 for target in target_platforms:
     print(f"Launching docker build of container-{target} ...", end='',

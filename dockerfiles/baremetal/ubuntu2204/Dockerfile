@@ -37,7 +37,8 @@ RUN curl -O https://nodejs.org/dist/v16.14.2/node-v16.14.2.tar.gz
 RUN tar xzf node-v16.14.2.tar.gz
 WORKDIR /node-v16.14.2
 RUN ./configure
-RUN make -j$(nproc) && make install
+RUN make -j$(nproc)
+RUN make install
 WORKDIR /
 RUN rm -rf node-v16.14.2*
 
