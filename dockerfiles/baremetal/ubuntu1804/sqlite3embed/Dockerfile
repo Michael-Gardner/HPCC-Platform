@@ -17,7 +17,7 @@
 
 # This dockerfile is used to generate the sqlite3embed plugin for ubuntu 18.04
 
-FROM container-ubuntu1804:latest
+FROM memeoru/hpcc-build-base:ubuntu1804
 
 ARG branch="master"
 ARG repository="hpcc-systems"

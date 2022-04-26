@@ -18,7 +18,7 @@
 # This dockerfile is used to generate the CE platform-with-plugins for ubuntu
 # 18.04
 
-FROM container-ubuntu1804:latest
+FROM memeoru/hpcc-build-base:ubuntu1804
 
 ARG branch="master"
 ARG repository="hpcc-systems"

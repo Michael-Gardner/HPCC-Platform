@@ -20,14 +20,14 @@
 import subprocess
 import os
 
-target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004', 'ubuntu2204']
+target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004']
 
 for target in target_platforms:
-    print(f"Launching docker build of container-{target} ...", end='',
+    print(f"Launching docker build of hpcc-build-base-{target} ...", end='',
         flush=True)
     try:
         cwd = f"{os.getcwd()}/{target}"
-        command = f"docker build -t container-{target} ."
+        command = f"docker build -t memeoru/hpcc-build-base:{target} ."
         process = subprocess.run(command.split(),
         text=True, check=True, timeout=900, cwd=cwd)
         print(" success")

@@ -17,7 +17,7 @@
 
 # This dockerfile is used to generate the rembed plugin for ubuntu 20.04
 
-FROM container-ubuntu2004:latest
+FROM memeoru/hpcc-build-base:ubuntu2004
 
 ARG branch="master"
 ARG repository="hpcc-systems"

@@ -17,7 +17,7 @@
 
 # This dockerfile is used to generate the memcached plugin for centos7
 
-FROM container-centos7:latest
+FROM memeoru/hpcc-build-base:centos7
 
 ARG branch="master"
 ARG repository="hpcc-systems"

@@ -18,7 +18,7 @@
 # This dockerfile is used to generate the CE platform-with-plugins for ubuntu
 # 22.04
 
-FROM container-ubuntu2204:latest
+FROM memeoru/hpcc-build-base:ubuntu2204
 
 ARG branch="master"
 ARG repository="hpcc-systems"

@@ -17,7 +17,7 @@
 
 # This dockerfile is used to generate the CE platform for centos8
 
-FROM container-centos8:latest
+FROM memeoru/hpcc-build-base:centos8
 
 ARG branch="master"
 ARG repository="hpcc-systems"

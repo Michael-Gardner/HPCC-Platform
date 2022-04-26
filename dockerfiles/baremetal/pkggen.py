@@ -80,11 +80,11 @@ def main():
 
     for t in targets:
         # regenerate build container
-        log.warning("testing output")
-        log.info(f"regenerating build container-{t}")
-        base_container = hpccpkg(t, f"container-{t}" , branch=branch,
-            repository=repository)
-        base_container.build()
+        #log.warning("testing output")
+        #log.info(f"regenerating build memeoru/hpcc-build-base:{t}")
+        #base_container = hpccpkg(t, f"memeoru/hpcc-build-base:{t}" , branch=branch,
+        #    repository=repository)
+        #base_container.build()
         if args.package != 'all':
             packages.append(args.package)
         else:
