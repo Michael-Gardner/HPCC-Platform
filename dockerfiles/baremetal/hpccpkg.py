@@ -18,7 +18,7 @@ class hpccpkg:
         logger.info(f"building tag {self.tag}")
         logger.debug(f"running command - {command}")
         try:
-            process = subprocess.run(command.split(), timeout=1200)
+            process = subprocess.run(command.split(), timeout=2700)
             logger.debug(process.stdout)
             if process.check_returncode():
                 logger.warning(process.stderr)
