@@ -18,7 +18,7 @@ class hpccpkg:
         logger.info(f"building tag {self.tag}")
         logger.debug(f"running command - {command}")
         try:
-            process = subprocess.run(command.split(), timeout=2700)
+            process = subprocess.run(command.split())
             logger.debug(process.stdout)
             if process.check_returncode():
                 logger.warning(process.stderr)
@@ -30,7 +30,7 @@ class hpccpkg:
         logger.info(f"creating temporary container tmp-{base_tag}")
         create_container = f"docker run --name tmp-{base_tag} {self.tag} /bin/true"
         try:
-            process = subprocess.run(create_container.split(), timeout=15)
+            process = subprocess.run(create_container.split(), timeout=60)
             logger.debug(process.stdout)
             if process.check_returncode():
                 logger.warning(process.stderr)
