@@ -56,6 +56,12 @@ RUN rm -rf curl-7.81.0* cmake-3.16.3*
 COPY libcurl.conf /etc/ld.so.conf.d/
 RUN ldconfig -v
 
+# doc dependencies
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    xsltproc \
+    libsaxonb-java \
+    fop
+
 RUN useradd -ms /bin/bash hpccbuild
 USER hpccbuild
 WORKDIR /home/hpccbuild
