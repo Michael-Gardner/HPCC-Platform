@@ -19,20 +19,40 @@
 
 import subprocess
 import os
+import argparse
 
-target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004']
+def main():
 
-for target in target_platforms:
-    print(f"Launching docker build of hpcc-build-base-{target} ...", end='',
-        flush=True)
-    try:
-        cwd = f"{os.getcwd()}/{target}"
-        command = f"docker build -t memeoru/hpcc-build-base:{target} ."
-        process = subprocess.run(command.split(),
-        text=True, check=True, timeout=900, cwd=cwd)
-        print(" success")
-    except subprocess.CalledProcessError as e:
-        print(" failed")
-        print(e.stderr)
-    except subprocess.TimeoutExpired:
-        print(" timeout")
+    target_platforms = []
+
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument("-t", "--target", default="all",
+        help='''
+            Target distribution for build
+            default: all
+            example: ubuntu1804, centos7
+            '''
+        )
+    args = parser.parse_args()
+    if args.target == 'all':
+        target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004']
+    else:
+        target_platforms.append(args.target)
+
+    for target in target_platforms:
+        print(f"Launching docker build of hpcc-build-base-{target} ...", end='',
+            flush=True)
+        try:
+            cwd = f"{os.getcwd()}/{target}"
+            command = f"docker build -t memeoru/hpcc-build-base:{target} ."
+            process = subprocess.run(command.split(),
+            text=True, check=True, cwd=cwd)
+            print(" success")
+        except subprocess.CalledProcessError as e:
+            print(" failed")
+            print(e.stderr)
+
+if __name__ == '__main__':
+    main()
