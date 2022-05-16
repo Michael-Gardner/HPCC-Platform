@@ -20,7 +20,7 @@
 
 FROM ubuntu:22.04
 
-RUN apt-get update && apt-get upgrade -y
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y bison flex \
     build-essential binutils-dev curl lsb-release \
@@ -33,14 +33,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y bison flex \
     pkg-config libtool autotools-dev automake libssl-dev \
     git libcurl4-openssl-dev cmake libbsd-dev
 
-RUN curl -O https://nodejs.org/dist/v16.14.2/node-v16.14.2.tar.gz
-RUN tar xzf node-v16.14.2.tar.gz
-WORKDIR /node-v16.14.2
-RUN ./configure
-RUN make -j$(nproc)
-RUN make install
-WORKDIR /
-RUN rm -rf node-v16.14.2*
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
 RUN useradd -ms /bin/bash hpccbuild
 USER hpccbuild
