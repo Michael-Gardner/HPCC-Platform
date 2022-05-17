@@ -44,4 +44,4 @@ RUN cmake ../HPCC-Platform \
 
 RUN make -j$(nproc) clean all
 
-RUN cp *.pdf /home/hpccbuild/package
+RUN cp -r /home/hpccbuild/build/${cmake_build_type}/docs/* /home/hpccbuild/package
