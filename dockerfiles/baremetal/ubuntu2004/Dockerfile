@@ -62,6 +62,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libsaxonb-java \
     fop
 
+# changelog dependencies
+RUN export PERL_MM_USE_DEFAULT=1 ;\
+    cpan install ;\
+    cpan App::cpanminus ;\
+    cpanm DateTime --force ;\
+    cpanm App::Gitc::Its::Jira --force ;\
+    cpanm XMLRPC::Lite --force ;\
+    cpanm Term::ReadKey --force ;\
+    cpanm Config::Simple --force ;\
+    cpanm JIRA::REST --force ;\
+    cpanm Date::PeriodParser --force ;\
+    cpanm Config::Identity --force
+
 RUN useradd -ms /bin/bash hpccbuild
 USER hpccbuild
 WORKDIR /home/hpccbuild
