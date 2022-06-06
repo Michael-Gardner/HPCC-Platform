@@ -42,7 +42,7 @@ def main():
             ''')
     args = parser.parse_args()
     if args.target == 'all':
-        target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004']
+        target_platforms = ['centos7', 'centos8', 'ubuntu1804', 'ubuntu2004', 'ubuntu2204']
     else:
         target_platforms.append(args.target)
 
