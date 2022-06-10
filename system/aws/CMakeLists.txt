@@ -28,6 +28,7 @@ if(USE_AWS)
 
     include(GNUInstallDirs)
     set(AWS_DEP_LIBDIR ${CMAKE_CURRENT_BINARY_DIR}/aws-sdk-cpp/.deps/install/${CMAKE_INSTALL_LIBDIR})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized")
     add_library(aws-cpp-sdk-core SHARED IMPORTED GLOBAL)
     add_library(aws-cpp-sdk-sqs SHARED IMPORTED GLOBAL)
     add_library(aws-cpp-sdk-s3 SHARED IMPORTED GLOBAL)
