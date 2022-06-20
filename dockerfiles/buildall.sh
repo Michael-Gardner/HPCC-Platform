@@ -23,13 +23,15 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd $SCRIPT_DIR 2>&1 > /dev/null
 
-set -e
+set -ex
 
 . ${SCRIPT_DIR}/../cmake_modules/parse_cmake.sh
 parse_cmake
 set_tag $HPCC_PROJECT
 
 . ./buildall-common.sh
+
+modules=(Audit.ecl BLAS.ecl BundleBase.ecl Crypto.ecl Date.ecl File.ecl Math.ecl Metaphone3.ecl Metaphone.ecl Str.ecl Uni.ecl)
 
 if [[ -n ${INPUT_USERNAME} ]] ; then
   echo ${INPUT_PASSWORD} | docker login -u ${INPUT_USERNAME} --password-stdin ${INPUT_REGISTRY}
@@ -86,7 +88,41 @@ build_ml_images() {
 if [[ -z "$BUILD_ML" ]]; then
   build_image platform-build-base ${BASE_VER}
   build_image platform-build
-  build_image platform-core
+  
+  # ensure clean environment
+  if [[ $(docker ps -a | grep extract-stdlib-ecl) ]]; then
+    docker rm extract-stdlib-ecl
+  fi
+  rm -rf std platform-core/std
+
+  # copy ecllibrary std from build for signing
+  docker run -it --name extract-stdlib-ecl ${DOCKER_REPO}/platform-build:${BUILD_LABEL} bash -c exit
+  docker cp extract-stdlib-ecl:/hpcc-dev/build/ecllibrary/std .
+  docker rm -f extract-stdlib-ecl
+  mkdir -p platform-core/std
+  
+  if [[ -n "$SIGN_ECL" ]]; then
+    if [[ -f "platform-core/pub.key" ]]; then
+      rm -f platform-core/pub.key
+    fi
+    gpg --output=platform-core/pub.key --batch --no-tty --export ${SIGN_MODULES_KEYID}
+    for m in ${modules[@]}; do
+      gpg_command_str="gpg --pinentry-mode loopback"
+      if [[ -n ${SIGN_MODULES_KEYID} ]]; then
+        gpg_command_str="${gpg_command_str} --default-key ${SIGN_MODULES_KEYID}"
+      fi
+      if [[ -n ${SIGN_MODULES_PASSPHRASE} ]]; then
+        gpg_command_str="${gpg_command_str} --passphrase ${SIGN_MODULES_PASSPHRASE}"
+      fi
+      gpg_command_str="${gpg_command_str} --batch --yes --no-tty --output platform-core/std/${m} --clearsign std/${m}"
+      echo "Signing ${m}"
+      eval "${gpg_command_str}"
+    done
+    build_image platform-core
+  else
+    cp -a std platform-core/std
+    build_image platform-core
+  fi
 else
   build_image platform-core # NB: if building ML images and core has already been built, this will only pull it
   build_ml_images

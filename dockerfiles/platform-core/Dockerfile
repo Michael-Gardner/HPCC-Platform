@@ -66,6 +66,7 @@ ENV LC_ALL en_US.UTF-8
 
 COPY --from=build /opt/HPCCSystems /opt/HPCCSystems
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
+COPY std/*.ecl /opt/HPCCSystems/share/ecllibrary/std/
 
 # NB: added in platform-build, but need to re-add as this image is not
 # based on it. Only /opt/HPCCSystems is copied over.
@@ -78,6 +79,8 @@ RUN mkdir /var/lib/HPCCSystems && chown hpcc:hpcc /var/lib/HPCCSystems
 RUN mkdir /var/log/HPCCSystems && chown hpcc:hpcc /var/log/HPCCSystems
 RUN mkdir /var/lock/HPCCSystems && chown hpcc:hpcc /var/lock/HPCCSystems
 RUN mkdir /var/run/HPCCSystems && chown hpcc:hpcc /var/run/HPCCSystems
+
+COPY --chown=hpcc:hpcc pub.key /var/lib/HPCCSystems
 
 USER hpcc
 ENV PATH="/opt/HPCCSystems/bin:${PATH}"
