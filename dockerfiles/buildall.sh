@@ -113,3 +113,7 @@ if [[ -n ${INPUT_PASSWORD} ]] ; then
   echo "::set-output name=${BUILD_LABEL}"
   docker logout
 fi
+
+if [[ -n {INPUT_SIGNING_SECRET} ]] ; then
+  rm -rf private.key
+fi
