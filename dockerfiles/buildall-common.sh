@@ -30,6 +30,11 @@ BUILD_TYPE=                                     # Set to Debug for a debug build
 DOCKER_REPO=hpccsystems
 DEST_DOCKER_REGISTRY=docker.io
 USE_CPPUNIT=1
+SIGN_MODULES=OFF
+SIGNING_SECRET=
+SIGNING_KEYID=HPCCSystems
+SIGNING_PASSPHRASE=none
+KEY_COMMAND=
 
 # These values are set in a GitHub workflow build
 
@@ -38,6 +43,9 @@ USE_CPPUNIT=1
 [[ -n ${INPUT_GITHUB_TOKEN} ]] && GITHUB_TOKEN=${INPUT_GITHUB_TOKEN}
 [[ -n ${INPUT_BUILD_VER} ]] && BUILD_TAG=${INPUT_BUILD_VER}
 [[ -n ${INPUT_DOCKER_REPO} ]] && DOCKER_REPO=${INPUT_DOCKER_REPO}
+[[ -n ${INPUT_SIGN_MODULES} ]] && SIGN_MODULES=${INPUT_SIGN_MODULES}
+[[ -n ${INPUT_SIGNING_KEYID} ]] && SIGNING_KEYID=${INPUT_SIGNING_KEYID}
+[[ -n ${INPUT_SIGNING_PASSPHRASE} ]] && SIGNING_PASSPHRASE=${INPUT_SIGNING_PASSPHRASE}
 
 DEST_DOCKER_REPO=${DOCKER_REPO}
 [[ -n ${INPUT_LN_DOCKER_REPO} ]] && DEST_DOCKER_REPO=${INPUT_LN_DOCKER_REPO}
@@ -67,6 +75,16 @@ else
   USE_CPPUNIT=0
 fi
 
+if [[ "${SIGN_MODULES}" != "OFF" ]] ; then
+  if [[ -n ${INPUT_SIGNING_SECRET} ]] ; then
+    echo "${INPUT_SIGNING_SECRET}" > private.key
+    KEY_COMMAND="--secret id=mysecret,src=private.key"
+  else
+    echo "Signing Secret required to sign modules"
+    exit 1
+  fi
+fi
+
 if [[ "$HPCC_MATURITY" = "release" ]] && [[ "$INPUT_LATEST" = "1" ]] ; then
   LATEST=1
 fi
@@ -87,7 +105,8 @@ build_image() {
   [[ -z ${buildTag} ]] && buildTag=$BUILD_TAG
 
   if [ "$rebuild" = "1" ] || ! docker pull ${DEST_DOCKER_REGISTRY}/${DOCKER_REPO}/${name}:${label} ; then
-    docker image build -t ${DEST_DOCKER_REGISTRY}/${DEST_DOCKER_REPO}/${name}:${label} \
+    DOCKER_BUILDKIT=1 docker image build ${KEY_COMMAND} \
+       -t ${DEST_DOCKER_REGISTRY}/${DEST_DOCKER_REPO}/${name}:${label} \
        --build-arg BASE_VER=${BASE_VER} \
        --build-arg DOCKER_REPO=${DOCKER_REPO} \
        --build-arg DEST_DOCKER_REPO=${DEST_DOCKER_REGISTRY}/${DEST_DOCKER_REPO} \
@@ -99,6 +118,9 @@ build_image() {
        --build-arg BUILD_THREADS=${BUILD_THREADS} \
        --build-arg GITHUB_ACTOR=${GITHUB_ACTOR} \
        --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} \
+       --build-arg SIGN_MODULES=${SIGN_MODULES} \
+       --build-arg SIGNING_KEYID=${SIGNING_KEYID} \
+       --build-arg SIGNING_PASSPHRASE=${SIGNING_PASSPHRASE} \
        ${rest} ${name}/
     push_image $name $label
   fi

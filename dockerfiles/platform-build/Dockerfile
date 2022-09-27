@@ -65,13 +65,23 @@ RUN mono `./vcpkg fetch nuget | tail -n 1` \
     -username "${GITHUB_ACTOR}" \
     -password "${GITHUB_TOKEN}"
 
+
 WORKDIR /hpcc-dev
 RUN mkdir build
 WORKDIR /hpcc-dev/build
 
+RUN --mount=type=secret,id=mysecret,uid=10000 gpg --batch --import /run/secrets/mysecret
+RUN gpg --list-secret-keys
+
 ARG BUILD_TYPE=RelWithDebInfo
 ARG USE_CPPUNIT=1
-RUN cmake /hpcc-dev/HPCC-Platform -Wno-dev -DCONTAINERIZED=1 -DINCLUDE_PLUGINS=1 -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DUSE_PYTHON2=0 -DSUPPRESS_SPARK=1 -DUSE_CPPUNIT=${USE_CPPUNIT}
+ARG SIGN_MODULES=OFF
+ARG SIGNING_KEYID=HPCCSystems
+ARG SIGNING_PASSPHRASE=none
+RUN cmake /hpcc-dev/HPCC-Platform -Wno-dev -DCONTAINERIZED=1 \
+    -DINCLUDE_PLUGINS=1 -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DUSE_PYTHON2=0 \
+    -DSUPPRESS_SPARK=1 -DUSE_CPPUNIT=${USE_CPPUNIT} -DSIGN_MODULES=${SIGN_MODULES} \
+    -DSIGN_MODULES_KEYID=${SIGNING_KEYID} -DSIGN_MODULES_PASSPHRASE=${SIGNING_PASSPHRASE}
 RUN rm -rf ./vcpkg_downloads && rm -rf ./vcpkg_buildtrees && rm -rf ./vcpkg_packages
 
 ARG BUILD_THREADS
@@ -90,4 +100,3 @@ RUN mkdir /var/lib/HPCCSystems && chown hpcc:hpcc /var/lib/HPCCSystems
 RUN mkdir /var/log/HPCCSystems && chown hpcc:hpcc /var/log/HPCCSystems
 RUN mkdir /var/lock/HPCCSystems && chown hpcc:hpcc /var/lock/HPCCSystems
 RUN mkdir /var/run/HPCCSystems && chown hpcc:hpcc /var/run/HPCCSystems
-
