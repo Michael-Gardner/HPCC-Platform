@@ -70,7 +70,7 @@ WORKDIR /hpcc-dev
 RUN mkdir build
 WORKDIR /hpcc-dev/build
 
-RUN --mount=type=secret,id=mysecret,uid=10000 gpg --batch --import /run/secrets/mysecret
+RUN --mount=type=secret,id=key,uid=10000 gpg --batch --import /run/secrets/key
 RUN gpg --list-secret-keys
 
 ARG BUILD_TYPE=RelWithDebInfo
@@ -78,10 +78,11 @@ ARG USE_CPPUNIT=1
 ARG SIGN_MODULES=OFF
 ARG SIGNING_KEYID=HPCCSystems
 ARG SIGNING_PASSPHRASE=none
-RUN cmake /hpcc-dev/HPCC-Platform -Wno-dev -DCONTAINERIZED=1 \
+RUN RUN --mount=type=secret,id=passphrase,uid=10000 cmake /hpcc-dev/HPCC-Platform \
+    -Wno-dev -DCONTAINERIZED=1 \
     -DINCLUDE_PLUGINS=1 -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DUSE_PYTHON2=0 \
     -DSUPPRESS_SPARK=1 -DUSE_CPPUNIT=${USE_CPPUNIT} -DSIGN_MODULES=${SIGN_MODULES} \
-    -DSIGN_MODULES_KEYID=${SIGNING_KEYID} -DSIGN_MODULES_PASSPHRASE=${SIGNING_PASSPHRASE}
+    -DSIGN_MODULES_KEYID=${SIGNING_KEYID} -DSIGN_MODULES_PASSPHRASE=$(cat /run/secrets/passphrase)
 RUN rm -rf ./vcpkg_downloads && rm -rf ./vcpkg_buildtrees && rm -rf ./vcpkg_packages
 
 ARG BUILD_THREADS
