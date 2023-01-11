@@ -67,7 +67,7 @@ jobs:
         id: vars
         run: |
           echo 'mount_platform=source="${{ github.workspace }}",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached' >> $GITHUB_OUTPUT
-          echo 'mount_ln=source="${{ github.workspace }}/../LN",target=/hpcc-dev/LN,type=bind,consistency=cached' >> $GITHUB_OUTPUT
+          echo 'mount_ln=source="${{ github.workspace }}/LN",target=/hpcc-dev/LN,type=bind,consistency=cached' >> $GITHUB_OUTPUT
           echo "branch_name=$(echo ${{ github.ref }} | cut -d'/' -f3)" >> $GITHUB_OUTPUT
           cd vcpkg
           echo "vcpkg_sha_short=$(git rev-parse --short=8 HEAD)" >> $GITHUB_OUTPUT
@@ -138,7 +138,7 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/LN
           ref: ${{ github.ref }}
-          path: ${{ github.workspace }}/../LN
+          path: ${{ github.workspace }}/LN
           token: ${{ secrets.LNB_TOKEN }}
 
       - name: CMake LN Packages
