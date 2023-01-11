@@ -52,6 +52,7 @@ jobs:
           - os: ubuntu-18.04
           - os: centos-8
           - os: centos-7
+          - os: centos-7
             ln: true
       fail-fast: false
     runs-on: ubuntu-22.04
@@ -101,10 +102,9 @@ jobs:
             BUILD_FOLDER=build-${{ matrix.os }}
 
       - name: CMake Packages
-        if: ${{ !matrix.container }}
+        if: ${{ !matrix.container && !matrix.ln }}
         run: |
-          pluginsBak=("CASSANDRAEMBED" "COUCHBASEEMBED" "ECLBLAS" "H3" "JAVAEMBED" "KAFKA" "MEMCACHED" "MYSQLEMBED" "NLP" "REDIS" "SQLITE3EMBED" "SQS" "PLATFORM")
-          plugins=("PLATFORM")
+          plugins=("CASSANDRAEMBED" "COUCHBASEEMBED" "ECLBLAS" "H3" "JAVAEMBED" "KAFKA" "MEMCACHED" "MYSQLEMBED" "NLP" "REDIS" "SQLITE3EMBED" "SQS" "PLATFORM")
           for plugin in "${plugins[@]}"; do
             sudo rm -f ./build/CMakeCache.txt
             sudo rm -rf ./build/CMakeFiles
@@ -128,6 +128,7 @@ jobs:
 
       - name: Upload Assets
         uses: ncipollo/release-action@v1.12.0
+        if: ${{ !matrix.ln }}
         with:
           allowUpdates: true
           artifacts: "build/*.deb,build/*.rpm"
@@ -153,13 +154,14 @@ jobs:
           docker run --rm --mount ${{ steps.vars.outputs.mount_platform }} --mount ${{ steps.vars.outputs.mount_ln }} $docker_label "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
 
       - name: Upload LN Assets
+        if: ${{ matrix.ln }}
         uses: ncipollo/release-action@v1.12.0
         with:
           owner: ${{ secrets.LNB_ACTOR }}
           repo: LN
           token: ${{ secrets.LNB_TOKEN }}
           allowUpdates: true
-          artifacts: "build/*.deb,build/*.rpm"
+          artifacts: "build/hpccsystems-platform-internal*.deb,build/hpccsystems-platform-internal*.rpm"
 
       - name: Upload error logs
         if: ${{ failure() || cancelled() }}
