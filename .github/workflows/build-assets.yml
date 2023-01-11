@@ -136,7 +136,7 @@ jobs:
         if: ${{ matrix.ln }}
         uses: actions/checkout@v3
         with:
-          repository: LN
+          repository: ${{ github.repository_owner }}/LN
           ref: ${{ github.ref }}
           path: LN
         env:
