@@ -32,7 +32,9 @@ jobs:
       - name: Release LN
         uses: ncipollo/release-action@v1.12.0
         with:
+          owner: ${{ secrets.LNB_ACTOR }}
           repo: LN
+          token: ${{ secrets.LNB_TOKEN }}
           generateReleaseNotes: true
           prerelease: ${{ contains(github.ref, '-rc') }}
 
