@@ -24,11 +24,18 @@ jobs:
     permissions:
       contents: write
     steps:
-      - id: create_release
-        uses: ncipollo/release-action@v1
+      - name: Release HPCC-Platform
+        uses: ncipollo/release-action@v1.12.0
         with:
           generateReleaseNotes: true
-          prerelease: ${{ contains(github.ref, 'rc') }}
+          prerelease: ${{ contains(github.ref, '-rc') }}
+      - name: Release LN
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          repo: LN
+          generateReleaseNotes: true
+          prerelease: ${{ contains(github.ref, '-rc') }}
+
 
   build-platform:
     name: Build Platform
@@ -39,20 +46,16 @@ jobs:
           - os: ubuntu-22.04
             container: true
           - os: ubuntu-22.04
-            container: false
           - os: ubuntu-20.04
-            container: false
           - os: ubuntu-18.04
-            container: false
           - os: centos-8
-            container: false
           - os: centos-7
-            container: false
+            ln: true
       fail-fast: false
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Check out source code (tag)
+      - name: Checkout HPCC-Platform
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
@@ -61,6 +64,8 @@ jobs:
       - name: Calculate vars
         id: vars
         run: |
+          echo 'mount_platform=source="$GITHUB_WORKSPACE/HPCC-Platform",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached' >> $GITHUB_OUTPUT
+          echo 'mount_ln=source="$GITHUB_WORKSPACE/LN",target=/hpcc-dev/LN,type=bind,consistency=cached' >> $GITHUB_OUTPUT
           echo "branch_name=$(echo ${{ github.ref }} | cut -d'/' -f3)" >> $GITHUB_OUTPUT
           cd vcpkg
           echo "vcpkg_sha_short=$(git rev-parse --short=8 HEAD)" >> $GITHUB_OUTPUT
@@ -96,29 +101,60 @@ jobs:
       - name: CMake Packages
         if: ${{ !matrix.container }}
         run: |
-          plugins=("CASSANDRAEMBED" "COUCHBASEEMBED" "ECLBLAS" "H3" "JAVAEMBED" "KAFKA" "MEMCACHED" "MYSQLEMBED" "NLP" "REDIS" "SQLITE3EMBED" "SQS" "PLATFORM")
+          pluginsBak=("CASSANDRAEMBED" "COUCHBASEEMBED" "ECLBLAS" "H3" "JAVAEMBED" "KAFKA" "MEMCACHED" "MYSQLEMBED" "NLP" "REDIS" "SQLITE3EMBED" "SQS" "PLATFORM")
+          plugins=("PLATFORM")
           for plugin in "${plugins[@]}"; do
             sudo rm -f ./build/CMakeCache.txt
             sudo rm -rf ./build/CMakeFiles
-            docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ steps.vars.outputs.branch_name }} "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -D$plugin=ON -DCONTAINERIZED=OFF -DCPACK_STRIP_FILES=OFF" 
-            docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ steps.vars.outputs.branch_name }} "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
-            docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ steps.vars.outputs.branch_name }} "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -D$plugin=ON -DCONTAINERIZED=OFF -DCPACK_STRIP_FILES=ON"
-            docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ steps.vars.outputs.branch_name }} "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
+            docker_label=${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ steps.vars.outputs.branch_name }}
+            docker run --rm --mount $mount_platform $docker_label "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -D$plugin=ON -DCONTAINERIZED=OFF -DCPACK_STRIP_FILES=OFF" 
+            docker run --rm --mount $mount_platform $docker_label "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target eclrtl" 
+            docker run --rm --mount $mount_platform $docker_label "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -D$plugin=ON -DCONTAINERIZED=OFF -DCPACK_STRIP_FILES=ON"
+            docker run --rm --mount $mount_platform $docker_label "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target eclrtl" 
           done
 
-      - name: Bundle containerized packages
+      - name: CMake Containerized Packages
         if: ${{ matrix.container }}
         run: |
           sudo rm -f ./build/CMakeCache.txt
           sudo rm -rf ./build/CMakeFiles
-          docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-ubuntu-22.04:${{ steps.vars.outputs.branch_name }} "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -DINCLUDE_PLUGINS=ON -DCONTAINERIZED=ON -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON -DSUPPRESS_SPARK=ON -DCPACK_STRIP_FILES=OFF"
-          docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-ubuntu-22.04:${{ steps.vars.outputs.branch_name }} "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
-          docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-ubuntu-22.04:${{ steps.vars.outputs.branch_name }} "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -DINCLUDE_PLUGINS=ON -DCONTAINERIZED=ON -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON -DSUPPRESS_SPARK=ON -DCPACK_STRIP_FILES=ON" 
-          docker run --rm --mount source="$(pwd)",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached ${{ secrets.DOCKER_USERNAME }}/build-ubuntu-22.04:${{ steps.vars.outputs.branch_name }} "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
+          docker_label=${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ steps.vars.outputs.branch_name }}
+          docker run --rm --mount $mount_platform $docker_label "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -DINCLUDE_PLUGINS=ON -DCONTAINERIZED=ON -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON -DSUPPRESS_SPARK=ON -DCPACK_STRIP_FILES=OFF"
+          docker run --rm --mount $mount_platform $docker_label "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
+          docker run --rm --mount $mount_platform $docker_label "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/HPCC-Platform/build ${{ steps.vars.outputs.cmake_options }} -DINCLUDE_PLUGINS=ON -DCONTAINERIZED=ON -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON -DSUPPRESS_SPARK=ON -DCPACK_STRIP_FILES=ON" 
+          docker run --rm --mount $mount_platform $docker_label "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
+
+      - name: Upload Assets
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          allowUpdates: true
+          artifacts: "build/*.deb;build/*.rpm"
+
+      - name: Checkout LN
+        if: ${{ matrix.ln }}
+        uses: actions/checkout@v3
+        with:
+          repository: LN
+          ref: ${{ github.ref }}
+          path: LN
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: CMake LN Packages
+        if: ${{ matrix.ln }}
+        run: |
+          sudo rm -f ./build/CMakeCache.txt
+          sudo rm -rf ./build/CMakeFiles
+          docker_label=${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ steps.vars.outputs.branch_name }}
+          docker run --rm --mount $mount_platform --mount $mount_ln $docker_label "cmake -S /hpcc-dev/LN -B /hpcc-dev/HPCC-Platform/build -DHPCC_SOURCE_DIR=/hpcc-dev/HPCC-Platform ${{ steps.vars.outputs.cmake_options }} -DINCLUDE_PLUGINS=ON -DCONTAINERIZED=OFF -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON -DSUPPRESS_SPARK=ON -DCPACK_STRIP_FILES=OFF"
+          docker run --rm --mount $mount_platform --mount $mount_ln $docker_label "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
+          docker run --rm --mount $mount_platform --mount $mount_ln $docker_label "cmake -S /hpcc-dev/LN -B /hpcc-dev/HPCC-Platform/build -DHPCC_SOURCE_DIR=/hpcc-dev/HPCC-Platform ${{ steps.vars.outputs.cmake_options }} -DINCLUDE_PLUGINS=ON -DCONTAINERIZED=OFF -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON -DSUPPRESS_SPARK=ON -DCPACK_STRIP_FILES=ON" 
+          docker run --rm --mount $mount_platform --mount $mount_ln $docker_label "cmake --build /hpcc-dev/HPCC-Platform/build --parallel $(nproc) --target package" 
 
       - uses: AButler/upload-release-assets@v2.0.2
+        if: ${{ matrix.ln }}
         with:
-          files: "build/*.deb;build/*.rpm"
+          files: "build/hpccsystems-platform-internal*.deb;build/hpccsystems-platform-internal*.rpm"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           release-tag: ${{ steps.vars.outputs.branch_name }}
 
