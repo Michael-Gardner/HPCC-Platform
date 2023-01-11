@@ -139,8 +139,7 @@ jobs:
           repository: ${{ github.repository_owner }}/LN
           ref: ${{ github.ref }}
           path: LN
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.LNB_TOKEN }}
 
       - name: CMake LN Packages
         if: ${{ matrix.ln }}
