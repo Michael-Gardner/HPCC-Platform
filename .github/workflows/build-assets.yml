@@ -54,7 +54,9 @@ jobs:
           echo "internal_tag=$(echo $community_tag | sed 's/community/internal/')" >> $GITHUB_OUTPUT
           community_base_ref=${{ github.event.base_ref || github.ref }}
           echo "community_branch=$(echo $community_base_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT
-          echo "cmake_options=-DCMAKE_BUILD_TYPE=RelWithDebInfo -DVCPKG_FILES_DIR=/hpcc-dev -DCPACK_THREADS=0 -DUSE_OPTIONAL=OFF" >> $GITHUB_OUTPUT
+          echo "cmake_options=-DCMAKE_BUILD_TYPE=RelWithDebInfo -DVCPKG_FILES_DIR=/hpcc-dev -DCPACK_THREADS=0 -DUSE_OPTIONAL=OFF -DSIGN_MODULES=ON -DSIGN_MODULES_KEYID=${{ secrets.SIGNING_KEYID }}" >> $GITHUB_OUTPUT
+          echo 'mount_ecl_signing_key=source="${{ github.workspace }}/private.key",target=/hpcc-dev/private.key,type=bind,consistency=cached' >> $GITHUB_OUTPUT
+          echo 'load_key="gpg --batch --import /hpcc-dev/private.key"' >> $GITHUB_OUTPUT
 
       - name: Print vars
         run: |
@@ -115,6 +117,10 @@ jobs:
           submodules: recursive
           path: ${{ needs.release.outputs.folder_ln }}
 
+      - name: Setup Signing
+        run: |
+          echo "${{ secrets.SIGNING_KEY }}" > private.key
+
       - name: Calculate vars
         id: vars
         working-directory: ${{ needs.release.outputs.folder_platform }}/vcpkg
@@ -155,13 +161,13 @@ jobs:
         if: ${{ !matrix.container && !matrix.ln }}
         run: |
           mkdir -p ${{ needs.release.outputs.folder_build }}
-          plugins=("CASSANDRAEMBED" "COUCHBASEEMBED" "ECLBLAS" "H3" "JAVAEMBED" "KAFKA" "MEMCACHED" "MYSQLEMBED" "NLP" "REDIS" "SQLITE3EMBED" "SQS" "PLATFORM")
+          plugins=("CASSANDRAEMBED" "COUCHBASEEMBED" "ECLBLAS" "H3" "JAVAEMBED" "KAFKA" "MEMCACHED" "MYSQLEMBED" "NLP" "REDIS" "SQLITE3EMBED" "SQS" "REMBED" "PLATFORM")
           for plugin in "${plugins[@]}"; do
             sudo rm -f ${{ needs.release.outputs.folder_build }}/CMakeCache.txt
             sudo rm -rf ${{ needs.release.outputs.folder_build }}/CMakeFiles
             docker_label=${{ secrets.DOCKER_USERNAME }}/build-${{ matrix.os }}:${{ needs.release.outputs.community_tag }}
-            docker run --rm --mount ${{ needs.release.outputs.mount_platform }} --mount ${{ needs.release.outputs.mount_build }} $docker_label "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/build ${{ needs.release.outputs.cmake_options }} -D$plugin=ON -DCONTAINERIZED=OFF -DCPACK_STRIP_FILES=OFF" 
-            docker run --rm --mount ${{ needs.release.outputs.mount_platform }} --mount ${{ needs.release.outputs.mount_build }} $docker_label "cmake --build /hpcc-dev/build --parallel $(nproc) --target package" 
+            docker run --rm --mount ${{ needs.release.outputs.mount_ecl_signing_key }} --mount ${{ needs.release.outputs.mount_platform }} --mount ${{ needs.release.outputs.mount_build }} $docker_label "${{ needs.release.outputs.load_key }} && cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/build ${{ needs.release.outputs.cmake_options }} -DSIGN_MODULES_PASSPHRASE=${{ secrets.SIGNING_PASSPHRASE }} -D$plugin=ON -DCONTAINERIZED=OFF -DCPACK_STRIP_FILES=OFF" 
+            docker run --rm --mount ${{ needs.release.outputs.mount_ecl_signing_key }} --mount ${{ needs.release.outputs.mount_platform }} --mount ${{ needs.release.outputs.mount_build }} $docker_label "${{ needs.release.outputs.load_key }} && cmake --build /hpcc-dev/build --parallel $(nproc) --target package" 
             # docker run --rm --mount ${{ needs.release.outputs.mount_platform }} --mount ${{ needs.release.outputs.mount_build }} $docker_label "cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/build ${{ needs.release.outputs.cmake_options }} -D$plugin=ON -DCONTAINERIZED=OFF -DCPACK_STRIP_FILES=ON"
             # docker run --rm --mount ${{ needs.release.outputs.mount_platform }} --mount ${{ needs.release.outputs.mount_build }} $docker_label "cmake --build /hpcc-dev/build --parallel $(nproc) --target package" 
           done
@@ -214,6 +220,10 @@ jobs:
         with:
           name: ${{ matrix.os }}-${{ matrix.package }}-logs
           path: ${{ needs.release.outputs.folder_build }}/**/*.log
+
+      - name: Cleanup Signing
+        if: always()
+        run: rm -f private.key
 
   build-clienttools:
     needs: release
