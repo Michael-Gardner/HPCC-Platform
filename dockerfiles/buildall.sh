@@ -99,9 +99,11 @@ if [[ -n "$BUILD_LN" ]]; then
   GITHUB_TOKEN=${LNB_TOKEN}
   lnBuildTag=${BUILD_TAG/community_/internal_}
   build_image platform-build-ln ${BUILD_LABEL} ${lnBuildTag}
+  ${SCRIPT_DIR}/cleanup.sh
   build_image platform-core-ln ${BUILD_LABEL} ${lnBuildTag} --build-arg BUILD_TAG_OVERRIDE=${HPCC_LONG_TAG}
 elif [[ -z "$BUILD_ML" ]]; then
   build_image platform-build
+  ${SCRIPT_DIR}/cleanup.sh
   build_image platform-core
 else
   docker pull ${DOCKER_REPO}/platform-core:${BUILD_LABEL}

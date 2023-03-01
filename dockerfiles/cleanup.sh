@@ -29,6 +29,6 @@ else
   HEAD=$(git rev-parse --short HEAD)
   PREV=$(git describe --abbrev=0 --tags)
 fi
-for f in `docker images  --format "{{.Repository}}:{{.Tag}}" | grep hpccsystems/ | grep -v $HEAD | grep -v $PREV` ; do
+for f in `docker images  --format "{{.Repository}}:{{.Tag}}" | grep memeoru/ | grep -v $HEAD | grep -v $PREV` ; do
   docker rmi $f
 done
