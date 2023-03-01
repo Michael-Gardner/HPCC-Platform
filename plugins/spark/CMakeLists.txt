@@ -130,43 +130,5 @@ if(SPARK)
             COMPONENT runtime
             DESTINATION "jars/spark/"
             )
-
-        
-        configure_file(spark-defaults.conf.in spark-defaults.conf @ONLY)
-        configure_file(spark-env.sh.in spark-env.sh @ONLY)
-        install(
-            FILES
-                ${CMAKE_CURRENT_BINARY_DIR}/spark-defaults.conf
-                ${CMAKE_CURRENT_BINARY_DIR}/spark-env.sh
-            COMPONENT runtime
-            DESTINATION "externals/spark-hadoop/conf"
-            )
-        install(
-            FILES
-                ${CMAKE_CURRENT_SOURCE_DIR}/spark-env.install
-            COMPONENT runtime
-            DESTINATION "etc/init.d/install"
-            )
-
-        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/sparkthor.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/sparkthor.sh" @ONLY)
-        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/sparkthor-worker.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/sparkthor-worker.sh" @ONLY)
-        install(PROGRAMS 
-            ${CMAKE_CURRENT_BINARY_DIR}/sparkthor.sh
-            ${CMAKE_CURRENT_BINARY_DIR}/sparkthor-worker.sh
-            DESTINATION sbin COMPONENT Runtime)
-
-        configure_file(init_sparkthor.in init_sparkthor @ONLY)
-        install(
-            PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/init_sparkthor
-            DESTINATION ${EXEC_DIR}
-            COMPONENT Runtime)
-        
-        configure_file(sparkthor@instance.service.in sparkthor@.service @ONLY)
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sparkthor@.service DESTINATION etc/systemd/system COMPONENT Systemd)
-
-        if(PLATFORM)
-            install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/sparkthor-service.install DESTINATION etc/init.d/install COMPONENT Systemd)
-            install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/sparkthor-service.uninstall DESTINATION etc/init.d/uninstall COMPONENT Systemd)
-        endif(PLATFORM)
     endif()
 endif()
