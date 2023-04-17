@@ -55,8 +55,25 @@ jobs:
           echo "internal_tag=$(echo $community_tag | sed 's/community/internal/')" >> $GITHUB_OUTPUT
           community_base_ref=${{ github.event.base_ref || github.ref }}
           echo "community_branch=$(echo $community_base_ref | cut -d'/' -f3)" >> $GITHUB_OUTPUT
+
+
+      - name: With Certificate Signing
+        id: with_signing
+        env:
+          do_sign: ${{ secrets.SIGNING_SECRET }}
+        if: ${{ env.do_sign != '' }}
+        run: |
           echo "cmake_docker_config=-DCMAKE_BUILD_TYPE=RelWithDebInfo -DVCPKG_FILES_DIR=/hpcc-dev -DCPACK_THREADS=0 -DUSE_OPTIONAL=OFF -DSIGN_MODULES=ON" >> $GITHUB_OUTPUT
           echo 'gpg_import=gpg --batch --import /hpcc-dev/build/private.key' >> $GITHUB_OUTPUT
+
+      - name: Without Certificate Signing
+        id: without_signing
+        env:
+          do_sign: ${{ secrets.SIGNING_SECRET }}
+        if: ${{ env.do_sign == '' }}
+        run: |
+          echo "cmake_docker_config=-DCMAKE_BUILD_TYPE=RelWithDebInfo -DVCPKG_FILES_DIR=/hpcc-dev -DCPACK_THREADS=0 -DUSE_OPTIONAL=OFF -DSIGN_MODULES=ON" >> $GITHUB_OUTPUT
+          echo 'gpg_import=true' >> $GITHUB_OUTPUT
 
       - name: Print vars
         run: |
