@@ -82,7 +82,7 @@ jobs:
 
   build-docker:
     name: Build Docker
-    # if: github.repository == 'hpcc-systems/HPCC-Platform'
+    if: github.repository == 'hpcc-systems/HPCC-Platform'
     needs: preamble
     runs-on: ubuntu-22.04
     strategy:
@@ -245,7 +245,7 @@ jobs:
 
   build-bare-metal:
     name: Build Bare Metal
-    # if: github.repository == 'hpcc-systems/HPCC-Platform'
+    if: github.repository == 'hpcc-systems/HPCC-Platform'
     needs: preamble
     strategy:
       matrix:
