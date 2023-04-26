@@ -65,7 +65,7 @@ if (MEMCACHED OR USE_LIBMEMCACHED)
         install(
             TARGETS memcachedplugin
             DESTINATION plugins
-            CALC_DEPS)
+            )
 
 	if(TARGET generate-libmemcached)
             target_link_libraries(memcachedplugin libmemcached libmemcachedutil)
