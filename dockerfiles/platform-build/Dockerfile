@@ -23,8 +23,8 @@ ARG CR_REPO=docker.io
 ARG CR_CONTAINER_NAME=platform-build-base
 FROM ${CR_REPO}/${CR_USER}/${CR_CONTAINER_NAME}-ubuntu-22.04:${BASE_VER}
 
-RUN apt-get update
-RUN apt-get install -y dirmngr gnupg apt-transport-https ca-certificates software-properties-common \
+RUN apt-get update && \
+    apt-get install -y dirmngr gnupg apt-transport-https ca-certificates software-properties-common \
     libcppunit-dev default-jdk python3-dev \
     bash-completion \
     expect \
@@ -36,21 +36,22 @@ RUN apt-get install -y dirmngr gnupg apt-transport-https ca-certificates softwar
     gdb \
     software-properties-common \  
     lsb-release \
-    jq
+    jq && \
+    echo "stop 1" && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
+    groupadd -g 10001 hpcc && \
+    useradd -s /bin/bash -r -m -N -c "hpcc runtime User" -u 10000 -g hpcc hpcc && \
+    passwd -l hpcc && \
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.18/bin/linux/amd64/kubectl && \
+    chmod +x ./kubectl && \
+    mv ./kubectl /usr/local/bin && \
+    cd /hpcc-dev && \
+    mkdir build && \
+    cd /hpcc-dev/build && \
+    ln -s ../vcpkg_installed . && \
+    echo "stop 2" && \
+    chown -R hpcc:hpcc /hpcc-dev
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-
-RUN groupadd -g 10001 hpcc
-RUN useradd -s /bin/bash -r -m -N -c "hpcc runtime User" -u 10000 -g hpcc hpcc
-RUN passwd -l hpcc 
-
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.18/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin
-
-WORKDIR /hpcc-dev
-RUN mkdir build
-WORKDIR /hpcc-dev/build
-RUN mv ../vcpkg_installed .
-RUN chown -R hpcc:hpcc /hpcc-dev
 WORKDIR /hpcc-dev
 
 # Runs as hpcc to fetch sources and build, to aid debugging containers as user hpcc
@@ -58,52 +59,48 @@ USER hpcc
 
 ARG BUILD_USER=hpcc-systems
 ARG BUILD_TAG=none
-RUN echo BUILD_USER is ${BUILD_USER}
-# NB: ensure the following 3 commands are done in one step, otherwise clone could succeed and get cached,
-# followed by an unsuccessful git checkout (because missing BUILD_TAG), meaning clone would not be redone
-RUN git clone --no-checkout https://github.com/${BUILD_USER}/HPCC-Platform.git && \
-    cd HPCC-Platform && \
-    git checkout ${BUILD_TAG} && \
-    git submodule update --init --recursive
-
-WORKDIR /hpcc-dev/HPCC-Platform/vcpkg
-RUN ./bootstrap-vcpkg.sh
 ARG GITHUB_ACTOR=hpcc-systems
 ARG GITHUB_TOKEN=none
-
-WORKDIR /hpcc-dev/build
-
 ARG SIGN_MODULES=OFF
-RUN --mount=type=secret,id=key,uid=10000 if [[ "${SIGN_MODULES}" != "OFF" ]] ; \
-    then \
-        gpg --batch --import /run/secrets/key && gpg --list-secret-keys ; \
-    else \
-        echo "skipping ECL signing" ; \
-    fi
-
 ARG BUILD_TYPE=RelWithDebInfo
 ARG USE_CPPUNIT=1
 ARG SIGNING_KEYID=HPCCSystems
 ARG SIGNING_PASSPHRASE=none
-RUN --mount=type=secret,id=passphrase,uid=10000 cmake /hpcc-dev/HPCC-Platform \
-    -Wno-dev -DCONTAINERIZED=1 \
-    -DINCLUDE_PLUGINS=1 -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DUSE_PYTHON2=0 \
-    -DUSE_CPPUNIT=${USE_CPPUNIT} -DSIGN_MODULES=${SIGN_MODULES} \
-    -DSIGN_MODULES_KEYID=${SIGNING_KEYID} -DSIGN_MODULES_PASSPHRASE=$(cat /run/secrets/passphrase) -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON
-RUN rm -rf ./vcpkg_downloads && rm -rf ./vcpkg_buildtrees && rm -rf ./vcpkg_packages
-
 ARG BUILD_THREADS
-RUN if [ -n "${BUILD_THREADS}" ] ; then echo ${BUILD_THREADS} > ~/build_threads; else echo $(nproc) > ~/build_threads ; fi
-RUN echo Building with $(cat ~/build_threads) threads
-RUN make -j$(cat ~/build_threads) jlib
-RUN make -j$(cat ~/build_threads) esp
-RUN make -j$(cat ~/build_threads) roxie
-RUN make -j$(cat ~/build_threads) ws_workunits ecl
-RUN make -j$(cat ~/build_threads)
+
+# NB: ensure the following 3 commands are done in one step, otherwise clone could succeed and get cached,
+# followed by an unsuccessful git checkout (because missing BUILD_TAG), meaning clone would not be redone
+RUN --mount=type=secret,id=key,uid=10000 --mount=type=secret,id=passphrase,uid=10000 git clone --no-checkout https://github.com/${BUILD_USER}/HPCC-Platform.git && \
+    cd HPCC-Platform && \
+    git checkout ${BUILD_TAG} && \
+    git submodule update --init --recursive && \
+    cd /hpcc-dev/HPCC-Platform/vcpkg && \
+    ./bootstrap-vcpkg.sh && \
+    cd /hpcc-dev/build && \
+    if [[ "${SIGN_MODULES}" != "OFF" ]] ; \
+    then \
+        gpg --batch --import /run/secrets/key && gpg --list-secret-keys ; \
+    else \
+        echo "skipping ECL signing" ; \
+    fi && \
+    cmake /hpcc-dev/HPCC-Platform \
+        -Wno-dev -DCONTAINERIZED=1 \
+        -DINCLUDE_PLUGINS=1 -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DUSE_PYTHON2=0 \
+        -DUSE_CPPUNIT=${USE_CPPUNIT} -DSIGN_MODULES=${SIGN_MODULES} \
+        -DSIGN_MODULES_KEYID=${SIGNING_KEYID} -DSIGN_MODULES_PASSPHRASE=$(cat /run/secrets/passphrase) -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON && \
+    rm -rf ./vcpkg_downloads && rm -rf ./vcpkg_buildtrees && rm -rf ./vcpkg_packages && \
+    if [ -n "${BUILD_THREADS}" ] ; then echo ${BUILD_THREADS} > ~/build_threads; else echo $(nproc) > ~/build_threads ; fi && \
+    echo Building with $(cat ~/build_threads) threads && \
+    make -j$(cat ~/build_threads) jlib && \
+    make -j$(cat ~/build_threads) esp && \
+    make -j$(cat ~/build_threads) roxie && \
+    make -j$(cat ~/build_threads) ws_workunits ecl && \
+    make -j$(cat ~/build_threads)
 
 USER root
+WORKDIR /hpcc-dev/build
 
-RUN make -j$(cat ~hpcc/build_threads) install
+RUN make -j$(cat /hpcc/build_threads) install
 RUN mkdir /var/lib/HPCCSystems && chown hpcc:hpcc /var/lib/HPCCSystems
 RUN mkdir /var/log/HPCCSystems && chown hpcc:hpcc /var/log/HPCCSystems
 RUN mkdir /var/lock/HPCCSystems && chown hpcc:hpcc /var/lock/HPCCSystems
