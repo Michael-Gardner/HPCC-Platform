@@ -107,7 +107,9 @@ jobs:
     steps:
       - name: Free additional disk space (remove Android SDK + Tools)
         run: |
+          sudo du -sh /usr/local/lib/android
           sudo rm -rf /usr/local/lib/android
+          sudo du -sh /usr/local/lib/android
 
       - name: Checkout HPCC-Platform
         uses: actions/checkout@v3
