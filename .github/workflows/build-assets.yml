@@ -202,6 +202,8 @@ jobs:
           echo "${{ secrets.SIGNING_SECRET }}" > ${{ needs.preamble.outputs.folder_build }}/private.key
           plugins=("PLATFORM" "CLIENTTOOLS_ONLY")
           for plugin in "${plugins[@]}"; do
+            echo "check ${{ needs.preamble.outputs.folder_build }} contents for $plugin run"
+            ls -la ${{ needs.preamble.outputs.folder_build }}
             sudo rm -f ${{ needs.preamble.outputs.folder_build }}/CMakeCache.txt
             sudo rm -rf ${{ needs.preamble.outputs.folder_build }}/CMakeFiles
             docker_label=build-${{ matrix.os }}:latest
