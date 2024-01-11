@@ -112,6 +112,10 @@ jobs:
           - os: ubuntu-22.04
             name: LN
             ln: true
+          - os: ubuntu-22.04
+            name: Enterprise
+            ee: true
+            cmake_options_extra: ""
           - os: ubuntu-20.04
             name: LN
             ln: true
@@ -138,7 +142,7 @@ jobs:
           path: ${{ needs.preamble.outputs.folder_platform }}
 
       - name: Checkout LN
-        if: ${{ matrix.ln }}
+        if: ${{ matrix.ln || matrix.ee }} 
         uses: actions/checkout@v3
         with:
           repository: ${{ github.repository_owner }}/LN
@@ -359,6 +363,33 @@ jobs:
         run: |
           jf docker push ${{ secrets.JFROG_REGISTRY || 'dummy.io' }}/hpccpl-docker-local/platform-core-ln:${{ needs.preamble.outputs.hpcc_version }} --build-name=platform-core-ln --build-number=${{ needs.preamble.outputs.hpcc_version }} --project=hpccpl
           jf rt bp platform-core-ln ${{ needs.preamble.outputs.hpcc_version }} --project=hpccpl
+
+
+      #  Enterprise Build ---
+      - name: CMake Packages (enterprise)
+        if: ${{ matrix.ee }}
+        run: |
+          mkdir -p ${{ needs.preamble.outputs.folder_build }}
+          echo "${{ secrets.SIGNING_SECRET }}" > ${{ needs.preamble.outputs.folder_build }}/private.key
+          sudo rm -f ${{ needs.preamble.outputs.folder_build }}/CMakeCache.txt
+          sudo rm -rf ${{ needs.preamble.outputs.folder_build }}/CMakeFiles
+          docker run --rm --mount ${{ needs.preamble.outputs.mount_platform }} --mount ${{ needs.preamble.outputs.mount_ln }} --mount ${{ needs.preamble.outputs.mount_build }} ${{ steps.vars.outputs.docker_tag_candidate_base }} "${{ needs.preamble.outputs.gpg_import }} && \
+          cmake -S /hpcc-dev/LN -B /hpcc-dev/build -DHPCC_SOURCE_DIR=/hpcc-dev/HPCC-Platform ${{ needs.preamble.outputs.cmake_docker_config }} -DBUILD_LEVEL=ENTERPRISE -DSIGN_MODULES_PASSPHRASE=${{ secrets.SIGN_MODULES_PASSPHRASE }} -DSIGN_MODULES_KEYID=${{ secrets.SIGN_MODULES_KEYID }} -DPLATFORM=ON -DINCLUDE_PLUGINS=ON -DCONTAINERIZED=OFF -DSUPPRESS_REMBED=ON -DSUPPRESS_V8EMBED=ON -DSUPPRESS_SPARK=ON -DCPACK_STRIP_FILES=OFF ${{ matrix.cmake_options_extra }} && \
+          cmake --build /hpcc-dev/build --parallel $(nproc) --target package" 
+      
+      - name: Upload Assets (enterprise)
+        if: ${{ matrix.ee }}
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          allowUpdates: true
+          generateReleaseNotes: false
+          prerelease: ${{ contains(github.ref, '-rc') }}
+          owner: ${{ secrets.LNB_ACTOR }}
+          repo: LN
+          token: ${{ secrets.LNB_TOKEN }}
+          tag: ${{ needs.preamble.outputs.internal_tag }}
+          artifacts: "${{ needs.preamble.outputs.folder_build }}/hpccsystems-platform-enterprise*.deb,${{ needs.preamble.outputs.folder_build }}/hpccsystems-platform-enterprise*.rpm"
+  
 
       #  Common  ---
       - name: Cleanup Environment
