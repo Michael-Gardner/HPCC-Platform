@@ -107,6 +107,9 @@ jobs:
           - os: ubuntu-20.04
             name: LN
             ln: true
+          - os: ubuntu-20.04
+            name: LN
+            cmake_options_extra: "-DBUILD_LEVEL=ENTERPRISE"
           - os: centos-8
             name: LN
             cmake_options_extra: ""
@@ -319,7 +322,7 @@ jobs:
           repo: LN
           token: ${{ secrets.LNB_TOKEN }}
           tag: ${{ needs.preamble.outputs.internal_tag }}
-          artifacts: "${{ needs.preamble.outputs.folder_build }}/hpccsystems-*-internal*.deb,${{ needs.preamble.outputs.folder_build }}/hpccsystems-*-internal*.rpm"
+          artifacts: "${{ needs.preamble.outputs.folder_build }}/hpccsystems-*-internal*.deb,${{ needs.preamble.outputs.folder_build }}/hpccsystems-*-internal*.rpm,${{ needs.preamble.outputs.folder_build }}/hpccsystems-*-enterprise*.deb,${{ needs.preamble.outputs.folder_build }}/hpccsystems-*-enterprise*.rpm"
 
       - name: Locate k8s deb file (internal)
         if: ${{ matrix.ln && matrix.container && !matrix.documentation }}
