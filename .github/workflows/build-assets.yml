@@ -39,6 +39,9 @@ jobs:
       candidate_branch: ${{ steps.vars.outputs.candidate_branch }}
       cmake_docker_config: ${{ steps.vars.outputs.cmake_docker_config }}
       gpg_import: ${{ steps.vars.outputs.gpg_import }}
+      full_version: ${{ steps.vars.outputs.full_version }}
+      sequence: ${{ steps.vars.outputs.sequence }}
+
     steps:
       - name: Calculate vars
         id: vars
@@ -62,6 +65,10 @@ jobs:
           echo "candidate_base_branch=$(echo $candidate_branch | awk -F'.' -v OFS='.' '{ $3="x"; print }')" >> $GITHUB_OUTPUT
           echo "cmake_docker_config=-DCMAKE_BUILD_TYPE=RelWithDebInfo -DVCPKG_FILES_DIR=/hpcc-dev -DCPACK_THREADS=0 -DUSE_OPTIONAL=OFF -DSIGN_MODULES=${{ github.repository_owner == 'hpcc-systems' && 'ON' || 'OFF' }}" >> $GITHUB_OUTPUT
           echo 'gpg_import=gpg --batch --import /hpcc-dev/build/private.key' >> $GITHUB_OUTPUT
+          full_version=$(echo $community_tag | sed 's/community_//' )
+          echo "full_version=$full_version" >> $GITHUB_OUTPUT
+          echo "sequence=$(echo ${full_version##*-})" >> $GITHUB_OUTPUT
+          
 
       - name: Print vars
         run: |
@@ -514,3 +521,70 @@ jobs:
         with:
           name: ${{ matrix.os }}-logs
           path: ./build/**/*.log
+
+  generate-changelogs:
+    name: Changelogs
+    needs: preamble
+    runs-on: ubuntu-22.04
+    #if: github.repository == 'hpcc-systems/HPCC-Platform'
+
+    steps:
+      - name: Print vars
+        shell: "bash"
+        run: |
+          echo "${{ toJSON(needs.preamble.outputs) }})"
+
+      - name: Checkout Changelog Scripts
+        uses: actions/checkout@v4
+        with:
+          repository: cloLN/PrettyGitLogs
+          ref: master
+          submodules: recursive
+          path: ./PrettyGitLogs
+          
+      - name: Checkout LN
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/LN
+          token: ${{ secrets.LNB_TOKEN }}
+          ref: ${{ needs.preamble.outputs.internal_ref }}
+          submodules: recursive
+          path: ./LN
+
+      - name: Checkout HPCC-Platform
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.preamble.outputs.community_ref }}
+          submodules: recursive
+          path: ./HPCC-Platform
+          fetch-depth: 0
+
+      - name: Checkout ECLIDE
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/ECLIDE
+          token: ${{ secrets.LNB_TOKEN }}
+          ref: ${{ needs.preamble.outputs.eclide_ref }}
+          submodules: recursive
+          path: ./ECLIDE
+
+          
+      - name: Generate Changelogs
+        run: |
+          cd ./HPCC-Platform
+          pversion="$(git log --pretty=one --max-count=25 | awk '/Split off/ {print $4; exit}')"
+          cd ..
+          prettyLogs=$(find $(pwd)/PrettyGitLogs -name prettyLogs.pl -type f)
+          echo "pversion: $pversion"
+          echo "prettyLogs: $prettyLogs"
+          # need to find and attach sequence data to pversion
+          if [ "${{ needs.preamble.outputs.sequence }}" == "1" ]; then
+            echo "1"
+            perl $prettyLogs -bt community_${{ needs.preamble.outputs.full_version }} -et community_$pversion -repo ${pwd}/HPCC-Platform -sort -html community_${{ needs.preamble.outputs.full_version }}_fulllog
+            perl $prettyLogs -bt internal_${{ needs.preamble.outputs.full_version }} -et internal_$pversion -repo ${pwd}/LN -sort -html internal_${{ needs.preamble.outputs.full_version }}_fulllog
+            perl $prettyLogs -bt eclide_${{ needs.preamble.outputs.full_version }} -et eclide_$pversion -repo ${pwd}/ECLIDE -sort -html eclide_${{ needs.preamble.outputs.full_version }}_fulllog
+          elif [ "${{ needs.preamble.outputs.sequence }}" == "rc1" ]; then
+            echo "rc1"
+          else
+            echo "rc*"
+          fi
