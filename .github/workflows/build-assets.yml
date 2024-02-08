@@ -359,7 +359,7 @@ jobs:
 
       - name: Upload error logs
         if: ${{ failure() || cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-${{ matrix.ln }}-${{ matrix.container }}-${{ matrix.documentation }}-logs
           path: ${{ needs.preamble.outputs.folder_build }}/**/*.log
@@ -472,7 +472,7 @@ jobs:
 
       - name: Upload error logs
         if: ${{ failure() || cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-logs
           path: ./build/**/*.log
