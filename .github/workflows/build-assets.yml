@@ -254,7 +254,7 @@ jobs:
           docker run --rm --mount ${{ needs.preamble.outputs.mount_platform }} --mount ${{ needs.preamble.outputs.mount_build }} ${{ steps.vars.outputs.docker_tag_candidate_base }} "cd /hpcc-dev/build/Release/docs/PT_BR && zip ALL_HPCC_DOCS_PT_BR-${{ needs.preamble.outputs.community_tag }}.zip *.pdf"
 
       - name: Upload Artifacts for ECLIDE build
-        if: ${{ !matrix.ln && !matrix.container && matrix.documentation }}
+        if: ${{ !matrix.ln && !matrix.ee && !matrix.container && matrix.documentation }}
         uses: actions/upload-artifact@v4
         with:
           name: html-help-documents
