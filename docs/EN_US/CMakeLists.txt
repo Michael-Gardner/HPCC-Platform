@@ -92,10 +92,10 @@ add_subdirectory(ContainerizedHPCC)
 
 
 # Docs automation
-if (DOCS_AUTO)
+#if (DOCS_AUTO)
 #   add_subdirectory(XMLGeneration)
-   add_subdirectory(ConfiguringHPCC)
-endif()
+#   add_subdirectory(ConfiguringHPCC)
+#endif()
 
 
 #WIP -  Docs
