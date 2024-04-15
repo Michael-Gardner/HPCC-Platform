@@ -1,0 +1,38 @@
+name: Cleanup Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'dry run of cleanup'
+        required: true
+        type: boolean
+  schedule:
+    - cron: '30 4 * * 5'
+            
+jobs:
+    jfrog:
+        name: "Cleanup Jfrog hpccpl-docker-local"
+        runs-on: ubuntu-22.04
+        #if: ${{ github.repository == 'hpcc-systems/HPCC-Platform' }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                submodules: false
+            - name: Login to JFrog
+              #if: ${{ matrix.ln && matrix.container && github.repository_owner == 'hpcc-systems' }}
+              uses: docker/login-action@v3
+              with:
+                registry: ${{ secrets.JFROG_REGISTRY }}
+                username: ${{ secrets.JFROG_USERNAME }}
+                password: ${{ secrets.JFROG_PASSWORD }}
+            - name: Setup JFrog CLI
+              #if: ${{ matrix.ln && matrix.container && github.repository_owner == 'hpcc-systems' }}
+              uses: jfrog/setup-jfrog-cli@v3
+              env:
+                JF_URL: https://${{ secrets.JFROG_REGISTRY }}
+                JF_USER: ${{ secrets.JFROG_USERNAME }}
+                JF_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
+            - name: 'Cleanup release-candidates over 1 month old'
+              run: |
+                jf rt s --spec ${{ github.workspace }}/HPCC-Platform/dockerfiles/rule-hpccpl-docker-local-rcs-over-1mo.spec
