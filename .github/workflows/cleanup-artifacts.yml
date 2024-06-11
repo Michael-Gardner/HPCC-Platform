@@ -36,6 +36,10 @@ jobs:
               shell: bash
               run: |
                 jf rt del --quiet --spec ${{ github.workspace }}/dockerfiles/rule-hpccpl-docker-local-rcs-over-1mo.spec |& tee -a rc-deletion.log
+                jf rt del --quiet --spec ${{ github.workspace }}/dockerfiles/rule-hpccpl-debian-local-rcs-over-1mo.spec |& tee -a rc-deletion.log
+                jf rt del --quiet --spec ${{ github.workspace }}/dockerfiles/rule-hpccpl-rpm-local-rcs-over-1mo.spec |& tee -a rc-deletion.log
+
+
 
             - name: 'Cleanup point releases over 6 months old'
               # sortBy, sortOrder necessary for offset=1 to remove latest point release from stack
