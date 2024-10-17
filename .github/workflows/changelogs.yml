@@ -1,0 +1,173 @@
+name: Change Logs
+ 
+on:
+  workflow_dispatch:
+
+  push:
+    tags:
+      - "*"
+      - "community_*"
+      - "!community_8.10.*"
+      - "!community_8.8.*"
+      - "!community_8.6.*"
+      - "!community_8.4.*"
+      - "!community_8.2.*"
+      - "!community_8.0.*"
+      - "!community_7.*"
+ 
+jobs:
+  changelogs:
+    runs-on: ubuntu-latest
+    name: Generate Changelogs
+    outputs:
+      community_ref: ${{ steps.vars.outputs.community_ref }}
+      internal_ref: ${{ steps.vars.outputs.internal_ref }}
+      eclide_ref: ${{ steps.vars.outputs.eclide_ref }}
+      current_version: ${{ steps.get_version.outputs.current_version }}
+      previous_rc_version: ${{ steps.get_version.outputs.previous_rc_version }}
+      previous_gold_version: ${{ steps.get_version.outputs.previous_gold_version }}
+      folder_platform: ${{ steps.vars.outputs.folder_platform }}
+      folder_ln: ${{ steps.vars.outputs.folder_ln }}
+      folder_eclide: ${{ steps.vars.outputs.folder_eclide }}
+      folder_prettyLogs: ${{ steps.vars.outputs.folder_prettyLogs }}
+      type: ${{ steps.get_version.outputs.type }}
+    steps:
+      - name: Calculate vars
+        id: vars
+        shell: bash
+        run: |
+          community_ref=${{ github.ref }}
+          echo "community_ref=$community_ref" >> $GITHUB_OUTPUT
+          echo "internal_ref=$(echo $community_ref | sed 's/community/internal/')" >> $GITHUB_OUTPUT
+          echo "eclide_ref=$(echo $community_ref | sed 's/community/eclide/')" >> $GITHUB_OUTPUT
+          echo "folder_platform=${{ github.workspace }}/HPCC-Platform" >> $GITHUB_OUTPUT
+          echo "folder_ln=${{ github.workspace }}/LN" >> $GITHUB_OUTPUT
+          echo "folder_eclide=${{ github.workspace }}/ECLIDE" >> $GITHUB_OUTPUT
+          echo "folder_prettyLogs=${{ github.workspace }}/PrettyGitLogs" >> $GITHUB_OUTPUT
+
+      - name: Checkout HPCC-Platform
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.vars.outputs.community_ref }}
+          submodules: recursive
+          path: ${{ steps.vars.outputs.folder_platform }}
+          fetch-tags: true
+          fetch-depth: 0
+      - name: Checkout LN
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/LN
+          token: ${{ secrets.LNB_TOKEN }}
+          ref: ${{ steps.vars.outputs.internal_ref }}
+          submodules: recursive
+          path: ${{ steps.vars.outputs.folder_ln }}
+          fetch-tags: true
+          fetch-depth: 0
+      - name: Checkout ECLIDE
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/ECLIDE
+          ref: ${{ steps.vars.outputs.eclide_ref }}
+          submodules: recursive
+          path: ${{ steps.vars.outputs.folder_eclide }}
+          fetch-tags: true
+          fetch-depth: 0
+      - name: Checkout PrettyGitLogs
+        uses: actions/checkout@v4
+        with:
+          repository: gfortil/PrettyGitLogs
+          ref: master
+          path: ${{ steps.vars.outputs.folder_prettyLogs }}
+
+      - name: Get Previous Versions
+        id: get_version
+        shell: bash
+        working-directory: ${{ steps.vars.outputs.folder_platform }}
+        run: |
+          set -x
+          tag=$(git describe --exact-match --tags 2>/dev/null)
+          version=$(echo $tag | cut -d_ -f2)
+          major=$(echo $version | cut -d. -f1)
+          minor=$(echo $version | cut -d. -f2)
+          point=$(echo $version | cut -d. -f3 | cut -d- -f1)
+          type=$(echo $version | cut -d- -f2)
+          if [[ $point -eq 0 ]]; then
+            if [[ $minor -eq 0 ]]; then
+              major=$((major - 1))
+              previous_rc=$(git tag --create-reflog --sort=-v:refname | grep -E "^community_$major\.[0-9]*\.[0-9]*-rc" | head -n 1 | cut -d_ -f2 )
+              previous_gold=$(git tag --create-reflog --sort=-v:refname | grep -E "^community_$major\.[0-9]*\.[0-9]*-[0-9]" | head -n 1 | cut -d_ -f2 )
+            else
+              minor=$((minor - 2))
+              previous_rc=$(git tag --create-reflog --sort=-v:refname | grep -E "^community_$major\.$minor\.[0-9]*-rc" | head -n 1 | cut -d_ -f2 )
+              previous_gold=$(git tag --create-reflog --sort=-v:refname | grep -E "^community_$major\.$minor\.[0-9]*-[0-9]" | head -n 1 | cut -d_ -f2 )
+            fi
+          else
+            point=$((point - 2))
+            previous_rc=$(git tag --create-reflog --sort=-v:refname | grep -E "^community_$major\.$minor\.$point-rc" | head -n 1 | cut -d_ -f2 )
+            previous_gold=$(git tag --create-reflog --sort=-v:refname | grep -E "^community_$major\.$minor\.$point-[0-9]" | head -n 1 | cut -d_ -f2)
+          fi
+          echo "current_version=$version" >> $GITHUB_OUTPUT
+          echo "previous_rc_version=$previous_rc" >> $GITHUB_OUTPUT
+          echo "previous_gold_version=$previous_gold" >> $GITHUB_OUTPUT
+          echo "type=$type" >> $GITHUB_OUTPUT
+
+      - name: Print vars
+        run: |
+          echo "${{ toJSON(steps.vars.outputs) }})"
+          echo "${{ toJSON(steps.get_version.outputs) }})"
+
+      - name: Check directories
+        run: |
+          echo "Checking directories"
+          echo "-------------------------------------------------"
+          echo "Base Directory: ${{ github.workspace }}"
+          ls -la ${{ github.workspace }}
+          echo "-------------------------------------------------"
+          echo "Platform: ${{ steps.vars.outputs.folder_platform }}"
+          ls -la ${{ steps.vars.outputs.folder_platform }}/..
+          echo "-------------------------------------------------"
+          echo "LN: ${{ steps.vars.outputs.folder_ln }}"
+          ls -la ${{ steps.vars.outputs.folder_ln }}
+          echo "-------------------------------------------------"
+          echo "ECLIDE: ${{ steps.vars.outputs.folder_eclide }}"
+          ls -la ${{ steps.vars.outputs.folder_eclide }}
+          echo "-------------------------------------------------"
+          echo "PrettyLogs: ${{ steps.vars.outputs.folder_prettyLogs }}"
+          ls -la ${{ steps.vars.outputs.folder_prettyLogs }}
+
+      - name: Generate Changelogs
+        shell: bash
+        working-directory: ${{ steps.vars.outputs.folder_prettyLogs }}
+        run: |
+          # run setup for perl environment
+          ./prettyLogs_setup.sh
+
+          # provide credentials
+          sed -i -e '/^JIRAUser/c\JIRAUser=${{ secrets.JIRA_USERNAME}}' prettylogs.conf
+          sed -i -e '/^JIRAPW/c\JIRAPW=${{ secrets.JIRA_TOKEN }}' prettylogs.conf
+ 
+          # Generate Changelogs
+          if [[ ! "${{ steps.get_version.outputs.type }}" == *"rc"* ]]; then
+            perl ./prettyLogs.pl -bt community_${{ steps.get_version.outputs.current_version }} -et community_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ steps.vars.outputs.folder_platform }} -sort -html community_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt internal_${{ steps.get_version.outputs.current_version }} -et internal_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ steps.vars.outputs.folder_ln }} -sort -html internal_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt eclide_${{ steps.get_version.outputs.current_version }} -et eclide_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ steps.vars.outputs.folder_eclide }} -sort -html eclide_${{ steps.get_version.outputs.current_version }}
+          elif [ "${{ steps.get_version.outputs.type }}" == "rc1" ]; then
+            perl ./prettyLogs.pl -bt community_${{ steps.get_version.outputs.current_version }} -et community_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ steps.vars.outputs.folder_platform }} -sort -html community_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt internal_${{ steps.get_version.outputs.current_version }} -et internal_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ steps.vars.outputs.folder_ln }} -sort -html internal_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt eclide_${{ steps.get_version.outputs.current_version }} -et eclide_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ steps.vars.outputs.folder_eclide }} -sort -html eclide_${{ steps.get_version.outputs.current_version }}
+          else
+            perl ./prettyLogs.pl -bt community_${{ steps.get_version.outputs.current_version }} -et community_${{ steps.get_version.outputs.previous_rc_version }} -repo ${{ steps.vars.outputs.folder_platform }} -sort -html community_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt internal_${{ steps.get_version.outputs.current_version }} -et internal_${{ steps.get_version.outputs.previous_rc_version }} -repo ${{ steps.vars.outputs.folder_ln }} -sort -html internal_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt eclide_${{ steps.get_version.outputs.current_version }} -et eclide_${{ steps.get_version.outputs.previous_rc_version }} -repo ${{ steps.vars.outputs.folder_eclide }} -sort -html eclide_${{ steps.get_version.outputs.current_version }}
+          fi
+          ls -la
+      - name: Upload Assets
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          allowUpdates: true
+          generateReleaseNotes: false
+          prerelease: ${{ contains(github.ref, '-rc') }}
+          artifacts: |
+            ${{ steps.vars.outputs.folder_prettyLogs }}/community_${{ steps.get_version.outputs.current_version }}.html,
+            ${{ steps.vars.outputs.folder_prettyLogs }}/internal_${{ steps.get_version.outputs.current_version }}.html,
+            ${{ steps.vars.outputs.folder_prettyLogs }}/eclide_${{ steps.get_version.outputs.current_version }}.html
