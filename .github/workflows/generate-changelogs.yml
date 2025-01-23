@@ -1,0 +1,133 @@
+name: Generate Changelogs
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_tag:
+        description: 'Base tag to generate changelogs from'
+        required: true
+        default: '9.8.0-1'
+      previous_rc_tag:
+        description: 'Previous RC tag to generate changelogs from'
+        required: true
+        default: '9.6.50-rc1'
+      previous_gold_tag:
+        description: 'Previous Gold tag to generate changelogs from'
+        required: true
+        default: '9.6.50-1'
+  workflow_call:
+    inputs:
+      base_tag:
+        type: string
+        description: 'Base tag to generate changelogs from'
+        required: true
+        default: '9.8.0-1'
+      previous_rc_tag:
+        type: string
+        description: 'Previous RC tag to generate changelogs from'
+        required: true
+        default: '9.6.50-rc1'
+      previous_gold_tag:
+        type: string
+        description: 'Previous Gold tag to generate changelogs from'
+        required: true
+        default: '9.6.50-1'
+
+jobs:
+  vars:
+    name: Changelog Environment Variables
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      platform_dir: ${{ steps.vars.outputs.platform_dir }}
+      internal_dir: ${{ steps.vars.outputs.internal_dir }}
+      eclide_dir: ${{ steps.vars.outputs.eclide_dir }}
+      community_base_tag: ${{ steps.vars.outputs.community_base_tag }}
+      community_previous_rc_tag: ${{ steps.vars.outputs.community_previous_rc_tag }}  
+      community_previous_gold_tag: ${{ steps.vars.outputs.community_previous_gold_tag }}
+      eclide_base_tag: ${{ steps.vars.outputs.eclide_base_tag }}
+      eclide_previous_rc_tag: ${{ steps.vars.outputs.eclide_previous_rc_tag }}
+      eclide_previous_gold_tag: ${{ steps.vars.outputs.eclide_previous_gold_tag }}
+      internal_base_tag: ${{ steps.vars.outputs.internal_base_tag }}
+      internal_previous_rc_tag: ${{ steps.vars.outputs.internal_previous_rc_tag }}
+      internal_previous_gold_tag: ${{ steps.vars.outputs.internal_previous_gold_tag }}
+    steps:
+      - name: Calculate Variables
+        id: vars
+        run: |
+          echo "platform_dir=${{ github.workspace }}/HPCC-Platform" >> $GITHUB_OUTPUT
+          echo "internal_dir=${{ github.workspace }}/LN" >> $GITHUB_OUTPUT
+          echo "eclide_dir=${{ github.workspace }}/eclide" >> $GITHUB_OUTPUT
+          echo "prettygitlogs_dir=${{ github.workspace }}/PrettyGitLogs" >> $GITHUB_OUTPUT
+          echo "community_base_tag=community_${{ github.event.inputs.base_tag }}" >> $GITHUB_OUTPUT
+          echo "community_previous_rc_tag=community_${{ github.event.inputs.previous_rc_tag }}" >> $GITHUB_OUTPUT
+          echo "community_previous_gold_tag=community_${{ github.event.inputs.previous_gold_tag }}" >> $GITHUB_OUTPUT
+          echo "eclide_base_tag=eclide_${{ github.event.inputs.base_tag }}" >> $GITHUB_OUTPUT
+          echo "eclide_previous_rc_tag=eclide_${{ github.event.inputs.previous_rc_tag }}" >> $GITHUB_OUTPUT
+          echo "eclide_previous_gold_tag=eclide_${{ github.event.inputs.previous_gold_tag }}" >> $GITHUB_OUTPUT
+          echo "internal_base_tag=internal_${{ github.event.inputs.base_tag }}" >> $GITHUB_OUTPUT
+          echo "internal_previous_rc_tag=internal_${{ github.event.inputs.previous_rc_tag }}" >> $GITHUB_OUTPUT
+          echo "internal_previous_gold_tag=internal_${{ github.event.inputs.previous_gold_tag }}" >> $GITHUB_OUTPUT
+      - name: Print Variables
+        run: |
+          echo "${{ toJSON(steps.vars.outputs)}}"
+
+  changelogs:
+    name: Generate Changelogs
+    runs-on: ubuntu-latest
+    needs: vars
+    steps:
+      - name: Checkout HPCC-Platform
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.vars.outputs.community_base_tag }}
+          submodules: recursive
+          path: ${{ needs.vars.outputs.platform_dir }}
+          fetch-tags: true
+          fetch-depth: 0
+      - name: Checkout LN
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/LN
+          token: ${{ secrets.LNB_TOKEN }}
+          ref: ${{ needs.vars.outputs.internal_base_tag }}
+          submodules: recursive
+          path: ${{ needs.vars.outputs.internal_dir }}
+          fetch-tags: true
+          fetch-depth: 0
+      - name: Checkout ECL IDE
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/eclide
+          ref: ${{ needs.vars.outputs.eclide_base_tag}}
+          submodules: recursive
+          path: ${{ needs.vars.outputs.eclide_dir }}
+          fetch-tags: true
+          fetch-depth: 0
+      - name: Checkout PrettyGitLogs
+        uses: actions/checkout@v4
+        with:
+          repository: hpcc-systems/PrettyGitLogs
+          ref: master
+          path: ${{ needs.vars.outputs.prettygitlogs_dir }}
+      - name: Generate Changelogs
+        shell: bash
+        working-directory: ${{ needs.vars.outputs.prettygitlogs_dir }}
+        run: |
+          ./prettyLogs_setup.sh
+          sed -i -e '/^JIRAUser/c\JIRAUser=${{ secrets.JIRA_USERNAME}}' prettylogs.conf
+          sed -i -e '/^JIRAPW/c\JIRAPW=${{ secrets.JIRA_TOKEN }}' prettylogs.conf
+          if [[ ! "${{ steps.get_version.outputs.type }}" == *"rc"* ]]; then
+            perl ./prettyLogs.pl -bt community_${{ steps.get_version.outputs.current_version }} -et community_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ needs.preamble.outputs.folder_platform }} -sort -html community_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt internal_${{ steps.get_version.outputs.current_version }} -et internal_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ needs.preamble.outputs.folder_ln }} -sort -html internal_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt eclide_${{ steps.get_version.outputs.current_version }} -et eclide_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ needs.preamble.outputs.folder_eclide }} -sort -html eclide_${{ steps.get_version.outputs.current_version }}
+          elif [ "${{ steps.get_version.outputs.type }}" == "rc1" ]; then
+            perl ./prettyLogs.pl -bt community_${{ steps.get_version.outputs.current_version }} -et community_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ needs.preamble.outputs.folder_platform }} -sort -html community_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt internal_${{ steps.get_version.outputs.current_version }} -et internal_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ needs.preamble.outputs.folder_ln }} -sort -html internal_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt eclide_${{ steps.get_version.outputs.current_version }} -et eclide_${{ steps.get_version.outputs.previous_gold_version }} -repo ${{ needs.preamble.outputs.folder_eclide }} -sort -html eclide_${{ steps.get_version.outputs.current_version }}
+          else
+            perl ./prettyLogs.pl -bt community_${{ steps.get_version.outputs.current_version }} -et community_${{ steps.get_version.outputs.previous_rc_version }} -repo ${{ needs.preamble.outputs.folder_platform }} -sort -html community_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt internal_${{ steps.get_version.outputs.current_version }} -et internal_${{ steps.get_version.outputs.previous_rc_version }} -repo ${{ needs.preamble.outputs.folder_ln }} -sort -html internal_${{ steps.get_version.outputs.current_version }}
+            perl ./prettyLogs.pl -bt eclide_${{ steps.get_version.outputs.current_version }} -et eclide_${{ steps.get_version.outputs.previous_rc_version }} -repo ${{ needs.preamble.outputs.folder_eclide }} -sort -html eclide_${{ steps.get_version.outputs.current_version }}
+          fi
