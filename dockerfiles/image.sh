@@ -310,8 +310,15 @@ build() {
             "cmake --install /hpcc-dev/build --prefix /opt/HPCCSystems"
     fi
 
-    echo "docker run --entrypoint /bin/bash -it hpccsystems/platform-core:$GIT_BRANCH-$MODE-$crc"
-    echo "hpccsystems/platform-core:$GIT_BRANCH-$MODE-$crc"
+    local tag="$GIT_BRANCH-$MODE-$crc"
+    if [ -n "$CUSTOM_TAG_NAME" ]; then
+        docker tag hpccsystems/platform-core:$GIT_BRANCH-$MODE-$crc hpccsystems/platform-core:$CUSTOM_TAG_NAME
+        tag="$CUSTOM_TAG_NAME"
+    fi
+    
+    echo "helm install mycluster $ROOT_DIR/helm/hpcc/ --set global.image.version=$tag --set global.privileged=true"
+    echo "docker run --entrypoint /bin/bash -it hpccsystems/platform-core:$tag"
+    echo "hpccsystems/platform-core:$tag"
     exit 0
 }
 
@@ -357,6 +364,7 @@ status() {
     echo "RECONFIGURE: $RECONFIGURE"
     echo "BUILD_OS: $BUILD_OS"
     echo "HPCC_BUILD: $HPCC_BUILD"
+    echo "CUSTOM_TAG_NAME: $CUSTOM_TAG_NAME"
 }
 
 # Print usage information
@@ -373,6 +381,7 @@ usage() {
     echo "  -t, --tag               tag the build volume with the current branch ref"
     echo "                          will preserve build state per branch"
     echo "  -r, --reconfigure       reconfigure CMake before building"
+    echo "  -n, --name              specify a custom tag name for the final platform-core image"
 }
 
 # Set default values
@@ -383,6 +392,7 @@ DEB_FILE=""
 BUILD_OS="ubuntu-22.04"
 RELEASE_BASE_IMAGE="ubuntu:jammy-20230308" # Matches vcpkg base image (does not need to be an exact match)
 TAG_BUILD=0
+CUSTOM_TAG_NAME=""
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]
@@ -424,6 +434,11 @@ case $key in
     -r|--reconfigure)
         RECONFIGURE=1
         shift # past argument
+        ;;
+    -n|--name)
+        CUSTOM_TAG_NAME="$2"
+        shift # past argument
+        shift # past value
         ;;
     -h|--help)
         usage
