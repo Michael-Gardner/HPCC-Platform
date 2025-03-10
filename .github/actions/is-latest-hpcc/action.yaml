@@ -1,0 +1,42 @@
+name: 'Check if latest HPCC version'
+description: 'use git to check if the current tag is the latest HPCC-Platform version'
+inputs:
+  git-ref:
+    description: 'Git ref'
+    required: true
+outputs:
+  latest_tag:
+    description: 'Latest HPCC-Platform version'
+    value: ${{ steps.set_output.outputs.latest_tag }}
+  is_latest:
+    description: 'Is this the latest HPCC-Platform version?'
+    value: ${{ steps.set_output.outputs.is_latest }}
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout HPCC-Platform
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.repository }}
+        ref: ${{ inputs.git-tag }}
+        fetch-tags: true
+        path: 
+    - name: Get latest HPCC-Platform version
+      id: get_latest
+      shell: bash
+      run: |
+        git clone https://github.com/${{ github.owner }}/HPCC-Platform.git check-for-latest
+        cd check-for-latest
+        git fetch --all
+        git fetch --tags
+        latest_tag=$(git tag -l 'community_*' | sort -V | tail -n 1)
+        echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
+        echo "is_latest=$(echo $latest_tag | grep -q ${{ github.ref }} && echo true || echo false)" >> $GITHUB_OUTPUT
+        cd ..
+        rm -rf check-for-latest
+    - name: Print vars
+      shell: "bash"
+      run: |
+        echo "${{ toJSON(steps.get_latest.outputs) }}"
+
+  
