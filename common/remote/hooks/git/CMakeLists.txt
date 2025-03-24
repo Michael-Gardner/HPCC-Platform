@@ -26,6 +26,7 @@ project( gitfile )
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
+pkg_check_modules(HTTP_PARSER REQUIRED http_parser)
 
 set (    SRCS
          gitfile.cpp
@@ -45,4 +46,5 @@ install ( TARGETS gitfile DESTINATION filehooks CALC_DEPS)
 target_link_libraries ( gitfile
     jlib
     PkgConfig::LIBGIT2
+    PkgConfig::HTTP_PARSER
     )
