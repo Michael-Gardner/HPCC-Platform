@@ -1,0 +1,160 @@
+name: Build Documentation
+
+on:
+  workflow_call:
+    inputs:
+      community_ref:
+        type: string
+        description: 'community_[semver]'
+        required: true
+      clienttools_asset_name:
+        type: string
+        description: 'Clienttools Asset name'
+        required: false
+        default: 'html-help-documents'
+      folder_platform:
+        type: string
+        description: 'Folder to checkout HPCC-Platform'
+        required: true
+      folder_build:
+        type: string
+        description: 'Folder to build HPCC-Platform'
+        required: true
+      os:
+        type: string
+        description: 'Operating System'
+        required: false
+        default: 'ubuntu-22.04'
+      candidate_base_branch:
+        type: string
+        description: 'Candidate Base Branch'
+        required: true
+      community_tag:
+        type: string
+        description: 'Community Tag'
+        required: true
+      mount_platform:
+        type: string
+        description: 'Mount point for HPCC-Platform'
+        required: true
+      mount_build:
+        type: string
+        description: 'Mount point for build'
+        required: true
+
+jobs:
+  build-documentation:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Print inputs
+        run: |
+          echo "community_ref: ${{ inputs.community_ref }}"
+          echo "clienttools_asset_name: ${{ inputs.clienttools_asset_name }}"
+          echo "folder_platform: ${{ inputs.folder_platform }}"
+          echo "folder_build: ${{ inputs.folder_build }}"
+          echo "os: ${{ inputs.os }}"
+          echo "candidate_base_branch: ${{ inputs.candidate_base_branch }}"
+          echo "community_tag: ${{ inputs.community_tag }}"
+          echo "mount_platform: ${{ inputs.mount_platform }}"
+          echo "mount_build: ${{ inputs.mount_build }}"
+
+      - name: Free additional disk space (remove Android SDK + Tools)
+        continue-on-error: true
+        run: |
+          df -h
+          sudo rm -rf ${ANDROID_HOME}
+          sudo rm -rf ${JAVA_HOME_8_X64}
+          sudo rm -rf ${JAVA_HOME_11_X64}
+          sudo rm -rf ${JAVA_HOME_17_X64}
+          sudo rm -rf ${JAVA_HOME_21_X64}
+          sudo rm -rf ${CHROMEWEBDRIVER}
+          sudo rm -rf ${EDGEWEBDRIVER}
+          sudo rm -rf ${GECKOWEBDRIVER}
+          sudo rm -rf ${SELENIUM_JAR_PATH}
+
+      - name: Checkout HPCC-Platform
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.community_ref }}
+          submodules: 'recursive'
+          path: ${{ inputs.folder_platform}}
+
+      - name: Calculate vars
+        id: vars
+        working-directory: ${{ inputs.folder_platform }}/vcpkg
+        run: |
+          vcpkg_sha_short=$(git rev-parse --short=8 HEAD)
+          echo "vcpkg_sha_short=$vcpkg_sha_short" >> $GITHUB_OUTPUT
+          docker_build_label=hpccsystems/platform-build-${{ inputs.os }}
+          echo "docker_build_label=$docker_build_label" >> $GITHUB_OUTPUT
+          echo "docker_tag=$docker_build_label:$vcpkg_sha_short" >> $GITHUB_OUTPUT
+          echo "docker_tag_candidate_base=$docker_build_label:${{ inputs.candidate_base_branch }}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Create Build Image
+        uses: docker/build-push-action@v5
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ inputs.folder_platform }}/dockerfiles/vcpkg/${{ inputs.os }}.dockerfile
+          context: ${{ inputs.folder_platform }}/dockerfiles/vcpkg
+          push: ${{ github.repository_owner == 'hpcc-systems' }}
+          load: ${{ github.repository_owner != 'hpcc-systems' }}
+          build-args: |
+            VCPKG_REF=${{ steps.vars.outputs.vcpkg_sha_short }}
+          tags: |
+            ${{ steps.vars.outputs.docker_tag_candidate_base }}
+          cache-from: |
+            type=registry,ref=${{ steps.vars.outputs.docker_tag_candidate_base }}
+            type=registry,ref=${{ steps.vars.outputs.docker_tag }}
+          cache-to: |
+            type=inline
+
+
+      - name: Build documentation
+        shell: "bash"
+        run: |
+          mkdir -p {${{ inputs.folder_build }},EN_US,PT_BR}
+          sudo rm -f ${{ inputs.folder_build }}/CMakeCache.txt
+          sudo rm -rf ${{ inputs.folder_build }}CMakeFiles
+          docker run --rm --mount ${{ inputs.mount_platform }} --mount ${{ inputs.mount_build }} ${{ steps.vars.outputs.docker_tag_candidate_base }} "\
+            cmake -S /hpcc-dev/HPCC-Platform -B /hpcc-dev/build -DVCPKG_FILES_DIR=/hpcc-dev -DMAKE_DOCS_ONLY=ON -DUSE_NATIVE_LIBRARIES=ON -DDOCS_AUTO=ON -DDOC_LANGS=ALL && \
+            cmake --build /hpcc-dev/build --parallel $(nproc) --target all && \
+            cd /hpcc-dev/build/Release/docs/EN_US && zip ALL_HPCC_DOCS_EN_US-$(echo '${{ inputs.community_tag }}' | sed 's/community_//' ).zip *.pdf && \
+            cd /hpcc-dev/build/Release/docs/PT_BR && zip ALL_HPCC_DOCS_PT_BR-$(echo '${{ inputs.community_tag }}' | sed 's/community_//' ).zip *.pdf"
+
+      - name: Upload Artifacts for ECLIDE build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.clienttools_asset_name }}
+          path: |
+            ${{ inputs.folder_build }}/docs/EN_US/EclipseHelp/*.zip
+            ${{ inputs.folder_build }}/docs/EN_US/HTMLHelp/*.zip
+            ${{ inputs.folder_build }}/docs/PT_BR/HTMLHelp/*.zip
+          compression-level: 0
+        
+      - name: Release Documentation
+        uses: ncipollo/release-action@v1.16.0
+        with:
+          allowUpdates: true
+          generateReleaseNotes: false
+          prerelease: ${{ contains(github.ref, '-rc') }}
+          artifacts: ${{ inputs.folder_build }}/Release/docs/*.zip,${{ inputs.folder_build }}/Release/docs/EN_US/*.zip,${{ inputs.folder_build }}/Release/docs/PT_BR/*.zip,${{ inputs.folder_build }}/Release/docs/EN_US/*.pdf,${{ inputs.folder_build }}/Release/docs/PT_BR/*.pdf,${{ inputs.folder_build }}/docs/EN_US/EclipseHelp/*.zip,${{ inputs.folder_build }}/docs/EN_US/HTMLHelp/*.zip,${{ inputs.folder_build }}/docs/PT_BR/HTMLHelp/*.zip
+
+      - name: Upload Error Logs
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.job }}-${{ github.run_id }}-logs
+          path: ${{ inputs.folder_build }}/**/*.log
+
+        

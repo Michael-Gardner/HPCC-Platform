@@ -24,8 +24,7 @@
 
 project( gitfile )
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
+find_package(libgit2 REQUIRED)
 
 set (    SRCS
          gitfile.cpp
@@ -43,6 +42,6 @@ HPCC_ADD_LIBRARY( gitfile SHARED ${SRCS}  )
 install ( TARGETS gitfile DESTINATION filehooks CALC_DEPS)
 
 target_link_libraries ( gitfile
-    jlib
-    PkgConfig::LIBGIT2
+    PUBLIC jlib
+    PRIVATE libgit2::libgit2
     )
