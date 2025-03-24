@@ -24,8 +24,12 @@
 
 project( gitfile )
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
+message(STATUS "CMAKE_TOOLCHAIN_FILE::${CMAKE_TOOLCHAIN_FILE}")
+message(STATUS "VCPKG_FILES_DIR::${VCPKG_FILES_DIR}")
+message(STATUS "VCPKG_ROOT::${VCPKG_ROOT}")
+message(STATUS "VCPKG_INSTALLED_DIR::${VCPKG_INSTALLED_DIR}")
+set(CMAKE_FIND_PACKAGE_DEBUG_MODE ON)
+find_package(libgit2 REQUIRED)
 
 set (    SRCS
          gitfile.cpp
@@ -43,6 +47,6 @@ HPCC_ADD_LIBRARY( gitfile SHARED ${SRCS}  )
 install ( TARGETS gitfile DESTINATION filehooks CALC_DEPS)
 
 target_link_libraries ( gitfile
-    jlib
-    PkgConfig::LIBGIT2
+    PUBLIC jlib
+    PRIVATE libgit2::libgit2
     )
