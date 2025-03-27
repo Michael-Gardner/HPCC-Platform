@@ -27,6 +27,10 @@ project( gitfile )
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
 
+if (APPLE)
+    find_package(unofficial-http-parser CONFIG REQUIRED)
+endif()
+
 set (    SRCS
          gitfile.cpp
          gitfile.hpp
@@ -46,3 +50,9 @@ target_link_libraries ( gitfile
     jlib
     PkgConfig::LIBGIT2
     )
+
+if (APPLE)
+    target_link_libraries( gitfile
+        unofficial::http_parser::http_parser
+        )
+endif ()
