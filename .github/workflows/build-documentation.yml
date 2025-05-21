@@ -12,6 +12,16 @@ on:
         description: 'Output Assets name'
         required: false
         default: 'html-help-documents'
+      pdf-asset-name:
+        type: string
+        description: 'Output PDF Assets name'
+        required: false
+        default: 'pdf-documents'
+      release-package:
+        type: boolean
+        description: 'Release package'
+        required: false
+        default: true
       folder-platform:
         type: string
         description: 'Folder to checkout HPCC-Platform'
@@ -131,7 +141,19 @@ jobs:
             cd /hpcc-dev/build/Release/docs/EN_US && zip ALL_HPCC_DOCS_EN_US-$(echo '${{ inputs.community-tag }}' | sed 's/community_//' ).zip *.pdf && \
             cd /hpcc-dev/build/Release/docs/PT_BR && zip ALL_HPCC_DOCS_PT_BR-$(echo '${{ inputs.community-tag }}' | sed 's/community_//' ).zip *.pdf"
 
+      - name: Upload Artifacts for github pages
+        if: ${{ !inputs.release-package }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.asset-name }}
+          path: |
+            ${{ inputs.folder-build }}/docs/EN_US/EclipseHelp/*.zip
+            ${{ inputs.folder-build }}/docs/EN_US/HTMLHelp/*.zip
+            ${{ inputs.folder-build }}/docs/PT_BR/HTMLHelp/*.zip
+          compression-level: 0
+
       - name: Upload Artifacts for ECLIDE build
+        if: ${{ inputs.release-package}}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.asset-name }}
@@ -142,6 +164,7 @@ jobs:
           compression-level: 0
         
       - name: Release Documentation
+        if: ${{ inputs.release-package }}
         uses: ncipollo/release-action@v1.16.0
         with:
           allowUpdates: true

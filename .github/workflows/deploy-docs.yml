@@ -21,6 +21,24 @@ jobs:
         with:
           node-version: 20
 
+      - name: Generate PDF Assets
+        uses: ./.github/actions/build-documentation.yml
+        with:
+          community-ref: master
+          release-package: false
+          folder-platform: ${{ github.workspace }}/HPCC-Platform
+          folder-build: ${{ github.workspace }}/build
+          candidate-base-branch: master
+          community-tag: master
+          mount-platform: 'source="${{ github.workspace }}/HPCC-Platform",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached'
+          mount-build: 'source="${{ github.workspace }}/build",target=/hpcc-dev/build,type=bind,consistency=cached'
+
+      - name: Download PDF Assets
+        uses: actions/download-artifact@v4
+        with:
+          name: pdf-documents
+      - run: ls -la 
+      - run: ls -la ${{ github.workspace }}/pdf-documents
       - run: npm ci
       - run: npm run build
 
