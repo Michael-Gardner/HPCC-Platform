@@ -60,8 +60,13 @@ export default async () => {
                         { text: 'Memory Manager', link: '/devdoc/MemoryManager' },
                         { text: 'Metrics', link: '/devdoc/Metrics' },
                     ]
+                },
+                {
+                    text: 'Documentation',
+                    items: [
+                        { text: 'Configuring HPCC', link: '/devdoc/ConfiguringHPCC' },
+                    ]
                 }
-
             ],
             footer: {
                 message: 'Released under the Apache-2.0 License.',

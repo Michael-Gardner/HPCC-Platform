@@ -9,9 +9,52 @@ on:
   workflow_dispatch:
 
 jobs:
+  preamble:
+    runs-on: ubuntu-latest
+    outputs:
+      folder-platform: ${{ steps.vars.outputs.folder_platform }}
+      folder-build: ${{ steps.vars.outputs.folder_build }}
+      mount-platform: ${{ steps.vars.outputs.mount_platform }}
+      mount-build: ${{ steps.vars.outputs.mount_build }}
+    steps:
+      - name: Checkout HPCC-Platform
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/HPCC-Platform
+          submodules: recursive
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Calculate vars
+        id: vars
+        run: |
+          echo "folder_platform=$GITHUB_WORKSPACE/HPCC-Platform" >> $GITHUB_OUTPUT
+          echo 'mount_platform=source="$GITHUB_WORKSPACE/HPCC-Platform",target=/hpcc-dev/HPCC-Platform,type=bind,consistency=cached' >> $GITHUB_OUTPUT
+          echo "folder_build=$GITHUB_WORKSPACE/build" >> $GITHUB_OUTPUT
+          echo 'mount_build=source="$GITHUB_WORKSPACE/build",target=/hpcc-dev/build,type=bind,consistency=cached' >> $GITHUB_OUTPUT
+
+      - name: Print vars
+        run: |
+          echo "${{ toJSON(steps.vars.outputs) }})"
+
+  generate-pdfs:
+      needs: preamble
+      uses: ./.github/workflows/build-documentation.yml
+      with:
+        community-ref: master
+        release-package: false
+        folder-platform: ${{ needs.preamble.outputs.folder-platform }}
+        folder-build: ${{ needs.preamble.outputs.folder-build }}
+        candidate-base-branch: master
+        community-tag: master
+        mount-platform: ${{ needs.preamble.outputs.mount-platform }}
+        mount-build: ${{ needs.preamble.outputs.mount-build }}
+      secrets: inherit
+
   # Build job
   deploy:
     runs-on: ubuntu-latest
+    needs: generate-pdfs
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,6 +64,27 @@ jobs:
         with:
           node-version: 20
 
+      - name: Download PDF Assets
+        uses: actions/download-artifact@v4
+        with:
+          name: pdf-documents
+          path: ${{ github.workspace }}/pdf-documents
+
+      - run: ls -la ${{ github.workspace }}/pdf-documents
+
+      - name: Rename PDF Assets
+        working-directory: ${{ github.workspace }}/pdf-documents
+        run: |
+          for file in *_EN_US*.pdf; do
+            newName="${file%%_EN_US*}.pdf"
+            mv "$file" "$newName"
+          done
+          for file in *.pdf; do
+            echo "Processing $file"
+            filename=$(basename -- "$file")
+            filename="${filename%.*}"
+            sed "s/filename/$filename/g" ../devdoc/pdftemplate.md > ../devdoc/${filename}.md
+          done
       - run: npm ci
       - run: npm run build
 

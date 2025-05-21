@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "rimraf ./devdoc/.vitepress/cache ./devdoc/.vitepress/dist",
     "copy-res": "cp ./devdoc/*.png ./devdoc/.vitepress/dist/devdoc",
+    "copy-pdfs": "cp ./pdf-documents/*.pdf ./devdoc/.vitepress/dist/devdoc",
     "dev-docs": "vitepress dev devdoc",
     "build-docs": "vitepress build devdoc",
     "preview-docs": "vitepress preview devdoc",
@@ -13,7 +14,7 @@
     "docs-preview": "npm run preview-docs",
     "convert": "pandoc -w markdown -o ./docs/DOCUMENTATION.md ./docs/DOCUMENTATION.rst",
     "watch": "vitepress dev devdoc",
-    "build": "npm run build-docs && npm run copy-res",
+    "build": "npm run build-docs && npm run copy-res && npm run copy-pdfs",
     "serve": "npm run preview-docs",
     "update": "npx npm-check-updates -u -t minor",
     "update-major": "npx npm-check-updates -u"
