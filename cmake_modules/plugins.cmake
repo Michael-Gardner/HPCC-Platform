@@ -32,6 +32,7 @@ set(PLUGINS_LIST
     H3
     JAVAEMBED
     KAFKA
+    PHONENUMBER
     MEMCACHED
     MONGODBEMBED
     MYSQLEMBED
@@ -60,6 +61,7 @@ foreach(plugin ${PLUGINS_LIST})
     elseif((INCLUDE_PLUGINS OR INCLUDE_${plugin}) AND (NOT SUPPRESS_${plugin}) AND (NOT PLUGIN))
         set(${plugin} ON)
         set(VCPKG_${plugin} "${VCPKG_INCLUDE}")
+        message(STATUS "Including ${plugin} in build with ${VCPKG_INCLUDE}")
     endif()
 endforeach()
 
