@@ -1,0 +1,38 @@
+name: Security Scans
+
+on:
+  push:
+    branches:
+      - *
+  cron:
+    - '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@v1
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'json'
+          output: 'trivy-report.json'
+          exit-code: '0'
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: 'false'
+          scanners: 'license,vuln,secret,misconfig'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.json
+          retention-days: 30
+      - name: Trivy Report Summary
+        run: |
+          jq -r '.Summary' trivy-report.json
+      - name: Trivy Report Details
+        run: |
+          jq -r '.Vulnerabilities[] | "Severity: \(.Severity)\nPackage: \(.PkgName)\nInstalled Version: \(.InstalledVersion)\nFixed Version: \(.FixedVersion)\nTitle: \(.Title)\n"' trivy-report.json
