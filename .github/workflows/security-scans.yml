@@ -1,0 +1,40 @@
+name: Security Scans
+
+on:
+  push:
+    branches:
+      - '*'
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate npm package information for Scans
+        run: npm install
+      - uses: aquasecurity/trivy-action@0.31.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-report.sarif'
+          exit-code: '0'
+          trivy-config: trivy.yaml
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: 'false'
+          scanners: 'license,vuln,secret,misconfig'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.sarif
+          retention-days: 1
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-report.sarif'
