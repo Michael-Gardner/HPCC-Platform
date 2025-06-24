@@ -14,9 +14,9 @@
 
     <para><informaltable colsep="1" frame="all" rowsep="1">
         <tgroup cols="2">
-          <colspec colwidth="79.25pt" />
+          <colspec colwidth="79.25pt"/>
 
-          <colspec colwidth="309.55pt" />
+          <colspec colwidth="309.55pt"/>
 
           <tbody>
             <row>
@@ -36,9 +36,11 @@
       </informaltable></para>
 
     <para>The <emphasis role="bold">CRON</emphasis> function defines a timer
-    event for use within the WHEN workflow service<indexterm>
+    event for use within the <link linkend="WHEN">WHEN</link> workflow
+    service<indexterm>
         <primary>WHEN workflow service</primary>
-      </indexterm> or WAIT function. This is synonymous with EVENT('CRON',
+      </indexterm> or <link linkend="WAIT">WAIT</link> function. This is
+    synonymous with <link linkend="EVENT">EVENT</link>('CRON',
     <emphasis>time</emphasis>).</para>
 
     <para>The <emphasis>time </emphasis>parameter is unix-standard cron time,
@@ -49,9 +51,9 @@
 
     <para><informaltable colsep="1" frame="all" rowsep="1">
         <tgroup cols="2">
-          <colspec colwidth="77.85pt" />
+          <colspec colwidth="77.85pt"/>
 
-          <colspec />
+          <colspec/>
 
           <tbody>
             <row>
