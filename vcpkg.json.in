@@ -114,7 +114,7 @@
             "name": "libphonenumber",
             "platform": "@VCPKG_PHONENUMBER@"
         },
-	    {
+        {
             "name": "librdkafka",
             "platform": "@VCPKG_KAFKA@"
         },
