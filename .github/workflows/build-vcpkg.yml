@@ -31,6 +31,7 @@ on:
     branches:
       - "master"
       - "candidate-*"
+      - "*"
       - "!candidate-7.10.*"
       - "!candidate-7.8.*"
       - "!candidate-7.6.*"
@@ -41,6 +42,10 @@ on:
 
   schedule:
     - cron: "0 0 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
