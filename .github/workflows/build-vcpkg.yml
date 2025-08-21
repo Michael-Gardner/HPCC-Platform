@@ -25,7 +25,9 @@ on:
         default: false
 
   # Do not include "push" in final version (uncomment for testing on users own repo)
-  # push:
+  push:
+    branches:
+      - "HPCC-*"
 
   pull_request:
     branches:
@@ -45,6 +47,10 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: write
 
 jobs:
 
