@@ -78,6 +78,7 @@ include(${HPCC_SOURCE_DIR}/version.cmake)
 include(${HPCC_SOURCE_DIR}/cmake_modules/options.cmake)
 include(${HPCC_SOURCE_DIR}/cmake_modules/plugins.cmake)
 include(${HPCC_SOURCE_DIR}/cmake_modules/vcpkg.cmake)
+include(${HPCC_SOURCE_DIR}/vcpkg_overlays/cmake/vcpkg_acquire_msys.cmake)
 
 project(hpccsystems-platform LANGUAGES C CXX
     VERSION ${HPCC_MAJOR}.${HPCC_MINOR}.${HPCC_POINT}.${HPCC_SEQUENCE}
