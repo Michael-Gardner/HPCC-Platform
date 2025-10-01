@@ -32,7 +32,7 @@ jobs:
   changelogs:
     name: Generate Changelogs
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'hpcc-systems' }}
+    # if: ${{ github.repository_owner == 'hpcc-systems' }}
     permissions:
       contents: write
     steps:
