@@ -141,7 +141,6 @@ jobs:
         with:
           name: ${{ inputs.asset-name }}
           path: |
-            ${{ inputs.folder-build }}/docs/EN_US/EclipseHelp/*.zip
             ${{ inputs.folder-build }}/docs/EN_US/HTMLHelp/*.zip
             ${{ inputs.folder-build }}/docs/PT_BR/HTMLHelp/*.zip
           compression-level: 0
