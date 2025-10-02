@@ -107,20 +107,18 @@ jobs:
         os: [ ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, rockylinux-8 ]
         container: [ true, false ]
         build-docker-image: [ false ]
-        architecture: [ "" ]
+        architecture: [ "", "-arm" ]
         include:
           - os: ubuntu-22.04
             container: true
-            build-docker-image: true
-          - os: ubuntu-24.04
-            architecture: "-arm"
-            bongo: true
-          - os: ubuntu-22.04
-            architecture: "-arm"
-            bongo: true
+            build-docker-image: true         
         exclude:
           - os: rockylinux-8
             container: true
+          - os: rockylinux-8
+            architecture: "-arm"
+          - os: ubuntu-20.04
+            architecture: "-arm"
       fail-fast: false
     
     uses: ./.github/workflows/build-docker-community.yml
