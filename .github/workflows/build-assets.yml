@@ -107,10 +107,15 @@ jobs:
         os: [ ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, rockylinux-8 ]
         container: [ true, false ]
         build-docker-image: [ false ]
+        architecture: [ "" ]
         include:
           - os: ubuntu-22.04
             container: true
             build-docker-image: true
+          - os: ubuntu-24.04
+            architecture: "-arm"
+          - os: ubuntu-22.04
+            architecture: "-arm"
         exclude:
           - os: rockylinux-8
             container: true
@@ -120,6 +125,7 @@ jobs:
     with:
       os: ${{ matrix.os }}
       container: ${{ matrix.container }}
+      architecture: ${{ matrix.architecture }}
       build-docker-image: ${{ matrix.build-docker-image }}
       community_ref: ${{ needs.preamble.outputs.community_ref }}
     secrets: inherit
