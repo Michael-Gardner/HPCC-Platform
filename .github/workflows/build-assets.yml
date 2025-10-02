@@ -114,8 +114,10 @@ jobs:
             build-docker-image: true
           - os: ubuntu-24.04
             architecture: "-arm"
+            bongo: true
           - os: ubuntu-22.04
             architecture: "-arm"
+            bongo: true
         exclude:
           - os: rockylinux-8
             container: true
