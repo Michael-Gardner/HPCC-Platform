@@ -119,10 +119,21 @@ jobs:
           echo "is_latest=$(echo $latest_tag | grep -q $community_tag && echo true || echo false)" >> $GITHUB_OUTPUT
           vcpkg_sha_short=$(git rev-parse --short=8 HEAD)
           echo "vcpkg_sha_short=$vcpkg_sha_short" >> $GITHUB_OUTPUT
-          docker_build_label=hpccsystems/platform-build-${{ inputs.os }}
-          echo "docker_build_label=$docker_build_label" >> $GITHUB_OUTPUT
-          echo "docker_tag=$docker_build_label:$vcpkg_sha_short" >> $GITHUB_OUTPUT
-          echo "docker_tag_candidate_base=$docker_build_label:$candidate_base_branch" >> $GITHUB_OUTPUT
+          if [[ "${{ github.repository_owner }}" == "hpcc-systems" ]]; then
+            docker_build_label=hpccsystems/platform-build-${{ inputs.os }}
+            echo "docker_build_label=$docker_build_label" >> $GITHUB_OUTPUT
+            echo "docker_tag=$docker_build_label:$vcpkg_sha_short" >> $GITHUB_OUTPUT
+            echo "docker_tag_candidate_base=$docker_build_label:$candidate_base_branch" >> $GITHUB_OUTPUT
+            echo "platform_core_base=hpccsystems/platform-core" >> $GITHUB_OUTPUT
+            echo "platform_core_os=hpccsystems/platform-core-${{ inputs.os }}" >> $GITHUB_OUTPUT
+          else
+            docker_build_label=useast.jfrog.lexisnexisrisk.com/hpccpl-docker-custom-local/platform-build-${{ inputs.os }}
+            echo "docker_build_label=$docker_build_label" >> $GITHUB_OUTPUT
+            echo "docker_tag=$docker_build_label:$vcpkg_sha_short" >> $GITHUB_OUTPUT
+            echo "docker_tag_candidate_base=$docker_build_label:$candidate_base_branch" >> $GITHUB_OUTPUT
+            echo "platform_core_base=useast.jfrog.lexisnexisrisk.com/hpccpl-docker-custom-local/platform-core" >> $GITHUB_OUTPUT
+            echo "platform_core_os=useast.jfrog.lexisnexisrisk.com/hpccpl-docker-custom-local/platform-core-${{ inputs.os }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Print Vars
         run: echo "${{ toJson(steps.vars.outputs)}}"
@@ -131,7 +142,16 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Login to JFrog Artifactory
+        if: ${{ github.repository_owner != 'hpcc-systems' }}
+        uses: docker/login-action@v3
+        with:
+          registry: useast.jfrog.lexisnexisrisk.com
+          username: ${{ secrets.JFROG_USERNAME }}
+          password: ${{ secrets.JFROG_PASSWORD }}
+
       - name: Login to DockerHub
+        if: ${{ github.repository_owner == 'hpcc-systems' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -143,8 +163,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           file: ${{ steps.vars.outputs.folder_platform }}/dockerfiles/${{ inputs.os }}.dockerfile
           context: ${{ steps.vars.outputs.folder_platform }}/dockerfiles
-          push: ${{ github.repository_owner == 'hpcc-systems' }}
-          load: ${{ github.repository_owner != 'hpcc-systems' }}
+          push: true
           build-args: |
             VCPKG_REF=${{ steps.vars.outputs.vcpkg_sha_short }}
           tags: |
@@ -215,15 +234,15 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           file: ${{ steps.vars.outputs.folder_platform }}/dockerfiles/platform-core-${{ inputs.os }}/Dockerfile
           context: ${{ steps.vars.outputs.folder_build }}
-          push: ${{ github.repository_owner == 'hpcc-systems' }}
+          push: true
           build-args: |
             PKG_FILE=${{ steps.container.outputs.k8s_pkg_file }}
           tags: |
-            hpccsystems/platform-core:${{ steps.vars.outputs.hpcc_version }}
-            hpccsystems/platform-core-${{ inputs.os }}:${{ steps.vars.outputs.community_tag }}
-            hpccsystems/platform-core-${{ inputs.os }}:${{ steps.vars.outputs.candidate_base_branch }}
+            ${{ steps.vars.outputs.platform_core_base }}:${{ steps.vars.outputs.hpcc_version }}
+            ${{ steps.vars.outputs.platform_core_os }}:${{ steps.vars.outputs.community_tag }}
+            ${{ steps.vars.outputs.platform_core_os }}:${{ steps.vars.outputs.candidate_base_branch }}
           cache-from: |
-            type=registry,ref=hpccsystems/platform-core-${{ inputs.os }}:${{ steps.vars.outputs.candidate_base_branch }}
+            type=registry,ref=${{ steps.vars.outputs.platform_core_os }}:${{ steps.vars.outputs.candidate_base_branch }}
   
       - name: Cleanup Environment
         if: always()
