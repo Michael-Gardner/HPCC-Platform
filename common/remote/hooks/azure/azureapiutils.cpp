@@ -29,7 +29,30 @@
 bool areManagedIdentitiesEnabled()
 {
     //Use a local static to avoid re-evaluation.  Performance is not critical - so once overhead is acceptable.
-    static bool enabled = std::getenv("MSI_ENDPOINT") || std::getenv("IDENTITY_ENDPOINT");
+    static bool initialized = false;
+    static bool enabled = false;
+
+    if (!initialized)
+    {
+        const char *msiEndpoint = std::getenv("MSI_ENDPOINT");
+        const char *identityEndpoint = std::getenv("IDENTITY_ENDPOINT");
+
+        if (msiEndpoint || identityEndpoint)
+        {
+            enabled = true;
+        }
+        else
+        {
+            const char *clientId = std::getenv("AZURE_CLIENT_ID");
+            const char *tokenFile = std::getenv("AZURE_FEDERATED_TOKEN_FILE");
+
+            if (!isEmptyString(clientId) && !isEmptyString(tokenFile))
+                enabled = true;
+        }
+
+        initialized = true;
+    }
+
     return enabled;
 }
 
