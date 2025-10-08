@@ -312,8 +312,16 @@ AzureFile::AzureFile(const char *_azureFileName) : fullName(_azureFileName)
 
         useManagedIdentity = storageapi->getPropBool("@managed", false);
         //MORE: We could allow the managed identity/secret to be supplied in the configuration
-        if (useManagedIdentity && !areManagedIdentitiesEnabled())
-            throw makeStringException(99, "Managed identity is not enabled for this environment");
+        if (useManagedIdentity)
+        {
+            StringBuffer miReason;
+            if (!areManagedIdentitiesEnabled(miReason))
+            {
+                if (miReason.isEmpty())
+                    miReason.append("no managed identity endpoints detected");
+                throw makeStringExceptionV(99, "Managed identity is not enabled for this environment (%s)", miReason.str());
+            }
+        }
 
         unsigned numDevices = plane->getPropInt("@numDevices", 1);
         if (numDevices != 1)

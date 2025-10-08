@@ -20,6 +20,7 @@
 
 #include "jlib.hpp"
 #include "jlog.hpp"
+#include "jstring.hpp"
 
 #include <azure/core.hpp>
 #include <azure/core/http/http.hpp>
@@ -36,6 +37,7 @@ constexpr const char * azureBlobPrefix = "azureblob:";
 constexpr const char * azureFilePrefix = "azurefile:";
 
 bool areManagedIdentitiesEnabled();
+bool areManagedIdentitiesEnabled(StringBuffer &reason);
 bool isBase64Char(char c);
 void handleRequestBackoff(const char * message, unsigned attempt, unsigned maxRetries);
 void handleRequestException(const Azure::Core::RequestFailedException& e, const char * op, unsigned attempt, unsigned maxRetries, const char * filename, offset_t pos, offset_t len);

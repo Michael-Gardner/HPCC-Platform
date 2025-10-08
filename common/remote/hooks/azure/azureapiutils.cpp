@@ -20,40 +20,85 @@
 #include "jlib.hpp"
 #include "jexcept.hpp"
 #include "jstring.hpp"
+#include "jfile.hpp"
 #include "jlog.hpp"
 #include <cstdlib>
 
 // Common utility functions shared by both blob and file implementations
 //---------------------------------------------------------------------------------------------------------------------
 
-bool areManagedIdentitiesEnabled()
+static inline bool isEnvSet(const char *value)
 {
-    //Use a local static to avoid re-evaluation.  Performance is not critical - so once overhead is acceptable.
-    static bool initialized = false;
-    static bool enabled = false;
+    return !isEmptyString(value);
+}
 
-    if (!initialized)
+static void appendReason(StringBuffer *reason, const char *text)
+{
+    if (!reason)
+        return;
+
+    if (!reason->isEmpty())
+        reason->append("; ");
+    reason->append(text);
+}
+
+static bool tokenFileAvailable(const char *tokenFile, StringBuffer *reason)
+{
+    if (!isEnvSet(tokenFile))
+        return false;
+
+    if (checkFileExists(tokenFile))
+        return true;
+
+    if (reason)
     {
-        const char *msiEndpoint = std::getenv("MSI_ENDPOINT");
-        const char *identityEndpoint = std::getenv("IDENTITY_ENDPOINT");
+        VStringBuffer msg("managed identity token file '%s' is not accessible", tokenFile);
+        appendReason(reason, msg.str());
+    }
+    return false;
+}
 
-        if (msiEndpoint || identityEndpoint)
-        {
-            enabled = true;
-        }
+static bool queryManagedIdentityAvailability(StringBuffer *reason)
+{
+    const char *msiEndpoint = std::getenv("MSI_ENDPOINT");
+    const char *identityEndpoint = std::getenv("IDENTITY_ENDPOINT");
+    const char *identityHeader = std::getenv("IDENTITY_HEADER");
+    const char *imdsEndpoint = std::getenv("IMDS_ENDPOINT");
+
+    if (isEnvSet(msiEndpoint) || isEnvSet(identityEndpoint) || isEnvSet(identityHeader) || isEnvSet(imdsEndpoint))
+        return true;
+
+    const char *clientId = std::getenv("AZURE_CLIENT_ID");
+    const char *tokenFile = std::getenv("AZURE_FEDERATED_TOKEN_FILE");
+
+    if (isEnvSet(clientId) && tokenFileAvailable(tokenFile, reason))
+        return true;
+
+    if (reason)
+    {
+        if (!isEnvSet(clientId) && !isEnvSet(tokenFile))
+            appendReason(reason, "managed identity environment variables were not detected");
         else
         {
-            const char *clientId = std::getenv("AZURE_CLIENT_ID");
-            const char *tokenFile = std::getenv("AZURE_FEDERATED_TOKEN_FILE");
-
-            if (!isEmptyString(clientId) && !isEmptyString(tokenFile))
-                enabled = true;
+            if (!isEnvSet(clientId))
+                appendReason(reason, "AZURE_CLIENT_ID is not set");
+            if (!isEnvSet(tokenFile))
+                appendReason(reason, "AZURE_FEDERATED_TOKEN_FILE is not set");
         }
-
-        initialized = true;
     }
 
-    return enabled;
+    return false;
+}
+
+bool areManagedIdentitiesEnabled()
+{
+    return queryManagedIdentityAvailability(nullptr);
+}
+
+bool areManagedIdentitiesEnabled(StringBuffer &reason)
+{
+    reason.clear();
+    return queryManagedIdentityAvailability(&reason);
 }
 
 bool isBase64Char(char c)
