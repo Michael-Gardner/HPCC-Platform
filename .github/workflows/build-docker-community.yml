@@ -26,6 +26,11 @@ on:
         required: false
         type: string
         default: ''
+      build-tag:
+        description: 'Build Tag'
+        required: false
+        type: string
+        default: ''
 
   workflow_dispatch:
     inputs:
@@ -50,6 +55,11 @@ on:
       cmake-options-extra:
         type: string
         description: 'Extra CMake options'
+        required: false
+        default: ''
+      build-tag:
+        type: string
+        description: 'Build Tag'
         required: false
         default: ''
 
@@ -127,9 +137,15 @@ jobs:
             echo "platform_core_base=hpccsystems/platform-core" >> $GITHUB_OUTPUT
             echo "platform_core_os=hpccsystems/platform-core-${{ inputs.os }}" >> $GITHUB_OUTPUT
           else
-            docker_build_label=useast.jfrog.lexisnexisrisk.com/hpccpl-docker-custom-local/platform-build-${{ inputs.os }}
+            docker_build_label=useast.jfrog.lexisnexisrisk.com/hpccpl-docker-custom-local/platform-core
             echo "docker_build_label=$docker_build_label" >> $GITHUB_OUTPUT
-            echo "docker_tag=$docker_build_label:$vcpkg_sha_short" >> $GITHUB_OUTPUT
+            build_tag_input="${{ inputs.build-tag }}"
+            if [[ -n "$build_tag_input" ]]; then
+              docker_tag_value="$build_tag_input"
+            else
+              docker_tag_value="$vcpkg_sha_short"
+            fi
+            echo "docker_tag=$docker_build_label:$docker_tag_value" >> $GITHUB_OUTPUT
             echo "docker_tag_candidate_base=$docker_build_label:$candidate_base_branch" >> $GITHUB_OUTPUT
             echo "platform_core_base=useast.jfrog.lexisnexisrisk.com/hpccpl-docker-custom-local/platform-core" >> $GITHUB_OUTPUT
             echo "platform_core_os=useast.jfrog.lexisnexisrisk.com/hpccpl-docker-custom-local/platform-core-${{ inputs.os }}" >> $GITHUB_OUTPUT
