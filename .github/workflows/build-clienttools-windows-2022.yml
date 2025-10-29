@@ -2,7 +2,9 @@ name: Build Clienttools windows-2022
 
 env:
   VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,read"
-  VCPKG_NUGET_REPOSITORY: "https://github.com/hpcc-systems/vcpkg"
+  VCPKG_NUGET_REPOSITORY: "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+  VCPKG_VERBOSE: "1"
+  VCPKG_DEBUG: "1"
 
 on:
   workflow_call:
@@ -47,6 +49,10 @@ jobs:
   generate_windows_2022_clienttools:
     name: Generate Windows Clienttools
     runs-on: "windows-2022"
+    
+    permissions:
+      contents: read
+      packages: read
 
     steps:
       - name: Checkout HPCC-Platform
@@ -89,10 +95,38 @@ jobs:
           `./HPCC-Platform/vcpkg/vcpkg fetch nuget | tail -n 1` \
           sources add \
           -name "GitHub" \
-          -source "https://nuget.pkg.github.com/hpcc-systems/index.json" \
+          -source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
           -storepasswordincleartext \
           -username "${{ github.repository_owner }}" \
           -password "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Debug NuGet Configuration
+        shell: "bash"
+        run: |
+          echo "=== NuGet Configuration Debug ==="
+          echo "VCPKG_BINARY_SOURCES: $VCPKG_BINARY_SOURCES"
+          echo "VCPKG_NUGET_REPOSITORY: $VCPKG_NUGET_REPOSITORY"
+          echo ""
+          echo "=== NuGet Sources ==="
+          `./HPCC-Platform/vcpkg/vcpkg fetch nuget | tail -n 1` sources list
+          echo ""
+          echo "=== NuGet Config ==="
+          `./HPCC-Platform/vcpkg/vcpkg fetch nuget | tail -n 1` config
+          echo ""
+          echo "=== Test NuGet Connectivity ==="
+          `./HPCC-Platform/vcpkg/vcpkg fetch nuget | tail -n 1` search -Source "GitHub" -Take 5 || echo "NuGet search failed"
+
+      - name: Debug vcpkg Binary Sources
+        shell: "bash"
+        run: |
+          echo "=== vcpkg Binary Sources Debug ==="
+          ./HPCC-Platform/vcpkg/vcpkg version
+          echo ""
+          echo "=== Environment Variables ==="
+          env | grep -i vcpkg || echo "No VCPKG environment variables found"
+          echo ""
+          echo "=== vcpkg integrate status ==="
+          ./HPCC-Platform/vcpkg/vcpkg integrate show || echo "vcpkg integrate not installed"
 
       - name: Setup Source Directory
         id: setup_source
@@ -106,12 +140,41 @@ jobs:
             echo "source_dir=./HPCC-Platform" >> $GITHUB_OUTPUT
           fi
 
+      - name: Debug vcpkg Install Process
+        shell: "bash"
+        run: |
+          echo "=== vcpkg Install Debug ==="
+          mkdir -p ./build
+          cd ./build
+          echo "Testing vcpkg install with verbose output..."
+          echo "Source directory: ${{ steps.setup_source.outputs.source_dir }}"
+          
+          # First, let's see what packages would be installed
+          cmake -S ../${{ steps.setup_source.outputs.source_dir }} -B . ${{ inputs.cmake-config-options }} --debug-output 2>&1 | head -50
+          
+          echo ""
+          echo "=== Checking vcpkg manifest ==="
+          if [ -f ../${{ steps.setup_source.outputs.source_dir }}/vcpkg.json ]; then
+            echo "vcpkg.json found:"
+            cat ../${{ steps.setup_source.outputs.source_dir }}/vcpkg.json
+          else
+            echo "No vcpkg.json found"
+          fi
+          
+          echo ""
+          echo "=== Manual vcpkg install test ==="
+          # Try installing a single package with maximum verbosity
+          ../HPCC-Platform/vcpkg/vcpkg install --debug --verbose zlib:x64-windows 2>&1 | head -100
+
       - name: Build Clienttools
         shell: "bash"
         run: |
           mkdir -p ./build
-          cmake -S ${{ steps.setup_source.outputs.source_dir }} -B ./build ${{ inputs.cmake-config-options }}
-          cmake --build ./build ${{ inputs.cmake-build-options }} --target package
+          echo "=== Starting CMake Configure ==="
+          cmake -S ${{ steps.setup_source.outputs.source_dir }} -B ./build ${{ inputs.cmake-config-options }} --debug-output
+          echo ""
+          echo "=== Starting CMake Build ==="
+          cmake --build ./build ${{ inputs.cmake-build-options }} --target package --verbose
 
       - name: Sign Package
         shell: "pwsh"
