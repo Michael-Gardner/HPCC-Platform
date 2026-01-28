@@ -66,19 +66,10 @@ jobs:
           submodules: recursive
           path: ./LN
 
-      - name: Setup Code Signing
-        shell: "pwsh"
+      - name: Setup Certificate File
+        shell: "bash"
         run: |
-          mkdir -p ./sign
-          cd sign
-          $pfxPath = "hpcc_code_signing.pfx"
-          $encodedBytes = [System.Convert]::FromBase64String("${{ secrets.SIGNING_CERTIFICATE }}")
-          $currentDirectory = Get-Location
-          $certificatePath = Join-Path -Path $currentDirectory -ChildPath $pfxPath
-          [IO.File]::WriteAllBytes("$certificatePath", $encodedBytes)
-          $passphrasePath = Join-Path -Path $currentDirectory -ChildPath "passphrase.txt"
-          Set-Content -Path $passphrasePath -Value "${{ secrets.SIGNING_CERTIFICATE_PASSPHRASE }}"
-          CertUtil -p ${{ secrets.SIGNING_CERTIFICATE_PASSPHRASE }} hpcc_code_signing.pfx           
+          echo "${{ secrets.SM_CLIENT_CERT_FILE_B64 }}" | base64 --decode > /d/sm_client_cert.p12   
 
       - name: vcpkg bootstrap
         shell: "bash"
@@ -109,15 +100,24 @@ jobs:
           fi
 
       - name: Build Clienttools
+        id: build_clienttools
         shell: "bash"
         run: |
           mkdir -p ./build
           cmake -S ${{ steps.setup_source.outputs.source_dir }} -B ./build ${{ inputs.cmake-config-options }}
-          if [ -d ./LN ]; then
-            cmake --build ./build ${{ inputs.cmake-build-options }} --target LN_SIGN
-          else
-            cmake --build ./build ${{ inputs.cmake-build-options }} --target SIGN
-          fi
+          cmake --build ./build ${{ inputs.cmake-build-options }} --target package
+          packages=($(ls -1 ./build/hpccsystems-clienttools-*.exe ))
+          echo "packages=${packages[*]}" >> $GITHUB_OUTPUT
+
+      - name: Sign Clienttools
+        uses: digicert/code-signing-software-trust-action@v1.0.0
+        with:
+          simple-signing-mode: true
+          keypair-alias: "RIS_Data_Services_HPCC_Systems"
+          input: "${{ steps.build_clienttools.outputs.packages }}"
+        env:
+          SM_API_KEY: ${{ secrets.DIGICERT_API_KEY }}
+          SM_CLIENT_CERT_FILE: "/d/sm_client_cert.p12"
 
       - name: Release Community Clienttools
         if: ${{ inputs.ln-ref == '' }}
@@ -127,7 +127,7 @@ jobs:
           generateReleaseNotes: false
           prerelease: ${{ contains(github.ref, '-rc') }}
           makeLatest: ${{ inputs.make-latest }}
-          artifacts: "./build/hpccsystems-clienttools-community*.exe"
+          artifacts: "${{ steps.build_clienttools.outputs.packages }}"
 
       - name: Release Internal Clienttools to JFrog Repository
         if: ${{ inputs.ln-ref != '' && github.repository_owner == 'hpcc-systems' }}
