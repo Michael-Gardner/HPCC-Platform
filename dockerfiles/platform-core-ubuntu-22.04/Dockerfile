@@ -20,6 +20,8 @@
 ARG BASE_IMAGE=ubuntu:22.04
 FROM ${BASE_IMAGE}
 
+ARG PYTHON_VERSION=3.14.0
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get clean -y && \
@@ -28,25 +30,44 @@ RUN apt-get clean -y && \
     apt-get autoremove -y && \
     apt-get update -y && \
     apt-get install --no-install-recommends -y \
+    build-essential \
     default-jdk \
     elfutils \
     expect \
     g++ \
     git \
+    libbz2-dev \
+    libffi-dev \
+    liblzma-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
     locales \
     jq \
     openssh-client \
     openssh-server \
-    python3 \ 
-    python3-dev \ 
     psmisc \
     r-base-core \
     r-cran-rcpp \
     r-cran-inline \
     rsync \
+    tar \
     zip \
     curl \
-    clang
+    clang \
+    zlib1g-dev
+
+RUN mkdir -p /hpcc-dev && \
+    curl -fsSLo /hpcc-dev/Python-${PYTHON_VERSION}.tgz https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
+    tar -C /hpcc-dev -xzf /hpcc-dev/Python-${PYTHON_VERSION}.tgz && \
+    cd /hpcc-dev/Python-${PYTHON_VERSION} && \
+    ./configure --prefix=/usr/local --with-ensurepip=install && \
+    make -j"$(nproc)" && \
+    make altinstall && \
+    ln -sf /usr/local/bin/python3.14 /usr/local/bin/python3 && \
+    ln -sf /usr/local/bin/pip3.14 /usr/local/bin/pip3 && \
+    ln -sf /usr/local/bin/python3.14-config /usr/local/bin/python3-config && \
+    rm -rf /hpcc-dev/Python-${PYTHON_VERSION} /hpcc-dev/Python-${PYTHON_VERSION}.tgz
 
 ARG USE_CPPUNIT=1
 RUN if [ ${USE_CPPUNIT} -eq 1 ] ; then apt-get install -y libcppunit-1.15-0 ; fi 
