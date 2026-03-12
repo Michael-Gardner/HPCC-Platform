@@ -13,4 +13,5 @@ ExecStart=@ADMIN_PATH@/@processName@ @processArgs@
 RemainAfterExit=yes
 
 [Install]
+WantedBy=hpccsystems-platform.target
 DefaultInstance=my@component@

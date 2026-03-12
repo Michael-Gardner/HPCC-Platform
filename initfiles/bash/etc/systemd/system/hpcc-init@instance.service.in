@@ -15,4 +15,5 @@ WorkingDirectory=@RUNTIME_PATH@
 StandardOutput=journal+console
 
 [Install]
+WantedBy=hpccsystems-platform.target
 DefaultInstance=mydafilesrv

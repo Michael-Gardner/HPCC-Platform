@@ -33,7 +33,7 @@ Automatic regeneration of hpccsystems-platform.target
 instance of a component which is explicitly declared in the `environment.xml`
 file.  In order to generate this required components list, the
 `generate-hpccsystems-target.sh` script is invoked.  This can be done
-automatically by enabling the `hpcc-environemnt-monitor.path` systemd script.
+automatically by enabling the `hpcc-environment-monitor.path` systemd script.
 This path script will call a corresponding service script of the same name
 whenever `environment.xml` is modified.
 

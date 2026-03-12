@@ -12,4 +12,5 @@ EnvironmentFile=@RUNTIME_PATH@/thorslaves/%i.cfg
 ExecStart=@EXEC_PATH@/@processName@ @processArgs@
 
 [Install]
+WantedBy=hpccsystems-platform.target
 DefaultInstance=my@component@
