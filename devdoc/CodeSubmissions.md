@@ -15,8 +15,8 @@ There are a few things that should be considered when creating a PR to increase 
   - You'll be able to provide more details.
   - Use bullet points to help keep your information organized and easy to read.
   - If adding detailed commit messages from commandline, the user can do the following:\
-    git commit -m "HPCC-XXXXX top level commit message" -m " - detailed commit message line 1: <press Enter>
-    1)  - this is the continuation of my detailed commit message <press Enter>
+    git commit -m "HPCC-XXXXX top level commit message" -m " - detailed commit message line 1: [press Enter]
+    1)  - this is the continuation of my detailed commit message [press Enter]
     2)  - this is the next line in the detailed commit message." 
     - the final quotation mark will end the detailed commit message.
 * If the component name (when applicable) can fit into the top level commit message, it would help clarify information.

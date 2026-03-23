@@ -47,6 +47,7 @@ export default async () => {
                         { text: 'Code Submission Guidelines', link: '/devdoc/CodeSubmissions' },
                         { text: 'Code Review Guidelines', link: '/devdoc/CodeReviews' },
                         { text: 'Writing Developer Documentation', link: '/devdoc/DevDocs' },
+                        { text: 'Shared Repository Model', link: '/devdoc/SharedRepositoryModel' },
                         { text: 'User Guides', link: '/devdoc/userdoc/README' },
                         { text: 'Build on Github Actions', link: '/devdoc/UserBuildAssets' },
                     ]
