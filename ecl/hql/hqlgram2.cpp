@@ -26,8 +26,6 @@
 #include "junicode.hpp"
 
 #include "hqlgram.hpp"
-#include "hqlgram.h"
-
 #include "hqlgram.hpp"
 #include "hqlfold.hpp"
 #include "hqlpmap.hpp"
@@ -49,6 +47,8 @@
 #include "hqlrepository.hpp"
 #include "hqlir.hpp"
 #include "reservedwords.hpp"
+
+#include "hqlgram.h"
 
 #define ADD_IMPLICIT_FILEPOS_FIELD_TO_INDEX         TRUE
 //#define USE_WHEN_FOR_SIDEEFFECTS
@@ -3347,7 +3347,7 @@ void HqlGram::processForwardModuleDefinition(const attribute & errpos)
     attribute nextToken;
     for (;;)
     {
-        int next = lexObject->yyLex(nextToken, LEXidentifier, NULL);
+        eclyytoken_kind_t next = static_cast<eclyytoken_kind_t>(lexObject->yyLex(nextToken, LEXidentifier, NULL));
         switch (next)
         {
         case ASSIGN:
@@ -3471,7 +3471,7 @@ void HqlGram::processForwardModuleDefinition(const attribute & errpos)
             break;
         }
         nextToken.release();
-        prev = next;
+        prev = static_cast<int>(next);
     }
 }
              
@@ -11538,7 +11538,7 @@ IHqlExpression * HqlGram::expandedSortListByReference(attribute * module, attrib
 
 static void getTokenText(StringBuffer & msg, int token)
 {
-    switch (token)
+    switch (static_cast<eclyytoken_kind_t>(token))
     {
     case ABS: msg.append("ABS"); break;
     case ACOS: msg.append("ACOS"); break;
@@ -11552,7 +11552,7 @@ static void getTokenText(StringBuffer & msg, int token)
     case ANDAND: msg.append("&&"); break;
     case ANY: msg.append("ANY"); break;
     case APPLY: msg.append("APPLY"); break;
-    case _ARRAY_: msg.append("_ARRAY_"); break;
+    case TOK_ARRAY: msg.append("_ARRAY_"); break;
     case AS: msg.append("AS"); break;
     case ASCII: msg.append("ASCII"); break;
     case ASIN: msg.append("ASIN"); break;
@@ -12099,7 +12099,7 @@ void HqlGram::simplifyExpected(int *expected)
     simplify(expected, SCOPE_ID, '$', HASH_DOLLAR, '^', 0);
     simplify(expected, RECORD, RECORDOF, RECORD_ID, RECORD_FUNCTION, VALUE_MACRO, '{', '@', '$', HASH_DOLLAR, IF, 0);
     simplify(expected, IFBLOCK, ANY, PACKED, BIG, LITTLE, 0);
-    simplify(expected, SIMPLE_TYPE, _ARRAY_, LINKCOUNTED, EMBEDDED, STREAMED, 0);
+    simplify(expected, SIMPLE_TYPE, TOK_ARRAY, LINKCOUNTED, EMBEDDED, STREAMED, 0);
     simplify(expected, END, '}', 0);
 }
 
