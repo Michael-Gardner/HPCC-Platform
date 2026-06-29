@@ -1,0 +1,26 @@
+name: Check macos
+
+on:
+  workflow_dispatch:
+    inputs:
+      arm:
+        description: Initial boolean parameter
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  test-matrix:
+    uses: ./.github/workflows/macos-test.yml
+    strategy:
+      matrix:
+        arm: [true, false]
+        include:
+          - arm: true
+            arch_string: "arm64"
+          - arm: false
+            arch_string: "x86_64"
+
+    with:
+      arm: ${{ matrix.arm }}
+      arch_string: ${{ matrix.arch_string }}

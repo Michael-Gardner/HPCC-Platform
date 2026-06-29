@@ -1,0 +1,23 @@
+name: Matrix Test
+
+on:
+  workflow_call:
+    inputs:
+      arm:
+        required: true
+        type: boolean
+      arch_string:
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  echo-params:
+    runs-on: "macos-14${{ inputs.arm && '' || '-large' }}"
+    steps:
+      - name: Echo inputs
+        run: |
+          echo "arm=${{ inputs.arm }}"
+          echo "arch_string=${{ inputs.arch_string }}"
+          actual_arch=$(uname -m)
+          echo "actual_arch=${actual_arch}"
